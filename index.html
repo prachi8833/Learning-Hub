@@ -463,6 +463,56 @@ body{background:var(--cream);color:var(--text)}
 .dg-cnt{font-size:.68rem;font-weight:800;opacity:.8}
 .dg-gift{font-size:1.9rem;float:right;margin-top:-28px}
 
+/* READING */
+#readingScreen{position:fixed;inset:0;z-index:900;background:var(--cream);display:none;flex-direction:column}
+.rd-header{background:linear-gradient(135deg,#1A6B5A,#2BBFB8);padding:18px 22px;display:flex;align-items:center;gap:14px;flex-shrink:0}
+.rd-back{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.rd-title{flex:1;color:#fff}
+.rd-title h3{font-size:.95rem;font-weight:900}
+.rd-title p{font-size:.68rem;opacity:.75;margin-top:1px}
+.rd-stars-live{font-size:.95rem;font-weight:900;color:var(--amber)}
+.rd-body{flex:1;overflow-y:auto;padding:20px 22px;max-width:680px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.rd-passage-card{background:var(--warm);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);border:2px solid var(--border)}
+.rd-passage-title{font-size:.72rem;font-weight:900;color:var(--teal2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.rd-passage-text{font-size:1.1rem;font-weight:700;color:var(--text);line-height:1.9;letter-spacing:.01em}
+.rd-word{display:inline;cursor:default;padding:1px 2px;border-radius:3px;transition:background .2s}
+.rd-word.correct{background:#D4EDDA;color:#1A7A3C}
+.rd-word.wrong{background:#FDECEA;color:var(--red);text-decoration:underline}
+.rd-word.missed{background:#FFF3CD;color:#856404}
+.rd-controls{display:flex;flex-direction:column;align-items:center;gap:14px}
+.rd-mic-btn{width:90px;height:90px;border-radius:50%;border:none;font-size:2.2rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;flex-direction:column;box-shadow:0 6px 24px rgba(0,0,0,.15)}
+.rd-mic-btn.ready{background:linear-gradient(135deg,var(--teal2),var(--teal));color:#fff}
+.rd-mic-btn.listening{background:linear-gradient(135deg,var(--red),#F07070);color:#fff;animation:rdPulse 1s ease-in-out infinite}
+.rd-mic-btn.done{background:linear-gradient(135deg,var(--green),#52D08A);color:#fff}
+@keyframes rdPulse{0%,100%{box-shadow:0 6px 24px rgba(232,69,69,.3),0 0 0 0 rgba(232,69,69,.4)}50%{box-shadow:0 6px 24px rgba(232,69,69,.3),0 0 0 16px rgba(232,69,69,0)}}
+.rd-mic-label{font-size:.65rem;font-weight:900;margin-top:5px;opacity:.85}
+.rd-status{font-size:.82rem;font-weight:800;color:var(--mid);text-align:center;min-height:22px}
+.rd-status.listening{color:var(--red)}
+.rd-results{background:var(--warm);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);display:none}
+.rd-results.show{display:block}
+.rd-score-row{display:flex;gap:12px;margin-bottom:16px}
+.rd-score-box{flex:1;background:var(--cream);border-radius:var(--r);padding:14px;text-align:center}
+.rd-score-val{font-size:1.8rem;font-weight:900;line-height:1}
+.rd-score-lbl{font-size:.62rem;font-weight:700;color:var(--light);margin-top:3px}
+.rd-score-box.accuracy .rd-score-val{color:var(--teal2)}
+.rd-score-box.stars .rd-score-val{color:var(--amber2)}
+.rd-score-box.words .rd-score-val{color:var(--purple)}
+.rd-feedback{background:linear-gradient(135deg,#FFF8E0,#FFF3C0);border:1px solid #F0DFA0;border-radius:var(--r);padding:16px;display:flex;gap:12px;margin-bottom:14px}
+.rd-fb-icon{font-size:1.8rem;animation:taraFloat 3s ease-in-out infinite;flex-shrink:0}
+.rd-fb-title{font-size:.62rem;font-weight:900;color:#C8860A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.rd-fb-msg{font-size:.82rem;font-weight:700;color:#6A5020;line-height:1.5}
+.rd-missed-words{margin-bottom:14px}
+.rd-missed-title{font-size:.7rem;font-weight:900;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.rd-missed-list{display:flex;flex-wrap:wrap;gap:6px}
+.rd-missed-chip{background:#FDECEA;color:var(--red);font-size:.72rem;font-weight:800;border-radius:99px;padding:4px 12px}
+.rd-submit-btn{width:100%;padding:15px;border:none;border-radius:var(--r);background:linear-gradient(135deg,var(--teal2),var(--teal));color:#fff;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:900;cursor:pointer;box-shadow:0 4px 16px rgba(43,191,184,.35)}
+.rd-next-btn{width:100%;padding:12px;border:none;border-radius:var(--r);background:rgba(0,0,0,.06);color:var(--mid);font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;margin-top:8px}
+.rd-passage-selector{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.rd-passage-selector::-webkit-scrollbar{height:3px}
+.rps-chip{flex-shrink:0;padding:6px 14px;border-radius:99px;font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;cursor:pointer;border:2px solid var(--border);background:var(--warm);color:var(--mid);transition:all .2s}
+.rps-chip.active{background:var(--teal2);color:#fff;border-color:var(--teal2)}
+.rd-no-support{background:#FDECEA;border-radius:var(--r);padding:16px;text-align:center;font-size:.82rem;font-weight:700;color:var(--red)}
+
 /* QUIZ */
 #quiz{position:fixed;inset:0;z-index:900;background:var(--cream);display:none;flex-direction:column}
 .qt{background:linear-gradient(135deg,#0D5C4A,#2BBFB8);padding:18px 22px 22px;display:flex;align-items:center;gap:13px;flex-shrink:0}
@@ -1007,6 +1057,74 @@ body{background:var(--cream);color:var(--text)}
   <div class="mn-it" onclick="navTo('profile')"><div class="mn-ico">👤</div><div class="mn-lb">Profile</div></div>
 </div>
 
+<!-- READING SCREEN -->
+<div id="readingScreen" style="display:none;flex-direction:column">
+  <div class="rd-header">
+    <button class="rd-back" onclick="closeReading()">←</button>
+    <div class="rd-title">
+      <h3 id="rd-passage-title">Reading Time 📖</h3>
+      <p id="rd-grade-label">Grade 1 · Level 1</p>
+    </div>
+    <div class="rd-stars-live">⭐ <span id="rd-stars-live">0</span></div>
+  </div>
+  <div class="rd-body">
+    <!-- Passage selector -->
+    <div>
+      <div style="font-size:.68rem;font-weight:900;color:var(--light);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Choose a passage</div>
+      <div class="rd-passage-selector" id="rd-passage-selector"></div>
+    </div>
+    <!-- Passage text -->
+    <div class="rd-passage-card">
+      <div class="rd-passage-title">
+        <span id="rd-title-label">Read this passage aloud</span>
+        <span style="font-size:.65rem;color:var(--light)" id="rd-word-count">0 words</span>
+      </div>
+      <div class="rd-passage-text" id="rd-passage-text">Loading passage...</div>
+    </div>
+    <!-- Controls -->
+    <div class="rd-controls">
+      <div class="rd-status" id="rd-status">Tap the microphone and read the passage aloud</div>
+      <button class="rd-mic-btn ready" id="rd-mic-btn" onclick="toggleListening()">
+        🎤
+        <span class="rd-mic-label" id="rd-mic-label">START</span>
+      </button>
+      <div id="rd-no-support" class="rd-no-support" style="display:none">
+        ⚠️ Your browser does not support voice recognition. Try Chrome or Edge.
+      </div>
+    </div>
+    <!-- Results -->
+    <div class="rd-results" id="rd-results">
+      <div class="rd-score-row">
+        <div class="rd-score-box accuracy">
+          <div class="rd-score-val" id="rd-accuracy">0%</div>
+          <div class="rd-score-lbl">Accuracy</div>
+        </div>
+        <div class="rd-score-box words">
+          <div class="rd-score-val" id="rd-words-correct">0/0</div>
+          <div class="rd-score-lbl">Words Read</div>
+        </div>
+        <div class="rd-score-box stars">
+          <div class="rd-score-val" id="rd-stars-earned">0</div>
+          <div class="rd-score-lbl">Stars Earned</div>
+        </div>
+      </div>
+      <div class="rd-feedback">
+        <div class="rd-fb-icon">⭐</div>
+        <div>
+          <div class="rd-fb-title">Tara Says</div>
+          <div class="rd-fb-msg" id="rd-tara-feedback">Great reading!</div>
+        </div>
+      </div>
+      <div class="rd-missed-words" id="rd-missed-section" style="display:none">
+        <div class="rd-missed-title">Words to practise</div>
+        <div class="rd-missed-list" id="rd-missed-list"></div>
+      </div>
+      <button class="rd-submit-btn" id="rd-submit-btn" onclick="submitReading()">⭐ Submit & Earn Stars</button>
+      <button class="rd-next-btn" onclick="tryAnotherPassage()">📖 Try Another Passage</button>
+    </div>
+  </div>
+</div>
+
 <!-- QUIZ -->
 <div id="quiz" style="display:none;flex-direction:column">
   <div class="qt">
@@ -1348,14 +1466,14 @@ function renderTasks(){
 
 async function tapTask(id,stars){
   const t=S.tasks.find(x=>x.id===id);if(!t||S.tc[id])return;
-  const status=t.requires_approval?'pending':'approved';
+  // Reading task opens reading screen instead
+  if(t.title.toLowerCase().includes('reading')){
+    openReading(id);return;
+  }
+  const status='pending';
   try{
     await db('task_completions',{method:'POST',prefer:'return=minimal',body:{task_id:id,player_id:S.player.id,status,completion_date:today()}});
     S.tc[id]=status;
-    if(!t.requires_approval){
-      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:stars,reason:`Task: ${t.title}`,category:'task'}});
-      S.stars+=stars;
-    }
     renderHome();renderTasks();
   }catch(e){}
 }
@@ -1696,6 +1814,171 @@ function showTaraTip(){const tips=[`Namaste! Every question makes you smarter! �
 // MODAL
 function showMod(h){document.getElementById('mc').innerHTML=h;document.getElementById('mov').classList.add('open');}
 function closeMod(){document.getElementById('mov').classList.remove('open');}
+
+// ═══════════════════════════════════════════════════════════
+// READING ASSESSMENT
+// ═══════════════════════════════════════════════════════════
+let RD={passages:[],currentPassage:null,recognition:null,listening:false,transcript:'',starsEarned:0,taskId:null};
+
+async function openReading(taskId){
+  RD.taskId=taskId||null;
+  document.getElementById('readingScreen').style.display='flex';
+  const grade=S.player?.grade||1;
+  const passages=await db(`reading_passages?active=eq.true&grade=lte.${grade}&order=grade,level`);
+  RD.passages=Array.isArray(passages)?passages:[];
+  if(!RD.passages.length){closeReading();return;}
+  const sel=document.getElementById('rd-passage-selector');
+  sel.innerHTML=RD.passages.map((p,i)=>`<button class="rps-chip ${i===0?'active':''}" onclick="selectPassage(${i},this)">${p.title}</button>`).join('');
+  selectPassage(0,sel.firstChild);
+  if(!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)){
+    document.getElementById('rd-no-support').style.display='block';
+    document.getElementById('rd-mic-btn').style.display='none';
+  }
+  resetReadingUI();
+}
+
+function selectPassage(idx,btn){
+  document.querySelectorAll('.rps-chip').forEach(c=>c.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  RD.currentPassage=RD.passages[idx];
+  const p=RD.currentPassage;
+  document.getElementById('rd-passage-title').textContent=p.title;
+  document.getElementById('rd-grade-label').textContent=`Grade ${p.grade} · Level ${p.level} · ${p.topic||'reading'}`;
+  document.getElementById('rd-word-count').textContent=`${p.word_count||p.content.trim().split(/\s+/).length} words`;
+  const words=p.content.split(/\s+/);
+  document.getElementById('rd-passage-text').innerHTML=words.map((w,i)=>`<span class="rd-word" id="rdw-${i}">${w}</span> `).join('');
+  resetReadingUI();
+}
+
+function resetReadingUI(){
+  RD.transcript='';RD.starsEarned=0;RD.listening=false;
+  document.getElementById('rd-status').textContent='Tap the microphone and read the passage aloud';
+  document.getElementById('rd-status').className='rd-status';
+  document.getElementById('rd-mic-btn').className='rd-mic-btn ready';
+  document.getElementById('rd-mic-label').textContent='START';
+  document.getElementById('rd-results').classList.remove('show');
+  document.getElementById('rd-stars-live').textContent='0';
+  const sb=document.getElementById('rd-submit-btn');
+  if(sb){sb.disabled=false;sb.textContent='⭐ Submit & Earn Stars';sb.style.background='';}
+  document.querySelectorAll('.rd-word').forEach(w=>{w.className='rd-word';});
+}
+
+function toggleListening(){if(RD.listening)stopListening();else startListening();}
+
+function startListening(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR)return;
+  RD.recognition=new SR();
+  RD.recognition.continuous=true;RD.recognition.interimResults=true;RD.recognition.lang='en-CA';
+  RD.transcript='';
+  RD.recognition.onstart=()=>{
+    RD.listening=true;
+    document.getElementById('rd-mic-btn').className='rd-mic-btn listening';
+    document.getElementById('rd-mic-label').textContent='STOP';
+    document.getElementById('rd-status').textContent='Listening... Read clearly 🎤';
+    document.getElementById('rd-status').className='rd-status listening';
+    document.getElementById('rd-results').classList.remove('show');
+  };
+  RD.recognition.onresult=(e)=>{
+    let interim='',final='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal)final+=e.results[i][0].transcript+' ';
+      else interim+=e.results[i][0].transcript;
+    }
+    RD.transcript+=final;
+    highlightWords(RD.transcript+interim);
+    const preview=(RD.transcript+interim).slice(-50);
+    document.getElementById('rd-status').textContent=`Hearing: "${preview}..."`;
+  };
+  RD.recognition.onerror=(e)=>{if(e.error==='no-speech')return;stopListening();};
+  RD.recognition.onend=()=>{if(RD.listening)RD.recognition.start();};
+  RD.recognition.start();
+}
+
+function stopListening(){
+  RD.listening=false;
+  if(RD.recognition){RD.recognition.onend=null;try{RD.recognition.stop();}catch(e){}}
+  document.getElementById('rd-mic-btn').className='rd-mic-btn done';
+  document.getElementById('rd-mic-label').textContent='DONE';
+  document.getElementById('rd-status').textContent='Great job! See your results below';
+  document.getElementById('rd-status').className='rd-status';
+  evaluateReading();
+}
+
+function norm(w){return w.toLowerCase().replace(/[^a-z0-9]/g,'');}
+
+function highlightWords(transcript){
+  if(!RD.currentPassage)return;
+  const spoken=transcript.toLowerCase().split(/\s+/).map(norm).filter(Boolean);
+  RD.currentPassage.content.split(/\s+/).forEach((word,i)=>{
+    const el=document.getElementById('rdw-'+i);if(!el)return;
+    if(spoken.includes(norm(word)))el.className='rd-word correct';
+  });
+}
+
+function evaluateReading(){
+  if(!RD.currentPassage||!RD.transcript.trim()){
+    document.getElementById('rd-status').textContent='No speech detected. Try again!';
+    document.getElementById('rd-mic-btn').className='rd-mic-btn ready';
+    document.getElementById('rd-mic-label').textContent='START';
+    return;
+  }
+  const passageWords=RD.currentPassage.content.split(/\s+/);
+  const spoken=RD.transcript.toLowerCase().split(/\s+/).map(norm).filter(Boolean);
+  let correct=0;const missed=[];
+  passageWords.forEach((word,i)=>{
+    const el=document.getElementById('rdw-'+i);
+    if(spoken.includes(norm(word))){correct++;if(el)el.className='rd-word correct';}
+    else{missed.push(word.replace(/[^a-zA-Z0-9]/g,''));if(el)el.className='rd-word missed';}
+  });
+  const total=passageWords.length;
+  const acc=Math.round(correct/total*100);
+  const stars=acc>=90?50:acc>=80?40:acc>=70?30:acc>=60?20:10;
+  RD.starsEarned=stars;
+  const name=S.player?.name||'';
+  let fb='';
+  if(acc>=95)fb=`Incredible reading, ${name}! Almost every word was perfect! You are a reading star! 🌟`;
+  else if(acc>=85)fb=`Shabash, ${name}! Really great reading! ${correct} out of ${total} words correct! 📚`;
+  else if(acc>=70)fb=`Good effort, ${name}! You got ${correct} words right. Practise the yellow words! 💪`;
+  else if(acc>=50)fb=`Keep going, ${name}! Try reading slowly one word at a time. You got ${correct} right! 🌱`;
+  else fb=`Ek aur try, ${name}! Reading takes practice. You can do it! 🤗`;
+  document.getElementById('rd-accuracy').textContent=acc+'%';
+  document.getElementById('rd-words-correct').textContent=correct+'/'+total;
+  document.getElementById('rd-stars-earned').textContent=stars;
+  document.getElementById('rd-stars-live').textContent=stars;
+  document.getElementById('rd-tara-feedback').textContent=fb;
+  const uniqueMissed=[...new Set(missed)].filter(Boolean).slice(0,8);
+  if(uniqueMissed.length){
+    document.getElementById('rd-missed-section').style.display='block';
+    document.getElementById('rd-missed-list').innerHTML=uniqueMissed.map(w=>`<span class="rd-missed-chip">${w}</span>`).join('');
+  } else document.getElementById('rd-missed-section').style.display='none';
+  document.getElementById('rd-results').classList.add('show');
+  setTimeout(()=>document.getElementById('rd-results').scrollIntoView({behavior:'smooth'}),200);
+}
+
+async function submitReading(){
+  const btn=document.getElementById('rd-submit-btn');
+  btn.disabled=true;btn.textContent='Submitting...';
+  try{
+    await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:RD.starsEarned,reason:`Reading: ${RD.currentPassage?.title||'passage'}`,category:'reading'}});
+    if(RD.taskId){await db('task_completions',{method:'POST',prefer:'return=minimal',body:{task_id:RD.taskId,player_id:S.player.id,status:'pending',completion_date:today()}});}
+    S.stars+=RD.starsEarned;
+    btn.textContent='✅ Submitted! Ask a parent to approve';
+    btn.style.background='var(--green)';
+    setTimeout(()=>closeReading(),2500);
+  }catch(e){btn.disabled=false;btn.textContent='⭐ Submit & Earn Stars';}
+}
+
+function tryAnotherPassage(){
+  resetReadingUI();
+  document.getElementById('rd-passage-selector').scrollIntoView({behavior:'smooth'});
+}
+
+function closeReading(){
+  document.getElementById('readingScreen').style.display='none';
+  if(RD.recognition){RD.recognition.onend=null;try{RD.recognition.stop();}catch(e){}}
+  RD.listening=false;renderHome();
+}
 
 // START
 init();
