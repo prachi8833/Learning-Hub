@@ -1121,7 +1121,8 @@ async function selectPlayer(name){
 async function loadPlayer(){
   const p=S.player;
   try{
-    const[logs,streak,subj,tasks,wish,goal,lvl,badges,earned,cfg,shop,tc,quotes]=await Promise.all([
+    // Load core data first — these must work
+    const[logs,streak,subj,tasks,wish,goal,lvl,badges,earned,cfg,shop,tc]=await Promise.all([
       db(`stars_log?player_id=eq.${p.id}&select=amount`),
       db(`streaks?player_id=eq.${p.id}`),
       db('subjects?active=eq.true&order=sort_order'),
@@ -1133,20 +1134,28 @@ async function loadPlayer(){
       db(`earned_badges?player_id=eq.${p.id}&select=badge_id`),
       db('star_config?active=eq.true'),
       db('reward_shop?active=eq.true&order=sort_order'),
-      db(`task_completions?player_id=eq.${p.id}&completion_date=eq.${today()}&select=task_id,status`),
-      db('motivation_quotes?active=eq.true&select=mood,quote,emoji')
+      db(`task_completions?player_id=eq.${p.id}&completion_date=eq.${today()}&select=task_id,status`)
     ]);
-    // Store quotes by mood
-    S.quotes={};
-    quotes.forEach(q=>{if(!S.quotes[q.mood])S.quotes[q.mood]=[];S.quotes[q.mood].push(q);});
     S.stars=Math.max(0,logs.reduce((a,l)=>a+l.amount,0));
     S.streak=streak[0]?.current_streak||0;
-    S.subjects=subj;S.tasks=tasks;S.wishList=wish;S.activeGoal=goal[0]||null;
-    S.levelProgress={};lvl.forEach(l=>{S.levelProgress[l.subject_key]=l;});
-    S.badges=badges;S.earnedBadges=earned.map(e=>e.badge_id);
-    S.starConfig={};cfg.forEach(c=>{S.starConfig[c.key]=c;});
-    S.rewardShop=shop;S.tc={};tc.forEach(c=>{S.tc[c.task_id]=c.status;});
-  }catch(e){console.log('load err',e);}
+    S.subjects=Array.isArray(subj)?subj:[];
+    S.tasks=Array.isArray(tasks)?tasks:[];
+    S.wishList=Array.isArray(wish)?wish:[];
+    S.activeGoal=goal[0]||null;
+    S.levelProgress={};if(Array.isArray(lvl))lvl.forEach(l=>{S.levelProgress[l.subject_key]=l;});
+    S.badges=Array.isArray(badges)?badges:[];
+    S.earnedBadges=Array.isArray(earned)?earned.map(e=>e.badge_id):[];
+    S.starConfig={};if(Array.isArray(cfg))cfg.forEach(c=>{S.starConfig[c.key]=c;});
+    S.rewardShop=Array.isArray(shop)?shop:[];
+    S.tc={};if(Array.isArray(tc))tc.forEach(c=>{S.tc[c.task_id]=c.status;});
+    console.log('Loaded: subjects='+S.subjects.length+' tasks='+S.tasks.length);
+  }catch(e){console.log('LOAD ERROR:',e);}
+  // Load quotes separately so failure does not break main app
+  try{
+    const quotes=await db('motivation_quotes?select=mood,quote,emoji');
+    S.quotes={};
+    if(Array.isArray(quotes))quotes.forEach(q=>{if(!S.quotes[q.mood])S.quotes[q.mood]=[];S.quotes[q.mood].push(q);});
+  }catch(e){console.log('Quotes load error:',e);}
 }
 
 // NAV
