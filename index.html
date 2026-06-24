@@ -628,6 +628,10 @@ body{background:var(--cream);color:var(--text)}
       <span style="font-size:.95rem">🔐</span>
       <span>Parent Dashboard</span>
     </div>
+    <div class="sb-parent" onclick="window.location.href='parent_dashboard.html'" style="margin-top:4px;border-color:rgba(246,192,74,.2);background:rgba(246,192,74,.06)">
+      <span style="font-size:.95rem">⚙️</span>
+      <span style="color:rgba(246,192,74,.7)">Open Full Dashboard</span>
+    </div>
   </aside>
 
   <!-- MAIN -->
@@ -1651,7 +1655,7 @@ function pk(k){
 function updDots(){for(let i=0;i<4;i++)document.getElementById('p'+i).classList.toggle('on',i<S.pinE.length);}
 
 // PARENT
-function openPD(){document.getElementById('pdash').style.display='block';loadPD();}
+function openPD(){window.location.href='parent_dashboard.html';}
 function closePD(){document.getElementById('pdash').style.display='none';}
 async function loadPD(){
   try{
