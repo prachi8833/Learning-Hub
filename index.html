@@ -1345,7 +1345,7 @@ function taskRowHTML(t,classes=''){
 function renderHTasks(){
   const render=(id,block,lim=4)=>{
     const el=document.getElementById(id);if(!el)return;
-    const ts=S.tasks.filter(t=>t.time_block===block&&(t.day_type==='both'||t.day_type==='summer')).slice(0,lim);
+    const ts=S.tasks.filter(t=>t.time_block===block&&(!t.day_type||t.day_type==='both'||t.day_type==='summer')).slice(0,lim);
     el.innerHTML=ts.map(t=>taskRowHTML(t)).join('');
     let done=ts.filter(t=>S.tc[t.id]==='approved').length;
     document.getElementById('plan-pill').textContent=`${done} / ${ts.length} done`;
@@ -1440,7 +1440,7 @@ function renderTasks(){
   ];
   let td=0,tt=0,html='';
   blocks.forEach(b=>{
-    const ts=S.tasks.filter(t=>t.time_block===b.k&&t.time_block!=='weekly'&&(t.day_type==='both'||t.day_type==='summer'));
+    const ts=S.tasks.filter(t=>t.time_block===b.k&&t.time_block!=='weekly'&&(!t.day_type||t.day_type==='both'||t.day_type==='summer'));
     if(!ts.length)return;
     html+=`<div class="tb-sec"><div class="tb-hdr ${b.c}"><span style="font-size:1rem">${b.i}</span><span class="tb-hdr-lbl">${b.l.toUpperCase()}</span><span class="tb-hdr-time">${b.t}</span></div>`;
     ts.forEach(t=>{
