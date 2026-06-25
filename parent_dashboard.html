@@ -560,7 +560,24 @@ async function approveAllPending(){
 }
 
 // ── TASKS ──────────────────────────────────────────────────
-function loadTasks(){
+function filterTaskBlock(b,btn){
+  document.querySelectorAll('#section-tasks .tab-btn').forEach(x=>x.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  const el=document.getElementById('task-list');
+  if(!D.tasks.length){el.innerHTML=`<div class="empty-state"><span class="es-icon">📋</span>No tasks found</div>`;return;}
+  const filtered=b==='all'?D.tasks:D.tasks.filter(t=>t.time_block===b);
+  el.innerHTML=filtered.length?filtered.map(t=>`<div class="wish-row" style="padding:10px 12px">
+    <div style="flex:1">
+      <div class="wish-name">${t.icon} ${t.title}</div>
+      <div class="wish-cost" style="font-size:.65rem;color:var(--light);margin-top:3px">${t.stars_value}⭐ · ${t.time_block} · ${t.assigned_to||'both'}</div>
+    </div>
+    <div class="tr-actions">
+      <button class="btn btn-ghost btn-icon btn-sm" onclick="openEditTask('${t.id}')">✏️</button>
+      <button class="btn btn-red btn-icon btn-sm" onclick="deleteTask('${t.id}')">🗑️</button>
+    </div>
+  </div>`).join(''):`<div class="empty-state"><span class="es-icon">📋</span>No tasks in this block</div>`;
+}
+  function loadTasks(){
   const el=document.getElementById('task-list');
   if(!D.tasks.length){el.innerHTML=`<div class="empty-state"><span class="es-icon">📋</span>No tasks found</div>`;return;}
   el.innerHTML=D.tasks.map(t=>`<div class="wish-row" style="padding:10px 12px">
