@@ -601,9 +601,11 @@ function openAddTask(){
 async function submitAddTask(){
   const title=document.getElementById('nt-title').value.trim();
   if(!title){toast('Please enter a task name','error');return;}
-  const body={title,icon:document.getElementById('nt-icon').value||'✅',stars_value:parseInt(document.getElementById('nt-stars').value)||15,time_block:document.getElementById('nt-block').value,active:true,assigned_to:'both'};
-  const r=await db('tasks',{method:'POST',body});
-  if(r[0]){D.tasks.push(r[0]);toast('Task added! ✅');closeModal();loadTasks();}
+  const body={title,icon:document.getElementById('nt-icon').value||'✅',stars_value:parseInt(document.getElementById('nt-stars').value)||15,time_block:document.getElementById('nt-block').value,active:true};
+  await db('tasks',{method:'POST',prefer:'return=minimal',body});
+  const fresh=await db('tasks?select=*&order=sort_order');
+  if(Array.isArray(fresh)&&fresh.length)D.tasks=fresh;
+  toast('Task added! ✅');closeModal();loadTasks();
 }
 function openEditTask(id){
   const t=D.tasks.find(x=>x.id===id);if(!t)return;
