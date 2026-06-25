@@ -921,7 +921,7 @@ async function submitAddTask(){
   const body={title,icon:document.getElementById('nt-icon').value||'✅',stars_value:parseInt(document.getElementById('nt-stars').value)||15,time_block:document.getElementById('nt-block').value,day_type:document.getElementById('nt-daytype').value,assigned_to:document.getElementById('nt-assigned').value,requires_approval:document.getElementById('nt-approval').value==='true',active:true,sort_order:D.tasks.length+1};
   const r=await db('tasks',{method:'POST',body});
   if(r[0]){D.tasks.push(r[0]);toast('Task added! ✅');closeModal();loadTasks();}
-  else toast('Error adding task','error');
+  else toast('Error: Run supabase_rls_fix.sql in Supabase SQL Editor to fix permissions','error');
 }
 function openEditTask(id){
   const t=D.tasks.find(x=>x.id===id);if(!t)return;
