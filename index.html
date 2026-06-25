@@ -961,6 +961,10 @@ body{background:#0a1a10}
             <button class="ctab" onclick="filterR('experience',this)">🎈 Experiences</button>
           </div>
           <div class="rew-grid" id="r-grid"></div>
+          <div id="r-wish-section" style="display:none">
+            <div style="font-size:.7rem;font-weight:900;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">🎁 Wish List Goals</div>
+            <div class="rew-grid" id="r-wish-grid"></div>
+          </div>
           <div class="cd-banner">
             <div class="cd-txt"><h3>💫 Save Your Stars, Get More!</h3><p>Wait for special offers and limited time rewards! 🎁</p></div>
             <div class="cd-timer">
@@ -1196,7 +1200,7 @@ const shuf=a=>{const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(M
 
 const FALLBACK_SUBJECTS=[{id:'s1',key:'math',name:'Math',icon:'🔢',color:'#29B0B8',bg_color:'#E8F8F4',active:true,sort_order:1},{id:'s2',key:'reading',name:'Reading',icon:'📚',color:'#8266DE',bg_color:'#F0ECFD',active:true,sort_order:2},{id:'s3',key:'science',name:'Science',icon:'🔬',color:'#3E8F3E',bg_color:'#EAF4EA',active:true,sort_order:3},{id:'s4',key:'writing',name:'Writing',icon:'✏️',color:'#E08833',bg_color:'#FDF3E7',active:true,sort_order:4},{id:'s5',key:'social',name:'Social Studies',icon:'🌍',color:'#C2185B',bg_color:'#FCE4EC',active:true,sort_order:5},{id:'s6',key:'coding',name:'Coding',icon:'💻',color:'#1565C0',bg_color:'#E3F2FD',active:true,sort_order:6}];
 const FALLBACK_TASKS=[{id:'t1',title:'Morning Reading',active:true,sort_order:1,icon:'📖',time_block:'morning',stars_value:5},{id:'t2',title:'Math Practice',active:true,sort_order:2,icon:'🔢',time_block:'morning',stars_value:5},{id:'t3',title:'Writing Practice',active:true,sort_order:3,icon:'✏️',time_block:'afternoon',stars_value:5},{id:'t4',title:'Science Activity',active:true,sort_order:4,icon:'🔬',time_block:'afternoon',stars_value:5},{id:'t5',title:'Free Reading',active:true,sort_order:5,icon:'📚',time_block:'evening',stars_value:3},{id:'t6',title:'Coding Practice',active:true,sort_order:6,icon:'💻',time_block:'afternoon',stars_value:5}];
-const FALLBACK_SHOP=[{id:'r1',title:'LEGO Creator Set',icon:'🏰',star_cost:2500,category:'toy'},{id:'r2',title:'Smart Watch',icon:'⌚',star_cost:3000,category:'toy'},{id:'r3',title:'Dog Man Series',icon:'📚',star_cost:1200,category:'creative'},{id:'r4',title:'Wireless Headphones',icon:'🎧',star_cost:2800,category:'toy'},{id:'r5',title:'Football',icon:'⚽',star_cost:800,category:'experience'},{id:'r6',title:'Board Game Catan',icon:'🎲',star_cost:1600,category:'toy'},{id:'r7',title:'Telescope',icon:'🔭',star_cost:2200,category:'creative'},{id:'r8',title:'Art and Craft Kit',icon:'🎨',star_cost:1000,category:'creative'},{id:'r9',title:'Mini Camera',icon:'📷',star_cost:1400,category:'toy'},{id:'r10',title:'Mystery Box',icon:'🎁',star_cost:1000,category:'toy'},{id:'r11',title:'30 min TV',icon:'📺',star_cost:50,category:'screen'},{id:'r12',title:'1 hour iPad',icon:'🎮',star_cost:130,category:'screen'},{id:'r13',title:'Favourite restaurant',icon:'🍕',star_cost:500,category:'experience'},{id:'r14',title:'Day out adventure',icon:'🎡',star_cost:800,category:'experience'}];
+const FALLBACK_SHOP=[];
 
 async function init(){
   Object.values(SCREEN_BG).forEach(u=>{new Image().src=u;});
@@ -1225,7 +1229,7 @@ async function loadPlayer(){
       db(`streaks?player_id=eq.${p.id}`),
       db('subjects?active=eq.true&order=sort_order'),
       db('tasks?active=eq.true&order=sort_order'),
-      db(`wish_list?active=eq.true&gifted=eq.false&order=created_at.desc`),
+      db(`wish_list?player_id=eq.${p.id}&active=eq.true&gifted=eq.false`),
       db(`active_goals?player_id=eq.${p.id}`),
       db(`level_progress?player_id=eq.${p.id}`),
       db('badges?active=eq.true'),
@@ -1244,9 +1248,9 @@ async function loadPlayer(){
     S.badges=Array.isArray(badges)?badges:[];
     S.earnedBadges=Array.isArray(earned)?earned.map(e=>e.badge_id):[];
     S.starConfig={};if(Array.isArray(cfg))cfg.forEach(c=>{S.starConfig[c.key]=c;});
-    S.rewardShop=Array.isArray(shop)&&shop.length?shop:FALLBACK_SHOP;
+    S.rewardShop=Array.isArray(shop)?shop:[];
     S.tc={};if(Array.isArray(tc))tc.forEach(c=>{S.tc[c.task_id]=c.status;});
-  }catch(e){S.subjects=FALLBACK_SUBJECTS;S.tasks=FALLBACK_TASKS;S.rewardShop=FALLBACK_SHOP;}
+  }catch(e){S.subjects=FALLBACK_SUBJECTS;S.tasks=FALLBACK_TASKS;}
   try{const quotes=await db('motivation_quotes?select=mood,quote,emoji');S.quotes={};if(Array.isArray(quotes))quotes.forEach(q=>{if(!S.quotes[q.mood])S.quotes[q.mood]=[];S.quotes[q.mood].push(q);});}catch(e){}
 }
 
@@ -1259,14 +1263,29 @@ function navTo(tab){
   document.querySelectorAll('.mn-it').forEach(n=>n.classList.remove('active'));
   document.getElementById('ps-scroll').scrollTo(0,0);
   setBG(tab);
-  if(tab==='home')renderHome();
+  if(tab==='home'){renderHome();refreshData();}
   if(tab==='learn')renderLearn();
-  if(tab==='tasks')renderTasks();
-  if(tab==='rewards')renderRewards();
+  if(tab==='tasks'){renderTasks();refreshData();}
+  if(tab==='rewards'){renderRewards();refreshData();}
   if(tab==='profile')renderProfile();
   updateTB();
 }
-function renderAll(){updateTB();renderHome();}
+function renderAll(){updateTB();renderHome();refreshData();}
+async function refreshData(){
+  if(!S.player)return;
+  const p=S.player;
+  const[wish,tasks,tc]=await Promise.all([
+    db(`wish_list?active=eq.true&gifted=eq.false&order=created_at.desc`),
+    db('tasks?active=eq.true&order=sort_order'),
+    db(`task_completions?player_id=eq.${p.id}&completion_date=eq.${today()}&select=task_id,status`)
+  ]);
+  if(Array.isArray(wish))S.wishList=wish;
+  if(Array.isArray(tasks)&&tasks.length)S.tasks=tasks;
+  if(Array.isArray(tc)){S.tc={};tc.forEach(c=>{S.tc[c.task_id]=c.status;});}
+  if(S.tab==='home'){renderHWish();renderHTasks();renderGoal();}
+  if(S.tab==='tasks')renderTasks();
+  if(S.tab==='rewards')renderRewards();
+}
 function updateTB(){
   const p=S.player;if(!p)return;
   const hr=new Date().getHours();
@@ -1370,10 +1389,8 @@ async function renderWeekLB(){
 
 function renderHWish(){
   const el=document.getElementById('h-wish');if(!el)return;
-  // Filter wishes: show if assigned to current player OR assigned to "both"
-  const items=S.wishList.filter(w=>!w.assigned_to||w.assigned_to==='both'||w.assigned_to===S.player.name.toLowerCase()).length?
-    S.wishList.filter(w=>!w.assigned_to||w.assigned_to==='both'||w.assigned_to===S.player.name.toLowerCase())
-    :[{title:'LEGO Set',star_cost:2500},{title:'Craft Kit',star_cost:1000},{title:'Board Game',star_cost:1200}];
+  const items=S.wishList.filter(w=>!w.assigned_to||w.assigned_to==='both'||w.assigned_to===S.player.name.toLowerCase());
+  if(!items.length){el.innerHTML='<div style="color:rgba(255,255,255,.35);font-size:.72rem;font-weight:700;padding:4px 8px;flex-shrink:0">No wishes yet — ask a parent to add some! 🎁</div>';return;}
   el.innerHTML=items.map(w=>`<div class="wi ${S.activeGoal?.wish_list_id===w.id?'goal-active':''}" onclick="setGoal('${w.id||''}')"><div class="wi-img">${w.image_url?`<img src="${w.image_url}">`:'🎁'}</div><div class="wi-nm">${w.title}</div><div class="wi-co">${(w.star_cost||0).toLocaleString()} ⭐</div></div>`).join('');
 }
 
@@ -1481,22 +1498,37 @@ function startCurrentLesson(){const s=S.subjects[0];if(s)startSubject(s.key);}
 
 function renderRewards(){
   document.getElementById('r-bal').textContent=S.stars.toLocaleString();
-  renderRGrid(S.rewardShop.length?S.rewardShop:FALLBACK_SHOP,'all');
+  renderRGrid(S.rewardShop,'all');
+  renderWishGrid();
   if(S.activeGoal){
     const item=S.wishList.find(w=>w.id===S.activeGoal.wish_list_id);
     if(item){const earned=Math.max(0,S.stars-(S.activeGoal.stars_at_start||0));const pct=Math.min(100,Math.round(earned/item.star_cost*100));document.getElementById('ul-bar').style.width=pct+'%';document.getElementById('ul-txt').textContent=`${S.stars.toLocaleString()} / ${item.star_cost.toLocaleString()} · ${Math.max(0,item.star_cost-earned).toLocaleString()} more to go!`;}
   }
 }
+function renderWishGrid(){
+  const el=document.getElementById('r-wish-grid');if(!el)return;
+  const ws=document.getElementById('r-wish-section');
+  const items=S.wishList.filter(w=>!w.assigned_to||w.assigned_to==='both'||w.assigned_to===S.player.name.toLowerCase());
+  if(!items.length){if(ws)ws.style.display='none';return;}
+  if(ws)ws.style.display='block';
+  el.innerHTML=items.map(w=>{
+    const isGoal=S.activeGoal?.wish_list_id===w.id;
+    const earned=isGoal?Math.max(0,S.stars-(S.activeGoal?.stars_at_start||0)):0;
+    const pct=isGoal?Math.min(100,Math.round(earned/w.star_cost*100)):0;
+    return `<div class="rc"><div class="rc-img">${w.image_url?`<img src="${w.image_url}" style="width:100%;height:100%;object-fit:cover;border-radius:9px">`:(w.icon||'🎁')}</div><div class="rc-nm">${w.title}</div><div class="rc-co">${(w.star_cost||0).toLocaleString()} ⭐</div><div style="height:4px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-bottom:9px"><div style="height:100%;background:var(--amber);border-radius:99px;width:${pct}%"></div></div><button class="rc-btn ${isGoal?'can':'cant'}" style="${isGoal?'background:var(--teal2)':''}" onclick="setGoal('${w.id}')">${isGoal?'🎯 Current Goal':'Set as Goal'}</button></div>`;
+  }).join('');
+}
 function renderRGrid(items,cat){
   const el=document.getElementById('r-grid');if(!el)return;
   const filtered=cat==='all'?items:items.filter(r=>r.category===cat);
+  if(!filtered.length){el.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:32px;color:rgba(255,255,255,.3);font-size:.82rem;font-weight:700"><span style="font-size:2.5rem;display:block;margin-bottom:10px">🛍️</span>No rewards yet — ask a parent to add some!</div>`;return;}
   const bgs=['pop','pop','new','pop','new','pop','new','pop'];
   el.innerHTML=filtered.map((r,i)=>{
     const can=S.stars>=r.star_cost,b=bgs[i%bgs.length];
     return `<div class="rc">${b?`<span class="rc-badge ${b}">${b==='pop'?'Popular':'New'}</span>`:''}<div class="rc-img">${r.image_url?`<img src="${r.image_url}">`:(r.icon||'🎁')}</div><div class="rc-nm">${r.title}</div><div class="rc-co">${(r.star_cost||0).toLocaleString()} ⭐</div><button class="rc-btn ${can?'can':'cant'}" onclick="${can?`redeemR('${r.id}','${esc(r.title)}',${r.star_cost})`:'void(0)'}">${can?'View Details':'Need more ⭐'}</button></div>`;
   }).join('');
 }
-function filterR(cat,btn){document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderRGrid(S.rewardShop.length?S.rewardShop:FALLBACK_SHOP,cat);}
+function filterR(cat,btn){document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderRGrid(S.rewardShop,cat);}
 async function redeemR(id,title,cost){
   if(S.stars<cost||!confirm(`Redeem "${title}" for ${cost.toLocaleString()} ⭐?`))return;
   try{
