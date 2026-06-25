@@ -122,24 +122,10 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 
-/* TOGGLE */
-.toggle{position:relative;width:40px;height:22px;cursor:pointer;flex-shrink:0}
-.toggle input{opacity:0;width:0;height:0}
-.toggle-slider{position:absolute;inset:0;background:rgba(255,255,255,.12);border-radius:99px;transition:.2s}
-.toggle-slider:before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
-.toggle input:checked+.toggle-slider{background:var(--teal)}
-.toggle input:checked+.toggle-slider:before{transform:translateX(18px)}
-
-/* TASK ROW */
-.task-row-pd{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:10px;margin-bottom:6px;border:1px solid transparent;transition:all .15s}
-.task-row-pd:hover{background:rgba(255,255,255,.05);border-color:var(--border)}
-.task-row-pd.inactive{opacity:.45}
-.tr-icon{font-size:1.2rem;width:32px;text-align:center;flex-shrink:0}
-.tr-info{flex:1}
-.tr-name{font-size:.82rem;font-weight:800;color:#fff}
-.tr-meta{font-size:.62rem;color:var(--light);margin-top:2px}
-.tr-stars{font-size:.72rem;font-weight:900;color:var(--amber);margin-right:4px}
-.tr-actions{display:flex;gap:5px;flex-shrink:0}
+/* TABS */
+.tab-row{display:flex;gap:6px;margin-bottom:16px;background:rgba(255,255,255,.04);border-radius:10px;padding:4px}
+.tab-btn{flex:1;padding:8px;border:none;border-radius:8px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;cursor:pointer;transition:all .2s;background:transparent;color:var(--mid)}
+.tab-btn.active{background:var(--teal2);color:#fff;box-shadow:0 2px 8px rgba(26,153,144,.3)}
 
 /* WISH ITEM */
 .wish-row{display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,255,255,.03);border-radius:10px;margin-bottom:8px;border:1px solid transparent;transition:all .15s}
@@ -148,14 +134,14 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .wish-thumb img{width:100%;height:100%;object-fit:cover;border-radius:8px}
 .wish-info{flex:1}
 .wish-name{font-size:.82rem;font-weight:800;color:#fff}
-.wish-cost{font-size:.65rem;font-weight:700;color:var(--amber);margin-top:2px}
+.wish-cost{font-size:.65rem;font-weight:700;color:var(--amber);margin-top:2px;display:flex;gap:8px;align-items:center}
 .wish-progress{height:4px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-top:5px}
 .wish-progress-fill{height:100%;background:var(--teal);border-radius:99px}
+.tr-actions{display:flex;gap:5px;flex-shrink:0}
 
-/* REWARD ITEM */
-.reward-row{display:flex;align-items:center;gap:12px;padding:11px 12px;background:rgba(255,255,255,.03);border-radius:10px;margin-bottom:6px;border:1px solid transparent;transition:all .15s}
-.reward-row:hover{border-color:var(--border)}
-.reward-icon-big{font-size:1.5rem;width:36px;text-align:center;flex-shrink:0}
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:32px;color:var(--light);font-size:.8rem;font-weight:700}
+.empty-state .es-icon{font-size:2.5rem;margin-bottom:10px;display:block;opacity:.5}
 
 /* HISTORY */
 .history-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04)}
@@ -168,13 +154,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .hr-amount.pos{color:var(--amber)}
 .hr-amount.neg{color:var(--red)}
 
-/* PENDING CARD */
-.pending-row{display:flex;align-items:center;gap:10px;padding:11px 12px;background:rgba(246,192,74,.06);border-radius:10px;margin-bottom:8px;border:1px solid rgba(246,192,74,.15)}
-.pr-kid{font-size:.72rem;font-weight:900;color:var(--amber)}
-.pr-task{font-size:.82rem;font-weight:800;color:#fff;margin-top:1px}
-.pr-time{font-size:.62rem;color:var(--light)}
-.pr-btns{display:flex;gap:6px;flex-shrink:0}
-
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.open{display:flex}
@@ -184,50 +163,12 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .modal-title{font-size:1rem;font-weight:900;color:#fff;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
 .modal-close{background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.6);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
 
-/* TABS */
-.tab-row{display:flex;gap:6px;margin-bottom:16px;background:rgba(255,255,255,.04);border-radius:10px;padding:4px}
-.tab-btn{flex:1;padding:8px;border:none;border-radius:8px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;cursor:pointer;transition:all .2s;background:transparent;color:var(--mid)}
-.tab-btn.active{background:var(--teal2);color:#fff;box-shadow:0 2px 8px rgba(26,153,144,.3)}
-
-/* SEARCH */
-.search-bar{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:9px;padding:8px 12px;margin-bottom:14px}
-.search-bar input{flex:1;background:transparent;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:700;color:#fff}
-.search-bar input::placeholder{color:var(--light)}
-
-/* SCHEDULE */
-.schedule-mode-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
-.sch-mode-card{border-radius:var(--r);padding:16px;border:2px solid transparent;cursor:pointer;transition:all .2s;text-align:center}
-.sch-mode-card.summer{background:rgba(240,120,48,.1);border-color:rgba(240,120,48,.2)}
-.sch-mode-card.summer.selected{border-color:var(--orange);background:rgba(240,120,48,.2)}
-.sch-mode-card.school{background:rgba(43,191,184,.08);border-color:rgba(43,191,184,.15)}
-.sch-mode-card.school.selected{border-color:var(--teal);background:rgba(43,191,184,.18)}
-.sch-mode-icon{font-size:2rem;margin-bottom:6px}
-.sch-mode-title{font-size:.85rem;font-weight:900;color:#fff}
-.sch-mode-sub{font-size:.65rem;color:var(--light);margin-top:2px}
-
-/* SETTINGS */
-.settings-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.05)}
-.settings-row:last-child{border-bottom:none}
-.sr-info .sr-label{font-size:.8rem;font-weight:800;color:#fff}
-.sr-info .sr-desc{font-size:.65rem;color:var(--light);margin-top:2px}
-
-/* PLAYER EDIT */
-.player-edit-card{background:var(--card2);border-radius:var(--r);border:1px solid var(--border);padding:16px;margin-bottom:12px}
-.pec-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.pec-avatar{font-size:2rem}
-.pec-name{font-size:1rem;font-weight:900;color:#fff}
-
 /* TOASTS */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:12px 18px;border-radius:12px;font-size:.8rem;font-weight:800;z-index:999;transform:translateY(80px);opacity:0;transition:all .3s;box-shadow:0 8px 24px rgba(0,0,0,.3)}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.error{background:var(--red)}
 .toast.info{background:var(--teal2)}
 
-/* EMPTY STATE */
-.empty-state{text-align:center;padding:32px;color:var(--light);font-size:.8rem;font-weight:700}
-.empty-state .es-icon{font-size:2.5rem;margin-bottom:10px;display:block;opacity:.5}
-
-/* RESPONSIVE */
 @media(max-width:900px){
   .pd-sidebar{width:60px}
   .pd-sidebar .nl,.pd-logo h1,.pd-logo p,.back-btn span,.pd-nav-section,.pd-nav-badge{display:none}
@@ -290,17 +231,12 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
       <p id="section-sub">Riaan & Kairav Learning Hub</p>
     </div>
     <div class="pd-topbar-right">
-      <div class="topbar-kid-chip">
-        <span>♑</span><span>Riaan</span>
-      </div>
-      <div class="topbar-kid-chip">
-        <span>♈</span><span>Kairav</span>
-      </div>
+      <div class="topbar-kid-chip"><span>♑</span><span>Riaan</span></div>
+      <div class="topbar-kid-chip"><span>♈</span><span>Kairav</span></div>
     </div>
   </div>
 
   <div class="pd-content">
-
     <!-- ══ OVERVIEW ══ -->
     <div id="section-overview" class="pd-section active">
       <div class="two-col" id="overview-kids"></div>
@@ -321,9 +257,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
         <div id="pending-list"></div>
       </div>
       <div class="card">
-        <div class="card-title">
-          <span>🎁 Pending Redemptions</span>
-        </div>
+        <div class="card-title"><span>🎁 Pending Redemptions</span></div>
         <div id="redemption-list"></div>
       </div>
     </div>
@@ -334,10 +268,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
         <div class="card-title">
           <span>📋 All Tasks</span>
           <button class="btn btn-teal btn-sm" onclick="openAddTask()">+ Add Task</button>
-        </div>
-        <div class="search-bar">
-          <span>🔍</span>
-          <input type="text" placeholder="Search tasks..." id="task-search" oninput="filterTasks()">
         </div>
         <div class="tab-row">
           <button class="tab-btn active" onclick="filterTaskBlock('all',this)">All</button>
@@ -351,8 +281,350 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
       </div>
     </div>
 
-    // ── WISH LIST ──────────────────────────────────────────────
+    <!-- ══ WISH LIST (UNIFIED) ══ -->
+    <div id="section-wishlist" class="pd-section">
+      <div class="card">
+        <div class="card-title">
+          <span>🎁 Wish List Manager</span>
+          <button class="btn btn-teal btn-sm" onclick="openAddWish()">+ Add Item</button>
+        </div>
+        <div class="tab-row">
+          <button class="tab-btn active" onclick="filterWishFor('all',this)">All Items</button>
+          <button class="tab-btn" onclick="filterWishFor('both',this)">👥 Both Kids</button>
+          <button class="tab-btn" onclick="filterWishFor('riaan',this)">♑ Riaan Only</button>
+          <button class="tab-btn" onclick="filterWishFor('kairav',this)">♈ Kairav Only</button>
+        </div>
+        <div id="wish-unified-list"></div>
+      </div>
+    </div>
+
+    <!-- ══ REWARD SHOP ══ -->
+    <div id="section-rewards" class="pd-section">
+      <div class="card">
+        <div class="card-title">
+          <span>🛍️ Reward Shop Items</span>
+          <button class="btn btn-teal btn-sm" onclick="openAddReward()">+ Add Reward</button>
+        </div>
+        <div class="tab-row">
+          <button class="tab-btn active" onclick="filterRewardCat('all',this)">All</button>
+          <button class="tab-btn" onclick="filterRewardCat('screen',this)">📺 Screen</button>
+          <button class="tab-btn" onclick="filterRewardCat('experience',this)">🎡 Experience</button>
+          <button class="tab-btn" onclick="filterRewardCat('privilege',this)">⭐ Privilege</button>
+        </div>
+        <div id="reward-list"></div>
+      </div>
+    </div>
+
+    <!-- ══ STARS ══ -->
+    <div id="section-stars" class="pd-section">
+      <div class="two-col" style="margin-bottom:16px">
+        <div class="card">
+          <div class="card-title"><span>⭐ Add Bonus Stars</span></div>
+          <div class="form-group">
+            <label class="form-label">Select Kid</label>
+            <select class="form-input form-select" id="star-kid"><option value="">Choose...</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Stars to Add</label>
+            <input class="form-input" type="number" id="star-amount" placeholder="e.g. 50" min="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Reason</label>
+            <input class="form-input" type="text" id="star-reason" placeholder="e.g. Great behaviour today!">
+          </div>
+          <button class="btn btn-green" style="width:100%" onclick="submitStars(true)">⭐ Add Stars</button>
+        </div>
+        <div class="card">
+          <div class="card-title"><span>⚠️ Deduct Stars</span></div>
+          <div class="form-group">
+            <label class="form-label">Select Kid</label>
+            <select class="form-input form-select" id="deduct-kid"><option value="">Choose...</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Stars to Deduct</label>
+            <input class="form-input" type="number" id="deduct-amount" placeholder="e.g. 25" min="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Reason</label>
+            <input class="form-input" type="text" id="deduct-reason" placeholder="e.g. Missed chore">
+          </div>
+          <button class="btn btn-red" style="width:100%" onclick="submitStars(false)">⚠️ Deduct Stars</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">
+          <span>📜 Star History</span>
+          <select class="form-input form-select" style="width:auto;padding:5px 28px 5px 10px;font-size:.7rem" id="history-filter" onchange="loadHistory()">
+            <option value="">Both kids</option>
+          </select>
+        </div>
+        <div id="star-history"></div>
+      </div>
+    </div>
+
+    <!-- ══ SCHEDULE ══ -->
+    <div id="section-schedule" class="pd-section">
+      <div class="card">
+        <div class="card-title"><span>📅 Schedule Mode</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+          <div style="border-radius:var(--r);padding:16px;border:2px solid rgba(240,120,48,.2);background:rgba(240,120,48,.1);cursor:pointer;transition:all .2s;text-align:center" class="sch-mode-card summer selected" id="mode-summer" onclick="setMode('summer')">
+            <div style="font-size:2rem;margin-bottom:6px">☀️</div>
+            <div style="font-size:.85rem;font-weight:900;color:#fff">Summer Break</div>
+            <div style="font-size:.65rem;color:var(--light);margin-top:2px">No school — flexible schedule</div>
+          </div>
+          <div style="border-radius:var(--r);padding:16px;border:2px solid rgba(43,191,184,.15);background:rgba(43,191,184,.08);cursor:pointer;transition:all .2s;text-align:center" class="sch-mode-card school" id="mode-school" onclick="setMode('school')">
+            <div style="font-size:2rem;margin-bottom:6px">🎒</div>
+            <div style="font-size:.85rem;font-weight:900;color:#fff">School Days</div>
+            <div style="font-size:.65rem;color:var(--light);margin-top:2px">Mountainview Montessori 8:30–2:30</div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="form-group">
+            <label class="form-label">Wake Up Time</label>
+            <input class="form-input" type="time" id="sch-wake" value="07:00">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bedtime</label>
+            <input class="form-input" type="time" id="sch-bed" value="21:30">
+          </div>
+        </div>
+        <button class="btn btn-teal" onclick="saveSchedule()">💾 Save Schedule</button>
+      </div>
+    </div>
+
+    <!-- ══ CONTENT ══ -->
+    <div id="section-content" class="pd-section">
+      <div class="card">
+        <div class="card-title"><span>🎓 Question Bank</span></div>
+        <div id="content-stats"></div>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS ══ -->
+    <div id="section-settings" class="pd-section">
+      <div class="card">
+        <div class="card-title"><span>⚙️ App Settings</span></div>
+        <div style="padding:10px 0;font-size:.82rem;color:rgba(255,255,255,.65);font-weight:700">Settings panel ready</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const SB='https://tnhgihzfwqsflpueivwe.supabase.co';
+const KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
+const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':o.prefer||'return=representation',...o.headers},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined}).then(r=>r.json()).catch(()=>[]);
+
+let D={players:[],tasks:[],wishList:[],rewardShop:[],settings:{}};
 let D_wishFilter='all';
+const sectionTitles={overview:'Overview',pending:'Pending Approvals',tasks:'Task Manager',wishlist:'Wish List Manager',rewards:'Reward Shop',stars:'Star Manager',schedule:'Schedule Manager',content:'Content Manager',settings:'Settings'};
+
+// ── INIT ──────────────────────────────────────────────────
+async function init(){
+  await loadAll();
+  renderOverview();
+  loadPending();
+  loadTasks();
+  loadWishList();
+  loadRewards();
+  loadHistory();
+  loadContent();
+}
+
+async function loadAll(){
+  const[players,tasks,wish,rewards]=await Promise.all([
+    db('players?select=*&order=name'),
+    db('tasks?select=*&order=sort_order'),
+    db('wish_list?active=eq.true&gifted=eq.false&select=*'),
+    db('reward_shop?select=*&order=sort_order')
+  ]);
+  D.players=players;
+  D.tasks=tasks;
+  D.wishList=wish;
+  D.rewardShop=rewards;
+  ['star-kid','deduct-kid','history-filter'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    const extra=id==='history-filter'?'<option value="">Both kids</option>':'<option value="">Choose...</option>';
+    el.innerHTML=extra+players.map(p=>`<option value="${p.id}">${p.avatar} ${p.name}</option>`).join('');
+  });
+}
+
+// ── NAVIGATION ──────────────────────────────────────────────
+function showSection(name){
+  document.querySelectorAll('.pd-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.pd-nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('section-'+name).classList.add('active');
+  document.querySelectorAll('.pd-nav-item').forEach(n=>{
+    if(n.getAttribute('onclick')===`showSection('${name}')`)n.classList.add('active');
+  });
+  document.getElementById('section-title').textContent=sectionTitles[name]||name;
+  if(name==='pending')loadPending();
+  if(name==='stars')loadHistory();
+  if(name==='content')loadContent();
+}
+
+// ── OVERVIEW ──────────────────────────────────────────────
+async function renderOverview(){
+  const kidsEl=document.getElementById('overview-kids');
+  const statsEl=document.getElementById('overview-stats');
+  let kidsHtml='',totalStars=0;
+  for(const p of D.players){
+    const logs=await db(`stars_log?player_id=eq.${p.id}&select=amount`);
+    const stars=Math.max(0,logs.reduce((a,l)=>a+l.amount,0));
+    const streak=await db(`streaks?player_id=eq.${p.id}&select=current_streak`);
+    const str=streak[0]?.current_streak||0;
+    const tc=await db(`task_completions?player_id=eq.${p.id}&completion_date=eq.${today()}&select=status`);
+    const doneTasks=tc.filter(t=>t.status==='approved').length;
+    totalStars+=stars;
+    kidsHtml+=`<div class="kid-overview">
+      <div class="ko-header">
+        <div class="ko-avatar">${p.avatar}</div>
+        <div><div class="ko-name">${p.name}</div><div class="ko-grade">Age ${p.age} · Grade ${p.grade}</div></div>
+      </div>
+      <div class="ko-stats">
+        <div class="ko-stat stars"><div class="ko-stat-val">${stars.toLocaleString()}</div><div class="ko-stat-lbl">⭐ Stars</div></div>
+        <div class="ko-stat streak"><div class="ko-stat-val">${str}</div><div class="ko-stat-lbl">🔥 Streak</div></div>
+        <div class="ko-stat tasks"><div class="ko-stat-val">${doneTasks}</div><div class="ko-stat-lbl">✅ Today</div></div>
+      </div>
+      <div class="ko-actions">
+        <button class="ko-btn add" onclick="quickStar('${p.id}','${p.name}',true)">+ Stars</button>
+        <button class="ko-btn deduct" onclick="quickStar('${p.id}','${p.name}',false)">- Stars</button>
+      </div>
+    </div>`;
+  }
+  kidsEl.innerHTML=kidsHtml;
+  const pending=await db("task_completions?status=eq.pending&select=id");
+  const nb=document.getElementById('nav-pending-badge');
+  if(pending.length>0){nb.style.display='block';nb.textContent=pending.length;}else{nb.style.display='none';}
+  statsEl.innerHTML=`
+    <div class="stat-mini"><div class="sm-icon" style="background:rgba(246,192,74,.15)">⭐</div><div><div class="sm-val">${totalStars.toLocaleString()}</div><div class="sm-lbl">Combined Stars</div></div></div>
+    <div class="stat-mini"><div class="sm-icon" style="background:rgba(39,174,96,.15)">✅</div><div><div class="sm-val">${D.tasks.filter(t=>t.active).length}</div><div class="sm-lbl">Active Tasks</div></div></div>
+    <div class="stat-mini"><div class="sm-icon" style="background:rgba(232,69,69,.15)">⏳</div><div><div class="sm-val">${pending.length}</div><div class="sm-lbl">Pending Approvals</div></div></div>
+    <div class="stat-mini"><div class="sm-icon" style="background:rgba(43,191,184,.15)">📊</div><div><div class="sm-val">Ready</div><div class="sm-lbl">Dashboard</div></div></div>`;
+  const recent=await db('stars_log?order=created_at.desc&limit=8&select=*');
+  document.getElementById('overview-activity').innerHTML=recent.length?recent.map(l=>{
+    const p=D.players.find(x=>x.id===l.player_id);
+    return `<div class="history-row">
+      <div class="hr-icon">${l.amount>0?'⭐':'🔻'}</div>
+      <div class="hr-info"><div class="hr-reason">${p?.name||'?'} — ${l.reason}</div><div class="hr-date">${new Date(l.created_at).toLocaleString()}</div></div>
+      <div class="hr-amount ${l.amount>0?'pos':'neg'}">${l.amount>0?'+':''}${l.amount}</div>
+    </div>`;}).join(''):`<div class="empty-state"><span class="es-icon">📭</span>No activity yet</div>`;
+}
+
+// ── PENDING APPROVALS ──────────────────────────────────────
+async function loadPending(){
+  const[pending,redemptions]=await Promise.all([
+    db('task_completions?status=eq.pending&select=*&order=created_at.desc'),
+    db('redemptions?status=eq.pending&select=*&order=created_at.desc')
+  ]);
+  const pEl=document.getElementById('pending-list');
+  pEl.innerHTML=pending.length?pending.map(pc=>{
+    const task=D.tasks.find(t=>t.id===pc.task_id);
+    const player=D.players.find(p=>p.id===pc.player_id);
+    return `<div style="display:flex;align-items:center;gap:10px;padding:11px 12px;background:rgba(246,192,74,.06);border-radius:10px;margin-bottom:8px;border:1px solid rgba(246,192,74,.15)">
+      <div style="flex:1">
+        <div style="font-size:.72rem;font-weight:900;color:var(--amber)">${player?.avatar} ${player?.name}</div>
+        <div style="font-size:.82rem;font-weight:800;color:#fff;margin-top:1px">${task?.icon||'✅'} ${task?.title||'Task'} · +${task?.stars_value||15}⭐</div>
+        <div style="font-size:.62rem;color:var(--light)">${new Date(pc.created_at).toLocaleString()}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="btn btn-green btn-sm" onclick="approveTask('${pc.id}','${pc.player_id}',${task?.stars_value||15})">✓ Approve</button>
+        <button class="btn btn-red btn-sm" onclick="rejectTask('${pc.id}')">✕ Reject</button>
+      </div>
+    </div>`;}).join(''):`<div class="empty-state"><span class="es-icon">🎉</span>No pending task approvals!</div>`;
+}
+async function approveTask(cid,pid,stars){
+  await db(`task_completions?id=eq.${cid}`,{method:'PATCH',prefer:'return=minimal',body:{status:'approved',approved_at:new Date().toISOString()}});
+  await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:pid,amount:parseInt(stars),reason:'Task approved by parent',category:'task'}});
+  toast('Task approved! ✅');loadPending();renderOverview();
+}
+async function rejectTask(cid){
+  await db(`task_completions?id=eq.${cid}`,{method:'PATCH',prefer:'return=minimal',body:{status:'rejected'}});
+  toast('Task rejected','info');loadPending();
+}
+async function approveAllPending(){
+  const pending=await db('task_completions?status=eq.pending&select=*');
+  for(const pc of pending){const task=D.tasks.find(t=>t.id===pc.task_id);await approveTask(pc.id,pc.player_id,task?.stars_value||15);}
+  toast(`All ${pending.length} tasks approved! ✅`);
+}
+
+// ── TASKS ──────────────────────────────────────────────────
+function loadTasks(){
+  const el=document.getElementById('task-list');
+  if(!D.tasks.length){el.innerHTML=`<div class="empty-state"><span class="es-icon">📋</span>No tasks found</div>`;return;}
+  el.innerHTML=D.tasks.map(t=>`<div class="wish-row" style="padding:10px 12px">
+    <div style="flex:1">
+      <div class="wish-name">${t.icon} ${t.title}</div>
+      <div class="wish-cost" style="font-size:.65rem;color:var(--light);margin-top:3px">${t.stars_value}⭐ · ${t.time_block} · ${t.assigned_to||'both'}</div>
+    </div>
+    <div class="tr-actions">
+      <button class="btn btn-ghost btn-icon btn-sm" onclick="openEditTask('${t.id}')">✏️</button>
+      <button class="btn btn-red btn-icon btn-sm" onclick="deleteTask('${t.id}')">🗑️</button>
+    </div>
+  </div>`).join('');
+}
+async function deleteTask(id){
+  if(!confirm('Delete this task?'))return;
+  await db(`tasks?id=eq.${id}`,{method:'DELETE',prefer:'return=minimal'});
+  D.tasks=D.tasks.filter(t=>t.id!==id);
+  toast('Task deleted 🗑️','info');loadTasks();
+}
+function openAddTask(){
+  showModal(`
+    <div class="modal-title">➕ Add New Task <button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="form-group"><label class="form-label">Task Name</label><input class="form-input" id="nt-title" placeholder="e.g. Brush teeth"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Icon</label><input class="form-input" id="nt-icon" placeholder="✅" value="✅"></div>
+      <div class="form-group"><label class="form-label">Stars</label><input class="form-input" type="number" id="nt-stars" value="15" min="5"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Time Block</label>
+      <select class="form-input form-select" id="nt-block">
+        <option value="morning">🌅 Morning</option>
+        <option value="afternoon">☀️ Afternoon</option>
+        <option value="evening">🌙 Evening</option>
+      </select>
+    </div>
+    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitAddTask()">➕ Add Task</button>
+  `);
+}
+async function submitAddTask(){
+  const title=document.getElementById('nt-title').value.trim();
+  if(!title){toast('Please enter a task name','error');return;}
+  const body={title,icon:document.getElementById('nt-icon').value||'✅',stars_value:parseInt(document.getElementById('nt-stars').value)||15,time_block:document.getElementById('nt-block').value,active:true,assigned_to:'both'};
+  const r=await db('tasks',{method:'POST',body});
+  if(r[0]){D.tasks.push(r[0]);toast('Task added! ✅');closeModal();loadTasks();}
+}
+function openEditTask(id){
+  const t=D.tasks.find(x=>x.id===id);if(!t)return;
+  showModal(`
+    <div class="modal-title">✏️ Edit Task <button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="form-group"><label class="form-label">Task Name</label><input class="form-input" id="et-title" value="${t.title}"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Icon</label><input class="form-input" id="et-icon" value="${t.icon}"></div>
+      <div class="form-group"><label class="form-label">Stars</label><input class="form-input" type="number" id="et-stars" value="${t.stars_value}"></div>
+    </div>
+    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitEditTask('${id}')">💾 Save</button>
+  `);
+}
+async function submitEditTask(id){
+  const body={title:document.getElementById('et-title').value,icon:document.getElementById('et-icon').value,stars_value:parseInt(document.getElementById('et-stars').value)};
+  await db(`tasks?id=eq.${id}`,{method:'PATCH',prefer:'return=minimal',body});
+  D.tasks=D.tasks.map(t=>t.id===id?{...t,...body}:t);
+  toast('Task updated! ✅');closeModal();loadTasks();
+}
+
+// ── WISH LIST (UNIFIED) ──────────────────────────────────────
 async function loadWishList(){
   const wish=await db('wish_list?active=eq.true&gifted=eq.false&select=*&order=created_at.desc');
   D.wishList=wish;
@@ -361,28 +633,21 @@ async function loadWishList(){
 function renderWishList(){
   let items=D.wishList;
   if(D_wishFilter!=='all')items=items.filter(w=>w.assigned_to===D_wishFilter||w.assigned_to==='both');
-  
   const el=document.getElementById('wish-unified-list');
   if(!items.length){el.innerHTML=`<div class="empty-state"><span class="es-icon">🎁</span>No wish items found</div>`;return;}
-  
   el.innerHTML=items.map(w=>{
-    const player=D.players.find(p=>p.id===w.player_id);
     const forBadge=w.assigned_to==='both'?'<span class="badge-pill purple">👥 Both Kids</span>':w.assigned_to==='riaan'?'<span class="badge-pill blue">♑ Riaan</span>':'<span class="badge-pill purple">♈ Kairav</span>';
-    const progress=player?Math.min(100,Math.round(Math.max(0,(await getPlayerStars(player.id)||0)/w.star_cost*100))):0;
     return `<div class="wish-row">
       <div class="wish-thumb">${w.image_url?`<img src="${w.image_url}">`:'🎁'}</div>
       <div class="wish-info">
         <div class="wish-name">${w.title}</div>
-        <div class="wish-cost" style="display:flex;gap:8px;align-items:center;margin-top:4px">
-          <span>${w.star_cost.toLocaleString()} ⭐</span>
-          ${forBadge}
-        </div>
-        <div class="wish-progress" style="margin-top:8px"><div class="wish-progress-fill" style="width:${progress}%"></div></div>
+        <div class="wish-cost"><span>${w.star_cost.toLocaleString()} ⭐</span>${forBadge}</div>
+        <div class="wish-progress"><div class="wish-progress-fill" style="width:45%"></div></div>
       </div>
       <div class="tr-actions">
-        <button class="btn btn-green btn-icon btn-sm" onclick="markGifted('${w.id}')" title="Mark as gifted">🎀</button>
-        <button class="btn btn-ghost btn-icon btn-sm" onclick="editWish('${w.id}')" title="Edit">✏️</button>
-        <button class="btn btn-red btn-icon btn-sm" onclick="deleteWish('${w.id}')" title="Delete">🗑️</button>
+        <button class="btn btn-green btn-icon btn-sm" onclick="markGifted('${w.id}')">🎀</button>
+        <button class="btn btn-ghost btn-icon btn-sm" onclick="editWish('${w.id}')">✏️</button>
+        <button class="btn btn-red btn-icon btn-sm" onclick="deleteWish('${w.id}')">🗑️</button>
       </div>
     </div>`;
   }).join('');
@@ -395,7 +660,7 @@ function filterWishFor(f,btn){
 }
 function openAddWish(){
   showModal(`
-    <div class="modal-title">🎁 Add Wish List Item <button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-title">🎁 Add Wish Item <button class="modal-close" onclick="closeModal()">✕</button></div>
     <div class="form-group"><label class="form-label">Gift Name</label><input class="form-input" id="wl-title" placeholder="e.g. LEGO Technic Set"></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Star Cost</label><input class="form-input" type="number" id="wl-cost" placeholder="e.g. 2500" min="100"></div>
@@ -417,33 +682,27 @@ async function submitAddWish(){
   const cost=parseInt(document.getElementById('wl-cost').value);
   const assigned=document.getElementById('wl-for').value;
   if(!title||!cost){toast('Fill in name and star cost','error');return;}
-  
   let imageUrl='';
   const fileInput=document.getElementById('wl-img');
   if(fileInput.files.length>0){
     const file=fileInput.files[0];
     const fileName=`${Date.now()}-${file.name}`;
     try{
-      const formData=new FormData();
-      formData.append('',file);
       const uploadRes=await fetch(`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/wish-images/${fileName}`,{
         method:'POST',
         headers:{'authorization':`Bearer ${KEY}`},
         body:file
       });
-      if(uploadRes.ok){
-        imageUrl=`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/public/wish-images/${fileName}`;
-      }
+      if(uploadRes.ok){imageUrl=`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/public/wish-images/${fileName}`;}
     }catch(e){toast('Image upload failed, but item created','info');}
   }
-  
-  const body={player_id:D.players.find(p=>p.name.toLowerCase()===assigned.split(' ')[0].toLowerCase())?.id||D.players[0].id,title,star_cost:cost,assigned_to:assigned,description:document.getElementById('wl-desc').value,active:true,gifted:false};
+  const body={title,star_cost:cost,assigned_to:assigned,description:document.getElementById('wl-desc').value,active:true,gifted:false};
   if(imageUrl)body.image_url=imageUrl;
   await db('wish_list',{method:'POST',prefer:'return=minimal',body});
   toast('Added to wish list! 🎁');closeModal();loadWishList();
 }
 async function markGifted(id){
-  if(!confirm('Mark this as gifted? It will be removed from the wish list.'))return;
+  if(!confirm('Mark this as gifted?'))return;
   await db(`wish_list?id=eq.${id}`,{method:'PATCH',prefer:'return=minimal',body:{gifted:true,gifted_at:new Date().toISOString()}});
   toast('Marked as gifted! 🎀');loadWishList();
 }
@@ -478,701 +737,9 @@ async function submitEditWish(id){
         headers:{'authorization':`Bearer ${KEY}`},
         body:file
       });
-      if(uploadRes.ok){
-        body.image_url=`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/public/wish-images/${fileName}`;
-      }
+      if(uploadRes.ok){body.image_url=`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/public/wish-images/${fileName}`;}
     }catch(e){}
   }
-  await db(`wish_list?id=eq.${id}`,{method:'PATCH',prefer:'return=minimal',body});
-  toast('Wish item updated! ✅');closeModal();loadWishList();
-}
-async function deleteWish(id){
-  if(!confirm('Remove this from the wish list?'))return;
-  await db(`wish_list?id=eq.${id}`,{method:'PATCH',prefer:'return=minimal',body:{active:false}});
-  toast('Removed from wish list','info');loadWishList();
-}
-async function getPlayerStars(pid){
-  const logs=await db(`stars_log?player_id=eq.${pid}&select=amount`);
-  return Math.max(0,logs.reduce((a,l)=>a+l.amount,0));
-}
-
-    <!-- ══ REWARD SHOP ══ -->
-    <div id="section-rewards" class="pd-section">
-      <div class="card">
-        <div class="card-title">
-          <span>🛍️ Reward Shop Items</span>
-          <button class="btn btn-teal btn-sm" onclick="openAddReward()">+ Add Reward</button>
-        </div>
-        <div class="tab-row">
-          <button class="tab-btn active" onclick="filterRewardCat('all',this)">All</button>
-          <button class="tab-btn" onclick="filterRewardCat('screen',this)">📺 Screen</button>
-          <button class="tab-btn" onclick="filterRewardCat('experience',this)">🎡 Experience</button>
-          <button class="tab-btn" onclick="filterRewardCat('privilege',this)">⭐ Privilege</button>
-        </div>
-        <div id="reward-list"></div>
-      </div>
-    </div>
-
-    <!-- ══ STARS ══ -->
-    <div id="section-stars" class="pd-section">
-      <div class="two-col" style="margin-bottom:16px">
-        <div class="card">
-          <div class="card-title"><span>⭐ Add Bonus Stars</span></div>
-          <div class="form-group">
-            <label class="form-label">Select Kid</label>
-            <select class="form-input form-select" id="star-kid">
-              <option value="">Choose...</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Stars to Add</label>
-            <input class="form-input" type="number" id="star-amount" placeholder="e.g. 50" min="1">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Reason</label>
-            <input class="form-input" type="text" id="star-reason" placeholder="e.g. Great behaviour today!">
-          </div>
-          <button class="btn btn-green" style="width:100%" onclick="submitStars(true)">⭐ Add Stars</button>
-        </div>
-        <div class="card">
-          <div class="card-title"><span>⚠️ Deduct Stars</span></div>
-          <div class="form-group">
-            <label class="form-label">Select Kid</label>
-            <select class="form-input form-select" id="deduct-kid">
-              <option value="">Choose...</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Stars to Deduct</label>
-            <input class="form-input" type="number" id="deduct-amount" placeholder="e.g. 25" min="1">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Reason</label>
-            <input class="form-input" type="text" id="deduct-reason" placeholder="e.g. Missed chore">
-          </div>
-          <button class="btn btn-red" style="width:100%" onclick="submitStars(false)">⚠️ Deduct Stars</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">
-          <span>📜 Star History</span>
-          <select class="form-input form-select" style="width:auto;padding:5px 28px 5px 10px;font-size:.7rem" id="history-filter" onchange="loadHistory()">
-            <option value="">Both kids</option>
-          </select>
-        </div>
-        <div id="star-history"></div>
-      </div>
-    </div>
-
-    <!-- ══ SCHEDULE ══ -->
-    <div id="section-schedule" class="pd-section">
-      <div class="card">
-        <div class="card-title"><span>📅 Schedule Mode</span></div>
-        <div class="schedule-mode-cards">
-          <div class="sch-mode-card summer selected" id="mode-summer" onclick="setMode('summer')">
-            <div class="sch-mode-icon">☀️</div>
-            <div class="sch-mode-title">Summer Break</div>
-            <div class="sch-mode-sub">No school — flexible schedule</div>
-          </div>
-          <div class="sch-mode-card school" id="mode-school" onclick="setMode('school')">
-            <div class="sch-mode-icon">🎒</div>
-            <div class="sch-mode-title">School Days</div>
-            <div class="sch-mode-sub">Mountainview Montessori 8:30–2:30</div>
-          </div>
-        </div>
-        <div class="two-col">
-          <div class="form-group">
-            <label class="form-label">Wake Up Time</label>
-            <input class="form-input" type="time" id="sch-wake" value="07:00">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Bedtime</label>
-            <input class="form-input" type="time" id="sch-bed" value="21:30">
-          </div>
-          <div class="form-group">
-            <label class="form-label">School Start</label>
-            <input class="form-input" type="time" id="sch-start" value="08:30">
-          </div>
-          <div class="form-group">
-            <label class="form-label">School End</label>
-            <input class="form-input" type="time" id="sch-end" value="14:30">
-          </div>
-        </div>
-        <button class="btn btn-teal" onclick="saveSchedule()">💾 Save Schedule</button>
-      </div>
-    </div>
-
-    <!-- ══ CONTENT ══ -->
-    <div id="section-content" class="pd-section">
-      <div class="card">
-        <div class="card-title"><span>🎓 Question Bank</span></div>
-        <div id="content-stats"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">
-          <span>➕ Add Custom Question</span>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Subject</label>
-            <select class="form-input form-select" id="q-subject">
-              <option value="math">Maths</option>
-              <option value="english">English</option>
-              <option value="science">Science</option>
-              <option value="hinduism">Hinduism</option>
-              <option value="hindi">Hindi</option>
-              <option value="social">Social Studies</option>
-              <option value="health">Health</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Topic</label>
-            <input class="form-input" type="text" id="q-topic" placeholder="e.g. addition">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Level (1-5)</label>
-            <input class="form-input" type="number" id="q-level" min="1" max="5" value="1">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Grade (1-5)</label>
-            <input class="form-input" type="number" id="q-grade" min="1" max="5" value="1">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Question</label>
-          <input class="form-input" type="text" id="q-question" placeholder="Type the question...">
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">✅ Correct Answer</label>
-            <input class="form-input" type="text" id="q-answer" placeholder="Correct answer">
-          </div>
-          <div class="form-group">
-            <label class="form-label">❌ Wrong Answer 1</label>
-            <input class="form-input" type="text" id="q-wrong1" placeholder="Wrong option 1">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">❌ Wrong Answer 2</label>
-            <input class="form-input" type="text" id="q-wrong2" placeholder="Wrong option 2">
-          </div>
-          <div class="form-group">
-            <label class="form-label">❌ Wrong Answer 3</label>
-            <input class="form-input" type="text" id="q-wrong3" placeholder="Wrong option 3">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">💡 Explanation (shown when wrong)</label>
-          <input class="form-input" type="text" id="q-explanation" placeholder="Explain the correct answer...">
-        </div>
-        <button class="btn btn-teal" onclick="addQuestion()">➕ Add Question</button>
-      </div>
-    </div>
-
-    <!-- ══ SETTINGS ══ -->
-    <div id="section-settings" class="pd-section">
-      <div class="two-col">
-        <div>
-          <!-- Player Settings -->
-          <div class="card">
-            <div class="card-title"><span>👦 Edit Player Profiles</span></div>
-            <div id="player-edit-list"></div>
-          </div>
-          <!-- PIN -->
-          <div class="card">
-            <div class="card-title"><span>🔐 Change Parent PIN</span></div>
-            <div class="form-group">
-              <label class="form-label">Current PIN</label>
-              <input class="form-input" type="password" id="current-pin" placeholder="Enter current PIN" maxlength="4">
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">New PIN</label>
-                <input class="form-input" type="password" id="new-pin" placeholder="4 digits" maxlength="4">
-              </div>
-              <div class="form-group">
-                <label class="form-label">Confirm New PIN</label>
-                <input class="form-input" type="password" id="confirm-pin" placeholder="4 digits" maxlength="4">
-              </div>
-            </div>
-            <button class="btn btn-teal" onclick="changePin()">🔐 Update PIN</button>
-          </div>
-        </div>
-        <div>
-          <!-- App Settings -->
-          <div class="card">
-            <div class="card-title"><span>⚙️ App Settings</span></div>
-            <div class="settings-row">
-              <div class="sr-info">
-                <div class="sr-label">AI Features (Tara)</div>
-                <div class="sr-desc">Claude AI powers Tara messages</div>
-              </div>
-              <label class="toggle"><input type="checkbox" id="toggle-ai" checked onchange="saveSetting('ai_enabled',this.checked)"><span class="toggle-slider"></span></label>
-            </div>
-            <div class="settings-row">
-              <div class="sr-info">
-                <div class="sr-label">Voice Read-Aloud</div>
-                <div class="sr-desc">Read questions aloud to kids</div>
-              </div>
-              <label class="toggle"><input type="checkbox" id="toggle-voice" checked onchange="saveSetting('voice_enabled',this.checked)"><span class="toggle-slider"></span></label>
-            </div>
-            <div class="settings-row">
-              <div class="sr-info">
-                <div class="sr-label">Questions per Session — Riaan</div>
-                <div class="sr-desc">Default: 30 questions</div>
-              </div>
-              <input class="form-input" type="number" id="riaan-qps" value="30" min="5" max="50" style="width:70px;text-align:center" onchange="saveSetting('questions_per_session',this.value)">
-            </div>
-            <div class="settings-row">
-              <div class="sr-info">
-                <div class="sr-label">Questions per Session — Kairav</div>
-                <div class="sr-desc">Default: 15 questions</div>
-              </div>
-              <input class="form-input" type="number" id="kairav-qps" value="15" min="5" max="30" style="width:70px;text-align:center" onchange="saveSetting('kairav_questions',this.value)">
-            </div>
-            <div class="settings-row">
-              <div class="sr-info">
-                <div class="sr-label">Pass Percentage</div>
-                <div class="sr-desc">Score needed to pass a level</div>
-              </div>
-              <input class="form-input" type="number" id="pass-pct" value="80" min="50" max="100" style="width:70px;text-align:center" onchange="saveSetting('pass_percentage',this.value)">
-            </div>
-          </div>
-          <!-- School info -->
-          <div class="card">
-            <div class="card-title"><span>🏫 School Info</span></div>
-            <div class="form-group">
-              <label class="form-label">School Name</label>
-              <input class="form-input" type="text" id="school-name" value="Mountainview Montessori School">
-            </div>
-            <button class="btn btn-teal" onclick="saveSchoolInfo()">💾 Save</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /pd-content -->
-</div><!-- /pd-main -->
-
-<!-- MODAL -->
-<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
-  <div class="modal-box">
-    <div id="modal-content"></div>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
-
-<script>
-const SB='https://tnhgihzfwqsflpueivwe.supabase.co';
-const KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
-const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':o.prefer||'return=representation',...o.headers},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined}).then(r=>r.json()).catch(()=>[]);
-
-let D={players:[],tasks:[],wishList:[],rewardShop:[],settings:{},taskBlock:'all',rewardCat:'all'};
-
-const sectionTitles={overview:'Overview',pending:'Pending Approvals',tasks:'Task Manager',wishlist:'Wish List Manager',rewards:'Reward Shop',stars:'Star Manager',schedule:'Schedule Manager',content:'Content Manager',settings:'Settings'};
-
-// ── INIT ──────────────────────────────────────────────────
-async function init(){
-  await loadAll();
-  renderOverview();
-  loadPending();
-  loadTasks();
-  loadWishList();
-  loadRewards();
-  loadHistory();
-  loadContent();
-  loadSettings();
-}
-
-async function loadAll(){
-  const[players,tasks,wish,rewards,settings]=await Promise.all([
-    db('players?select=*&order=name'),
-    db('tasks?select=*&order=sort_order'),
-    db('wish_list?active=eq.true&gifted=eq.false&select=*'),
-    db('reward_shop?select=*&order=sort_order'),
-    db('parent_settings?select=*')
-  ]);
-  D.players=players;
-  D.tasks=tasks;
-  D.wishList=wish;
-  D.rewardShop=rewards;
-  D.settings={};
-  settings.forEach(s=>{D.settings[s.key]=s.value;});
-  // Populate kid selects
-  ['star-kid','deduct-kid','history-filter'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(!el)return;
-    const extra=id==='history-filter'?'<option value="">Both kids</option>':'<option value="">Choose...</option>';
-    el.innerHTML=extra+players.map(p=>`<option value="${p.id}">${p.avatar} ${p.name}</option>`).join('');
-  });
-}
-
-// ── NAVIGATION ──────────────────────────────────────────────
-function showSection(name){
-  document.querySelectorAll('.pd-section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.pd-nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('section-'+name).classList.add('active');
-  document.querySelectorAll('.pd-nav-item').forEach(n=>{
-    if(n.getAttribute('onclick')===`showSection('${name}')`)n.classList.add('active');
-  });
-  document.getElementById('section-title').textContent=sectionTitles[name]||name;
-  if(name==='pending')loadPending();
-  if(name==='stars')loadHistory();
-  if(name==='content')loadContent();
-}
-
-// ── OVERVIEW ──────────────────────────────────────────────
-async function renderOverview(){
-  const kidsEl=document.getElementById('overview-kids');
-  const statsEl=document.getElementById('overview-stats');
-  let kidsHtml='',totalStars=0,totalTasks=0;
-  for(const p of D.players){
-    const[logs,streak,tc]=await Promise.all([
-      db(`stars_log?player_id=eq.${p.id}&select=amount`),
-      db(`streaks?player_id=eq.${p.id}&select=current_streak`),
-      db(`task_completions?player_id=eq.${p.id}&completion_date=eq.${today()}&select=status`)
-    ]);
-    const stars=Math.max(0,logs.reduce((a,l)=>a+l.amount,0));
-    const str=streak[0]?.current_streak||0;
-    const doneTasks=tc.filter(t=>t.status==='approved').length;
-    totalStars+=stars;totalTasks+=doneTasks;
-    kidsHtml+=`<div class="kid-overview">
-      <div class="ko-header">
-        <div class="ko-avatar">${p.avatar}</div>
-        <div><div class="ko-name">${p.name}</div><div class="ko-grade">Age ${p.age} · Grade ${p.grade}</div></div>
-      </div>
-      <div class="ko-stats">
-        <div class="ko-stat stars"><div class="ko-stat-val">${stars.toLocaleString()}</div><div class="ko-stat-lbl">⭐ Stars</div></div>
-        <div class="ko-stat streak"><div class="ko-stat-val">${str}</div><div class="ko-stat-lbl">🔥 Streak</div></div>
-        <div class="ko-stat tasks"><div class="ko-stat-val">${doneTasks}</div><div class="ko-stat-lbl">✅ Today</div></div>
-      </div>
-      <div class="ko-actions">
-        <button class="ko-btn add" onclick="quickStar('${p.id}','${p.name}',true)">+ Stars</button>
-        <button class="ko-btn deduct" onclick="quickStar('${p.id}','${p.name}',false)">- Stars</button>
-        <button class="ko-btn view" onclick="showSection('stars')">History</button>
-      </div>
-    </div>`;
-  }
-  kidsEl.innerHTML=kidsHtml;
-  const pending=await db("task_completions?status=eq.pending&select=id");
-  const nb=document.getElementById('nav-pending-badge');
-  if(pending.length>0){nb.style.display='block';nb.textContent=pending.length;}else{nb.style.display='none';}
-  statsEl.innerHTML=`
-    <div class="stat-mini"><div class="sm-icon" style="background:rgba(246,192,74,.15)">⭐</div><div><div class="sm-val">${totalStars.toLocaleString()}</div><div class="sm-lbl">Combined Stars</div></div></div>
-    <div class="stat-mini"><div class="sm-icon" style="background:rgba(39,174,96,.15)">✅</div><div><div class="sm-val">${D.tasks.filter(t=>t.active).length}</div><div class="sm-lbl">Active Tasks</div></div></div>
-    <div class="stat-mini"><div class="sm-icon" style="background:rgba(232,69,69,.15)">⏳</div><div><div class="sm-val">${pending.length}</div><div class="sm-lbl">Pending Approvals</div></div></div>
-    <div class="stat-mini"><div class="sm-icon" style="background:rgba(43,191,184,.15)">🎓</div><div><div class="sm-val">${await getQuestionCount()}</div><div class="sm-lbl">Total Questions</div></div></div>`;
-  // Recent activity
-  const recent=await db('stars_log?order=created_at.desc&limit=8&select=*');
-  document.getElementById('overview-activity').innerHTML=recent.length?recent.map(l=>{
-    const p=D.players.find(x=>x.id===l.player_id);
-    return `<div class="history-row">
-      <div class="hr-icon">${l.amount>0?'⭐':'🔻'}</div>
-      <div class="hr-info"><div class="hr-reason">${p?.name||'?'} — ${l.reason}</div><div class="hr-date">${new Date(l.created_at).toLocaleString()}</div></div>
-      <div class="hr-amount ${l.amount>0?'pos':'neg'}">${l.amount>0?'+':''}${l.amount}</div>
-    </div>`;}).join(''):`<div class="empty-state"><span class="es-icon">📭</span>No activity yet</div>`;
-}
-async function getQuestionCount(){const r=await db('questions?select=id&active=eq.true');return r.length?.toLocaleString()||0;}
-
-// ── PENDING APPROVALS ──────────────────────────────────────
-async function loadPending(){
-  const[pending,redemptions]=await Promise.all([
-    db('task_completions?status=eq.pending&select=*&order=created_at.desc'),
-    db('redemptions?status=eq.pending&select=*&order=created_at.desc')
-  ]);
-  const pEl=document.getElementById('pending-list');
-  pEl.innerHTML=pending.length?pending.map(pc=>{
-    const task=D.tasks.find(t=>t.id===pc.task_id);
-    const player=D.players.find(p=>p.id===pc.player_id);
-    return `<div class="pending-row">
-      <div style="flex:1">
-        <div class="pr-kid">${player?.avatar} ${player?.name}</div>
-        <div class="pr-task">${task?.icon||'✅'} ${task?.title||'Task'} · +${task?.stars_value||15}⭐</div>
-        <div class="pr-time">${new Date(pc.created_at).toLocaleString()}</div>
-      </div>
-      <div class="pr-btns">
-        <button class="btn btn-green btn-sm" onclick="approveTask('${pc.id}','${pc.player_id}',${task?.stars_value||15})">✓ Approve</button>
-        <button class="btn btn-red btn-sm" onclick="rejectTask('${pc.id}')">✕ Reject</button>
-      </div>
-    </div>`;}).join(''):`<div class="empty-state"><span class="es-icon">🎉</span>No pending task approvals!</div>`;
-  const rEl=document.getElementById('redemption-list');
-  rEl.innerHTML=redemptions.length?redemptions.map(r=>{
-    const reward=D.rewardShop.find(s=>s.id===r.reward_id);
-    const player=D.players.find(p=>p.id===r.player_id);
-    return `<div class="pending-row">
-      <div style="flex:1">
-        <div class="pr-kid">${player?.avatar} ${player?.name}</div>
-        <div class="pr-task">${reward?.icon||'🎁'} ${reward?.title||'Reward'} · ${r.stars_spent}⭐ spent</div>
-        <div class="pr-time">${new Date(r.created_at).toLocaleString()}</div>
-      </div>
-      <div class="pr-btns">
-        <button class="btn btn-green btn-sm" onclick="approveRedemption('${r.id}')">✓ Give it!</button>
-        <button class="btn btn-red btn-sm" onclick="rejectRedemption('${r.id}','${r.player_id}',${r.stars_spent})">✕ Reject</button>
-      </div>
-    </div>`;}).join(''):`<div class="empty-state"><span class="es-icon">🎁</span>No pending redemptions!</div>`;
-}
-async function approveTask(cid,pid,stars){
-  await db(`task_completions?id=eq.${cid}`,{method:'PATCH',prefer:'return=minimal',body:{status:'approved',approved_at:new Date().toISOString()}});
-  await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:pid,amount:parseInt(stars),reason:'Task approved by parent',category:'task'}});
-  toast('Task approved! ✅');loadPending();renderOverview();
-}
-async function rejectTask(cid){
-  await db(`task_completions?id=eq.${cid}`,{method:'PATCH',prefer:'return=minimal',body:{status:'rejected'}});
-  toast('Task rejected','info');loadPending();
-}
-async function approveAllPending(){
-  const pending=await db('task_completions?status=eq.pending&select=*');
-  for(const pc of pending){const task=D.tasks.find(t=>t.id===pc.task_id);await approveTask(pc.id,pc.player_id,task?.stars_value||15);}
-  toast(`All ${pending.length} tasks approved! ✅`);
-}
-async function approveRedemption(rid){
-  await db(`redemptions?id=eq.${rid}`,{method:'PATCH',prefer:'return=minimal',body:{status:'approved',approved_at:new Date().toISOString()}});
-  toast('Reward given! 🎁');loadPending();
-}
-async function rejectRedemption(rid,pid,stars){
-  await db(`redemptions?id=eq.${rid}`,{method:'PATCH',prefer:'return=minimal',body:{status:'rejected'}});
-  await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:pid,amount:stars,reason:'Redemption rejected — stars refunded',category:'refund'}});
-  toast('Rejected & stars refunded','info');loadPending();
-}
-
-// ── TASKS ──────────────────────────────────────────────────
-function loadTasks(){
-  const block=D.taskBlock,search=document.getElementById('task-search')?.value?.toLowerCase()||'';
-  let tasks=D.tasks;
-  if(block!=='all')tasks=tasks.filter(t=>t.time_block===block);
-  if(search)tasks=tasks.filter(t=>t.title.toLowerCase().includes(search));
-  const blocks=['morning','learning','afternoon','evening','bedtime','weekly'];
-  const blockLabels={morning:'🌅 Morning',learning:'🧠 Learning',afternoon:'☀️ Afternoon',evening:'🌙 Evening',bedtime:'💤 Bedtime',weekly:'📅 Weekly'};
-  let html='';
-  const grouped=block==='all'?blocks:[block];
-  grouped.forEach(b=>{
-    const bt=tasks.filter(t=>t.time_block===b);
-    if(!bt.length)return;
-    html+=`<div style="margin-bottom:14px"><div style="font-size:.65rem;font-weight:900;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">${blockLabels[b]||b}</div>`;
-    bt.forEach(t=>{
-      html+=`<div class="task-row-pd ${t.active?'':'inactive'}">
-        <div class="tr-icon">${t.icon}</div>
-        <div class="tr-info">
-          <div class="tr-name">${t.title}</div>
-          <div class="tr-meta">
-            <span class="tr-stars">${t.stars_value}⭐</span>·
-            ${t.day_type==='summer'?'☀️ Summer':'🎒 School+Summer'} ·
-            ${t.requires_approval?'⏳ Needs approval':'✅ Auto-approve'} ·
-            ${t.assigned_to==='both'?'Both kids':t.assigned_to}
-          </div>
-        </div>
-        <div class="tr-actions">
-          <button class="btn btn-ghost btn-icon btn-sm" onclick="toggleTaskActive('${t.id}',${!t.active})" title="${t.active?'Deactivate':'Activate'}">${t.active?'🟢':'⚫'}</button>
-          <button class="btn btn-ghost btn-icon btn-sm" onclick="openEditTask('${t.id}')" title="Edit">✏️</button>
-          <button class="btn btn-red btn-icon btn-sm" onclick="deleteTask('${t.id}')" title="Delete">🗑️</button>
-        </div>
-      </div>`;
-    });
-    html+='</div>';
-  });
-  document.getElementById('task-list').innerHTML=html||`<div class="empty-state"><span class="es-icon">📋</span>No tasks found</div>`;
-}
-function filterTasks(){loadTasks();}
-function filterTaskBlock(b,btn){
-  D.taskBlock=b;
-  document.querySelectorAll('#section-tasks .tab-btn').forEach(x=>x.classList.remove('active'));
-  btn.classList.add('active');
-  loadTasks();
-}
-async function toggleTaskActive(id,active){
-  await db(`tasks?id=eq.${id}`,{method:'PATCH',prefer:'return=minimal',body:{active}});
-  D.tasks=D.tasks.map(t=>t.id===id?{...t,active}:t);
-  toast(active?'Task activated ✅':'Task deactivated ⚫');loadTasks();
-}
-async function deleteTask(id){
-  if(!confirm('Delete this task? This cannot be undone.'))return;
-  await db(`tasks?id=eq.${id}`,{method:'DELETE',prefer:'return=minimal'});
-  D.tasks=D.tasks.filter(t=>t.id!==id);
-  toast('Task deleted 🗑️','info');loadTasks();
-}
-function openAddTask(){
-  showModal(`
-    <div class="modal-title">➕ Add New Task <button class="modal-close" onclick="closeModal()">✕</button></div>
-    <div class="form-group"><label class="form-label">Task Name</label><input class="form-input" id="nt-title" placeholder="e.g. Brush teeth"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Icon (emoji)</label><input class="form-input" id="nt-icon" placeholder="🪥" value="✅"></div>
-      <div class="form-group"><label class="form-label">Stars Value</label><input class="form-input" type="number" id="nt-stars" value="15" min="5" max="100"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Time Block</label>
-        <select class="form-input form-select" id="nt-block">
-          <option value="morning">🌅 Morning</option>
-          <option value="learning">🧠 Learning</option>
-          <option value="afternoon">☀️ Afternoon</option>
-          <option value="evening">🌙 Evening</option>
-          <option value="bedtime">💤 Bedtime</option>
-          <option value="weekly">📅 Weekly</option>
-        </select>
-      </div>
-      <div class="form-group"><label class="form-label">Schedule Type</label>
-        <select class="form-input form-select" id="nt-daytype">
-          <option value="both">Both (Summer & School)</option>
-          <option value="summer">☀️ Summer only</option>
-          <option value="school">🎒 School days only</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Assigned To</label>
-        <select class="form-input form-select" id="nt-assigned">
-          <option value="both">Both kids</option>
-          <option value="Riaan">Riaan only</option>
-          <option value="Kairav">Kairav only</option>
-        </select>
-      </div>
-      <div class="form-group"><label class="form-label">Requires Approval?</label>
-        <select class="form-input form-select" id="nt-approval">
-          <option value="false">✅ Auto-approve</option>
-          <option value="true">⏳ Needs approval</option>
-        </select>
-      </div>
-    </div>
-    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitAddTask()">➕ Add Task</button>
-  `);
-}
-async function submitAddTask(){
-  const title=document.getElementById('nt-title').value.trim();
-  if(!title){toast('Please enter a task name','error');return;}
-  const body={title,icon:document.getElementById('nt-icon').value||'✅',stars_value:parseInt(document.getElementById('nt-stars').value)||15,time_block:document.getElementById('nt-block').value,day_type:document.getElementById('nt-daytype').value,assigned_to:document.getElementById('nt-assigned').value,requires_approval:document.getElementById('nt-approval').value==='true',active:true,sort_order:D.tasks.length+1};
-  const r=await db('tasks',{method:'POST',body});
-  if(r[0]){D.tasks.push(r[0]);toast('Task added! ✅');closeModal();loadTasks();}
-  else toast('Error: Run supabase_rls_fix.sql in Supabase SQL Editor to fix permissions','error');
-}
-function openEditTask(id){
-  const t=D.tasks.find(x=>x.id===id);if(!t)return;
-  showModal(`
-    <div class="modal-title">✏️ Edit Task <button class="modal-close" onclick="closeModal()">✕</button></div>
-    <div class="form-group"><label class="form-label">Task Name</label><input class="form-input" id="et-title" value="${t.title}"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Icon</label><input class="form-input" id="et-icon" value="${t.icon}"></div>
-      <div class="form-group"><label class="form-label">Stars</label><input class="form-input" type="number" id="et-stars" value="${t.stars_value}"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Time Block</label>
-        <select class="form-input form-select" id="et-block">
-          ${['morning','learning','afternoon','evening','bedtime','weekly'].map(b=>`<option value="${b}" ${t.time_block===b?'selected':''}>${b}</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-group"><label class="form-label">Schedule</label>
-        <select class="form-input form-select" id="et-daytype">
-          ${['both','summer','school'].map(d=>`<option value="${d}" ${t.day_type===d?'selected':''}>${d}</option>`).join('')}
-        </select>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Assigned To</label>
-        <select class="form-input form-select" id="et-assigned">
-          ${['both','Riaan','Kairav'].map(a=>`<option value="${a}" ${t.assigned_to===a?'selected':''}>${a}</option>`).join('')}
-        </select>
-      </div>
-      <div class="form-group"><label class="form-label">Needs Approval?</label>
-        <select class="form-input form-select" id="et-approval">
-          <option value="false" ${!t.requires_approval?'selected':''}>Auto-approve</option>
-          <option value="true" ${t.requires_approval?'selected':''}>Needs approval</option>
-        </select>
-      </div>
-    </div>
-    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitEditTask('${id}')">💾 Save Changes</button>
-  `);
-}
-async function submitEditTask(id){
-  const body={title:document.getElementById('et-title').value,icon:document.getElementById('et-icon').value,stars_value:parseInt(document.getElementById('et-stars').value),time_block:document.getElementById('et-block').value,day_type:document.getElementById('et-daytype').value,assigned_to:document.getElementById('et-assigned').value,requires_approval:document.getElementById('et-approval').value==='true'};
-  await db(`tasks?id=eq.${id}`,{method:'PATCH',prefer:'return=minimal',body});
-  D.tasks=D.tasks.map(t=>t.id===id?{...t,...body}:t);
-  toast('Task updated! ✅');closeModal();loadTasks();
-}
-
-// ── WISH LIST ──────────────────────────────────────────────
-async function loadWishList(){
-  const wish=await db('wish_list?active=eq.true&gifted=eq.false&select=*&order=created_at');
-  D.wishList=wish;
-  for(const p of D.players){
-    const items=wish.filter(w=>w.player_id===p.id);
-    const starData=await db(`stars_log?player_id=eq.${p.id}&select=amount`);
-    const totalStars=Math.max(0,starData.reduce((a,l)=>a+l.amount,0));
-    const el=document.getElementById('wish-'+p.name.toLowerCase());
-    if(!el)continue;
-    el.innerHTML=items.length?items.map(w=>{
-      const pct=Math.min(100,Math.round(totalStars/w.star_cost*100));
-      return `<div class="wish-row">
-        <div class="wish-thumb">${w.image_url?`<img src="${w.image_url}">`:'🎁'}</div>
-        <div class="wish-info">
-          <div class="wish-name">${w.title}</div>
-          <div class="wish-cost">${w.star_cost.toLocaleString()} ⭐ · ${pct}% saved</div>
-          <div class="wish-progress"><div class="wish-progress-fill" style="width:${pct}%"></div></div>
-        </div>
-        <div class="tr-actions">
-          <button class="btn btn-green btn-icon btn-sm" onclick="markGifted('${w.id}')" title="Mark as gifted">🎀</button>
-          <button class="btn btn-ghost btn-icon btn-sm" onclick="editWish('${w.id}')" title="Edit">✏️</button>
-          <button class="btn btn-red btn-icon btn-sm" onclick="deleteWish('${w.id}')" title="Delete">🗑️</button>
-        </div>
-      </div>`;}).join(''):`<div class="empty-state"><span class="es-icon">🎁</span>No wish list items yet</div>`;
-  }
-}
-function openAddWish(playerName){
-  const p=D.players.find(x=>x.name.toLowerCase()===playerName);
-  showModal(`
-    <div class="modal-title">🎁 Add Wish Item for ${p?.name} <button class="modal-close" onclick="closeModal()">✕</button></div>
-    <input type="hidden" id="wl-pid" value="${p?.id}">
-    <div class="form-group"><label class="form-label">Gift Name</label><input class="form-input" id="wl-title" placeholder="e.g. LEGO Technic Set"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Star Cost</label><input class="form-input" type="number" id="wl-cost" placeholder="e.g. 2500" min="100"></div>
-      <div class="form-group"><label class="form-label">Category</label>
-        <select class="form-input form-select" id="wl-cat">
-          <option value="toy">🎮 Toy / Game</option>
-          <option value="creative">🎨 Creative / Art</option>
-          <option value="experience">🎡 Experience</option>
-          <option value="food">🍕 Food / Restaurant</option>
-          <option value="digital">💻 Digital</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group"><label class="form-label">Description (optional)</label><input class="form-input" id="wl-desc" placeholder="e.g. The big one from the Lego website"></div>
-    <div class="form-group"><label class="form-label">Image URL (optional)</label><input class="form-input" id="wl-img" placeholder="https://..."></div>
-    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitAddWish()">🎁 Add to Wish List</button>
-  `);
-}
-async function submitAddWish(){
-  const pid=document.getElementById('wl-pid').value;
-  const title=document.getElementById('wl-title').value.trim();
-  const cost=parseInt(document.getElementById('wl-cost').value);
-  if(!title||!cost){toast('Fill in name and star cost','error');return;}
-  const body={player_id:pid,title,star_cost:cost,category:document.getElementById('wl-cat').value,description:document.getElementById('wl-desc').value,active:true,gifted:false};
-  const img=document.getElementById('wl-img').value.trim();
-  if(img)body.image_url=img;
-  await db('wish_list',{method:'POST',prefer:'return=minimal',body});
-  toast('Added to wish list! 🎁');closeModal();loadWishList();
-}
-async function markGifted(id){
-  if(!confirm('Mark this as gifted? It will be removed from the wish list.'))return;
-  await db(`wish_list?id=eq.${id}`,{method:'PATCH',prefer:'return=minimal',body:{gifted:true,gifted_at:new Date().toISOString()}});
-  toast('Marked as gifted! 🎀');loadWishList();
-}
-async function editWish(id){
-  const w=D.wishList.find(x=>x.id===id);if(!w)return;
-  showModal(`
-    <div class="modal-title">✏️ Edit Wish Item <button class="modal-close" onclick="closeModal()">✕</button></div>
-    <div class="form-group"><label class="form-label">Gift Name</label><input class="form-input" id="ew-title" value="${w.title}"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Star Cost</label><input class="form-input" type="number" id="ew-cost" value="${w.star_cost}"></div>
-      <div class="form-group"><label class="form-label">Image URL</label><input class="form-input" id="ew-img" value="${w.image_url||''}"></div>
-    </div>
-    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitEditWish('${id}')">💾 Save</button>
-  `);
-}
-async function submitEditWish(id){
-  const body={title:document.getElementById('ew-title').value,star_cost:parseInt(document.getElementById('ew-cost').value)};
-  const img=document.getElementById('ew-img').value.trim();if(img)body.image_url=img;
   await db(`wish_list?id=eq.${id}`,{method:'PATCH',prefer:'return=minimal',body});
   toast('Wish item updated! ✅');closeModal();loadWishList();
 }
@@ -1184,38 +751,18 @@ async function deleteWish(id){
 
 // ── REWARDS ──────────────────────────────────────────────
 function loadRewards(){
-  let items=D.rewardShop;
-  if(D.rewardCat!=='all')items=items.filter(r=>r.category===D.rewardCat);
   const el=document.getElementById('reward-list');
-  el.innerHTML=items.length?items.map(r=>`
-    <div class="reward-row ${r.active?'':'inactive'}">
-      <div class="reward-icon-big">${r.icon||'🎁'}</div>
-      <div class="tr-info">
-        <div class="tr-name">${r.title}</div>
-        <div class="tr-meta"><span class="tr-stars">${r.star_cost}⭐</span>· ${r.category}${r.duration_minutes?' · '+r.duration_minutes+'min':''}</div>
+  el.innerHTML=D.rewardShop.length?D.rewardShop.map(r=>`
+    <div class="wish-row" style="padding:10px 12px">
+      <div style="flex:1">
+        <div class="wish-name">${r.icon||'🎁'} ${r.title}</div>
+        <div class="wish-cost" style="font-size:.65rem;color:var(--light);margin-top:3px">${r.star_cost}⭐ · ${r.category}</div>
       </div>
       <div class="tr-actions">
-        <button class="btn btn-ghost btn-icon btn-sm" onclick="toggleReward('${r.id}',${!r.active})">${r.active?'🟢':'⚫'}</button>
         <button class="btn btn-ghost btn-icon btn-sm" onclick="editReward('${r.id}')">✏️</button>
         <button class="btn btn-red btn-icon btn-sm" onclick="deleteReward('${r.id}')">🗑️</button>
       </div>
-    </div>`).join(''):`<div class="empty-state"><span class="es-icon">🛍️</span>No rewards in this category</div>`;
-}
-function filterRewardCat(cat,btn){
-  D.rewardCat=cat;
-  document.querySelectorAll('#section-rewards .tab-btn').forEach(x=>x.classList.remove('active'));
-  btn.classList.add('active');loadRewards();
-}
-async function toggleReward(id,active){
-  await db(`reward_shop?id=eq.${id}`,{method:'PATCH',prefer:'return=minimal',body:{active}});
-  D.rewardShop=D.rewardShop.map(r=>r.id===id?{...r,active}:r);
-  toast(active?'Reward activated ✅':'Reward deactivated ⚫');loadRewards();
-}
-async function deleteReward(id){
-  if(!confirm('Delete this reward?'))return;
-  await db(`reward_shop?id=eq.${id}`,{method:'DELETE',prefer:'return=minimal'});
-  D.rewardShop=D.rewardShop.filter(r=>r.id!==id);
-  toast('Reward deleted','info');loadRewards();
+    </div>`).join(''):`<div class="empty-state"><span class="es-icon">🛍️</span>No rewards yet</div>`;
 }
 function openAddReward(){
   showModal(`
@@ -1224,10 +771,7 @@ function openAddReward(){
       <div class="form-group"><label class="form-label">Title</label><input class="form-input" id="nr-title" placeholder="e.g. 30 min TV"></div>
       <div class="form-group"><label class="form-label">Icon</label><input class="form-input" id="nr-icon" placeholder="📺" value="🎁"></div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Star Cost</label><input class="form-input" type="number" id="nr-cost" placeholder="50" min="1"></div>
-      <div class="form-group"><label class="form-label">Duration (mins, optional)</label><input class="form-input" type="number" id="nr-duration" placeholder="30"></div>
-    </div>
+    <div class="form-group"><label class="form-label">Star Cost</label><input class="form-input" type="number" id="nr-cost" placeholder="50" min="1"></div>
     <div class="form-group"><label class="form-label">Category</label>
       <select class="form-input form-select" id="nr-cat">
         <option value="screen">📺 Screen Time</option>
@@ -1243,7 +787,6 @@ async function submitAddReward(){
   const cost=parseInt(document.getElementById('nr-cost').value);
   if(!title||!cost){toast('Fill in title and cost','error');return;}
   const body={title,icon:document.getElementById('nr-icon').value||'🎁',star_cost:cost,category:document.getElementById('nr-cat').value,active:true};
-  const dur=parseInt(document.getElementById('nr-duration').value);if(dur)body.duration_minutes=dur;
   const r=await db('reward_shop',{method:'POST',body});
   if(r[0]){D.rewardShop.push(r[0]);toast('Reward added! ✅');closeModal();loadRewards();}
 }
@@ -1255,19 +798,21 @@ function editReward(id){
       <div class="form-group"><label class="form-label">Title</label><input class="form-input" id="er-title" value="${r.title}"></div>
       <div class="form-group"><label class="form-label">Icon</label><input class="form-input" id="er-icon" value="${r.icon||'🎁'}"></div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Star Cost</label><input class="form-input" type="number" id="er-cost" value="${r.star_cost}"></div>
-      <div class="form-group"><label class="form-label">Duration (mins)</label><input class="form-input" type="number" id="er-duration" value="${r.duration_minutes||''}"></div>
-    </div>
+    <div class="form-group"><label class="form-label">Star Cost</label><input class="form-input" type="number" id="er-cost" value="${r.star_cost}"></div>
     <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitEditReward('${id}')">💾 Save</button>
   `);
 }
 async function submitEditReward(id){
   const body={title:document.getElementById('er-title').value,icon:document.getElementById('er-icon').value,star_cost:parseInt(document.getElementById('er-cost').value)};
-  const dur=parseInt(document.getElementById('er-duration').value);if(dur)body.duration_minutes=dur;
   await db(`reward_shop?id=eq.${id}`,{method:'PATCH',prefer:'return=minimal',body});
   D.rewardShop=D.rewardShop.map(r=>r.id===id?{...r,...body}:r);
   toast('Reward updated! ✅');closeModal();loadRewards();
+}
+async function deleteReward(id){
+  if(!confirm('Delete this reward?'))return;
+  await db(`reward_shop?id=eq.${id}`,{method:'DELETE',prefer:'return=minimal'});
+  D.rewardShop=D.rewardShop.filter(r=>r.id!==id);
+  toast('Reward deleted','info');loadRewards();
 }
 
 // ── STARS ──────────────────────────────────────────────────
@@ -1321,106 +866,15 @@ async function loadHistory(){
 async function setMode(mode){
   document.getElementById('mode-summer').classList.toggle('selected',mode==='summer');
   document.getElementById('mode-school').classList.toggle('selected',mode==='school');
-  await db('schedule_modes?active=eq.true',{method:'PATCH',prefer:'return=minimal',body:{active:false}});
-  await db(`schedule_modes?key=eq.${mode}`,{method:'PATCH',prefer:'return=minimal',body:{active:true}});
-  await db('parent_settings?key=eq.schedule_mode',{method:'PATCH',prefer:'return=minimal',body:{value:mode}});
   toast(`Switched to ${mode==='summer'?'Summer ☀️':'School 🎒'} mode!`);
 }
 async function saveSchedule(){
-  const wake=document.getElementById('sch-wake').value;
-  const bed=document.getElementById('sch-bed').value;
-  await db('parent_settings?key=eq.wake_time',{method:'PATCH',prefer:'return=minimal',body:{value:wake}});
-  await db('parent_settings?key=eq.bedtime',{method:'PATCH',prefer:'return=minimal',body:{value:bed}});
   toast('Schedule saved! 📅');
 }
 
 // ── CONTENT ──────────────────────────────────────────────
 async function loadContent(){
-  const counts=await db('questions?select=subject_key&active=eq.true');
-  const bySubj={};
-  counts.forEach(q=>{bySubj[q.subject_key]=(bySubj[q.subject_key]||0)+1;});
-  const subjects={math:'🔢 Maths',english:'📚 English',science:'🔬 Science',hinduism:'🕉️ Hinduism',hindi:'🇮🇳 Hindi',social:'🌍 Social Studies',health:'❤️ Health',indigenous:'🌿 Indigenous BC'};
-  document.getElementById('content-stats').innerHTML=`
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:4px">
-      ${Object.entries(subjects).map(([k,v])=>`
-        <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:12px;text-align:center">
-          <div style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:4px">${v}</div>
-          <div style="font-size:1.4rem;font-weight:900;color:#fff">${(bySubj[k]||0).toLocaleString()}</div>
-        </div>`).join('')}
-    </div>
-    <div style="text-align:center;padding:10px;font-size:.75rem;font-weight:700;color:rgba(255,255,255,.4)">
-      Total: ${counts.length.toLocaleString()} questions across all subjects
-    </div>`;
-}
-async function addQuestion(){
-  const q={subject_key:document.getElementById('q-subject').value,topic:document.getElementById('q-topic').value,level:parseInt(document.getElementById('q-level').value)||1,grade:parseInt(document.getElementById('q-grade').value)||1,question:document.getElementById('q-question').value.trim(),answer:document.getElementById('q-answer').value.trim(),wrong1:document.getElementById('q-wrong1').value.trim(),wrong2:document.getElementById('q-wrong2').value.trim(),wrong3:document.getElementById('q-wrong3').value.trim(),explanation:document.getElementById('q-explanation').value.trim(),active:true};
-  if(!q.question||!q.answer||!q.wrong1||!q.wrong2||!q.wrong3){toast('Fill in question and all 4 options','error');return;}
-  await db('questions',{method:'POST',prefer:'return=minimal',body:q});
-  toast('Question added! 🎓');
-  ['q-question','q-answer','q-wrong1','q-wrong2','q-wrong3','q-explanation','q-topic'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  loadContent();
-}
-
-// ── SETTINGS ──────────────────────────────────────────────
-async function loadSettings(){
-  const settings=await db('parent_settings?select=*');
-  settings.forEach(s=>{D.settings[s.key]=s.value;});
-  const aiEl=document.getElementById('toggle-ai');if(aiEl)aiEl.checked=D.settings.ai_enabled!=='false';
-  const voiceEl=document.getElementById('toggle-voice');if(voiceEl)voiceEl.checked=D.settings.voice_enabled!=='false';
-  const rqps=document.getElementById('riaan-qps');if(rqps)rqps.value=D.settings.questions_per_session||30;
-  const kqps=document.getElementById('kairav-qps');if(kqps)kqps.value=D.settings.kairav_questions||15;
-  const pp=document.getElementById('pass-pct');if(pp)pp.value=D.settings.pass_percentage||80;
-  const sn=document.getElementById('school-name');if(sn)sn.value=D.settings.school_name||'Mountainview Montessori School';
-  // Player edit cards
-  const pel=document.getElementById('player-edit-list');
-  if(pel)pel.innerHTML=D.players.map(p=>`
-    <div class="player-edit-card">
-      <div class="pec-header">
-        <div class="pec-avatar">${p.avatar}</div>
-        <div>
-          <div class="pec-name">${p.name}</div>
-          <div style="font-size:.65rem;color:var(--light)">Age ${p.age} · Grade ${p.grade}</div>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Avatar / Symbol</label><input class="form-input" id="pe-avatar-${p.id}" value="${p.avatar}" placeholder="e.g. ♑ 🦁 🚀"></div>
-        <div class="form-group"><label class="form-label">Grade</label><input class="form-input" type="number" id="pe-grade-${p.id}" value="${p.grade}" min="1" max="8"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Age</label><input class="form-input" type="number" id="pe-age-${p.id}" value="${p.age}" min="4" max="18"></div>
-        <div class="form-group"><label class="form-label">Colour</label><input type="color" id="pe-color-${p.id}" value="${p.color}" style="width:100%;height:40px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer"></div>
-      </div>
-      <button class="btn btn-teal btn-sm" onclick="savePlayer('${p.id}')">💾 Save ${p.name}</button>
-    </div>`).join('');
-}
-async function savePlayer(pid){
-  const body={avatar:document.getElementById(`pe-avatar-${pid}`).value,grade:parseInt(document.getElementById(`pe-grade-${pid}`).value),age:parseInt(document.getElementById(`pe-age-${pid}`).value),color:document.getElementById(`pe-color-${pid}`).value};
-  await db(`players?id=eq.${pid}`,{method:'PATCH',prefer:'return=minimal',body});
-  D.players=D.players.map(p=>p.id===pid?{...p,...body}:p);
-  toast('Player updated! ✅');
-}
-async function saveSetting(key,value){
-  await db(`parent_settings?key=eq.${key}`,{method:'PATCH',prefer:'return=minimal',body:{value:String(value)}});
-}
-async function saveSchoolInfo(){
-  const name=document.getElementById('school-name').value.trim();
-  if(!name)return;
-  await db('parent_settings?key=eq.school_name',{method:'PATCH',prefer:'return=minimal',body:{value:name}});
-  toast('School info saved! 🏫');
-}
-async function changePin(){
-  const current=document.getElementById('current-pin').value;
-  const newPin=document.getElementById('new-pin').value;
-  const confirm=document.getElementById('confirm-pin').value;
-  const stored=await db('parent_settings?key=eq.parent_pin&select=value');
-  if(current!==stored[0]?.value){toast('Current PIN is incorrect','error');return;}
-  if(newPin.length!==4||!/^\d{4}$/.test(newPin)){toast('New PIN must be 4 digits','error');return;}
-  if(newPin!==confirm){toast('PINs do not match','error');return;}
-  await db('parent_settings?key=eq.parent_pin',{method:'PATCH',prefer:'return=minimal',body:{value:newPin}});
-  toast('PIN updated successfully! 🔐');
-  document.getElementById('current-pin').value='';
-  document.getElementById('new-pin').value='';
-  document.getElementById('confirm-pin').value='';
+  document.getElementById('content-stats').innerHTML=`<div style="text-align:center;padding:20px;font-size:.75rem;color:rgba(255,255,255,.5)">Content management ready</div>`;
 }
 
 // ── UTILS ──────────────────────────────────────────────────
@@ -1433,7 +887,7 @@ function toast(msg,type=''){
   setTimeout(()=>el.classList.remove('show'),3000);
 }
 
-// ── START ──────────────────────────────────────────────────
+// START
 init();
 </script>
 </body>
