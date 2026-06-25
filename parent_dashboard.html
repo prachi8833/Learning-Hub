@@ -588,12 +588,24 @@ function openAddTask(){
       <div class="form-group"><label class="form-label">Icon</label><input class="form-input" id="nt-icon" placeholder="✅" value="✅"></div>
       <div class="form-group"><label class="form-label">Stars</label><input class="form-input" type="number" id="nt-stars" value="15" min="5"></div>
     </div>
-    <div class="form-group"><label class="form-label">Time Block</label>
-      <select class="form-input form-select" id="nt-block">
-        <option value="morning">🌅 Morning</option>
-        <option value="afternoon">☀️ Afternoon</option>
-        <option value="evening">🌙 Evening</option>
-      </select>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Time Block</label>
+        <select class="form-input form-select" id="nt-block">
+          <option value="morning">🌅 Morning</option>
+          <option value="learning">🧠 Learning</option>
+          <option value="afternoon">☀️ Afternoon</option>
+          <option value="evening">🌙 Evening</option>
+          <option value="bedtime">💤 Bedtime</option>
+          <option value="weekly">📅 Weekly</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Assigned To</label>
+        <select class="form-input form-select" id="nt-assigned">
+          <option value="both">👥 Both Kids</option>
+          <option value="Riaan">♑ Riaan Only</option>
+          <option value="Kairav">♈ Kairav Only</option>
+        </select>
+      </div>
     </div>
     <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitAddTask()">➕ Add Task</button>
   `);
@@ -601,7 +613,7 @@ function openAddTask(){
 async function submitAddTask(){
   const title=document.getElementById('nt-title').value.trim();
   if(!title){toast('Please enter a task name','error');return;}
-  const body={title,icon:document.getElementById('nt-icon').value||'✅',stars_value:parseInt(document.getElementById('nt-stars').value)||15,time_block:document.getElementById('nt-block').value,active:true};
+  const body={title,icon:document.getElementById('nt-icon').value||'✅',stars_value:parseInt(document.getElementById('nt-stars').value)||15,time_block:document.getElementById('nt-block').value,assigned_to:document.getElementById('nt-assigned').value,day_type:'both',active:true};
   await db('tasks',{method:'POST',prefer:'return=minimal',body});
   const fresh=await db('tasks?select=*&order=sort_order');
   if(Array.isArray(fresh)&&fresh.length)D.tasks=fresh;
