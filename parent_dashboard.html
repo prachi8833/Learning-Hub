@@ -351,25 +351,150 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
       </div>
     </div>
 
-    <!-- ══ WISH LIST ══ -->
-    <div id="section-wishlist" class="pd-section">
-      <div class="two-col">
-        <div class="card">
-          <div class="card-title">
-            <span>♑ Riaan's Wish List</span>
-            <button class="btn btn-teal btn-sm" onclick="openAddWish('riaan')">+ Add</button>
-          </div>
-          <div id="wish-riaan"></div>
+    // ── WISH LIST ──────────────────────────────────────────────
+let D_wishFilter='all';
+async function loadWishList(){
+  const wish=await db('wish_list?active=eq.true&gifted=eq.false&select=*&order=created_at.desc');
+  D.wishList=wish;
+  renderWishList();
+}
+function renderWishList(){
+  let items=D.wishList;
+  if(D_wishFilter!=='all')items=items.filter(w=>w.assigned_to===D_wishFilter||w.assigned_to==='both');
+  
+  const el=document.getElementById('wish-unified-list');
+  if(!items.length){el.innerHTML=`<div class="empty-state"><span class="es-icon">🎁</span>No wish items found</div>`;return;}
+  
+  el.innerHTML=items.map(w=>{
+    const player=D.players.find(p=>p.id===w.player_id);
+    const forBadge=w.assigned_to==='both'?'<span class="badge-pill purple">👥 Both Kids</span>':w.assigned_to==='riaan'?'<span class="badge-pill blue">♑ Riaan</span>':'<span class="badge-pill purple">♈ Kairav</span>';
+    const progress=player?Math.min(100,Math.round(Math.max(0,(await getPlayerStars(player.id)||0)/w.star_cost*100))):0;
+    return `<div class="wish-row">
+      <div class="wish-thumb">${w.image_url?`<img src="${w.image_url}">`:'🎁'}</div>
+      <div class="wish-info">
+        <div class="wish-name">${w.title}</div>
+        <div class="wish-cost" style="display:flex;gap:8px;align-items:center;margin-top:4px">
+          <span>${w.star_cost.toLocaleString()} ⭐</span>
+          ${forBadge}
         </div>
-        <div class="card">
-          <div class="card-title">
-            <span>♈ Kairav's Wish List</span>
-            <button class="btn btn-purple btn-sm" onclick="openAddWish('kairav')">+ Add</button>
-          </div>
-          <div id="wish-kairav"></div>
-        </div>
+        <div class="wish-progress" style="margin-top:8px"><div class="wish-progress-fill" style="width:${progress}%"></div></div>
+      </div>
+      <div class="tr-actions">
+        <button class="btn btn-green btn-icon btn-sm" onclick="markGifted('${w.id}')" title="Mark as gifted">🎀</button>
+        <button class="btn btn-ghost btn-icon btn-sm" onclick="editWish('${w.id}')" title="Edit">✏️</button>
+        <button class="btn btn-red btn-icon btn-sm" onclick="deleteWish('${w.id}')" title="Delete">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function filterWishFor(f,btn){
+  D_wishFilter=f;
+  document.querySelectorAll('#section-wishlist .tab-btn').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');
+  renderWishList();
+}
+function openAddWish(){
+  showModal(`
+    <div class="modal-title">🎁 Add Wish List Item <button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="form-group"><label class="form-label">Gift Name</label><input class="form-input" id="wl-title" placeholder="e.g. LEGO Technic Set"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Star Cost</label><input class="form-input" type="number" id="wl-cost" placeholder="e.g. 2500" min="100"></div>
+      <div class="form-group"><label class="form-label">For...</label>
+        <select class="form-input form-select" id="wl-for">
+          <option value="both">👥 Both Kids</option>
+          <option value="riaan">♑ Riaan Only</option>
+          <option value="kairav">♈ Kairav Only</option>
+        </select>
       </div>
     </div>
+    <div class="form-group"><label class="form-label">Description (optional)</label><input class="form-input" id="wl-desc" placeholder="e.g. The big one from the Lego website"></div>
+    <div class="form-group"><label class="form-label">📸 Upload Image (optional)</label><input class="form-input" type="file" id="wl-img" accept="image/*"></div>
+    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitAddWish()">🎁 Add to Wish List</button>
+  `);
+}
+async function submitAddWish(){
+  const title=document.getElementById('wl-title').value.trim();
+  const cost=parseInt(document.getElementById('wl-cost').value);
+  const assigned=document.getElementById('wl-for').value;
+  if(!title||!cost){toast('Fill in name and star cost','error');return;}
+  
+  let imageUrl='';
+  const fileInput=document.getElementById('wl-img');
+  if(fileInput.files.length>0){
+    const file=fileInput.files[0];
+    const fileName=`${Date.now()}-${file.name}`;
+    try{
+      const formData=new FormData();
+      formData.append('',file);
+      const uploadRes=await fetch(`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/wish-images/${fileName}`,{
+        method:'POST',
+        headers:{'authorization':`Bearer ${KEY}`},
+        body:file
+      });
+      if(uploadRes.ok){
+        imageUrl=`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/public/wish-images/${fileName}`;
+      }
+    }catch(e){toast('Image upload failed, but item created','info');}
+  }
+  
+  const body={player_id:D.players.find(p=>p.name.toLowerCase()===assigned.split(' ')[0].toLowerCase())?.id||D.players[0].id,title,star_cost:cost,assigned_to:assigned,description:document.getElementById('wl-desc').value,active:true,gifted:false};
+  if(imageUrl)body.image_url=imageUrl;
+  await db('wish_list',{method:'POST',prefer:'return=minimal',body});
+  toast('Added to wish list! 🎁');closeModal();loadWishList();
+}
+async function markGifted(id){
+  if(!confirm('Mark this as gifted? It will be removed from the wish list.'))return;
+  await db(`wish_list?id=eq.${id}`,{method:'PATCH',prefer:'return=minimal',body:{gifted:true,gifted_at:new Date().toISOString()}});
+  toast('Marked as gifted! 🎀');loadWishList();
+}
+async function editWish(id){
+  const w=D.wishList.find(x=>x.id===id);if(!w)return;
+  showModal(`
+    <div class="modal-title">✏️ Edit Wish Item <button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="form-group"><label class="form-label">Gift Name</label><input class="form-input" id="ew-title" value="${w.title}"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Star Cost</label><input class="form-input" type="number" id="ew-cost" value="${w.star_cost}"></div>
+      <div class="form-group"><label class="form-label">For...</label>
+        <select class="form-input form-select" id="ew-for">
+          <option value="both" ${w.assigned_to==='both'?'selected':''}>👥 Both Kids</option>
+          <option value="riaan" ${w.assigned_to==='riaan'?'selected':''}>♑ Riaan Only</option>
+          <option value="kairav" ${w.assigned_to==='kairav'?'selected':''}>♈ Kairav Only</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">📸 Update Image (optional)</label><input class="form-input" type="file" id="ew-img" accept="image/*"><div style="font-size:.65rem;color:var(--light);margin-top:4px">${w.image_url?'✓ Has image':'No image'}</div></div>
+    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitEditWish('${id}')">💾 Save</button>
+  `);
+}
+async function submitEditWish(id){
+  const body={title:document.getElementById('ew-title').value,star_cost:parseInt(document.getElementById('ew-cost').value),assigned_to:document.getElementById('ew-for').value};
+  const fileInput=document.getElementById('ew-img');
+  if(fileInput.files.length>0){
+    const file=fileInput.files[0];
+    const fileName=`${Date.now()}-${file.name}`;
+    try{
+      const uploadRes=await fetch(`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/wish-images/${fileName}`,{
+        method:'POST',
+        headers:{'authorization':`Bearer ${KEY}`},
+        body:file
+      });
+      if(uploadRes.ok){
+        body.image_url=`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/public/wish-images/${fileName}`;
+      }
+    }catch(e){}
+  }
+  await db(`wish_list?id=eq.${id}`,{method:'PATCH',prefer:'return=minimal',body});
+  toast('Wish item updated! ✅');closeModal();loadWishList();
+}
+async function deleteWish(id){
+  if(!confirm('Remove this from the wish list?'))return;
+  await db(`wish_list?id=eq.${id}`,{method:'PATCH',prefer:'return=minimal',body:{active:false}});
+  toast('Removed from wish list','info');loadWishList();
+}
+async function getPlayerStars(pid){
+  const logs=await db(`stars_log?player_id=eq.${pid}&select=amount`);
+  return Math.max(0,logs.reduce((a,l)=>a+l.amount,0));
+}
 
     <!-- ══ REWARD SHOP ══ -->
     <div id="section-rewards" class="pd-section">
