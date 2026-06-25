@@ -719,12 +719,12 @@ async function submitAddWish(){
     const file=fileInput.files[0];
     const fileName=`${Date.now()}-${file.name}`;
     try{
-      const uploadRes=await fetch(`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/wish-images/${fileName}`,{
+      const uploadRes=await fetch(`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/Wish-images/${fileName}`,{
         method:'POST',
         headers:{'authorization':`Bearer ${KEY}`},
         body:file
       });
-      if(uploadRes.ok){imageUrl=`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/public/wish-images/${fileName}`;}
+      if(uploadRes.ok){imageUrl=`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/public/Wish-images/${fileName}`;}
     }catch(e){toast('Image upload failed, but item created','info');}
   }
   const body={title,star_cost:cost,assigned_to:assigned,description:document.getElementById('wl-desc').value,active:true,gifted:false};
