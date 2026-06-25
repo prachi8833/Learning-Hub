@@ -1225,7 +1225,7 @@ async function loadPlayer(){
       db(`streaks?player_id=eq.${p.id}`),
       db('subjects?active=eq.true&order=sort_order'),
       db('tasks?active=eq.true&order=sort_order'),
-      db(`wish_list?player_id=eq.${p.id}&active=eq.true&gifted=eq.false`),
+      db(`wish_list?active=eq.true&gifted=eq.false&order=created_at.desc`),
       db(`active_goals?player_id=eq.${p.id}`),
       db(`level_progress?player_id=eq.${p.id}`),
       db('badges?active=eq.true'),
@@ -1370,7 +1370,10 @@ async function renderWeekLB(){
 
 function renderHWish(){
   const el=document.getElementById('h-wish');if(!el)return;
-  const items=S.wishList.length?S.wishList:[{title:'LEGO Set',star_cost:2500},{title:'Craft Kit',star_cost:1000},{title:'Board Game',star_cost:1200}];
+  // Filter wishes: show if assigned to current player OR assigned to "both"
+  const items=S.wishList.filter(w=>!w.assigned_to||w.assigned_to==='both'||w.assigned_to===S.player.name.toLowerCase()).length?
+    S.wishList.filter(w=>!w.assigned_to||w.assigned_to==='both'||w.assigned_to===S.player.name.toLowerCase())
+    :[{title:'LEGO Set',star_cost:2500},{title:'Craft Kit',star_cost:1000},{title:'Board Game',star_cost:1200}];
   el.innerHTML=items.map(w=>`<div class="wi ${S.activeGoal?.wish_list_id===w.id?'goal-active':''}" onclick="setGoal('${w.id||''}')"><div class="wi-img">${w.image_url?`<img src="${w.image_url}">`:'🎁'}</div><div class="wi-nm">${w.title}</div><div class="wi-co">${(w.star_cost||0).toLocaleString()} ⭐</div></div>`).join('');
 }
 
