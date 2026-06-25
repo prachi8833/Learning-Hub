@@ -464,7 +464,7 @@ body{background:var(--cream);color:var(--text)}
 .dg-gift{font-size:1.9rem;float:right;margin-top:-28px}
 
 /* READING */
-#readingScreen{position:fixed;inset:0;z-index:900;background:var(--cream);display:none;flex-direction:column}
+#readingScreen{position:fixed;inset:0;z-index:9999;background:var(--cream);display:none;flex-direction:column;overflow-y:auto}
 .rd-header{background:linear-gradient(135deg,#1A6B5A,#2BBFB8);padding:18px 22px;display:flex;align-items:center;gap:14px;flex-shrink:0}
 .rd-back{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .rd-title{flex:1;color:#fff}
@@ -514,7 +514,7 @@ body{background:var(--cream);color:var(--text)}
 .rd-no-support{background:#FDECEA;border-radius:var(--r);padding:16px;text-align:center;font-size:.82rem;font-weight:700;color:var(--red)}
 
 /* QUIZ */
-#quiz{position:fixed;inset:0;z-index:900;background:var(--cream);display:none;flex-direction:column}
+#quiz{position:fixed;inset:0;z-index:9999;background:var(--cream);display:none;flex-direction:column;overflow-y:auto}
 .qt{background:linear-gradient(135deg,#0D5C4A,#2BBFB8);padding:18px 22px 22px;display:flex;align-items:center;gap:13px;flex-shrink:0}
 .qb-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .qs-nm{font-size:.95rem;font-weight:900;color:#fff}
@@ -539,7 +539,7 @@ body{background:var(--cream);color:var(--text)}
 .q-nxt:hover{transform:translateY(-2px)}
 
 /* RESULTS */
-#res{position:fixed;inset:0;z-index:950;background:linear-gradient(160deg,#0A1F16,#1A6B5E);display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:40px 22px}
+#res{position:fixed;inset:0;z-index:10000;background:linear-gradient(160deg,#0A1F16,#1A6B5E);display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:40px 22px}
 .res-tr{font-size:5.5rem;animation:taraFloat 2s ease-in-out infinite}
 .res-ttl{font-size:1.7rem;font-weight:900;color:#fff}
 .res-sc{font-size:3.8rem;font-weight:900;color:var(--amber);line-height:1}
@@ -658,7 +658,7 @@ body{background:var(--cream);color:var(--text)}
       <div class="star-dot" style="width:3px;height:3px;top:30%;left:48%;--d:2.8s;--dl:1.5s;background:rgba(246,192,74,.6)"></div>
     </div>
     <div class="sb-logo">
-      <span class="sb-logo-icon">🌿</span>
+      <img src="https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/RK%20logo.png" style="width:36px;height:36px;object-fit:contain" alt="RK">
       <div class="sb-logo-title">Learning<br>Hub</div>
       <div class="sb-logo-sub">BC Curriculum · Gr. 1–5</div>
     </div>
@@ -705,7 +705,7 @@ body{background:var(--cream);color:var(--text)}
 
       <!-- HOME -->
       <div id="homeScreen" class="screen active">
-        <div class="hero">
+        <div class="hero" style="background-image:url('https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/hero-jungle-day.png');background-size:cover;background-position:center">
           <div class="hero-art">
             <div class="h-leaf">🌿</div>
             <div class="h-lan l">🏮</div>
@@ -717,7 +717,7 @@ body{background:var(--cream);color:var(--text)}
             <div class="h-name">Ready to learn today?</div>
             <div class="h-sub">Every lesson is a step towards your dreams! <b>✨</b></div>
           </div>
-          <div class="h-tara">⭐</div>
+          <img class="h-tara" src="https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/Star%20home%20-%20no%20bg.png" alt="Tara" style="width:120px;height:120px;object-fit:contain">
         </div>
 
         <div class="stats-row">
@@ -800,7 +800,7 @@ body{background:var(--cream);color:var(--text)}
       </div><!-- /home -->
 
       <!-- LEARN -->
-      <div id="learnScreen" class="screen">
+      <div id="learnScreen" class="screen" style="background-image:url('https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/Learn-BG.png');background-size:cover;background-position:top center">
         <div class="learn-layout">
           <div class="lleft">
             <div class="search-bar">
@@ -1196,6 +1196,10 @@ body{background:var(--cream);color:var(--text)}
 </div>
 <script>
 const SB='https://tnhgihzfwqsflpueivwe.supabase.co',KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
+const IMG_BASE='https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/';
+const subjectImages={math:'Maths.jpg',english:'English.jpg',science:'Science.jpg',social:'Socail Studies.jpg',hinduism:'Hinduism.jpg',hindi:'Hindi.jpg',gujarat:'Festivals.jpg',music:'Music.jpg',coding:'Coding.jpg',health:'Life Skills.jpg',clock:'Maths.jpg',indigenous:'Canada.jpg',space:'Space.jpg',weather:'Weather.jpg',animals:'Animals.jpg',plants:'Plants.jpg',body:'Human Body.jpg',earth:'Earth Science.jpg',art:'Art.jpg',stories:'Stories.jpg',values:'Values.jpg',world:'World Geography.jpg'};
+const streakPlants=['01_Seed.png','02_Sprout.png','03_Tiny_Plant.png','04_Bud.png','05_Small_Flower.png','06_Blooming.png','07_Purple_Flower.png','08_Sunflower.png','09_White_Tree.png','10_Apple_Tree.png','11_Star_Tree.png','12_Rainbow_Tree.png'];
+function subjectImg(key){const file=subjectImages[key]||'Science.jpg';return IMG_BASE+encodeURIComponent(file);}
 const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':o.prefer||'return=representation',...o.headers},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined}).then(r=>r.json()).catch(()=>[]);
 let S={player:null,players:[],stars:0,streak:0,subjects:[],tasks:[],wishList:[],activeGoal:null,levelProgress:{},badges:[],earnedBadges:[],starConfig:{},rewardShop:[],quotes:{},calY:new Date().getFullYear(),calM:new Date().getMonth(),quizSubj:null,quizBatch:[],quizIdx:0,quizScore:0,quizSE:0,quizAns:false,pin:'1820',pinE:'',tab:'home',tc:{}};
 function getQuote(mood){
@@ -1380,16 +1384,15 @@ function renderPathMap(){
 
 function renderHSubjects(){
   const el=document.getElementById('h-sg');if(!el)return;
-  const colors=['#7C5CBF','#3E8FD0','#1AA39B','#E0883C','#C2185B','#E0883C'];
-  const bgs=['#EDE0FF','#E6F1FB','#E2F4F1','#FCEEDE','#FCE4EC','#FFF3E0'];
+  if(!S.subjects||!S.subjects.length){el.innerHTML='<div style="color:var(--light);font-size:.8rem;padding:10px">Loading subjects...</div>';return;}
   el.innerHTML=S.subjects.slice(0,7).map((s,i)=>{
     const lv=S.levelProgress[s.key]?.current_level||1;
-    return `<div class="st" style="background:${s.bg_color||bgs[i]};--sc:${s.color||colors[i]};--sbg:${s.bg_color||bgs[i]}" onclick="startSubject('${s.key}')">
-      <span class="st-ico">${s.icon}</span>
-      <div class="st-nm">${s.name}</div>
-      <div class="st-lv">${lv}</div>
+    const img=subjectImg(s.key);
+    return `<div class="st" onclick="startSubject('${s.key}')" style="background-image:url('${img}');background-size:cover;background-position:center;position:relative;overflow:hidden;">
+      <div style="position:absolute;inset:0;background:${s.color||'rgba(0,0,0,0.45)'};opacity:0.65;border-radius:inherit"></div>
+      <div style="position:relative;z-index:1"><span class="st-ico">${s.icon}</span><div class="st-nm" style="color:#fff">${s.name}</div><div class="st-lv" style="background:rgba(255,255,255,.2);color:#fff">${lv}</div></div>
     </div>`;
-  }).join('')+`<div class="st" style="background:#F5F5F5;--sc:#999;--sbg:#EEE" onclick="navTo('learn')"><span class="st-ico">⋯</span><div class="st-nm">More</div><div class="st-lv">All</div></div>`;
+  }).join('')+`<div class="st" onclick="navTo('learn')" style="background:#F5F5F5"><span class="st-ico">⋯</span><div class="st-nm">More</div><div class="st-lv" style="background:#eee;color:#888">All</div></div>`;
 }
 
 async function renderWeekLB(){
@@ -1511,8 +1514,15 @@ function buildWS(){
 
 function buildGarden(){
   const el=document.getElementById('garden-row');if(!el)return;
-  const fl=[{e:'🌸',d:'Mon'},{e:'🌼',d:'Tue'},{e:'🌻',d:'Wed'},{e:'🌺',d:'Thu'},{e:'🌱',d:'Fri'},{e:'🌿',d:'Sat'},{e:'🌷',d:'Today'}];
-  el.innerHTML=fl.map((f,i)=>`<div class="fp"><span class="fe" style="--fd:${2+i*.3}s;--fdl:${i*.2}s">${f.e}</span><div class="fd">${f.d}</div></div>`).join('');
+  const streak=S.streak||0;
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Today'];
+  el.innerHTML=days.map((d,i)=>{
+    const plantIdx=Math.min(i<streak?i:0,11);
+    return `<div class="fp">
+      <img src="${IMG_BASE+streakPlants[plantIdx]}" style="width:40px;height:40px;object-fit:contain" class="fe" alt="${d}">
+      <div class="fd">${d}</div>
+    </div>`;
+  }).join('');
 }
 
 // LEARN
@@ -1537,7 +1547,7 @@ function renderIslands(){
   el.innerHTML=S.subjects.slice(0,6).map((s,i)=>{
     const lv=S.levelProgress[s.key]?.current_level||1;
     const pct=Math.round((lv-1)/10*100);
-    return `<div class="sic" style="--sicbg:${s.bg_color||bgs[i]};--sicc:${s.color||colors[i]}" onclick="startSubject('${s.key}')">
+    return `<div class="sic" style="--sicbg:${s.bg_color||bgs[i]};--sicc:${s.color||colors[i]};background-image:url('${subjectImg(s.key)}');background-size:cover;background-position:center" onclick="startSubject('${s.key}')">
       <span class="sic-art">${s.icon}</span>
       <div class="sic-nm">${s.name}</div>
       <span class="sic-pill">Level ${lv}</span>
@@ -1712,6 +1722,8 @@ async function startSubject(key){
   const s=S.subjects.find(x=>x.key===key);if(!s)return;
   S.quizSubj=s;
   document.getElementById('quiz').style.display='flex';
+  document.getElementById('mob-nav').style.display='none';
+  document.body.style.overflow='hidden';
   document.getElementById('q-subj').textContent=s.name;
   const per=S.player?.name==='Kairav'?15:30;
   const lv=S.levelProgress[key]?.current_level||1;
@@ -1768,7 +1780,11 @@ async function showQRes(){
   document.getElementById('r-mg').textContent=perf?getQuote('perfect_score'):dist?getQuote('level_up'):passed?getQuote('level_up'):getQuote('wrong_answer');
 }
 function retryQuiz(){document.getElementById('res').style.display='none';startSubject(S.quizSubj.key);}
-function closeQuiz(){document.getElementById('quiz').style.display='none';}
+function closeQuiz(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('mob-nav').style.display='';
+  document.body.style.overflow='';
+}
 function closeRes(){document.getElementById('res').style.display='none';renderHome();}
 
 // PIN
