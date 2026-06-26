@@ -1185,7 +1185,7 @@ const SCREEN_BG={
 function setBG(screen){
   const url=SCREEN_BG[screen]||SCREEN_BG.home;
   document.getElementById('bg-layer').style.backgroundImage=`url('${url}')`;
-  SceneAmbience.load(screen);
+  if(typeof SceneAmbience!=='undefined')SceneAmbience.load(screen);
 }
 
 const SB='https://tnhgihzfwqsflpueivwe.supabase.co',KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
@@ -1206,7 +1206,7 @@ const FALLBACK_TASKS=[{id:'t1',title:'Morning Reading',active:true,sort_order:1,
 const FALLBACK_SHOP=[];
 
 async function init(){
-  SceneAmbience.init();
+  if(typeof SceneAmbience!=='undefined')SceneAmbience.init();
   Object.values(SCREEN_BG).forEach(u=>{new Image().src=u;});
   buildCalendar();buildGarden();buildWS();buildSMD();buildCountdown();
   try{
