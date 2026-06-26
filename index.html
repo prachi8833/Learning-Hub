@@ -728,6 +728,7 @@ body{background:#0a1a10}
             <div class="h-greet" id="h-greet">Namaste, Riaan! 🙏</div>
             <div class="h-name">Ready to learn today?</div>
             <div class="h-sub">Every lesson is a step towards your dreams! <b>✨</b></div>
+<button onclick="startDailyMix()" style="margin-top:14px;padding:13px 28px;border:none;border-radius:14px;background:linear-gradient(135deg,#F6C04A,#E8A020);color:#1A2B1E;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(246,192,74,.4);display:flex;align-items:center;gap:8px">🚀 Start Today's Learning</button>
           </div>
           <img class="h-tara" src="https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/Star%20home%20-%20no%20bg.png" alt="Tara">
         </div>
@@ -1196,6 +1197,7 @@ let S={player:null,players:[],stars:0,streak:0,subjects:[],tasks:[],wishList:[],
 function getQuote(m){const p=S.quotes[m];if(p&&p.length){const q=p[Math.floor(Math.random()*p.length)];return q.emoji+' '+q.quote;}return{success:'⭐ Shabash!',wrong_answer:'🌱 Ek aur try!',level_up:'🏆 Level up!',daily_start:'🙏 Namaste! Ready?',perfect_score:'🎊 Perfect!'}[m]||'⭐ Keep going!';}
 const today=()=>new Date().toISOString().split('T')[0];
 const esc=s=>(s||'').replace(/'/g,"\\'");
+const gradeAhead=(g)=>Math.min(g+2,6);
 const shuf=a=>{const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;};
 
 const FALLBACK_SUBJECTS=[{id:'s1',key:'math',name:'Math',icon:'🔢',color:'#29B0B8',bg_color:'#E8F8F4',active:true,sort_order:1},{id:'s2',key:'reading',name:'Reading',icon:'📚',color:'#8266DE',bg_color:'#F0ECFD',active:true,sort_order:2},{id:'s3',key:'science',name:'Science',icon:'🔬',color:'#3E8F3E',bg_color:'#EAF4EA',active:true,sort_order:3},{id:'s4',key:'writing',name:'Writing',icon:'✏️',color:'#E08833',bg_color:'#FDF3E7',active:true,sort_order:4},{id:'s5',key:'social',name:'Social Studies',icon:'🌍',color:'#C2185B',bg_color:'#FCE4EC',active:true,sort_order:5},{id:'s6',key:'coding',name:'Coding',icon:'💻',color:'#1565C0',bg_color:'#E3F2FD',active:true,sort_order:6}];
@@ -1271,6 +1273,27 @@ function navTo(tab){
   updateTB();
 }
 function renderAll(){updateTB();renderHome();refreshData();}
+  async function startDailyMix(){
+  const subjects=['math','english','science','social','hinduism','health','hindi'];
+  const counts={math:10,english:10,science:8,social:7,hindi:6,hinduism:5,health:4};
+  const targetGrade=gradeAhead(S.player.grade);
+  let allQ=[];
+  for(const key of subjects){
+    const qs=await db(`questions?subject_key=eq.${key}&active=eq.true&grade=lte.${targetGrade}&limit=80`);
+    if(Array.isArray(qs)&&qs.length){
+      const picked=shuf(qs).slice(0,counts[key]||5);
+      allQ=[...allQ,...picked];
+    }
+  }
+  if(!allQ.length){showMod(`<div style="text-align:center;padding:12px"><div style="font-size:3rem;margin-bottom:9px">🚧</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:14px">No questions found!</div><button class="mb" onclick="closeMod()">OK</button></div>`);return;}
+  allQ=shuf(allQ);
+  S.quizSubj={key:'daily',name:'Daily Mix 🌟',icon:'🌟',color:'#F6C04A'};
+  S.quizBatch=allQ;S.quizIdx=0;S.quizScore=0;S.quizSE=0;
+  document.getElementById('quiz').style.display='flex';
+  if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='none';
+  document.getElementById('q-subj').textContent='Daily Mix 🌟';
+  loadQ();
+}
 async function refreshData(){
   if(!S.player)return;
   const p=S.player;
@@ -1601,8 +1624,10 @@ async function startSubject(key){
   if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='none';
   document.getElementById('q-subj').textContent=s.name;
   const lv=S.levelProgress[key]?.current_level||1;
+  const targetGrade=gradeAhead(S.player.grade);
   try{
-    let qs=await db(`questions?subject_key=eq.${key}&active=eq.true&level=lte.${Math.min(lv+1,10)}&order=random()&limit=15`);
+    let qs=await db(`questions?subject_key=eq.${key}&active=eq.true&grade=lte.${targetGrade}&limit=50`);
+    if(Array.isArray(qs)&&qs.length)qs=shuf(qs).slice(0,15);
     if(!Array.isArray(qs)||!qs.length)qs=[{id:'q1',subject_key:'math',grade:3,level:1,topic:'addition',question:'What is 5 + 7?',answer:'12',wrong1:'10',wrong2:'11',wrong3:'13',explanation:'5 + 7 = 12',active:true},{id:'q2',subject_key:'math',grade:1,level:1,topic:'counting',question:'What is 2 + 3?',answer:'5',wrong1:'4',wrong2:'6',wrong3:'7',explanation:'2 + 3 = 5',active:true},{id:'q3',subject_key:'science',grade:3,level:1,topic:'plants',question:'What do plants need to grow?',answer:'sunlight, water and soil',wrong1:'darkness and ice',wrong2:'only water',wrong3:'only sunlight',explanation:'Plants need sunlight, water, and soil',active:true},{id:'q4',subject_key:'reading',grade:3,level:1,topic:'vocabulary',question:'What word means the opposite of hot?',answer:'cold',wrong1:'warm',wrong2:'cool',wrong3:'boiling',explanation:'Hot and cold are opposites',active:true},{id:'q5',subject_key:'social',grade:3,level:1,topic:'canada',question:'What is the capital city of Canada?',answer:'Ottawa',wrong1:'Toronto',wrong2:'Vancouver',wrong3:'Montreal',explanation:'Ottawa is the capital city',active:true},{id:'q6',subject_key:'coding',grade:3,level:1,topic:'basics',question:'What do we call instructions for a computer?',answer:'program',wrong1:'story',wrong2:'picture',wrong3:'song',explanation:'A program tells computers what to do',active:true},{id:'q7',subject_key:'writing',grade:3,level:1,topic:'punctuation',question:'Which mark ends a question?',answer:'?',wrong1:'.',wrong2:'!',wrong3:',',explanation:'A question mark ends a question',active:true}].filter(q=>q.subject_key===key);
     if(!qs.length){document.getElementById('quiz').style.display='none';showMod(`<div style="text-align:center;padding:12px"><div style="font-size:3rem;margin-bottom:9px">🚧</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Questions Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">Adding questions for <strong>${s.name}</strong> soon!</div><button class="mb" onclick="closeMod()">OK!</button></div>`);return;}
     S.quizBatch=shuf(qs);S.quizIdx=0;S.quizScore=0;S.quizSE=0;loadQ();
