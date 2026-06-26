@@ -1279,7 +1279,7 @@ function renderAll(){updateTB();renderHome();refreshData();}
   const targetGrade=gradeAhead(S.player.grade);
   let allQ=[];
   for(const key of subjects){
-    const qs=await db(`questions?subject_key=eq.${key}&active=eq.true&grade=lte.${targetGrade}&limit=80`);
+    const qs=await db(`questions?subject_key=eq.${key}&grade=lte.${targetGrade}&limit=80`);
     if(Array.isArray(qs)&&qs.length){
       const picked=shuf(qs).slice(0,counts[key]||5);
       allQ=[...allQ,...picked];
@@ -1626,7 +1626,7 @@ async function startSubject(key){
   const lv=S.levelProgress[key]?.current_level||1;
   const targetGrade=gradeAhead(S.player.grade);
   try{
-    let qs=await db(`questions?subject_key=eq.${key}&active=eq.true&grade=lte.${targetGrade}&limit=50`);
+    let qs=await db(`questions?subject_key=eq.${key}&grade=lte.${targetGrade}&limit=50`);
     if(Array.isArray(qs)&&qs.length)qs=shuf(qs).slice(0,15);
     if(!Array.isArray(qs)||!qs.length)qs=[{id:'q1',subject_key:'math',grade:3,level:1,topic:'addition',question:'What is 5 + 7?',answer:'12',wrong1:'10',wrong2:'11',wrong3:'13',explanation:'5 + 7 = 12',active:true},{id:'q2',subject_key:'math',grade:1,level:1,topic:'counting',question:'What is 2 + 3?',answer:'5',wrong1:'4',wrong2:'6',wrong3:'7',explanation:'2 + 3 = 5',active:true},{id:'q3',subject_key:'science',grade:3,level:1,topic:'plants',question:'What do plants need to grow?',answer:'sunlight, water and soil',wrong1:'darkness and ice',wrong2:'only water',wrong3:'only sunlight',explanation:'Plants need sunlight, water, and soil',active:true},{id:'q4',subject_key:'reading',grade:3,level:1,topic:'vocabulary',question:'What word means the opposite of hot?',answer:'cold',wrong1:'warm',wrong2:'cool',wrong3:'boiling',explanation:'Hot and cold are opposites',active:true},{id:'q5',subject_key:'social',grade:3,level:1,topic:'canada',question:'What is the capital city of Canada?',answer:'Ottawa',wrong1:'Toronto',wrong2:'Vancouver',wrong3:'Montreal',explanation:'Ottawa is the capital city',active:true},{id:'q6',subject_key:'coding',grade:3,level:1,topic:'basics',question:'What do we call instructions for a computer?',answer:'program',wrong1:'story',wrong2:'picture',wrong3:'song',explanation:'A program tells computers what to do',active:true},{id:'q7',subject_key:'writing',grade:3,level:1,topic:'punctuation',question:'Which mark ends a question?',answer:'?',wrong1:'.',wrong2:'!',wrong3:',',explanation:'A question mark ends a question',active:true}].filter(q=>q.subject_key===key);
     if(!qs.length){document.getElementById('quiz').style.display='none';showMod(`<div style="text-align:center;padding:12px"><div style="font-size:3rem;margin-bottom:9px">🚧</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Questions Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">Adding questions for <strong>${s.name}</strong> soon!</div><button class="mb" onclick="closeMod()">OK!</button></div>`);return;}
@@ -1786,6 +1786,7 @@ function closeReading(){
   if(RD.recognition){RD.recognition.onend=null;try{RD.recognition.stop();}catch(e){}}
   RD.listening=false;renderHome();
 }
+
 init();
 </script>
 </body>
