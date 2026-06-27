@@ -181,16 +181,14 @@ body{background:#060e18;display:flex;flex-direction:column;align-items:center;ju
   box-shadow:0 3px 12px rgba(43,191,184,.3)}
 
 
-/* QUESTION IMAGE */
-.q-image-wrap{margin-bottom:12px;border-radius:13px;overflow:hidden;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-  display:none;position:relative}
-.q-image-wrap.loaded{display:block}
-.q-image-wrap img{width:100%;max-height:180px;object-fit:cover;display:block;border-radius:12px}
-.q-image-caption{font-size:.58rem;font-weight:700;color:rgba(255,255,255,.35);
-  padding:5px 10px;text-align:center;background:rgba(0,0,0,.3)}
-.q-image-loading{height:100px;display:flex;align-items:center;justify-content:center;
-  font-size:.72rem;font-weight:700;color:rgba(255,255,255,.25)}
+
+/* SHOW PICTURE BUTTON */
+.show-pic-btn{margin-top:10px;width:100%;padding:9px;
+  background:rgba(0,245,255,.07);border:1.5px solid rgba(0,245,255,.18);
+  border-radius:11px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;
+  color:rgba(0,245,255,.7);cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:6px}
+.show-pic-btn:hover{background:rgba(0,245,255,.15);border-color:var(--cyan);color:var(--cyan);transform:translateY(-1px)}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 @keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes popIn{0%{transform:scale(.94)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
@@ -318,7 +316,6 @@ body{background:#060e18;display:flex;flex-direction:column;align-items:center;ju
         <span class="topic-tag" id="g-topic-tag">Classification</span>
         <span class="q-grade" id="g-grade-tag">Grade 3</span>
       </div>
-      <div id="q-image-wrap" class="q-image-wrap"></div>
       <div id="q-content"></div>
       <div id="hint-area" style="text-align:center;margin-top:8px">
         <button id="hint-btn" style="display:none;padding:6px 16px;background:rgba(0,245,255,.1);
@@ -709,65 +706,16 @@ function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
 function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
 
 
-// ── Curated image library (Wikipedia Commons CC licensed) ────────
-const IMG = {
-  // Experiments
-  baking_soda_vinegar:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/NaHCO3_+_CH3COOH_%E2%86%92_CO2.jpg/320px-NaHCO3_+_CH3COOH_%E2%86%92_CO2.jpg',
-  oil_water:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Oil_water_immiscible.jpg/320px-Oil_water_immiscible.jpg',
-  // Light
-  prism:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Dispersive_Prism_Illustration_by_Spigget.jpg/320px-Dispersive_Prism_Illustration_by_Spigget.jpg',
-  rainbow:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Double-alaskan-rainbow.jpg/320px-Double-alaskan-rainbow.jpg',
-  lightning:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Cloud-to-ground_lightning_strikes_in_a_field_in_Leesburg%2C_Florida_-_DPLA_-_17b2e8a22f5dc55e2bb4e30eae9bd7f0.jpg/320px-Cloud-to-ground_lightning_strikes_in_a_field_in_Leesburg%2C_Florida_-_DPLA_-_17b2e8a22f5dc55e2bb4e30eae9bd7f0.jpg',
-  // Space
-  saturn:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Saturn_during_Equinox.jpg/320px-Saturn_during_Equinox.jpg',
-  jupiter:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Jupiter_and_its_shrunken_Great_Red_Spot.jpg/320px-Jupiter_and_its_shrunken_Great_Red_Spot.jpg',
-  mars:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/OSIRIS_Mars_true_color.jpg/320px-OSIRIS_Mars_true_color.jpg',
-  moon:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/320px-FullMoon2010.jpg',
-  sun:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg/320px-The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg',
-  solar_system:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Planets2013.svg/320px-Planets2013.svg.png',
-  black_hole:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Black_hole_-_Messier_87_crop_max_res.jpg/320px-Black_hole_-_Messier_87_crop_max_res.jpg',
-  // Animals
-  dolphin:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Tursiops_truncatus_01.jpg/320px-Tursiops_truncatus_01.jpg',
-  crocodile:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Nile_crocodile_head.jpg/320px-Nile_crocodile_head.jpg',
-  frog:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Dendrobates_leucomelas_1.jpg/320px-Dendrobates_leucomelas_1.jpg',
-  butterfly:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Monarch_butterfly_showy.jpg/320px-Monarch_butterfly_showy.jpg',
-  shark:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/White_shark.jpg/320px-White_shark.jpg',
-  eagle:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Bald_Eagle_Portrait.jpg/320px-Bald_Eagle_Portrait.jpg',
-  bat:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Little_brown_bat.jpg/320px-Little_brown_bat.jpg',
-  octopus:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Octopus3.jpg/320px-Octopus3.jpg',
-  // Body
-  heart:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Diagram_of_the_human_heart_%28cropped%29.svg/250px-Diagram_of_the_human_heart_%28cropped%29.svg.png',
-  lungs:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Respiratory_system_complete_en.svg/220px-Respiratory_system_complete_en.svg.png',
-  brain:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Human_brain_NIH.jpg/320px-Human_brain_NIH.jpg',
-  skeleton:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Human_skeleton_front_en.svg/180px-Human_skeleton_front_en.svg.png',
-  // Science concepts
-  food_chain:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/FoodChain.jpg/320px-FoodChain.jpg',
-  photosynthesis:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Photosynthesis_en.svg/320px-Photosynthesis_en.svg.png',
-  water_cycle:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Water_cycle_ene.svg/320px-Water_cycle_ene.svg.png',
-  states_matter:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Solid_liquid_gas.jpg/320px-Solid_liquid_gas.jpg',
-  frog_lifecycle:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Frog_Life_Cycle.jpg/320px-Frog_Life_Cycle.jpg',
-  butterfly_lifecycle:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Caterpillar_to_chrysalis.jpg/320px-Caterpillar_to_chrysalis.jpg',
-  // Forces & Machines
-  magnet:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Magnet0873.png/320px-Magnet0873.png',
-  lever:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Simple_machine_-_Lever.jpg/320px-Simple_machine_-_Lever.jpg',
-  gravity:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Newton%27s_apple_tree.jpg/320px-Newton%27s_apple_tree.jpg',
-  // Weather
-  cumulonimbus:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Cumulonimbus_cloud_over_Africa_%28color%29.jpg/320px-Cumulonimbus_cloud_over_Africa_%28color%29.jpg',
-};
+// ── Show Picture button ───────────────────────────────────────────
+function showPicture(query) {
+  const url = 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(query);
+  window.open(url, '_blank');
+}
 
 function loadQuestionImage(imgKey) {
-  const wrap = document.getElementById('q-image-wrap');
-  if (!wrap) return;
-  if (!imgKey || !IMG[imgKey]) { wrap.style.display='none'; return; }
-  const src = IMG[imgKey];
-  wrap.style.display = 'block';
-  wrap.innerHTML = `<img src="${src}" alt="${imgKey.replace(/_/g,' ')}"
-    onerror="this.parentElement.style.display='none';this.parentElement.classList.remove('loaded')"
-    onload="this.parentElement.classList.add('loaded')"
-    style="width:100%;max-height:180px;object-fit:cover;display:block;border-radius:12px 12px 0 0">
-    <div class="q-image-caption">📷 Image: Wikipedia Commons (CC)</div>`;
-  wrap.classList.add('loaded');
+  // No-op — images shown via showPicture button instead
 }
+
 
 // ── Game state ────────────────────────────────────────────────────
 let G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
@@ -830,7 +778,6 @@ function loadQuestion(){
   document.getElementById('explanation-card').className='explanation-card';
   document.getElementById('hint-btn').style.display='none';
   document.getElementById('hint-box').style.display='none';
-  const imgWrap=document.getElementById('q-image-wrap');if(imgWrap){imgWrap.style.display='none';imgWrap.className='q-image-wrap';imgWrap.innerHTML='';}
 
   // Every 4th question is an experiment (hypothesis mode)
   const isExp=G.qIdx%4===2&&G.expIdx<G.experiments.length;
@@ -863,16 +810,15 @@ function renderQuestion(){
   document.getElementById('g-topic-tag').className=`topic-tag ${q.topic}`;
   document.getElementById('g-grade-tag').textContent=`Grade ${q.grade}`;
   document.getElementById('g-topic-display').textContent=topicLabel(q.topic);
-  // Load image if available
-  const wrap=document.getElementById('q-image-wrap');
-  if(wrap){wrap.style.display='none';wrap.className='q-image-wrap';wrap.innerHTML='';}
-  if(q.imgKey)loadQuestionImage(q.imgKey);
+  // Image search button injected after question renders (see below)
   const el=document.getElementById('q-content');
   const qClass=q.q.length>60?'question small':'question';
+  const sq=(q.imgKey||q.topic+' '+q.q.slice(0,35)).replace(/_/g,' ');
   el.innerHTML=`<div class="${qClass}">${q.q}</div>
     <div class="opts ${q.opts.length>4?'single':''}">${q.opts.map(o=>
       `<button class="opt" onclick="checkOpt(this,'${o.replace(/'/g,"\\'")}','${q.a.replace(/'/g,"\\'")}')">
-        ${o}</button>`).join('')}</div>`;
+        ${o}</button>`).join('')}</div>
+    <button onclick="showPicture('${sq}')" class="show-pic-btn">🔍 Show Picture</button>`;
 }
 
 function renderHypothesis(){
@@ -1006,7 +952,8 @@ function renderExperimentQuestion(exp){
     <div class="question small">${exp.question}</div>
     <div class="opts">${exp.opts.map(o=>
       `<button class="opt" onclick="checkOpt(this,'${o.replace(/'/g,"\\'")}','${exp.a.replace(/'/g,"\\'")}')">
-        ${o}</button>`).join('')}</div>`;
+        ${o}</button>`).join('')}</div>
+    <button onclick="showPicture('${exp.sub1.name} ${exp.sub2.name} chemical reaction')" class="show-pic-btn">🔍 Show Picture</button>`;
   G.question={...exp,isExperiment:true};
   document.getElementById('hint-btn').style.display='none';
   G.hintTimer=setTimeout(()=>{
