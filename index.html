@@ -13,36 +13,18 @@
   --pink:#E8457A;--red:#E84545;--green:#27AE60;
   --blue:#4A90D9;--text:#1A2B22;--mid:#4A6355;--light:#8AA898;
   --r:16px;--shadow:0 4px 20px rgba(0,0,0,0.25);
-  --gc:rgba(12,28,18,0.58);
-  --gb:rgba(255,255,255,0.11);
-  --gblur:blur(14px);
+  --gc:rgba(12,28,18,0.58);--gb:rgba(255,255,255,0.11);--gblur:blur(14px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;color:#fff}
 body{background:#0a1a10}
 
-/* BG LAYER */
-.bg-layer{
-  position:fixed;inset:0;z-index:0;
-  background-size:cover;background-position:center;background-repeat:no-repeat;
-  transition:background-image 0.5s ease;
-}
-.bg-layer::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(4,12,6,0.48) 0%,rgba(4,12,6,0.22) 100%);
-}
-
-/* SHELL */
+.bg-layer{position:fixed;inset:0;z-index:0;background-size:cover;background-position:center;background-repeat:no-repeat;transition:background-image 0.5s ease}
+.bg-layer::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(4,12,6,0.48) 0%,rgba(4,12,6,0.22) 100%)}
 .shell{display:flex;height:100vh;width:100vw;overflow:hidden;position:relative;z-index:1}
 
 /* SIDEBAR */
-.sidebar{
-  width:190px;min-width:190px;
-  background:rgba(6,18,10,0.74);
-  backdrop-filter:var(--gblur);-webkit-backdrop-filter:var(--gblur);
-  border-right:1px solid rgba(255,255,255,0.08);
-  display:flex;flex-direction:column;position:relative;z-index:10;
-}
+.sidebar{width:190px;min-width:190px;background:rgba(4,12,6,0.35);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;position:relative;z-index:10}
 .sb-stars{position:absolute;top:0;left:0;right:0;height:250px;pointer-events:none}
 .star-dot{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d,3s) ease-in-out infinite var(--dl,0s)}
 @keyframes twinkle{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:.9;transform:scale(1.5)}}
@@ -68,16 +50,7 @@ body{background:#0a1a10}
 
 /* MAIN */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;position:relative;z-index:5}
-
-/* TOPBAR */
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 22px 10px;
-  background:rgba(6,18,10,0.6);
-  backdrop-filter:var(--gblur);-webkit-backdrop-filter:var(--gblur);
-  border-bottom:1px solid rgba(255,255,255,.07);
-  flex-shrink:0;gap:12px;
-}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 22px 10px;background:rgba(6,18,10,0.6);backdrop-filter:var(--gblur);-webkit-backdrop-filter:var(--gblur);border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0;gap:12px}
 .tb-left h1{font-size:1.4rem;font-weight:900;color:#fff;line-height:1.1;text-shadow:0 2px 10px rgba(0,0,0,.4)}
 .tb-left p{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.55);margin-top:1px}
 .tb-right{display:flex;align-items:center;gap:9px}
@@ -99,12 +72,7 @@ body{background:#0a1a10}
 .card-lnk:hover{text-decoration:underline}
 
 /* PLAYER SELECT */
-#ps{
-  position:fixed;inset:0;z-index:1000;
-  background-image:url('https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/bg-beach-FirstPage.png');
-  background-size:cover;background-position:center;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:40px 24px;
-}
+#ps{position:fixed;inset:0;z-index:1000;background-image:url('https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/bg-beach-FirstPage.png');background-size:cover;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:40px 24px}
 #ps::before{content:'';position:absolute;inset:0;background:rgba(4,14,8,.5)}
 .ps-brand,.ps-cards,.ps-par{position:relative;z-index:2}
 .ps-brand{text-align:center}
@@ -133,7 +101,7 @@ body{background:#0a1a10}
 .h-sub{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.7);margin-top:5px}
 .h-sub b{color:var(--amber)}
 
-/* STAT CARDS */
+/* STATS */
 .stats-row{display:flex;gap:12px;padding:0 22px;margin-top:12px}
 .sc{flex:1;background:var(--gc);backdrop-filter:var(--gblur);border:1px solid var(--gb);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:11px;box-shadow:var(--shadow)}
 .sc-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
@@ -216,15 +184,109 @@ body{background:#0a1a10}
 .tara-box-lbl{font-size:.56rem;font-weight:900;color:var(--amber);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
 .tara-box-msg{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.75);line-height:1.5}
 
-/* SUBJECTS */
+/* ═══════════════════════════════════════════
+   SUBJECT CARDS — shared style for Home + Learn
+   ═══════════════════════════════════════════ */
+
+/* Home grid wrapper */
 .subj-card{grid-column:1/3}
-.sg{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin-top:11px}
-.st{border-radius:15px;padding:13px 7px 11px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
-.st:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.35)}
-.st::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:3px 3px 0 0;background:var(--sc,var(--teal))}
-.st-ico{font-size:1.7rem;line-height:1;margin-bottom:6px;display:block}
-.st-nm{font-size:.65rem;font-weight:900;color:#fff}
-.st-lv{display:inline-block;font-size:.57rem;font-weight:800;border-radius:99px;padding:2px 7px;margin-top:3px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.8)}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:10px;margin-top:11px}
+
+/* Each subject card — rectangular with soft gradient border */
+.scard{
+  position:relative;border-radius:14px;overflow:hidden;
+  cursor:pointer;transition:transform .25s,box-shadow .25s;
+  background:rgba(8,20,12,.7);
+  /* Soft gradient border via box-shadow — no harsh line */
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.08),
+    0 4px 18px rgba(0,0,0,.3);
+}
+.scard::before{
+  /* Animated gradient border shimmer */
+  content:'';position:absolute;inset:0;border-radius:14px;z-index:0;
+  background:linear-gradient(135deg,var(--sc-color,rgba(43,191,184,.25)) 0%,transparent 60%);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.scard:hover{transform:translateY(-5px)}
+.scard:hover::before{opacity:1}
+.scard:hover{
+  box-shadow:
+    0 0 0 1.5px var(--sc-color,rgba(43,191,184,.5)),
+    0 8px 28px rgba(0,0,0,.4),
+    0 0 20px var(--sc-color,rgba(43,191,184,.15));
+}
+
+/* Image area */
+.scard-img{
+  position:relative;width:100%;height:96px;overflow:hidden;
+}
+.scard-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease,filter .35s ease}
+.scard:hover .scard-img img{transform:scale(1.08);filter:brightness(1.1)}
+/* Gradient fallback when no PNG */
+.scard-img-fallback{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  font-size:2.4rem;
+  background:var(--sc-grad,linear-gradient(135deg,#1A9990,#2BBFB8));
+}
+/* Bottom fade from image into card body */
+.scard-img::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:40px;
+  background:linear-gradient(0deg,rgba(8,20,12,.9) 0%,transparent 100%);
+  pointer-events:none;
+}
+
+/* Text area */
+.scard-body{position:relative;z-index:2;padding:8px 9px 10px;text-align:center}
+.scard-nm{font-size:.72rem;font-weight:900;color:#fff;line-height:1.2;margin-bottom:4px;text-shadow:0 1px 6px rgba(0,0,0,.8)}
+.scard-pill{display:inline-block;font-size:.54rem;font-weight:800;border-radius:99px;padding:2px 8px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.75);margin-bottom:5px}
+.scard-pb{height:3px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin:0 4px}
+.scard-pf{height:100%;border-radius:99px;background:var(--sc-color,var(--teal));transition:width .6s}
+
+/* "More" card */
+.scard-more{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:130px;background:rgba(255,255,255,.04);border-radius:14px;box-shadow:0 0 0 1px rgba(255,255,255,.07);cursor:pointer;transition:all .2s}
+.scard-more:hover{background:rgba(255,255,255,.08);transform:translateY(-3px)}
+.scard-more span{font-size:1.4rem;opacity:.5;margin-bottom:4px}
+.scard-more p{font-size:.62rem;font-weight:800;color:rgba(255,255,255,.4)}
+
+/* ═══════════════════════
+   LEARN SCREEN subject cards (horizontal scroll)
+   slightly wider, same style
+   ═══════════════════════ */
+.isl-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;margin-top:11px}
+.isl-row::-webkit-scrollbar{height:4px}
+.isl-row::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:99px}
+
+.lscard{
+  flex-shrink:0;width:148px;position:relative;border-radius:14px;overflow:hidden;
+  cursor:pointer;transition:transform .25s,box-shadow .25s;
+  background:rgba(8,20,12,.7);
+  box-shadow:0 0 0 1px rgba(255,255,255,.08),0 4px 18px rgba(0,0,0,.3);
+}
+.lscard::before{
+  content:'';position:absolute;inset:0;border-radius:14px;z-index:0;
+  background:linear-gradient(135deg,var(--sc-color,rgba(43,191,184,.25)) 0%,transparent 55%);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.lscard:hover{transform:translateY(-5px)}
+.lscard:hover::before{opacity:1}
+.lscard:hover{
+  box-shadow:
+    0 0 0 1.5px var(--sc-color,rgba(43,191,184,.5)),
+    0 8px 28px rgba(0,0,0,.4),
+    0 0 18px var(--sc-color,rgba(43,191,184,.12));
+}
+.lscard-img{position:relative;width:100%;height:80px;overflow:hidden}
+.lscard-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s,filter .35s}
+.lscard:hover .lscard-img img{transform:scale(1.08);filter:brightness(1.1)}
+.lscard-img-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;background:var(--sc-grad,linear-gradient(135deg,#1A9990,#2BBFB8))}
+.lscard-img::after{content:'';position:absolute;bottom:0;left:0;right:0;height:32px;background:linear-gradient(0deg,rgba(8,20,12,.9) 0%,transparent 100%);pointer-events:none}
+.lscard-body{position:relative;z-index:2;padding:8px 9px 10px;text-align:center}
+.lscard-nm{font-size:.78rem;font-weight:900;color:#fff;margin-bottom:4px}
+.lscard-pill{display:inline-block;font-size:.55rem;font-weight:900;border-radius:99px;padding:2px 9px;margin-top:2px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.75);margin-bottom:5px}
+.lscard-pb{height:3px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin:0 4px}
+.lscard-pf{height:100%;border-radius:99px;background:var(--sc-color,var(--teal))}
+.lscard-pct{font-size:.5rem;font-weight:700;color:rgba(255,255,255,.3);margin-top:3px}
 
 /* WISH LIST */
 .wish-scroll{display:flex;gap:9px;overflow-x:auto;padding-bottom:3px;margin-top:11px}
@@ -413,7 +475,7 @@ body{background:#0a1a10}
 .radar-wrap{margin-top:11px;display:flex;align-items:center;justify-content:center}
 .radar-q{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.4);text-align:center;margin-top:10px;font-style:italic;padding:0 4px}
 
-/* LEARN */
+/* LEARN SCREEN */
 .learn-layout{display:grid;grid-template-columns:1fr 310px;gap:18px;padding:22px}
 .lleft{display:flex;flex-direction:column;gap:14px}
 .lright{display:flex;flex-direction:column;gap:14px}
@@ -421,18 +483,6 @@ body{background:#0a1a10}
 .search-bar input{flex:1;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;color:#fff;background:transparent}
 .search-bar input::placeholder{color:rgba(255,255,255,.28)}
 .sflt{width:32px;height:32px;border-radius:50%;background:var(--purple);border:none;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.85rem;cursor:pointer}
-.isl-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:7px;margin-top:11px}
-.isl-row::-webkit-scrollbar{height:3px}
-.isl-row::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:99px}
-.sic{flex-shrink:0;width:155px;background:var(--gc);backdrop-filter:var(--gblur);border:1px solid var(--gb);border-radius:var(--r);padding:14px 10px 12px;text-align:center;cursor:pointer;transition:all .2s;box-shadow:var(--shadow);position:relative;overflow:hidden}
-.sic:hover{transform:translateY(-5px);box-shadow:0 12px 32px rgba(0,0,0,.35)}
-.sic::before{content:'';position:absolute;top:0;left:0;right:0;height:58px;border-radius:var(--r) var(--r) 40% 40%;background:rgba(255,255,255,.05)}
-.sic-art{position:relative;z-index:2;font-size:2.6rem;display:block;margin-bottom:3px}
-.sic-nm{font-size:.84rem;font-weight:900;color:#fff;margin-top:5px}
-.sic-pill{display:inline-block;font-size:.58rem;font-weight:900;border-radius:99px;padding:2px 9px;margin-top:5px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.75)}
-.sic-pb{margin-top:7px;height:4px;background:rgba(255,255,255,.09);border-radius:99px;overflow:hidden}
-.sic-pf{height:100%;border-radius:99px;background:var(--teal)}
-.sic-pct{font-size:.56rem;font-weight:700;color:rgba(255,255,255,.35);margin-top:2px}
 .cont-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:3px;margin-top:11px}
 .cont-scroll::-webkit-scrollbar{height:3px}
 .cc{flex-shrink:0;width:175px;background:var(--gc);backdrop-filter:var(--gblur);border:1px solid var(--gb);border-radius:var(--r);padding:13px;box-shadow:var(--shadow)}
@@ -630,21 +680,10 @@ body{background:#0a1a10}
   .stats-row{flex-wrap:wrap}.goal-card{flex-wrap:wrap}
 }
 .empty{text-align:center;padding:18px;color:rgba(255,255,255,.3);font-size:.8rem;font-weight:700}
-/* SUBJECT IMAGE CARDS */
-.subj-img-card{padding:0!important;overflow:hidden!important;background:rgba(0,0,0,.3)!important;border-radius:15px}
-.sic-img-wrap{position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;border-radius:15px}
-.sic-img{width:100%;height:100%;object-fit:cover;border-radius:15px;display:block;transition:transform .3s ease,filter .3s ease}
-.sic-fallback{position:absolute;inset:0;display:none;align-items:center;justify-content:center;font-size:1.7rem;background:rgba(0,0,0,.3)}
-.sic-overlay{position:absolute;bottom:0;left:0;right:0;padding:7px 6px 8px;background:linear-gradient(0deg,rgba(4,12,6,.88) 0%,rgba(4,12,6,.4) 70%,transparent 100%);border-radius:0 0 15px 15px;text-align:center}
-.subj-img-card:hover .sic-img{transform:scale(1.08);filter:brightness(1.12)}
-.subj-img-card:hover{box-shadow:0 8px 28px rgba(43,191,184,.35),0 0 0 1.5px rgba(43,191,184,.4)!important;transform:translateY(-5px)!important}
-.subj-img-card .st-nm{font-size:.62rem;font-weight:900;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.8);line-height:1.2;margin-bottom:2px}
-.subj-img-card .st-lv{font-size:.54rem;font-weight:800;color:rgba(255,255,255,.75);background:rgba(0,0,0,.35);border-radius:99px;padding:1px 6px;display:inline-block}
 </style>
 </head>
 <body>
 
-<!-- BG LAYER -->
 <div class="bg-layer" id="bg-layer"></div>
 
 <!-- PLAYER SELECT -->
@@ -738,7 +777,7 @@ body{background:#0a1a10}
             <div class="h-greet" id="h-greet">Namaste, Riaan! 🙏</div>
             <div class="h-name">Ready to learn today?</div>
             <div class="h-sub">Every lesson is a step towards your dreams! <b>✨</b></div>
-<button onclick="startDailyMix()" style="margin-top:14px;padding:13px 28px;border:none;border-radius:14px;background:linear-gradient(135deg,#F6C04A,#E8A020);color:#1A2B1E;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(246,192,74,.4);display:flex;align-items:center;gap:8px">🚀 Start Today's Learning</button>
+            <button onclick="startDailyMix()" style="margin-top:14px;padding:13px 28px;border:none;border-radius:14px;background:linear-gradient(135deg,#F6C04A,#E8A020);color:#1A2B1E;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(246,192,74,.4);display:flex;align-items:center;gap:8px">🚀 Start Today's Learning</button>
           </div>
           <img class="h-tara" src="https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/Star%20home%20-%20no%20bg.png" alt="Tara">
         </div>
@@ -819,12 +858,18 @@ body{background:#0a1a10}
               <button class="sflt">⚙</button>
             </div>
             <div class="card">
-              <div class="card-hdr"><div class="card-ttl">⭐ Explore by Subject</div><span class="card-lnk">View all →</span></div>
+              <div class="card-hdr">
+                <div class="card-ttl">⭐ Explore by Subject</div>
+                <span class="card-lnk" onclick="navTo('learn')">View all →</span>
+              </div>
               <p style="font-size:.68rem;color:rgba(255,255,255,.38);font-weight:700;margin-bottom:3px">Choose a world and start your adventure</p>
               <div class="isl-row" id="l-islands"></div>
             </div>
             <div class="card">
-              <div class="card-hdr"><div class="card-ttl">📖 Continue Learning</div><span class="card-lnk">View progress →</span></div>
+              <div class="card-hdr">
+                <div class="card-ttl">📖 Continue Learning</div>
+                <span class="card-lnk" onclick="navTo('profile')">View progress →</span>
+              </div>
               <p style="font-size:.68rem;color:rgba(255,255,255,.38);font-weight:700;margin-bottom:3px">Pick up where you left off</p>
               <div class="cont-scroll" id="l-cont"></div>
             </div>
@@ -1057,9 +1102,9 @@ body{background:#0a1a10}
         </div>
       </div>
 
-    </div><!-- /page-scroll -->
-  </div><!-- /main -->
-</div><!-- /shell -->
+    </div>
+  </div>
+</div>
 
 <!-- MOBILE NAV -->
 <div class="mob-nav" id="mob-nav">
@@ -1183,7 +1228,9 @@ body{background:#0a1a10}
 <div class="mov" id="mov" onclick="if(event.target===this)closeMod()">
   <div class="mbox"><div class="mh"></div><div id="mc"></div></div>
 </div>
+
 <script>
+// ─── CONFIG ────────────────────────────────────────────────────────
 const BG_BASE='https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/';
 const SCREEN_BG={
   home:    BG_BASE+'bg-ocean-Home.png',
@@ -1193,24 +1240,118 @@ const SCREEN_BG={
   profile: BG_BASE+'bg-treehouse-airballons-Profile.png',
 };
 function setBG(screen){
-  const url=SCREEN_BG[screen]||SCREEN_BG.home;
-  document.getElementById('bg-layer').style.backgroundImage=`url('${url}')`;
+  document.getElementById('bg-layer').style.backgroundImage=`url('${SCREEN_BG[screen]||SCREEN_BG.home}')`;
 }
 
-const SB='https://tnhgihzfwqsflpueivwe.supabase.co',KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
+const SB='https://tnhgihzfwqsflpueivwe.supabase.co';
+const KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
 const IMG_BASE='https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/';
-const subjectImages={math:'Maths.png',english:'English.png',science:'Science.png',social:'Social_Studies.png',hinduism:'Hinduism.png',hindi:'Hindi.png',gujarat:'Festivals.png',music:'Music.png',coding:'Coding.png',health:'Life_Skills.png',clock:'Maths.png',indigenous:'Canada.png',space:'Space.png',weather:'Weather.png',animals:'Animals.png',plants:'Plants.png',body:'Human_Body.png',earth:'Earth_Science.png',art:'Art.png',stories:'Stories.png',values:'Values.png',world:'World_Geography.png',biology:'Biology.png',creative:'Creative_Thinking.png',water:'Water_Cycle.png'};
+
+// Subject key → PNG filename mapping (all uploaded PNGs)
+const subjectImages={
+  math:'Maths.png',english:'English.png',science:'Science.png',
+  social:'Social_Studies.png',hinduism:'Hinduism.png',hindi:'Hindi.png',
+  gujarat:'Festivals.png',festivals:'Festivals.png',
+  music:'Music.png',coding:'Coding.png',health:'Life_Skills.png',
+  clock:'Maths.png',indigenous:'Canada.png',canada:'Canada.png',
+  space:'Space.png',weather:'Weather.png',animals:'Animals.png',
+  plants:'Plants.png',body:'Human_Body.png',earth:'Earth_Science.png',
+  art:'Art.png',stories:'Stories.png',values:'Values.png',
+  world:'World_Geography.png',biology:'Biology.png',
+  creative:'Creative_Thinking.png',water:'Water_Cycle.png',
+  // subjects without PNGs — will use gradient fallback
+  reading:null,writing:null,
+};
+
+// Gradient fallbacks for subjects without a PNG
+const subjectGrads={
+  reading:'linear-gradient(135deg,#5B4FD4,#8B7FE8)',
+  writing:'linear-gradient(135deg,#E08833,#F6A040)',
+};
+
+// Subject accent colours (used for glow border + progress bar)
+const subjectColors={
+  math:'#29B0B8',english:'#8266DE',science:'#3E8F3E',social:'#C2185B',
+  hinduism:'#E8457A',hindi:'#FF7043',gujarat:'#FF5722',festivals:'#FF5722',
+  music:'#9C27B0',coding:'#1565C0',health:'#27AE60',clock:'#29B0B8',
+  indigenous:'#E53935',canada:'#E53935',space:'#283593',weather:'#0288D1',
+  animals:'#558B2F',plants:'#2E7D32',body:'#AD1457',earth:'#4E342E',
+  art:'#F57F17',stories:'#6A1B9A',values:'#00695C',world:'#1565C0',
+  biology:'#1B5E20',creative:'#F9A825',water:'#0277BD',
+  reading:'#8266DE',writing:'#E08833',
+};
+
+function subjectImg(key){
+  const f=subjectImages[key];
+  return f?IMG_BASE+f:null;
+}
+function subjectColor(s){
+  return s.color||subjectColors[s.key]||'#2BBFB8';
+}
+function subjectGrad(s){
+  const c=subjectColor(s);
+  return subjectGrads[s.key]||`linear-gradient(135deg,${c}cc,${c}66)`;
+}
+
+// Build a subject card HTML (shared for Home + Learn)
+// type='home' → .scard, type='learn' → .lscard
+function buildSCard(s, type='home'){
+  const lv=S.levelProgress[s.key]?.current_level||1;
+  const pct=Math.round((lv-1)/10*100);
+  const img=subjectImg(s.key);
+  const col=subjectColor(s);
+  const grad=subjectGrad(s);
+  const cl=type==='home'?'scard':'lscard';
+  const imgCl=type==='home'?'scard-img':'lscard-img';
+  const fbCl=type==='home'?'scard-img-fallback':'lscard-img-fallback';
+  const bodyCl=type==='home'?'scard-body':'lscard-body';
+  const nmCl=type==='home'?'scard-nm':'lscard-nm';
+  const pillCl=type==='home'?'scard-pill':'lscard-pill';
+  const pbCl=type==='home'?'scard-pb':'lscard-pb';
+  const pfCl=type==='home'?'scard-pf':'lscard-pf';
+  const pctCl=type==='home'?'':'lscard-pct';
+  return `<div class="${cl}" style="--sc-color:${col};--sc-grad:${grad}" onclick="startSubject('${s.key}')">
+    <div class="${imgCl}">
+      ${img
+        ?`<img src="${img}" alt="${s.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        :''}
+      <div class="${fbCl}" style="${img?'display:none':''};background:${grad}">
+        <span>${s.icon||'📖'}</span>
+      </div>
+    </div>
+    <div class="${bodyCl}">
+      <div class="${nmCl}">${s.name}</div>
+      <span class="${pillCl}">Lv${lv}</span>
+      <div class="${pbCl}"><div class="${pfCl}" style="width:${pct}%"></div></div>
+      ${pctCl?`<div class="${pctCl}">${pct}%</div>`:''}
+    </div>
+  </div>`;
+}
+
 const streakPlants=['01_Seed.png','02_Sprout.png','03_Tiny_Plant.png','04_Bud.png','05_Small_Flower.png','06_Blooming.png','07_Purple_Flower.png','08_Sunflower.png','09_White_Tree.png','10_Apple_Tree.png','11_Star_Tree.png','12_Rainbow_Tree.png'];
-function subjectImg(key){return IMG_BASE+encodeURIComponent(subjectImages[key]||'Science.jpg');}
 const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':o.prefer||'return=representation',...o.headers},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined}).then(r=>r.json()).catch(()=>[]);
 let S={player:null,players:[],stars:0,streak:0,subjects:[],tasks:[],wishList:[],activeGoal:null,levelProgress:{},badges:[],earnedBadges:[],starConfig:{},rewardShop:[],quotes:{},calY:new Date().getFullYear(),calM:new Date().getMonth(),quizSubj:null,quizBatch:[],quizIdx:0,quizScore:0,quizSE:0,quizAns:false,pin:'1820',pinE:'',tab:'home',tc:{}};
+
 function getQuote(m){const p=S.quotes[m];if(p&&p.length){const q=p[Math.floor(Math.random()*p.length)];return q.emoji+' '+q.quote;}return{success:'⭐ Shabash!',wrong_answer:'🌱 Ek aur try!',level_up:'🏆 Level up!',daily_start:'🙏 Namaste! Ready?',perfect_score:'🎊 Perfect!'}[m]||'⭐ Keep going!';}
 const today=()=>new Date().toISOString().split('T')[0];
 const esc=s=>(s||'').replace(/'/g,"\\'");
 const gradeAhead=(g)=>Math.min(g+2,6);
 const shuf=a=>{const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;};
 
-const FALLBACK_SUBJECTS=[{id:'s1',key:'math',name:'Math',icon:'🔢',color:'#29B0B8',bg_color:'#E8F8F4',active:true,sort_order:1},{id:'s2',key:'reading',name:'Reading',icon:'📚',color:'#8266DE',bg_color:'#F0ECFD',active:true,sort_order:2},{id:'s3',key:'science',name:'Science',icon:'🔬',color:'#3E8F3E',bg_color:'#EAF4EA',active:true,sort_order:3},{id:'s4',key:'writing',name:'Writing',icon:'✏️',color:'#E08833',bg_color:'#FDF3E7',active:true,sort_order:4},{id:'s5',key:'social',name:'Social Studies',icon:'🌍',color:'#C2185B',bg_color:'#FCE4EC',active:true,sort_order:5},{id:'s6',key:'coding',name:'Coding',icon:'💻',color:'#1565C0',bg_color:'#E3F2FD',active:true,sort_order:6}];
+const FALLBACK_SUBJECTS=[
+  {id:'s1',key:'math',name:'Maths',icon:'🔢',color:'#29B0B8',active:true,sort_order:1},
+  {id:'s2',key:'reading',name:'Reading',icon:'📚',color:'#8266DE',active:true,sort_order:2},
+  {id:'s3',key:'science',name:'Science',icon:'🔬',color:'#3E8F3E',active:true,sort_order:3},
+  {id:'s4',key:'writing',name:'Writing',icon:'✏️',color:'#E08833',active:true,sort_order:4},
+  {id:'s5',key:'social',name:'Social Studies',icon:'🌍',color:'#C2185B',active:true,sort_order:5},
+  {id:'s6',key:'coding',name:'Coding',icon:'💻',color:'#1565C0',active:true,sort_order:6},
+  {id:'s7',key:'hindi',name:'Hindi',icon:'🕉️',color:'#FF7043',active:true,sort_order:7},
+  {id:'s8',key:'hinduism',name:'Hinduism',icon:'🪔',color:'#E8457A',active:true,sort_order:8},
+  {id:'s9',key:'festivals',name:'Festivals',icon:'🎉',color:'#FF5722',active:true,sort_order:9},
+  {id:'s10',key:'music',name:'Music',icon:'🎵',color:'#9C27B0',active:true,sort_order:10},
+  {id:'s11',key:'art',name:'Art',icon:'🎨',color:'#F57F17',active:true,sort_order:11},
+  {id:'s12',key:'health',name:'Life Skills',icon:'💪',color:'#27AE60',active:true,sort_order:12},
+];
 const FALLBACK_TASKS=[{id:'t1',title:'Morning Reading',active:true,sort_order:1,icon:'📖',time_block:'morning',stars_value:5},{id:'t2',title:'Math Practice',active:true,sort_order:2,icon:'🔢',time_block:'morning',stars_value:5},{id:'t3',title:'Writing Practice',active:true,sort_order:3,icon:'✏️',time_block:'afternoon',stars_value:5},{id:'t4',title:'Science Activity',active:true,sort_order:4,icon:'🔬',time_block:'afternoon',stars_value:5},{id:'t5',title:'Free Reading',active:true,sort_order:5,icon:'📚',time_block:'evening',stars_value:3},{id:'t6',title:'Coding Practice',active:true,sort_order:6,icon:'💻',time_block:'afternoon',stars_value:5}];
 const FALLBACK_SHOP=[];
 
@@ -1219,7 +1360,12 @@ async function init(){
   buildCalendar();buildGarden();buildWS();buildSMD();buildCountdown();
   try{
     S.players=await db('players?select=*&order=name');
-    for(const p of S.players){const logs=await db(`stars_log?player_id=eq.${p.id}&select=amount`);const total=Math.max(0,logs.reduce((a,l)=>a+l.amount,0));const el=document.getElementById(p.name.toLowerCase()[0]+'-ps-stars');if(el)el.textContent=`⭐ ${total.toLocaleString()} stars`;}
+    for(const p of S.players){
+      const logs=await db(`stars_log?player_id=eq.${p.id}&select=amount`);
+      const total=Math.max(0,logs.reduce((a,l)=>a+l.amount,0));
+      const el=document.getElementById(p.name.toLowerCase()[0]+'-ps-stars');
+      if(el)el.textContent=`⭐ ${total.toLocaleString()} stars`;
+    }
   }catch(e){}
 }
 
@@ -1263,7 +1409,11 @@ async function loadPlayer(){
     S.rewardShop=Array.isArray(shop)?shop:[];
     S.tc={};if(Array.isArray(tc))tc.forEach(c=>{S.tc[c.task_id]=c.status;});
   }catch(e){S.subjects=FALLBACK_SUBJECTS;S.tasks=FALLBACK_TASKS;}
-  try{const quotes=await db('motivation_quotes?select=mood,quote,emoji');S.quotes={};if(Array.isArray(quotes))quotes.forEach(q=>{if(!S.quotes[q.mood])S.quotes[q.mood]=[];S.quotes[q.mood].push(q);});}catch(e){}
+  try{
+    const quotes=await db('motivation_quotes?select=mood,quote,emoji');
+    S.quotes={};
+    if(Array.isArray(quotes))quotes.forEach(q=>{if(!S.quotes[q.mood])S.quotes[q.mood]=[];S.quotes[q.mood].push(q);});
+  }catch(e){}
 }
 
 function navTo(tab){
@@ -1283,17 +1433,15 @@ function navTo(tab){
   updateTB();
 }
 function renderAll(){updateTB();renderHome();refreshData();}
-  async function startDailyMix(){
+
+async function startDailyMix(){
   const subjects=['math','english','science','social','hinduism','health','hindi'];
   const counts={math:10,english:10,science:8,social:7,hindi:6,hinduism:5,health:4};
   const targetGrade=gradeAhead(S.player.grade);
   let allQ=[];
   for(const key of subjects){
     const qs=await db(`questions?subject_key=eq.${key}&active=eq.true&grade=lte.${targetGrade}&limit=80`);
-    if(Array.isArray(qs)&&qs.length){
-      const picked=shuf(qs).slice(0,counts[key]||5);
-      allQ=[...allQ,...picked];
-    }
+    if(Array.isArray(qs)&&qs.length){const picked=shuf(qs).slice(0,counts[key]||5);allQ=[...allQ,...picked];}
   }
   if(!allQ.length){showMod(`<div style="text-align:center;padding:12px"><div style="font-size:3rem;margin-bottom:9px">🚧</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:14px">No questions found!</div><button class="mb" onclick="closeMod()">OK</button></div>`);return;}
   allQ=shuf(allQ);
@@ -1304,6 +1452,7 @@ function renderAll(){updateTB();renderHome();refreshData();}
   document.getElementById('q-subj').textContent='Daily Mix 🌟';
   loadQ();
 }
+
 async function refreshData(){
   if(!S.player)return;
   const p=S.player;
@@ -1319,6 +1468,7 @@ async function refreshData(){
   if(S.tab==='tasks')renderTasks();
   if(S.tab==='rewards')renderRewards();
 }
+
 function updateTB(){
   const p=S.player;if(!p)return;
   const hr=new Date().getHours();
@@ -1352,7 +1502,7 @@ function renderGoal(){
   document.getElementById('g-bar').style.width=pct+'%';
   document.getElementById('g-pct').textContent=pct+'%';
   document.getElementById('g-cnt').textContent=`${earned.toLocaleString()} / ${item.star_cost.toLocaleString()} ⭐`;
-  document.getElementById('g-msg').textContent=pct>=80?`Almost there! Ek aur push! 💪`:pct>=50?'Halfway! Keep going! 🌟':'Every star counts! ⭐';
+  document.getElementById('g-msg').textContent=pct>=80?'Almost there! Ek aur push! 💪':pct>=50?'Halfway! Keep going! 🌟':'Every star counts! ⭐';
   if(item.image_url){document.getElementById('g-thumb').innerHTML=`<img src="${item.image_url}" style="width:100%;height:100%;object-fit:cover;border-radius:12px">`;}
 }
 
@@ -1395,22 +1545,10 @@ function renderPathMap(){
   });
 }
 
+// HOME subjects — ALL of them, auto-wrap grid
 function renderHSubjects(){
   const el=document.getElementById('h-sg');if(!el)return;
-  el.innerHTML=S.subjects.slice(0,7).map(s=>{
-    const lv=S.levelProgress[s.key]?.current_level||1;
-    const img=subjectImg(s.key);
-    return `<div class="st subj-img-card" onclick="startSubject('${s.key}')">
-      <div class="sic-img-wrap">
-        <img src="${img}" alt="${s.name}" class="sic-img" onerror="this.style.display='none';this.parentElement.querySelector('.sic-fallback').style.display='flex'">
-        <div class="sic-fallback"><span>${s.icon}</span></div>
-        <div class="sic-overlay">
-          <div class="st-nm">${s.name}</div>
-          <div class="st-lv">Lv${lv}</div>
-        </div>
-      </div>
-    </div>`;
-  }).join('')+`<div class="st" onclick="navTo('learn')" style="background:rgba(255,255,255,.05);display:flex;flex-direction:column;align-items:center;justify-content:center"><span class="st-ico" style="font-size:1.7rem;margin-bottom:6px">⋯</span><div class="st-nm">More</div><div class="st-lv">All</div></div>`;
+  el.innerHTML=S.subjects.map(s=>buildSCard(s,'home')).join('');
 }
 
 async function renderWeekLB(){
@@ -1451,7 +1589,8 @@ function renderTasks(){
   document.getElementById('full-tasks').innerHTML=html;
   const pct=tt>0?Math.round(td/tt*100):0;
   document.getElementById('ds-txt').textContent=`${td} of ${tt} tasks completed`;
-  document.getElementById('ds-bar').style.width=pct+'%';document.getElementById('ds-pct').textContent=pct+'%';
+  document.getElementById('ds-bar').style.width=pct+'%';
+  document.getElementById('ds-pct').textContent=pct+'%';
   const c=138.2;document.getElementById('ds-ring').style.strokeDashoffset=c-(c*pct/100);
   buildCalendar();buildWS();
 }
@@ -1484,6 +1623,7 @@ function buildCalendar(){
 }
 function calPrev(){S.calM--;if(S.calM<0){S.calM=11;S.calY--;}buildCalendar();}
 function calNext(){S.calM++;if(S.calM>11){S.calM=0;S.calY++;}buildCalendar();}
+
 function buildWS(){
   const el=document.getElementById('ws-grid');if(!el)return;
   const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
@@ -1492,16 +1632,21 @@ function buildWS(){
   el.innerHTML=days.map((d,i)=>`<div class="ws-day"><div class="ws-dn">${d}</div><div class="ws-star ${st[i]}">${{full:'⭐',part:'⭐',miss:'✕',cur:'★',fut:'○'}[st[i]]}</div><div class="ws-sc">${sc[i]}</div></div>`).join('');
   const wl=document.getElementById('ws-lbl');if(wl)wl.textContent='4 of 6 days completed';
 }
+
 function buildGarden(){
   const el=document.getElementById('garden-row');if(!el)return;
   const days=['Mon','Tue','Wed','Thu','Fri','Sat','Today'];
   el.innerHTML=days.map((d,i)=>`<div class="fp"><img src="${IMG_BASE+streakPlants[Math.min(i<(S.streak||0)?i:0,11)]}" style="width:40px;height:40px;object-fit:contain" class="fe" alt="${d}"><div class="fd">${d}</div></div>`).join('');
 }
 
+// LEARN screen
 function renderLearn(){
-  renderIslands();renderContCards();renderSkills();buildSMD();renderRAch();
+  // ALL subjects in horizontal scroll
+  renderIslands();
+  renderContCards();renderSkills();buildSMD();renderRAch();
   document.getElementById('l-streak').textContent=`${S.streak} Days`;
-  const total=S.subjects.length*10,done=Object.values(S.levelProgress).reduce((a,l)=>a+(l.current_level-1),0);
+  const total=S.subjects.length*10;
+  const done=Object.values(S.levelProgress).reduce((a,l)=>a+(l.current_level-1),0);
   const pct=total>0?Math.round(done/total*100):0;
   document.getElementById('op-pct').textContent=pct+'%';
   document.getElementById('op-det').textContent=`${done} / ${total} Skills`;
@@ -1510,39 +1655,37 @@ function renderLearn(){
   const fs=S.subjects[0];
   if(fs){document.getElementById('cl-ico').textContent=fs.icon;document.getElementById('cl-nm').textContent=fs.name;document.getElementById('cl-lv').textContent=`Level ${S.levelProgress[fs.key]?.current_level||1}`;}
 }
+
+// ALL subjects in Learn scroll using shared lscard style
 function renderIslands(){
   const el=document.getElementById('l-islands');if(!el)return;
-  el.innerHTML=S.subjects.slice(0,6).map(s=>{
-    const lv=S.levelProgress[s.key]?.current_level||1,pct=Math.round((lv-1)/10*100);
-    const img=subjectImg(s.key);
-    return `<div class="sic" onclick="startSubject('${s.key}')" style="padding:0;overflow:hidden;position:relative">
-      <img src="${img}" alt="${s.name}" style="width:100%;height:72px;object-fit:cover;display:block;border-radius:var(--r) var(--r) 0 0;transition:transform .3s" onerror="this.style.display='none'">
-      <div style="padding:9px 10px 11px;position:relative;z-index:2">
-        <div class="sic-nm">${s.name}</div>
-        <span class="sic-pill">Level ${lv}</span>
-        <div class="sic-pb" style="margin-top:7px"><div class="sic-pf" style="width:${pct}%;background:${s.color||'#29B0B8'}"></div></div>
-        <div class="sic-pct">${pct}%</div>
-      </div>
-    </div>`;
-  }).join('');
+  el.innerHTML=S.subjects.map(s=>buildSCard(s,'learn')).join('');
 }
+
 function renderContCards(){
   const el=document.getElementById('l-cont');if(!el)return;
-  el.innerHTML=S.subjects.slice(0,4).map(s=>`<div class="cc"><div class="cc-tp">${s.name} — Level ${S.levelProgress[s.key]?.current_level||1}</div><div class="cc-sb">${s.name}</div><div class="cc-pb"><div class="cc-pf" style="width:${Math.round(Math.random()*60+15)}%;background:${s.color||'#29B0B8'}"></div></div><div class="cc-pct">In progress</div><button class="cc-btn" style="background:${s.color||'#29B0B8'}" onclick="startSubject('${s.key}')">Continue ▶</button></div>`).join('');
+  el.innerHTML=S.subjects.slice(0,5).map(s=>{
+    const col=subjectColor(s);
+    return `<div class="cc"><div class="cc-tp">${s.name} — Level ${S.levelProgress[s.key]?.current_level||1}</div><div class="cc-sb">${s.name}</div><div class="cc-pb"><div class="cc-pf" style="width:${Math.round(Math.random()*60+15)}%;background:${col}"></div></div><div class="cc-pct">In progress</div><button class="cc-btn" style="background:${col}" onclick="startSubject('${s.key}')">Continue ▶</button></div>`;
+  }).join('');
 }
+
 function renderSkills(){
   const el=document.getElementById('l-skills');if(!el)return;
   const sks=[{e:'⚙️',n:'Problem Solver',c:'#3E8FD0'},{e:'⚡',n:'Quick Learner',c:'#27AE60'},{e:'💡',n:'Curious Mind',c:'#F0A030'},{e:'🎯',n:'Focus Master',c:'#E05C8A'},{e:'⭐',n:'Consistent Star',c:'#7C5CBF'},{e:'🔒',n:'Coming Soon',c:'#555',locked:true}];
   el.innerHTML=sks.map(s=>`<div class="sk-hex"><div class="sk-ico ${s.locked?'lck':''}">${s.e}</div><div class="sk-nm" style="color:${s.c}">${s.n}</div></div>`).join('');
 }
+
 function buildSMD(){
   const el=document.getElementById('l-smd');if(!el)return;
   el.innerHTML=['d','d','d','d','m','t','f'].map(s=>`<div class="smd ${s}">${s==='d'?'✓':s==='t'?'★':s==='m'?'✕':'·'}</div>`).join('');
 }
+
 function renderRAch(){
   const el=document.getElementById('l-rach');if(!el)return;
   el.innerHTML=[{ico:'🔬',nm:'Science Explorer',sb:'Completed 5 lessons',dt:'21 Jun'},{ico:'📖',nm:'Reading Champion',sb:'Read 10 lessons',dt:'20 Jun'},{ico:'🧮',nm:'Maths Wizard',sb:'Solved 50 problems',dt:'19 Jun'}].map(a=>`<div class="ra-row"><div class="ra-ico">${a.ico}</div><div style="flex:1"><div class="ra-nm">${a.nm}</div><div class="ra-sb">${a.sb}</div></div><div class="ra-dt">${a.dt}</div></div>`).join('');
 }
+
 function startCurrentLesson(){const s=S.subjects[0];if(s)startSubject(s.key);}
 
 function renderRewards(){
@@ -1554,6 +1697,7 @@ function renderRewards(){
     if(item){const earned=Math.max(0,S.stars-(S.activeGoal.stars_at_start||0));const pct=Math.min(100,Math.round(earned/item.star_cost*100));document.getElementById('ul-bar').style.width=pct+'%';document.getElementById('ul-txt').textContent=`${S.stars.toLocaleString()} / ${item.star_cost.toLocaleString()} · ${Math.max(0,item.star_cost-earned).toLocaleString()} more to go!`;}
   }
 }
+
 function renderWishGrid(){
   const el=document.getElementById('r-wish-grid');if(!el)return;
   const ws=document.getElementById('r-wish-section');
@@ -1567,6 +1711,7 @@ function renderWishGrid(){
     return `<div class="rc"><div class="rc-img">${w.image_url?`<img src="${w.image_url}" style="width:100%;height:100%;object-fit:cover;border-radius:9px">`:(w.icon||'🎁')}</div><div class="rc-nm">${w.title}</div><div class="rc-co">${(w.star_cost||0).toLocaleString()} ⭐</div><div style="height:4px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-bottom:9px"><div style="height:100%;background:var(--amber);border-radius:99px;width:${pct}%"></div></div><button class="rc-btn ${isGoal?'can':'cant'}" style="${isGoal?'background:var(--teal2)':''}" onclick="setGoal('${w.id}')">${isGoal?'🎯 Current Goal':'Set as Goal'}</button></div>`;
   }).join('');
 }
+
 function renderRGrid(items,cat){
   const el=document.getElementById('r-grid');if(!el)return;
   const filtered=cat==='all'?items:items.filter(r=>r.category===cat);
@@ -1577,15 +1722,20 @@ function renderRGrid(items,cat){
     return `<div class="rc">${b?`<span class="rc-badge ${b}">${b==='pop'?'Popular':'New'}</span>`:''}<div class="rc-img">${r.image_url?`<img src="${r.image_url}">`:(r.icon||'🎁')}</div><div class="rc-nm">${r.title}</div><div class="rc-co">${(r.star_cost||0).toLocaleString()} ⭐</div><button class="rc-btn ${can?'can':'cant'}" onclick="${can?`redeemR('${r.id}','${esc(r.title)}',${r.star_cost})`:'void(0)'}">${can?'View Details':'Need more ⭐'}</button></div>`;
   }).join('');
 }
+
 function filterR(cat,btn){document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderRGrid(S.rewardShop,cat);}
+
 async function redeemR(id,title,cost){
   if(S.stars<cost||!confirm(`Redeem "${title}" for ${cost.toLocaleString()} ⭐?`))return;
   try{
     await db('redemptions',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,reward_id:id,stars_spent:cost,status:'pending'}});
     await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:-cost,reason:`Redeemed: ${title}`,category:'spend'}});
-    S.stars-=cost;showMod(`<div style="text-align:center;padding:12px 0"><div style="font-size:3.5rem;margin-bottom:9px">🎉</div><div style="font-size:1.1rem;font-weight:900;color:#fff;margin-bottom:5px">Request sent!</div><div style="font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:14px">Ask a parent to approve <strong>${title}</strong>!</div><button class="mb" onclick="closeMod()">Awesome! 🌟</button></div>`);renderRewards();
+    S.stars-=cost;
+    showMod(`<div style="text-align:center;padding:12px 0"><div style="font-size:3.5rem;margin-bottom:9px">🎉</div><div style="font-size:1.1rem;font-weight:900;color:#fff;margin-bottom:5px">Request sent!</div><div style="font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:14px">Ask a parent to approve <strong>${title}</strong>!</div><button class="mb" onclick="closeMod()">Awesome! 🌟</button></div>`);
+    renderRewards();
   }catch(e){}
 }
+
 async function setGoal(wid){
   if(!wid)return;
   try{
@@ -1595,6 +1745,7 @@ async function setGoal(wid){
     S.activeGoal={wish_list_id:wid,stars_at_start:S.stars};renderGoal();renderRewards();
   }catch(e){}
 }
+
 function buildCountdown(){
   const tgt=new Date();tgt.setDate(tgt.getDate()+2);tgt.setHours(14,36,8,0);
   function tick(){const now=new Date(),diff=Math.max(0,tgt-now);const d=Math.floor(diff/864e5),h=Math.floor(diff%864e5/36e5),mi=Math.floor(diff%36e5/6e4),s=Math.floor(diff%6e4/1e3);['d','h','m','s'].forEach((k,i)=>{const el=document.getElementById('cd-'+k);if(el)el.textContent=String([d,h,mi,s][i]).padStart(2,'0');});}
@@ -1618,15 +1769,23 @@ function renderProfile(){
   document.getElementById('xp-txt').textContent=`${S.stars%200} / 200 XP · Keep going! ⭐`;
   renderAchs();renderPBars();buildRadar([85,75,80,88,90]);
 }
+
 function renderAchs(){
   const el=document.getElementById('ach-scroll');if(!el)return;
   const a=[{e:'🌅',n:'Early Bird',d:'10 morning tasks',earned:true},{e:'⭐',n:'Star Collector',d:'500 stars',earned:S.stars>=500},{e:'🔥',n:'Streak Master',d:'7 days streak',earned:S.streak>=7},{e:'📚',n:'Bookworm',d:'Read 10 books',earned:false},{e:'🧮',n:'Math Whiz',d:'100% in 5 quizzes',earned:false},{e:'💚',n:'Kind Heart',d:'Helped a friend',earned:true}];
   el.innerHTML=a.map(x=>`<div class="ach-chip ${x.earned?'earned':''}"><span class="ac-ico">${x.e}</span><div class="ac-nm">${x.n}</div><div class="ac-ds">${x.d}</div></div>`).join('');
 }
+
 function renderPBars(){
   const el=document.getElementById('pr-bars');if(!el)return;
-  el.innerHTML=S.subjects.slice(0,5).map(s=>{const lv=S.levelProgress[s.key]?.current_level||1;const pct=Math.round((lv-1)/10*100);return `<div class="pb-row"><div class="pb-ico">${s.icon}</div><div class="pb-inf"><div class="pb-nm">${s.name}</div><div class="pb-bg"><div class="pb-fill" style="width:${pct}%;background:${s.color||'#29B0B8'}"></div></div></div><div class="pb-pct">${pct}%</div></div>`;}).join('');
+  el.innerHTML=S.subjects.slice(0,6).map(s=>{
+    const lv=S.levelProgress[s.key]?.current_level||1;
+    const pct=Math.round((lv-1)/10*100);
+    const col=subjectColor(s);
+    return `<div class="pb-row"><div class="pb-ico">${s.icon}</div><div class="pb-inf"><div class="pb-nm">${s.name}</div><div class="pb-bg"><div class="pb-fill" style="width:${pct}%;background:${col}"></div></div></div><div class="pb-pct">${pct}%</div></div>`;
+  }).join('');
 }
+
 function buildRadar(vals){
   const svg=document.getElementById('radar-svg');if(!svg)return;
   const cx=77.5,cy=77.5,r=52,labels=['Knowledge','Creativity','Consistency','Kindness','Focus'],n=5;
@@ -1640,6 +1799,7 @@ function buildRadar(vals){
   axes.forEach(([x,y],i)=>{const lx=cx+(x-cx)*1.32,ly=cy+(y-cy)*1.32;h+=`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" fill="rgba(255,255,255,.4)" font-size="7.5" font-family="Nunito" font-weight="700">${labels[i]}</text><text x="${lx}" y="${ly+10}" text-anchor="middle" dominant-baseline="middle" fill="#F6C04A" font-size="7.5" font-family="Nunito" font-weight="800">${vals[i]}%</text>`;});
   svg.innerHTML=h;
 }
+
 function editAbout(){showMod(`<div class="mt">✏️ About Me</div><textarea class="mi" id="ab-ta" style="height:110px;resize:none">${document.getElementById('about-txt').textContent}</textarea><input class="mi" type="text" id="ab-em" placeholder="Emoji e.g. 🚀 🌍" value="${document.getElementById('about-em').textContent}"><button class="mb" onclick="saveAbout()">Save ✓</button><button class="mb s" style="margin-top:7px" onclick="closeMod()">Cancel</button>`);}
 function saveAbout(){document.getElementById('about-txt').textContent=document.getElementById('ab-ta').value;document.getElementById('about-em').textContent=document.getElementById('ab-em').value;closeMod();}
 
@@ -1649,18 +1809,31 @@ async function startSubject(key){
   document.getElementById('quiz').style.display='flex';
   if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='none';
   document.getElementById('q-subj').textContent=s.name;
-  const lv=S.levelProgress[key]?.current_level||1;
   const targetGrade=gradeAhead(S.player.grade);
   try{
     let qs=await db(`questions?subject_key=eq.${key}&active=eq.true&grade=lte.${targetGrade}&limit=50`);
     if(Array.isArray(qs)&&qs.length)qs=shuf(qs).slice(0,15);
-    if(!Array.isArray(qs)||!qs.length)qs=[{id:'q1',subject_key:'math',grade:3,level:1,topic:'addition',question:'What is 5 + 7?',answer:'12',wrong1:'10',wrong2:'11',wrong3:'13',explanation:'5 + 7 = 12',active:true},{id:'q2',subject_key:'math',grade:1,level:1,topic:'counting',question:'What is 2 + 3?',answer:'5',wrong1:'4',wrong2:'6',wrong3:'7',explanation:'2 + 3 = 5',active:true},{id:'q3',subject_key:'science',grade:3,level:1,topic:'plants',question:'What do plants need to grow?',answer:'sunlight, water and soil',wrong1:'darkness and ice',wrong2:'only water',wrong3:'only sunlight',explanation:'Plants need sunlight, water, and soil',active:true},{id:'q4',subject_key:'reading',grade:3,level:1,topic:'vocabulary',question:'What word means the opposite of hot?',answer:'cold',wrong1:'warm',wrong2:'cool',wrong3:'boiling',explanation:'Hot and cold are opposites',active:true},{id:'q5',subject_key:'social',grade:3,level:1,topic:'canada',question:'What is the capital city of Canada?',answer:'Ottawa',wrong1:'Toronto',wrong2:'Vancouver',wrong3:'Montreal',explanation:'Ottawa is the capital city',active:true},{id:'q6',subject_key:'coding',grade:3,level:1,topic:'basics',question:'What do we call instructions for a computer?',answer:'program',wrong1:'story',wrong2:'picture',wrong3:'song',explanation:'A program tells computers what to do',active:true},{id:'q7',subject_key:'writing',grade:3,level:1,topic:'punctuation',question:'Which mark ends a question?',answer:'?',wrong1:'.',wrong2:'!',wrong3:',',explanation:'A question mark ends a question',active:true}].filter(q=>q.subject_key===key);
-    if(!qs.length){document.getElementById('quiz').style.display='none';showMod(`<div style="text-align:center;padding:12px"><div style="font-size:3rem;margin-bottom:9px">🚧</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Questions Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">Adding questions for <strong>${s.name}</strong> soon!</div><button class="mb" onclick="closeMod()">OK!</button></div>`);return;}
+    if(!Array.isArray(qs)||!qs.length)qs=[
+      {id:'q1',subject_key:'math',grade:3,level:1,topic:'addition',question:'What is 5 + 7?',answer:'12',wrong1:'10',wrong2:'11',wrong3:'13',explanation:'5 + 7 = 12',active:true},
+      {id:'q2',subject_key:'math',grade:1,level:1,topic:'counting',question:'What is 2 + 3?',answer:'5',wrong1:'4',wrong2:'6',wrong3:'7',explanation:'2 + 3 = 5',active:true},
+      {id:'q3',subject_key:'science',grade:3,level:1,topic:'plants',question:'What do plants need to grow?',answer:'sunlight, water and soil',wrong1:'darkness and ice',wrong2:'only water',wrong3:'only sunlight',explanation:'Plants need sunlight, water, and soil',active:true},
+      {id:'q4',subject_key:'reading',grade:3,level:1,topic:'vocabulary',question:'What word means the opposite of hot?',answer:'cold',wrong1:'warm',wrong2:'cool',wrong3:'boiling',explanation:'Hot and cold are opposites',active:true},
+      {id:'q5',subject_key:'social',grade:3,level:1,topic:'canada',question:'What is the capital city of Canada?',answer:'Ottawa',wrong1:'Toronto',wrong2:'Vancouver',wrong3:'Montreal',explanation:'Ottawa is the capital city',active:true},
+      {id:'q6',subject_key:'coding',grade:3,level:1,topic:'basics',question:'What do we call instructions for a computer?',answer:'program',wrong1:'story',wrong2:'picture',wrong3:'song',explanation:'A program tells computers what to do',active:true},
+      {id:'q7',subject_key:'writing',grade:3,level:1,topic:'punctuation',question:'Which mark ends a question?',answer:'?',wrong1:'.',wrong2:'!',wrong3:',',explanation:'A question mark ends a question',active:true}
+    ].filter(q=>q.subject_key===key);
+    if(!qs.length){
+      document.getElementById('quiz').style.display='none';
+      showMod(`<div style="text-align:center;padding:12px"><div style="font-size:3rem;margin-bottom:9px">🚧</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Questions Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">Adding questions for <strong>${s.name}</strong> soon!</div><button class="mb" onclick="closeMod()">OK!</button></div>`);
+      return;
+    }
     S.quizBatch=shuf(qs);S.quizIdx=0;S.quizScore=0;S.quizSE=0;loadQ();
   }catch(e){document.getElementById('quiz').style.display='none';}
 }
+
 function loadQ(){
-  S.quizAns=false;const q=S.quizBatch[S.quizIdx],total=S.quizBatch.length;
+  S.quizAns=false;
+  const q=S.quizBatch[S.quizIdx],total=S.quizBatch.length;
   document.getElementById('q-cnt').textContent=`Q ${S.quizIdx+1} of ${total}`;
   document.getElementById('q-prog').style.width=(S.quizIdx/total*100)+'%';
   document.getElementById('q-tag').textContent=`Grade ${q.grade} · Level ${q.level}`;
@@ -1671,16 +1844,26 @@ function loadQ(){
   const opts=shuf([q.answer,q.wrong1,q.wrong2,q.wrong3]);
   document.getElementById('q-opts').innerHTML=opts.map((o,i)=>`<button class="q-opt" onclick="pickQ(this,'${esc(o)}','${esc(q.answer)}',${q.level})"><span class="q-let">${['A','B','C','D'][i]}</span>${o}</button>`).join('');
 }
+
 function pickQ(btn,chosen,correct,lv){
   if(S.quizAns)return;S.quizAns=true;
   document.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
   const stars=lv<=2?10:lv<=4?15:lv<=6?20:25;
   const fb=document.getElementById('q-fb');
-  if(chosen===correct){btn.classList.add('correct');fb.className='q-fb ok';fb.textContent=getQuote('success');S.quizScore++;S.quizSE+=stars;document.getElementById('q-stl').textContent=S.quizSE;}
-  else{btn.classList.add('wrong');fb.className='q-fb no';const exp=S.quizBatch[S.quizIdx]?.explanation;fb.textContent=getQuote('wrong_answer')+(exp?' — '+exp:'');document.querySelectorAll('.q-opt').forEach(b=>{if(b.textContent.trim().slice(1).trim()===correct)b.classList.add('correct');});}
+  if(chosen===correct){
+    btn.classList.add('correct');fb.className='q-fb ok';fb.textContent=getQuote('success');
+    S.quizScore++;S.quizSE+=stars;document.getElementById('q-stl').textContent=S.quizSE;
+  }else{
+    btn.classList.add('wrong');fb.className='q-fb no';
+    const exp=S.quizBatch[S.quizIdx]?.explanation;
+    fb.textContent=getQuote('wrong_answer')+(exp?' — '+exp:'');
+    document.querySelectorAll('.q-opt').forEach(b=>{if(b.textContent.trim().slice(1).trim()===correct)b.classList.add('correct');});
+  }
   document.getElementById('q-nxt').style.display='block';
 }
+
 function qNext(){S.quizIdx++;if(S.quizIdx>=S.quizBatch.length){showQRes();return;}loadQ();}
+
 async function showQRes(){
   const total=S.quizBatch.length,pct=Math.round(S.quizScore/total*100);
   const passed=pct>=80,perf=pct===100;
@@ -1689,7 +1872,12 @@ async function showQRes(){
     await db('sessions',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,subject_key:S.quizSubj.key,level:S.levelProgress[S.quizSubj.key]?.current_level||1,score:S.quizScore,total,stars_earned:ts,passed,perfect:perf}});
     await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:ts,reason:`${S.quizSubj.name} quiz — ${S.quizScore}/${total}`,category:'learning'}});
     S.stars+=ts;
-    if(passed){const nl=(S.levelProgress[S.quizSubj.key]?.current_level||1)+1;if(S.levelProgress[S.quizSubj.key])await db(`level_progress?player_id=eq.${S.player.id}&subject_key=eq.${S.quizSubj.key}`,{method:'PATCH',prefer:'return=minimal',body:{current_level:Math.min(nl,10)}});else await db('level_progress',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,subject_key:S.quizSubj.key,current_level:2}});S.levelProgress[S.quizSubj.key]={...(S.levelProgress[S.quizSubj.key]||{}),current_level:Math.min(nl,10)};}
+    if(passed){
+      const nl=(S.levelProgress[S.quizSubj.key]?.current_level||1)+1;
+      if(S.levelProgress[S.quizSubj.key])await db(`level_progress?player_id=eq.${S.player.id}&subject_key=eq.${S.quizSubj.key}`,{method:'PATCH',prefer:'return=minimal',body:{current_level:Math.min(nl,10)}});
+      else await db('level_progress',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,subject_key:S.quizSubj.key,current_level:2}});
+      S.levelProgress[S.quizSubj.key]={...(S.levelProgress[S.quizSubj.key]||{}),current_level:Math.min(nl,10)};
+    }
   }catch(e){}
   document.getElementById('quiz').style.display='none';
   const rs=document.getElementById('res');rs.style.display='flex';
@@ -1698,6 +1886,7 @@ async function showQRes(){
   document.getElementById('r-ea').textContent=`+${ts.toLocaleString()} ⭐ earned`;
   document.getElementById('r-mg').textContent=perf?getQuote('perfect_score'):passed?getQuote('level_up'):getQuote('wrong_answer');
 }
+
 function retryQuiz(){document.getElementById('res').style.display='none';startSubject(S.quizSubj.key);}
 function closeQuiz(){document.getElementById('quiz').style.display='none';if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='flex';}
 function closeRes(){document.getElementById('res').style.display='none';renderHome();}
@@ -1707,7 +1896,10 @@ function closePin(){document.getElementById('pin').style.display='none';}
 function pk(k){
   if(k==='back')S.pinE=S.pinE.slice(0,-1);else if(S.pinE.length<4)S.pinE+=k;
   updDots();
-  if(S.pinE.length===4){if(S.pinE===S.pin){S.pinE='';updDots();document.getElementById('pin').style.display='none';openPD();}else{document.getElementById('pin-err').textContent='Incorrect PIN';setTimeout(()=>{S.pinE='';updDots();document.getElementById('pin-err').textContent='';},800);}}
+  if(S.pinE.length===4){
+    if(S.pinE===S.pin){S.pinE='';updDots();document.getElementById('pin').style.display='none';openPD();}
+    else{document.getElementById('pin-err').textContent='Incorrect PIN';setTimeout(()=>{S.pinE='';updDots();document.getElementById('pin-err').textContent='';},800);}
+  }
 }
 function updDots(){for(let i=0;i<4;i++)document.getElementById('p'+i).classList.toggle('on',i<S.pinE.length);}
 function openPD(){window.location.href='parent_dashboard.html';}
@@ -1726,7 +1918,7 @@ function showTaraTip(){const tips=['Namaste! Every question makes you smarter! �
 function showMod(h){document.getElementById('mc').innerHTML=h;document.getElementById('mov').classList.add('open');}
 function closeMod(){document.getElementById('mov').classList.remove('open');}
 
-// READING
+// ─── READING ────────────────────────────────────────────────────────
 let RD={passages:[],currentPassage:null,recognition:null,listening:false,transcript:'',starsEarned:0,taskId:null};
 async function openReading(taskId){
   RD.taskId=taskId||null;document.getElementById('readingScreen').style.display='flex';
