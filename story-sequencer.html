@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Story Sequencer 📚 — Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --amber:#F6C04A;--amber2:#E8A020;--amber3:#FDE68A;
+  --brown:#92400E;--brown2:#78350F;--cream:#FEF3C7;
+  --red:#E84545;--green:#27AE60;--purple:#7C5CBF;
+  --warm1:rgba(30,16,4,0.92);--warm2:rgba(255,255,255,0.08);
+  --r:16px;--shadow:0 4px 24px rgba(0,0,0,0.5);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden}
+body{background:#120A02;display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+.bg{position:fixed;inset:0;z-index:0;
+  background:radial-gradient(ellipse at 30% 40%,rgba(146,64,14,.12) 0%,transparent 60%),
+             radial-gradient(ellipse at 70% 70%,rgba(120,53,15,.10) 0%,transparent 55%),#120A02}
+.bg-deco{position:fixed;font-size:6rem;opacity:.03;pointer-events:none;user-select:none}
+
+.wrap{position:relative;z-index:1;width:100%;max-width:620px;padding:12px;
+  display:flex;flex-direction:column;gap:9px;max-height:100vh;overflow-y:auto}
+.wrap::-webkit-scrollbar{display:none}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:10px;background:var(--warm1);backdrop-filter:blur(14px);
+  border:1px solid rgba(246,192,74,.15);border-radius:var(--r);padding:11px 15px;box-shadow:var(--shadow);flex-shrink:0}
+.back-btn{width:32px;height:32px;border-radius:50%;background:rgba(246,192,74,.1);border:none;
+  color:#fff;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hdr-title{flex:1;font-size:1rem;font-weight:900;color:#fff}
+.hdr-sub{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.45)}
+.lives{display:flex;gap:2px;font-size:1rem}
+.star-count{font-size:.9rem;font-weight:900;color:var(--amber);white-space:nowrap}
+
+/* INFO ROW */
+.info-row{display:flex;gap:7px;flex-shrink:0}
+.info-box{flex:1;background:var(--warm1);backdrop-filter:blur(14px);
+  border:1px solid rgba(246,192,74,.12);border-radius:11px;padding:7px 9px;
+  text-align:center;box-shadow:var(--shadow)}
+.ib-val{font-size:.95rem;font-weight:900;color:#fff;line-height:1}
+.ib-lbl{font-size:.5rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px;text-transform:uppercase}
+.ib-val.amber{color:var(--amber)}
+.streak-badge{display:inline-flex;align-items:center;gap:3px;border-radius:99px;padding:3px 9px;
+  font-size:.7rem;font-weight:900;background:rgba(246,192,74,.1);
+  border:1px solid rgba(246,192,74,.2);color:var(--amber);transition:all .3s}
+.streak-badge.s3{background:rgba(39,174,96,.12);border-color:rgba(39,174,96,.28);color:#90FFB0}
+.streak-badge.s5{background:rgba(124,92,191,.12);border-color:rgba(124,92,191,.28);color:#C8A8FF}
+.streak-badge.s7{background:rgba(246,192,74,.15);border-color:rgba(246,192,74,.3);color:var(--amber);animation:mp .6s ease infinite alternate}
+@keyframes mp{from{transform:scale(1)}to{transform:scale(1.08)}}
+
+/* POPUPS */
+.popup-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
+  z-index:9999;text-align:center;pointer-events:none;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  background:rgba(18,10,2,0.95);backdrop-filter:blur(18px);
+  border-radius:24px;padding:20px 32px;box-shadow:0 8px 40px rgba(0,0,0,0.7)}
+.popup-overlay.combo{border:1.5px solid rgba(246,192,74,0.3)}
+.popup-overlay.life{border:1.5px solid rgba(232,69,122,0.35)}
+.popup-overlay.show{transform:translate(-50%,-50%) scale(1)}
+.popup-overlay.hide{transform:translate(-50%,-50%) scale(0);opacity:0}
+.po-text{font-size:1.9rem;font-weight:900;white-space:nowrap}
+.po-sub{font-size:.85rem;font-weight:800;color:rgba(255,255,255,.6);margin-top:3px}
+
+/* STORY CARD */
+.story-card{background:var(--warm1);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(246,192,74,.2);border-radius:var(--r);
+  padding:16px;box-shadow:var(--shadow),0 0 20px rgba(146,64,14,.1)}
+.story-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.story-cat{font-size:.6rem;font-weight:900;border-radius:99px;padding:3px 10px;border:1px solid}
+.story-title{font-size:.88rem;font-weight:900;color:var(--amber);flex:1}
+.story-grade{font-size:.58rem;font-weight:700;color:rgba(255,255,255,.35)}
+.story-body{font-family:'Lora',serif;font-size:.9rem;line-height:1.75;color:rgba(255,255,255,.85)}
+.story-body .sentence{transition:all .3s;border-radius:4px;padding:1px 3px;margin:0 -3px;display:inline}
+.story-body .sentence.highlight{background:rgba(246,192,74,.2);color:#fff;border-radius:6px}
+.story-body .sentence.highlight-q{background:rgba(124,92,191,.25);color:#fff;border-radius:6px}
+.story-body .sentence.wrong{background:rgba(232,69,69,.15);color:#FF9090}
+.story-body .sentence.correct{background:rgba(39,174,96,.15);color:#90FFB0}
+.story-progress{display:flex;gap:4px;margin-top:10px}
+.sp-dot{flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.1);transition:all .3s}
+.sp-dot.done{background:var(--amber)}
+.sp-dot.current{background:rgba(246,192,74,.5);animation:spPulse 1s ease infinite}
+@keyframes spPulse{0%,100%{opacity:.5}50%{opacity:1}}
+
+/* QUESTION CARD */
+.q-card{background:var(--warm1);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(246,192,74,.15);border-radius:var(--r);
+  padding:15px;box-shadow:var(--shadow)}
+.q-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.mode-tag{font-size:.62rem;font-weight:900;border-radius:99px;padding:3px 11px;border:1px solid}
+.mode-tag.sequence{background:rgba(246,192,74,.1);color:var(--amber);border-color:rgba(246,192,74,.25)}
+.mode-tag.inference{background:rgba(124,92,191,.1);color:#C8A8FF;border-color:rgba(124,92,191,.25)}
+.mode-tag.fill{background:rgba(43,191,184,.1);color:#7DFFCC;border-color:rgba(43,191,184,.25)}
+.mode-tag.predict{background:rgba(240,120,48,.1);color:#FFB060;border-color:rgba(240,120,48,.25)}
+.mode-tag.whosaid{background:rgba(74,144,217,.1);color:#90CAF9;border-color:rgba(74,144,217,.25)}
+.mode-tag.mood{background:rgba(232,69,122,.1);color:#FF8FAA;border-color:rgba(232,69,122,.25)}
+.mode-tag.truefalse{background:rgba(39,174,96,.1);color:#90FFB0;border-color:rgba(39,174,96,.25)}
+.mode-tag.vocabulary{background:rgba(246,192,74,.1);color:var(--amber);border-color:rgba(246,192,74,.25)}
+.mode-tag.character{background:rgba(232,69,122,.1);color:#FF8FAA;border-color:rgba(232,69,122,.25)}
+.mode-tag.title{background:rgba(124,92,191,.1);color:#C8A8FF;border-color:rgba(124,92,191,.25)}
+.q-num{font-size:.6rem;font-weight:800;color:rgba(255,255,255,.35)}
+.question{font-size:1.1rem;font-weight:900;color:#fff;text-align:center;
+  margin-bottom:12px;line-height:1.4;min-height:38px;
+  display:flex;align-items:center;justify-content:center}
+.question.small{font-size:.92rem}
+
+/* MCQ */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px}
+.opts.single{grid-template-columns:1fr}
+.opt{padding:11px 10px;background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(246,192,74,.12);
+  border-radius:12px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;
+  color:rgba(255,255,255,.85);cursor:pointer;transition:all .15s;text-align:center;word-break:break-word}
+.opt:hover:not(:disabled){background:rgba(246,192,74,.1);border-color:rgba(246,192,74,.3);transform:translateY(-2px)}
+.opt.correct{background:rgba(39,174,96,.2)!important;border-color:var(--green)!important;color:#90FFB0!important}
+.opt.wrong{background:rgba(232,69,69,.15)!important;border-color:var(--red)!important;color:#FF9090!important;animation:shake .3s ease}
+
+/* SEQUENCE */
+.seq-instruction{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.45);
+  text-align:center;margin-bottom:10px;padding:6px;background:rgba(246,192,74,.05);
+  border-radius:8px;border:1px solid rgba(246,192,74,.1)}
+.seq-bank{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.seq-sentence{padding:10px 13px;background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(246,192,74,.15);border-radius:11px;
+  font-family:'Lora',serif;font-size:.82rem;font-weight:400;color:rgba(255,255,255,.85);
+  cursor:pointer;transition:all .2s;line-height:1.5;display:flex;align-items:center;gap:8px}
+.seq-sentence:hover:not(.placed){background:rgba(246,192,74,.1);border-color:rgba(246,192,74,.3);transform:translateX(3px)}
+.seq-sentence.placed{opacity:.3;cursor:default;transform:none}
+.seq-sentence.correct-order{background:rgba(39,174,96,.15);border-color:rgba(39,174,96,.3)}
+.seq-sentence.wrong-order{background:rgba(232,69,69,.1);border-color:rgba(232,69,69,.25)}
+.seq-num{width:22px;height:22px;border-radius:50%;background:rgba(246,192,74,.15);
+  display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;
+  color:var(--amber);flex-shrink:0}
+.seq-slots{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.seq-slot{padding:10px 13px;background:rgba(255,255,255,.03);
+  border:1.5px dashed rgba(255,255,255,.12);border-radius:11px;
+  font-family:'Lora',serif;font-size:.82rem;font-weight:400;
+  color:rgba(255,255,255,.25);display:flex;align-items:center;gap:8px;
+  min-height:46px;transition:all .2s;cursor:pointer}
+.seq-slot.filled{background:rgba(246,192,74,.08);border-style:solid;border-color:rgba(246,192,74,.2);color:rgba(255,255,255,.85)}
+.seq-slot.filled:hover{background:rgba(232,69,69,.1);border-color:rgba(232,69,69,.25)}
+.seq-slot .slot-num{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;
+  color:rgba(255,255,255,.4);flex-shrink:0}
+
+/* FILL BLANK */
+.fill-sentence{font-family:'Lora',serif;font-size:.95rem;line-height:1.8;color:rgba(255,255,255,.85);
+  text-align:center;margin-bottom:12px;padding:12px;background:rgba(246,192,74,.05);
+  border-radius:11px;border:1px solid rgba(246,192,74,.1)}
+.fill-blank{display:inline-block;min-width:80px;border-bottom:2px solid var(--amber);
+  color:var(--amber);font-weight:700;text-align:center;padding:0 4px}
+
+/* TRUE/FALSE */
+.tf-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tf-btn{padding:16px;border:2px solid rgba(255,255,255,.1);border-radius:13px;
+  font-family:'Nunito',sans-serif;font-size:1rem;font-weight:900;
+  cursor:pointer;transition:all .2s;text-align:center}
+.tf-btn.true-btn{background:rgba(39,174,96,.1);border-color:rgba(39,174,96,.2);color:#90FFB0}
+.tf-btn.false-btn{background:rgba(232,69,69,.1);border-color:rgba(232,69,69,.2);color:#FF9090}
+.tf-btn:hover:not(:disabled){transform:translateY(-3px);filter:brightness(1.2)}
+.tf-btn.correct{filter:brightness(1.3);box-shadow:0 4px 16px rgba(39,174,96,.3)}
+.tf-btn.wrong{opacity:.5;animation:shake .3s ease}
+
+/* MOOD */
+.mood-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mood-btn{padding:14px 10px;border:1.5px solid rgba(255,255,255,.1);border-radius:13px;
+  font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;
+  cursor:pointer;transition:all .2s;text-align:center;background:rgba(255,255,255,.05)}
+.mood-btn:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.15)}
+.mood-btn.correct{background:rgba(39,174,96,.2)!important;border-color:var(--green)!important;color:#90FFB0!important}
+.mood-btn.wrong{background:rgba(232,69,69,.1)!important;border-color:var(--red)!important;animation:shake .3s ease}
+
+/* HINT + SHOW PIC */
+.btn-row{display:flex;gap:7px;margin-top:8px}
+.show-pic-btn{flex:1;padding:8px;background:rgba(246,192,74,.08);
+  border:1.5px solid rgba(246,192,74,.18);border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:800;
+  color:rgba(246,192,74,.7);cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:5px}
+.show-pic-btn:hover{background:rgba(246,192,74,.15);color:var(--amber)}
+.hint-btn{flex:1;padding:8px;background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(255,255,255,.1);border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:800;
+  color:rgba(255,255,255,.4);cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:5px;display:none}
+.hint-btn:hover{background:rgba(246,192,74,.1);border-color:rgba(246,192,74,.2);color:var(--amber)}
+.hint-btn.used{opacity:.35;cursor:default}
+.hint-box{background:rgba(246,192,74,.07);border:1px solid rgba(246,192,74,.15);
+  border-radius:10px;padding:8px 12px;margin-top:6px;display:none}
+.hint-box.show{display:block}
+.hint-txt{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.65)}
+
+/* EXPLANATION */
+.explanation-card{margin-top:10px;border-radius:13px;padding:13px 15px;display:none;animation:slideDown .3s ease}
+.explanation-card.show{display:block}
+.explanation-card.ok{background:rgba(39,174,96,.1);border:1.5px solid rgba(39,174,96,.22)}
+.explanation-card.no{background:rgba(232,69,69,.08);border:1.5px solid rgba(232,69,69,.2)}
+.explanation-card.partial{background:rgba(246,192,74,.08);border:1.5px solid rgba(246,192,74,.2)}
+.ex-result{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ex-icon{font-size:1.2rem;flex-shrink:0}
+.ex-answer{font-size:.88rem;font-weight:900;color:#fff}
+.ex-answer span{color:var(--amber)}
+.ex-explain{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.7);line-height:1.55;margin-bottom:7px}
+.ex-word{background:rgba(246,192,74,.07);border:1px solid rgba(246,192,74,.15);
+  border-radius:9px;padding:8px 11px;margin-bottom:9px;display:none}
+.ex-word.show{display:block}
+.ex-word-lbl{font-size:.57rem;font-weight:900;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.ex-word-txt{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.75);line-height:1.5}
+.ex-next{width:100%;padding:10px;border:none;border-radius:11px;font-family:'Nunito',sans-serif;
+  font-size:.85rem;font-weight:900;cursor:pointer;color:#fff}
+.ex-next.ok{background:linear-gradient(135deg,var(--green),#52D08A)}
+.ex-next.no{background:linear-gradient(135deg,var(--amber2),var(--amber));color:#1A0A00}
+.ex-next.partial{background:linear-gradient(135deg,var(--amber2),var(--amber));color:#1A0A00}
+
+/* ROUND SUMMARY */
+.round-story-card{background:var(--warm1);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(246,192,74,.2);border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
+.rs-title{font-size:.78rem;font-weight:900;color:var(--amber);margin-bottom:10px;
+  display:flex;align-items:center;gap:6px}
+.rs-story{font-family:'Lora',serif;font-size:.85rem;line-height:1.8;color:rgba(255,255,255,.8)}
+.rs-sentence{display:inline}
+.rs-sentence.missed{color:#FF9090;background:rgba(232,69,69,.1);border-radius:4px;padding:1px 3px}
+.rs-fact{background:rgba(246,192,74,.07);border:1px solid rgba(246,192,74,.15);
+  border-radius:9px;padding:9px 12px;margin-top:10px}
+.rs-fact-lbl{font-size:.57rem;font-weight:900;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.rs-fact-txt{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.7);line-height:1.5}
+
+/* SCREENS */
+.screen{display:none}.screen.active{display:flex;flex-direction:column;gap:9px}
+
+/* START */
+.start-card{background:var(--warm1);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(246,192,74,.2);border-radius:var(--r);
+  padding:24px 20px;text-align:center;box-shadow:var(--shadow)}
+.start-icon{font-size:3.2rem;margin-bottom:8px;display:block;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.start-title{font-size:1.4rem;font-weight:900;color:var(--amber);margin-bottom:4px}
+.start-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:14px;line-height:1.6}
+.cat-chips{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:14px}
+.cat-chip{font-size:.62rem;font-weight:800;border-radius:99px;padding:4px 11px;border:1px solid;
+  background:rgba(246,192,74,.08);border-color:rgba(246,192,74,.2);color:rgba(246,192,74,.8)}
+.rules{display:flex;flex-direction:column;gap:5px;text-align:left;margin-bottom:14px}
+.rule{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border-radius:9px;padding:6px 10px}
+.rule-ico{font-size:.9rem;flex-shrink:0}
+.rule-txt{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.7)}
+.start-btn{width:100%;padding:13px;border:none;border-radius:13px;
+  background:linear-gradient(135deg,var(--brown2),var(--amber2));
+  color:#fff;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;
+  cursor:pointer;box-shadow:0 4px 20px rgba(146,64,14,.4);transition:all .2s}
+.start-btn:hover{transform:translateY(-2px)}
+.pb-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:9px;
+  font-size:.7rem;font-weight:700;color:rgba(255,255,255,.4)}
+.pb-val{color:var(--amber);font-weight:900}
+
+/* ROUND END */
+.re-card{background:var(--warm1);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(246,192,74,.2);border-radius:var(--r);
+  padding:20px 16px;text-align:center;box-shadow:var(--shadow)}
+.re-icon{font-size:2.6rem;margin-bottom:6px;display:block}
+.re-title{font-size:1.1rem;font-weight:900;color:var(--amber);margin-bottom:3px}
+.re-stats{display:flex;gap:7px;margin:10px 0}
+.re-stat{flex:1;background:rgba(255,255,255,.05);border-radius:10px;padding:9px;text-align:center}
+.re-sv{font-size:1.1rem;font-weight:900;color:var(--amber)}
+.re-sl{font-size:.53rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px}
+.re-btn{width:100%;padding:10px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;
+  font-size:.85rem;font-weight:900;cursor:pointer;transition:all .2s}
+.re-btn.next{background:linear-gradient(135deg,var(--brown2),var(--amber2));color:#fff}
+.re-btn.home{background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);margin-top:6px}
+
+/* GAME OVER */
+.go-card{background:var(--warm1);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(246,192,74,.2);border-radius:var(--r);
+  padding:24px 18px;text-align:center;box-shadow:var(--shadow)}
+.go-trophy{font-size:3.8rem;margin-bottom:7px;display:block;animation:float 2s ease-in-out infinite}
+.go-title{font-size:1.3rem;font-weight:900;color:var(--amber);margin-bottom:3px}
+.go-score{font-size:2.4rem;font-weight:900;color:var(--amber);line-height:1}
+.go-earned{font-size:.85rem;font-weight:800;color:#90FFB0;margin-top:3px}
+.go-msg{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.5);margin:7px 0 3px;line-height:1.5}
+.new-best{background:rgba(246,192,74,.1);border:1px solid rgba(246,192,74,.25);
+  border-radius:10px;padding:8px 13px;font-size:.78rem;font-weight:900;
+  color:var(--amber);margin:7px 0;animation:popIn .4s ease}
+.go-stats{display:flex;gap:6px;margin-bottom:12px}
+.go-stat{flex:1;background:rgba(255,255,255,.05);border-radius:10px;padding:8px;text-align:center}
+.go-sv{font-size:1rem;font-weight:900;color:#fff}
+.go-sl{font-size:.5rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px}
+.go-btns{display:flex;flex-direction:column;gap:6px}
+.go-btn{width:100%;padding:10px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:900;cursor:pointer;transition:all .2s}
+.go-btn.play{background:linear-gradient(135deg,var(--brown2),var(--amber2));color:#fff}
+.go-btn.home{background:rgba(255,255,255,.06);color:rgba(255,255,255,.5)}
+
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{0%{transform:scale(.94)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="bg-deco" style="top:5%;left:2%">📚</div>
+<div class="bg-deco" style="top:20%;right:3%">✨</div>
+<div class="bg-deco" style="bottom:15%;left:5%">🌟</div>
+
+<div class="popup-overlay combo" id="combo-popup">
+  <div class="po-text" id="combo-text">BOOKWORM! 📚</div>
+  <div class="po-sub" id="combo-sub">3 correct!</div>
+</div>
+<div class="popup-overlay life" id="life-popup">
+  <div class="po-text">❤️ Life Restored!</div>
+  <div class="po-sub">3 correct in a row!</div>
+</div>
+
+<div class="wrap">
+  <!-- START -->
+  <div id="startScreen" class="screen active">
+    <div class="start-card">
+      <span class="start-icon">📚</span>
+      <div class="start-title">Story Sequencer</div>
+      <div class="start-sub" id="start-greeting">Read stories, answer questions, explore words!</div>
+      <div class="cat-chips">
+        <span class="cat-chip">🐘 Animals</span><span class="cat-chip">🤝 Friendship</span>
+        <span class="cat-chip">🍁 Canadian</span><span class="cat-chip">🪔 Hindu Stories</span>
+        <span class="cat-chip">🗺️ Adventure</span><span class="cat-chip">🔬 Science</span>
+        <span class="cat-chip">🏠 Family</span>
+      </div>
+      <div class="rules">
+        <div class="rule"><span class="rule-ico">📖</span><span class="rule-txt">Read a story then answer 8 different questions about it</span></div>
+        <div class="rule"><span class="rule-ico">🔀</span><span class="rule-txt">Sequence scrambled sentences in the right order</span></div>
+        <div class="rule"><span class="rule-ico">⭐</span><span class="rule-txt">Partial credit for sequencing — every correct sentence counts</span></div>
+        <div class="rule"><span class="rule-ico">💡</span><span class="rule-txt">New word learned after every question</span></div>
+        <div class="rule"><span class="rule-ico">❤️</span><span class="rule-txt">3 correct in a row restores a life</span></div>
+      </div>
+      <button class="start-btn" onclick="startGame()">📚 Start Reading!</button>
+      <div class="pb-row" id="pb-row" style="display:none">🏆 Personal Best: <span class="pb-val" id="pb-val">0</span> stars</div>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div id="gameScreen" class="screen">
+    <div class="hdr">
+      <button class="back-btn" onclick="confirmQuit()">←</button>
+      <div style="flex:1">
+        <div class="hdr-title">📚 Story Sequencer</div>
+        <div class="hdr-sub" id="g-player-label">Riaan · Grade 3</div>
+      </div>
+      <div class="lives" id="lives-display">❤️❤️❤️</div>
+      <div class="star-count">⭐ <span id="g-stars">0</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-box"><div class="ib-val amber" id="g-round">1</div><div class="ib-lbl">Story</div></div>
+      <div class="info-box"><div class="ib-val" id="g-qnum">1/8</div><div class="ib-lbl">Question</div></div>
+      <div class="info-box" style="flex:1.5">
+        <div class="ib-val" id="g-mode-display" style="font-size:.7rem;color:rgba(255,255,255,.7)">Sequencing</div>
+        <div class="ib-lbl">Mode</div>
+      </div>
+      <div class="info-box" style="display:flex;align-items:center;justify-content:center">
+        <div id="streak-badge" class="streak-badge">0 📚</div>
+      </div>
+    </div>
+    <!-- STORY -->
+    <div class="story-card" id="story-card">
+      <div class="story-header">
+        <span class="story-cat" id="g-story-cat">Animals</span>
+        <span class="story-title" id="g-story-title">Loading...</span>
+        <span class="story-grade" id="g-story-grade">Grade 3</span>
+      </div>
+      <div class="story-body" id="story-body"></div>
+      <div class="story-progress" id="story-progress"></div>
+    </div>
+    <!-- QUESTION -->
+    <div class="q-card">
+      <div class="q-meta">
+        <span class="mode-tag" id="g-mode-tag">Sequence</span>
+        <span class="q-num" id="g-qnum2">Q 1/8</span>
+      </div>
+      <div class="question" id="g-question">Loading...</div>
+      <div id="q-content"></div>
+      <div class="btn-row">
+        <button class="show-pic-btn" onclick="showPicture()">🔍 Show Picture</button>
+        <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 Hint</button>
+      </div>
+      <div class="hint-box" id="hint-box"><div class="hint-txt" id="hint-txt"></div></div>
+      <div class="explanation-card" id="explanation-card">
+        <div class="ex-result">
+          <span class="ex-icon" id="ex-icon">✅</span>
+          <span class="ex-answer" id="ex-answer">Correct!</span>
+        </div>
+        <div class="ex-explain" id="ex-explain"></div>
+        <div class="ex-word" id="ex-word">
+          <div class="ex-word-lbl">📖 New Word</div>
+          <div class="ex-word-txt" id="ex-word-txt"></div>
+        </div>
+        <button class="ex-next" id="ex-next" onclick="advanceQuestion()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUND END -->
+  <div id="roundEndScreen" class="screen">
+    <div class="re-card">
+      <span class="re-icon" id="re-icon">⭐</span>
+      <div class="re-title" id="re-title">Story 1 Complete!</div>
+      <div class="re-stats">
+        <div class="re-stat"><div class="re-sv" id="re-correct">0</div><div class="re-sl">Correct</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-acc">0%</div><div class="re-sl">Accuracy</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-stars-r">0</div><div class="re-sl">Stars</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-streak-r">0</div><div class="re-sl">Best Streak</div></div>
+      </div>
+      <div style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.45);margin-bottom:10px;text-align:center" id="re-msg"></div>
+      <button class="re-btn next" id="re-next-btn" onclick="nextRound()">Next Story →</button>
+      <button class="re-btn home" onclick="goHome()">🏠 Back to Hub</button>
+    </div>
+    <!-- Story review -->
+    <div class="round-story-card" id="round-story-review"></div>
+  </div>
+
+  <!-- GAME OVER -->
+  <div id="gameOverScreen" class="screen">
+    <div class="go-card">
+      <span class="go-trophy" id="go-trophy">🏆</span>
+      <div class="go-title">Story Complete!</div>
+      <div class="go-score" id="go-score">0 ⭐</div>
+      <div class="go-earned" id="go-earned">+0 stars saved</div>
+      <div id="new-best-banner" class="new-best" style="display:none">🏆 NEW PERSONAL BEST!</div>
+      <div class="go-msg" id="go-msg">Great reading!</div>
+      <div class="go-stats">
+        <div class="go-stat"><div class="go-sv" id="go-stories">1</div><div class="go-sl">Stories</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-correct">0</div><div class="go-sl">Correct</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-streak">0</div><div class="go-sl">Best Streak</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-pb">0</div><div class="go-sl">Personal Best</div></div>
+      </div>
+      <div class="go-btns">
+        <button class="go-btn play" onclick="restartGame()">📚 Read Again</button>
+        <button class="go-btn home" onclick="goHome()">🏠 Back to Hub</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SB='https://tnhgihzfwqsflpueivwe.supabase.co',KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
+const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':o.prefer||'return=representation',...o.headers},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined}).then(r=>r.json()).catch(()=>[]);
+
+const params=new URLSearchParams(window.location.search);
+const playerName=params.get('player')||'riaan';
+let playerId=null,playerGrade=3,personalBest=0;
+
+// ── STORY BANK ────────────────────────────────────────────────────
+const STORIES=[
+  // ANIMALS
+  {id:'elephant_river',title:'The Elephant at the River',category:'Animals',emoji:'🐘',
+   grade:1,pic:'elephant drinking river Africa',
+   sentences:[
+     'A big elephant walked slowly to the river.',
+     'She dipped her long trunk into the cool water.',
+     'She sprayed water all over her back to cool down.',
+     'Then she splashed and played until the sun went down.'
+   ],
+   vocab:[
+     {word:'trunk',def:'The long nose of an elephant, used to breathe, smell, drink and pick up things'},
+     {word:'sprayed',def:'Shot liquid out in small drops'},
+     {word:'dipped',def:'Put something briefly into a liquid'},
+     {word:'splashed',def:'Hit a liquid so that it flies up in drops'},
+   ],
+   fact:'Elephants use their trunks like a built-in water hose — they can suck up to 14 litres of water at once!',
+   mood:'Happy',
+   questions:{
+     inference:'Why did the elephant spray water on her back?',inference_opts:['To clean herself','To cool down in the heat','To scare other animals','To wash her trunk'],inference_ans:'To cool down in the heat',
+     predict:'What do you think the elephant does the next morning?',predict_opts:['She goes back to the river','She flies away','She turns into a fish','She sleeps all day'],predict_ans:'She goes back to the river',
+     character:'How did the elephant feel at the river?',character_opts:['Scared','Lonely','Happy and refreshed','Angry'],character_ans:'Happy and refreshed',
+     truefalse_q:'The elephant used her ears to carry water.',truefalse_ans:false,
+     vocabulary_word:'trunk',vocabulary_q:'In this story, the word "trunk" means:',vocabulary_opts:['A suitcase','A car boot','The elephant\'s long nose','A tree stump'],vocabulary_ans:'The elephant\'s long nose',
+     fill_sentence:'She dipped her long ___ into the cool water.',fill_blank:'trunk',fill_opts:['tail','trunk','leg','ear'],
+     title_opts:['The Hot Desert','The Elephant at the River','A Day at the Zoo','The Clever Fish'],title_ans:'The Elephant at the River',
+     whosaid:null
+   }
+  },
+  // FRIENDSHIP
+  {id:'maya_kite',title:'Maya\'s Kite',category:'Friendship',emoji:'🤝',
+   grade:1,pic:'children flying kite together park',
+   sentences:[
+     'Maya wanted to fly her new kite in the park.',
+     'But the string got all twisted and she started to cry.',
+     'Her friend Sam ran over and helped untangle the string.',
+     'Together they sent the kite soaring high into the blue sky.',
+     'Maya smiled and said, "Everything is better with a friend!"'
+   ],
+   vocab:[
+     {word:'twisted',def:'Turned or wound so as to form a spiral or tangle'},
+     {word:'untangle',def:'Free something from being twisted or knotted'},
+     {word:'soaring',def:'Flying or rising high in the air'},
+     {word:'together',def:'With another person or group'},
+   ],
+   fact:'The kite was invented in China about 2,800 years ago — making it one of the oldest flying objects ever made!',
+   mood:'Happy',
+   questions:{
+     inference:'Why did Maya start to cry?',inference_opts:['She lost her kite','Her string got twisted and she couldn\'t fly it','Sam took her kite','It started to rain'],inference_ans:'Her string got twisted and she couldn\'t fly it',
+     predict:'What will Maya and Sam probably do next time?',predict_opts:['Never fly kites again','Fly kites together again','Give the kite away','Stay inside'],predict_ans:'Fly kites together again',
+     character:'How did Maya feel at the END of the story?',character_opts:['Sad and upset','Happy and grateful','Tired','Confused'],character_ans:'Happy and grateful',
+     truefalse_q:'Sam helped Maya fix her kite string.',truefalse_ans:true,
+     vocabulary_word:'soaring',vocabulary_q:'What does "soaring" mean in this story?',vocabulary_opts:['Falling down fast','Flying high in the air','Spinning around','Getting wet'],vocabulary_ans:'Flying high in the air',
+     fill_sentence:'Together they sent the kite ___ high into the blue sky.',fill_blank:'soaring',fill_opts:['falling','soaring','crashing','rolling'],
+     title_opts:['Sam Goes to the Park','The Broken Kite','Maya\'s Kite','A Windy Day'],title_ans:'Maya\'s Kite',
+     whosaid:{line:'"Everything is better with a friend!"',opts:['Sam','Maya','A stranger','Maya\'s mum'],ans:'Maya'}
+   }
+  },
+  // CANADIAN
+  {id:'hockey_night',title:'Hockey Night in Canada',category:'Canadian',emoji:'🍁',
+   grade:1,pic:'children ice hockey Canada winter',
+   sentences:[
+     'Every Saturday night, the Singh family watched hockey together.',
+     'Priya pulled on her red and white jersey and cheered loudly.',
+     'When Canada scored, her dad lifted her up in the air.',
+     'They ate samosas and drank hot chocolate while the snow fell outside.',
+     'Priya said it was the best night of the whole week.'
+   ],
+   vocab:[
+     {word:'jersey',def:'A shirt worn as part of a team\'s uniform'},
+     {word:'cheered',def:'Shouted with excitement to show support'},
+     {word:'scored',def:'Got a point or goal in a game'},
+     {word:'tradition',def:'Something families do regularly, passed down through generations'},
+   ],
+   fact:'Hockey is Canada\'s national winter sport. Canada has won the most Olympic gold medals in ice hockey!',
+   mood:'Happy',
+   questions:{
+     inference:'Why did Priya\'s dad lift her up?',inference_opts:['She was scared','Canada scored a goal','She dropped her samosa','The TV broke'],inference_ans:'Canada scored a goal',
+     predict:'What will the Singh family probably do NEXT Saturday?',predict_opts:['Move to a new city','Watch hockey again','Stop watching hockey','Go swimming'],predict_ans:'Watch hockey again',
+     character:'How did Priya feel during the game?',character_opts:['Bored','Excited and happy','Nervous and worried','Tired and sleepy'],character_ans:'Excited and happy',
+     truefalse_q:'The Singh family watched hockey on Friday nights.',truefalse_ans:false,
+     vocabulary_word:'jersey',vocabulary_q:'What is a "jersey" in this story?',vocabulary_opts:['A type of food','A hockey team shirt','A warm blanket','A province in Canada'],vocabulary_ans:'A hockey team shirt',
+     fill_sentence:'Priya pulled on her red and white ___ and cheered loudly.',fill_blank:'jersey',fill_opts:['hat','jersey','skates','boots'],
+     title_opts:['Snow Day','The Hockey Match','Hockey Night in Canada','Samosas and Hot Chocolate'],title_ans:'Hockey Night in Canada',
+     whosaid:{line:'"It was the best night of the whole week."',opts:['Priya\'s dad','Priya','Priya\'s mum','The hockey commentator'],ans:'Priya'}
+   }
+  },
+  // HINDU STORY
+  {id:'ganesha_pen',title:'Ganesha and the Pen',category:'Hindu Stories',emoji:'🪔',
+   grade:3,pic:'Ganesha writing Mahabharata Hindu mythology',
+   sentences:[
+     'Long ago, the wise sage Vyasa wanted to write the great story of the Mahabharata.',
+     'But the story was so vast that his hand could never write fast enough.',
+     'He prayed to Lord Ganesha, the remover of obstacles, for help.',
+     'Ganesha agreed, but with one condition — Vyasa must never stop dictating.',
+     'Ganesha broke off his own tusk to use as a pen and began to write.',
+     'Together, they created one of the longest poems ever written.'
+   ],
+   vocab:[
+     {word:'sage',def:'A very wise person, especially one who is respected for spiritual knowledge'},
+     {word:'vast',def:'Very large or great in area or amount'},
+     {word:'obstacles',def:'Things that block your way or make something difficult'},
+     {word:'dictating',def:'Speaking aloud so someone else can write it down'},
+     {word:'tusk',def:'A long pointed tooth that sticks out of an animal\'s mouth'},
+     {word:'condition',def:'A rule that must be agreed to before something happens'},
+   ],
+   fact:'The Mahabharata is one of the longest epic poems in the world with over 200,000 verse lines — 10 times longer than the Iliad and Odyssey combined!',
+   mood:'Inspiring',
+   questions:{
+     inference:'Why did Ganesha break off his own tusk?',inference_opts:['It was hurting him','He needed a pen to write with','He wanted to give Vyasa a gift','He was angry'],inference_ans:'He needed a pen to write with',
+     predict:'What do you think happened if Vyasa stopped dictating?',predict_opts:['Ganesha would continue writing','Ganesha would stop writing immediately','The pen would break','The story would end'],predict_ans:'Ganesha would stop writing immediately',
+     character:'What does Ganesha\'s action show about his character?',character_opts:['He was selfish','He was wise and willing to sacrifice','He was lazy','He was forgetful'],character_ans:'He was wise and willing to sacrifice',
+     truefalse_q:'Vyasa wrote the Mahabharata all by himself.',truefalse_ans:false,
+     vocabulary_word:'obstacles',vocabulary_q:'Ganesha is called "the remover of obstacles." What are obstacles?',vocabulary_opts:['Beautiful flowers','Things that block your way','Musical instruments','Types of food'],vocabulary_ans:'Things that block your way',
+     fill_sentence:'Ganesha broke off his own ___ to use as a pen.',fill_blank:'tusk',fill_opts:['ear','tusk','trunk','tail'],
+     title_opts:['The Longest Book','How Paper Was Made','Ganesha and the Pen','Vyasa\'s Dream'],title_ans:'Ganesha and the Pen',
+     whosaid:{line:'"You must never stop dictating."',opts:['Vyasa','Ganesha','A student','Lord Brahma'],ans:'Ganesha'}
+   }
+  },
+  // ADVENTURE
+  {id:'lighthouse_keeper',title:'The Lighthouse Keeper\'s Discovery',category:'Adventure',emoji:'🗺️',
+   grade:3,pic:'lighthouse rocky coast ocean stormy',
+   sentences:[
+     'Old Thomas had kept the lighthouse for forty years, guiding ships safely through the fog.',
+     'One stormy night, he noticed an unusual light blinking from the rocky shore below.',
+     'He pulled on his heavy coat and climbed down the steep path with his lantern.',
+     'Hidden in a crevice was an old iron box, still locked tight after decades.',
+     'Inside were letters — love letters from a sailor to his family, never delivered.',
+     'Thomas posted them the very next morning, and three families finally received news of their grandfather.'
+   ],
+   vocab:[
+     {word:'crevice',def:'A narrow opening or crack in rock or a wall'},
+     {word:'decades',def:'Periods of ten years'},
+     {word:'steep',def:'Rising or falling sharply; almost vertical'},
+     {word:'guiding',def:'Showing the way to someone who is travelling'},
+     {word:'unusual',def:'Not often seen or done; remarkable or surprising'},
+     {word:'delivered',def:'Taken and given to the correct person or place'},
+   ],
+   fact:'Lighthouses were built as early as 280 BC — the Lighthouse of Alexandria in Egypt was one of the Seven Wonders of the Ancient World!',
+   mood:'Exciting',
+   questions:{
+     inference:'Why did Thomas climb down to the rocky shore in a storm?',inference_opts:['He was looking for fish','He saw an unusual light and was curious','He lost his keys','He wanted a walk'],inference_ans:'He saw an unusual light and was curious',
+     predict:'How do you think the three families felt when they received the letters?',predict_opts:['Confused and angry','Overwhelmed with emotion and gratitude','They threw them away','They didn\'t care'],predict_ans:'Overwhelmed with emotion and gratitude',
+     character:'What does Thomas posting the letters tell us about him?',character_opts:['He was nosy','He was kind and responsible','He wanted a reward','He was bored'],character_ans:'He was kind and responsible',
+     truefalse_q:'The iron box was hidden inside the lighthouse.',truefalse_ans:false,
+     vocabulary_word:'crevice',vocabulary_q:'Where was the iron box hidden?',vocabulary_opts:['In a tall tower','In a crevice in the rocks','Under the sea','In Thomas\'s coat'],vocabulary_ans:'In a crevice in the rocks',
+     fill_sentence:'Old Thomas had kept the lighthouse for ___ years.',fill_blank:'forty',fill_opts:['ten','forty','two','hundred'],
+     title_opts:['Lost at Sea','The Lighthouse Keeper\'s Discovery','Thomas and the Storm','Letters from the Past'],title_ans:'The Lighthouse Keeper\'s Discovery',
+     whosaid:null
+   }
+  },
+  // SCIENCE
+  {id:'seed_travels',title:'How Seeds Travel',category:'Science',emoji:'🔬',
+   grade:3,pic:'dandelion seeds blowing wind nature',
+   sentences:[
+     'Plants cannot walk, so they have clever ways to send their seeds far away.',
+     'Some seeds have tiny parachutes of fluff, like dandelions, and float on the wind.',
+     'Others have hooks that catch on animal fur and hitch a ride to a new place.',
+     'Coconuts travel across entire oceans, floating on the water for months.',
+     'Some seeds are inside fruits that animals eat and then deposit elsewhere.',
+     'Each method ensures the plant\'s children grow up far from their parents.'
+   ],
+   vocab:[
+     {word:'deposit',def:'To leave something somewhere, especially seeds left in animal droppings'},
+     {word:'ensures',def:'Makes certain that something will happen'},
+     {word:'method',def:'A particular way of doing something'},
+     {word:'hitch',def:'To get a free ride; to travel by attaching to something else'},
+     {word:'fluff',def:'Soft light fibres or threads'},
+     {word:'parachutes',def:'Devices shaped like umbrellas that slow a fall through air'},
+   ],
+   fact:'A coconut is technically a seed! It can survive floating in salt water for up to 110 days and still germinate when it reaches land.',
+   mood:'Interesting',
+   questions:{
+     inference:'Why do plants need to send seeds far away?',inference_opts:['So birds can eat them','So they don\'t compete with the parent plant','Because seeds are heavy','To make more parachutes'],inference_ans:'So they don\'t compete with the parent plant',
+     predict:'If you planted a dandelion seed indoors with no wind, what would be different?',predict_opts:['It would grow faster','The seeds couldn\'t travel by wind','It would never grow','The seeds would swim'],predict_ans:'The seeds couldn\'t travel by wind',
+     character:'What does this story show about plants?',character_opts:['Plants are boring','Plants have clever survival strategies','Plants need humans to survive','Plants can walk slowly'],character_ans:'Plants have clever survival strategies',
+     truefalse_q:'Coconut seeds travel by attaching to animal fur.',truefalse_ans:false,
+     vocabulary_word:'deposit',vocabulary_q:'What does "deposit" mean in this story?',vocabulary_opts:['Put money in a bank','Leave seeds somewhere in droppings','Float on water','Catch on fur'],vocabulary_ans:'Leave seeds somewhere in droppings',
+     fill_sentence:'Some seeds have hooks that catch on animal fur and ___ a ride.',fill_blank:'hitch',fill_opts:['buy','hitch','steal','lose'],
+     title_opts:['The Life of a Flower','Coconuts and Oceans','How Seeds Travel','Animals and Plants'],title_ans:'How Seeds Travel',
+     whosaid:null
+   }
+  },
+  // DIWALI
+  {id:'diwali_light',title:'The Festival of Lights',category:'Hindu Stories',emoji:'🪔',
+   grade:1,pic:'Diwali diyas oil lamps festival lights India',
+   sentences:[
+     'Arjun and his family lit little clay lamps called diyas all around their home.',
+     'The warm golden light danced and flickered in the gentle breeze.',
+     'Arjun\'s grandmother told him that the lights welcome goodness and push away darkness.',
+     'They shared sweet mithai with their neighbours and burst colourful crackers.',
+     'Arjun looked up at the sky full of colours and felt his heart fill with joy.'
+   ],
+   vocab:[
+     {word:'diyas',def:'Small clay oil lamps used during Diwali celebrations'},
+     {word:'flickered',def:'Shone with a light that keeps going on and off or moving'},
+     {word:'mithai',def:'Traditional Indian sweets shared during festivals'},
+     {word:'goodness',def:'The quality of being kind, honest, and morally right'},
+   ],
+   fact:'Diwali is celebrated by over 1 billion people worldwide and is one of the biggest festivals in the world! It celebrates the victory of light over darkness.',
+   mood:'Happy',
+   questions:{
+     inference:'Why did Arjun\'s family light diyas?',inference_opts:['Because the electricity went off','To welcome goodness and push away darkness','To cook food','Because they were cold'],inference_ans:'To welcome goodness and push away darkness',
+     predict:'What will Arjun probably remember most about Diwali?',predict_opts:['A boring evening at home','The lights, sweets and fireworks with family','Going to school','A sad moment'],predict_ans:'The lights, sweets and fireworks with family',
+     character:'How did Arjun feel at the end of the story?',character_opts:['Sad and lonely','Full of joy','Tired and grumpy','Scared of the crackers'],character_ans:'Full of joy',
+     truefalse_q:'Diyas are made of metal.',truefalse_ans:false,
+     vocabulary_word:'flickered',vocabulary_q:'What does "flickered" tell us about the lamp light?',vocabulary_opts:['It was very bright and strong','It moved on and off gently like a dance','It made a loud sound','It was blue and cold'],vocabulary_ans:'It moved on and off gently like a dance',
+     fill_sentence:'The warm golden light danced and ___ in the gentle breeze.',fill_blank:'flickered',fill_opts:['stopped','flickered','crashed','disappeared'],
+     title_opts:['A Dark Night','Arjun Goes to School','The Festival of Lights','Fireworks in the Sky'],title_ans:'The Festival of Lights',
+     whosaid:{line:'"The lights welcome goodness and push away darkness."',opts:['Arjun','A neighbour','Arjun\'s grandmother','Arjun\'s father'],ans:'Arjun\'s grandmother'}
+   }
+  },
+  // FAMILY
+  {id:'baking_nani',title:'Baking with Nani',category:'Family',emoji:'🏠',
+   grade:1,pic:'grandmother granddaughter baking kitchen together',
+   sentences:[
+     'Every Sunday, Mia went to her grandmother\'s house to bake.',
+     'Nani\'s kitchen always smelled of warm cardamom and butter.',
+     'They made soft round rotis and pressed patterns into the edges.',
+     'Mia\'s hands were always covered in flour by the end.',
+     '"One day you will teach your children this," said Nani with a smile.'
+   ],
+   vocab:[
+     {word:'cardamom',def:'A sweet spice with a warm, aromatic smell used in Indian cooking'},
+     {word:'rotis',def:'Soft round flatbreads made from wheat flour, common in South Asian cooking'},
+     {word:'patterns',def:'Repeated designs or shapes'},
+     {word:'tradition',def:'Something passed down through generations in a family or culture'},
+   ],
+   fact:'Roti has been made in South Asia for thousands of years. The word comes from Sanskrit "rotika" meaning bread!',
+   mood:'Warm and cozy',
+   questions:{
+     inference:'Why does Nani say "One day you will teach your children this"?',inference_opts:['She wants Mia to open a bakery','She is passing on a family tradition','She thinks Mia is a bad cook','She wants to stop baking'],inference_ans:'She is passing on a family tradition',
+     predict:'What will Mia probably do when she grows up?',predict_opts:['Forget everything','Bake with her own children','Never cook again','Move far away'],predict_ans:'Bake with her own children',
+     character:'How does Mia feel about baking with Nani?',character_opts:['Bored and tired','Happy and close to her grandmother','Confused','Scared of getting messy'],character_ans:'Happy and close to her grandmother',
+     truefalse_q:'Mia went to Nani\'s house every Saturday.',truefalse_ans:false,
+     vocabulary_word:'cardamom',vocabulary_q:'What is cardamom in this story?',vocabulary_opts:['A type of bread','A sweet warm spice','A kitchen tool','A flower'],vocabulary_ans:'A sweet warm spice',
+     fill_sentence:'Nani\'s kitchen always smelled of warm ___ and butter.',fill_blank:'cardamom',fill_opts:['pepper','cardamom','garlic','sugar'],
+     title_opts:['Sunday at School','The Flour Fight','Baking with Nani','A Roti Recipe'],title_ans:'Baking with Nani',
+     whosaid:{line:'"One day you will teach your children this."',opts:['Mia','Mia\'s mum','Nani','Mia\'s dad'],ans:'Nani'}
+   }
+  },
+];
+
+// ── Helpers ───────────────────────────────────────────────────────
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+
+// ── Build question set for a story ────────────────────────────────
+function buildQuestions(story){
+  const q=story.questions;
+  const set=[];
+  // Always include sequence
+  set.push({mode:'sequence',display:'Sequence It!',
+    q:'Put the sentences in the correct order:',
+    sentences:[...story.sentences],answer:[...story.sentences],
+    hint:'Read the story above — what happened first?'});
+  // Inference
+  set.push({mode:'inference',display:'Think About It',
+    q:q.inference,opts:q.inference_opts,answer:q.inference_ans,
+    hint:'The answer isn\'t directly in the story — think about WHY.',
+    word:story.vocab[0]});
+  // Predict
+  set.push({mode:'predict',display:'Predict Ending',
+    q:q.predict,opts:q.predict_opts,answer:q.predict_ans,
+    hint:'Think about what makes the most sense based on the story.',
+    word:story.vocab[1]||story.vocab[0]});
+  // Character feelings
+  set.push({mode:'character',display:'Character Feelings',
+    q:q.character,opts:q.character_opts,answer:q.character_ans,
+    hint:'Look for clues in what the character does or says.',
+    word:story.vocab[2]||story.vocab[0]});
+  // True/False
+  set.push({mode:'truefalse',display:'True or False',
+    q:q.truefalse_q,answer:q.truefalse_ans,
+    hint:'Read the story carefully — did this actually happen?',
+    word:story.vocab[3]||story.vocab[0]});
+  // Vocabulary
+  set.push({mode:'vocabulary',display:'Vocabulary',
+    q:q.vocabulary_q,opts:q.vocabulary_opts,answer:q.vocabulary_ans,
+    highlight:q.vocabulary_word,
+    hint:`Find the word "${q.vocabulary_word}" in the story above.`,
+    word:story.vocab.find(v=>v.word===q.vocabulary_word)||story.vocab[0]});
+  // Fill blank
+  set.push({mode:'fill',display:'Fill the Blank',
+    q:'Choose the correct word to complete the sentence:',
+    sentence:q.fill_sentence,blank:q.fill_blank,opts:q.fill_opts,answer:q.fill_blank,
+    hint:`The missing word is in the story above.`,
+    word:story.vocab.find(v=>v.word===q.fill_blank)||story.vocab[0]});
+  // Story title
+  set.push({mode:'title',display:'Story Title',
+    q:'Which title best fits this story?',
+    opts:q.title_opts,answer:q.title_ans,
+    hint:'Think about the MAIN idea of the whole story.',
+    word:story.vocab[story.vocab.length-1]});
+  // Who said it (if available)
+  if(q.whosaid){
+    set.push({mode:'whosaid',display:'Who Said It?',
+      q:`Who said: "${q.whosaid.line}"`,
+      opts:q.whosaid.opts,answer:q.whosaid.ans,
+      hint:'Find the speech marks in the story.',
+      word:story.vocab[1]||story.vocab[0]});
+  }
+  // Story mood
+  set.push({mode:'mood',display:'Story Mood',
+    q:'What is the overall mood of this story?',
+    opts:shuffle([story.mood,'Scary','Sad','Angry'].filter((v,i,a)=>a.indexOf(v)===i).slice(0,4)),
+    answer:story.mood,
+    hint:'Think about how the story made you FEEL.',
+    word:story.vocab[story.vocab.length-1]});
+
+  // Shuffle all except keep sequence first
+  const first=set[0];
+  const rest=shuffle(set.slice(1));
+  return [first,...rest].slice(0,8);
+}
+
+// ── Game State ────────────────────────────────────────────────────
+let G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
+  streak:0,bestStreak:0,sessionBestStreak:0,answered:false,roundStars:0,
+  story:null,questions:[],storyPool:[],storyIdx:0,
+  lifeRestoreStreak:0,hintUsed:false,hintTimer:null,
+  missedSentences:[],seqState:{placed:[],shuffled:[]}};
+
+// ── Init ──────────────────────────────────────────────────────────
+async function init(){
+  try{
+    const players=await db('players?select=*');
+    const p=players.find(x=>x.name.toLowerCase()===playerName.toLowerCase());
+    if(p){playerId=p.id;playerGrade=p.grade||3;}
+  }catch(e){}
+  if(playerId){
+    try{
+      const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.story-sequencer`);
+      if(rows&&rows.length){personalBest=rows[0].best_score||0;
+        document.getElementById('pb-row').style.display='flex';
+        document.getElementById('pb-val').textContent=personalBest.toLocaleString();}
+    }catch(e){}
+  }
+  document.getElementById('start-greeting').textContent=`Read stories, answer questions, ${cap(playerName)}! 📚`;
+  document.getElementById('g-player-label').textContent=`${cap(playerName)} · Grade ${playerGrade}`;
+}
+
+function startGame(){
+  const pool=shuffle(STORIES.filter(s=>s.grade<=playerGrade));
+  G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
+    streak:0,bestStreak:0,sessionBestStreak:0,answered:false,roundStars:0,
+    story:null,questions:[],storyPool:pool,storyIdx:0,
+    lifeRestoreStreak:0,hintUsed:false,hintTimer:null,
+    missedSentences:[],seqState:{placed:[],shuffled:[]}};
+  showScreen('gameScreen');
+  loadStory();
+}
+
+function loadStory(){
+  if(G.storyIdx>=G.storyPool.length){
+    G.storyPool=shuffle(STORIES.filter(s=>s.grade<=playerGrade));
+    G.storyIdx=0;
+  }
+  G.story=G.storyPool[G.storyIdx++];
+  G.questions=buildQuestions(G.story);
+  G.qIdx=0;G.roundStars=0;G.correct=0;G.missedSentences=[];
+  renderStory();
+  loadQuestion();
+}
+
+// ── Render story ──────────────────────────────────────────────────
+function renderStory(highlightIdx=-1,highlightMode='highlight'){
+  const s=G.story;
+  const catColors={
+    'Animals':'rgba(43,191,184,.15)','Friendship':'rgba(232,69,122,.15)',
+    'Canadian':'rgba(232,69,69,.15)','Hindu Stories':'rgba(246,192,74,.15)',
+    'Adventure':'rgba(124,92,191,.15)','Science':'rgba(39,174,96,.15)','Family':'rgba(240,120,48,.15)'
+  };
+  const catBorders={
+    'Animals':'rgba(43,191,184,.3)','Friendship':'rgba(232,69,122,.3)',
+    'Canadian':'rgba(232,69,69,.3)','Hindu Stories':'rgba(246,192,74,.3)',
+    'Adventure':'rgba(124,92,191,.3)','Science':'rgba(39,174,96,.3)','Family':'rgba(240,120,48,.3)'
+  };
+  const catText={
+    'Animals':'#7DFFCC','Friendship':'#FF8FAA','Canadian':'#FF9090',
+    'Hindu Stories':'var(--amber)','Adventure':'#C8A8FF','Science':'#90FFB0','Family':'#FFB060'
+  };
+  const cat=document.getElementById('g-story-cat');
+  cat.textContent=`${s.emoji} ${s.category}`;
+  cat.style.cssText=`background:${catColors[s.category]||'rgba(255,255,255,.1)'};border-color:${catBorders[s.category]||'rgba(255,255,255,.2)'};color:${catText[s.category]||'#fff'}`;
+  document.getElementById('g-story-title').textContent=s.title;
+  document.getElementById('g-story-grade').textContent=`Grade ${s.grade}`;
+  const body=document.getElementById('story-body');
+  body.innerHTML=s.sentences.map((sent,i)=>{
+    let cls='sentence';
+    if(i===highlightIdx&&highlightMode==='highlight')cls+=' highlight';
+    if(i===highlightIdx&&highlightMode==='question')cls+=' highlight-q';
+    return `<span class="${cls}" id="sent-${i}">${sent} </span>`;
+  }).join('');
+  // Progress dots
+  const prog=document.getElementById('story-progress');
+  prog.innerHTML=Array(8).fill(0).map((_,i)=>`<div class="sp-dot ${i<G.qIdx?'done':i===G.qIdx?'current':''}" id="sp-${i}"></div>`).join('');
+}
+
+// ── Load question ─────────────────────────────────────────────────
+function loadQuestion(){
+  if(G.qIdx>=G.questions.length){endRound();return;}
+  G.answered=false;G.hintUsed=false;
+  clearTimeout(G.hintTimer);
+  const q=G.questions[G.qIdx];
+  document.getElementById('g-qnum').textContent=`${G.qIdx+1}/8`;
+  document.getElementById('g-qnum2').textContent=`Q ${G.qIdx+1}/8`;
+  document.getElementById('g-round').textContent=G.round;
+  document.getElementById('g-mode-tag').textContent=q.display;
+  document.getElementById('g-mode-tag').className=`mode-tag ${q.mode}`;
+  document.getElementById('g-mode-display').textContent=q.display;
+  document.getElementById('g-question').textContent=q.q;
+  document.getElementById('g-question').className=q.q.length>60?'question small':'question';
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('hint-box').className='hint-box';
+  document.getElementById('hint-btn').style.display='none';
+  document.getElementById('q-content').innerHTML='';
+  // Highlight relevant sentence for vocabulary questions
+  const highlightIdx=q.mode==='vocabulary'?
+    G.story.sentences.findIndex(s=>s.toLowerCase().includes(q.highlight||'')):-1;
+  renderStory(highlightIdx,'question');
+  renderQuestion(q);
+  // Show hint after 8 seconds
+  G.hintTimer=setTimeout(()=>{
+    if(!G.answered)document.getElementById('hint-btn').style.display='flex';
+  },8000);
+}
+
+// ── Render question ───────────────────────────────────────────────
+function renderQuestion(q){
+  const el=document.getElementById('q-content');
+  if(q.mode==='sequence')renderSequence(q,el);
+  else if(q.mode==='truefalse')renderTrueFalse(q,el);
+  else if(q.mode==='mood')renderMood(q,el);
+  else if(q.mode==='fill')renderFill(q,el);
+  else renderMCQ(q,el);
+}
+
+function renderMCQ(q,el){
+  el.innerHTML=`<div class="opts ${q.opts&&q.opts.length>4?'single':''}">${
+    (q.opts||[]).map(o=>`<button class="opt" onclick="checkOpt(this,'${o.replace(/'/g,"\\'")}','${q.answer.replace(/'/g,"\\'")}')">
+      ${o}</button>`).join('')}</div>`;
+}
+
+function renderTrueFalse(q,el){
+  el.innerHTML=`<div class="tf-opts">
+    <button class="tf-btn true-btn" onclick="checkTF(this,true,${q.answer})">✅ True</button>
+    <button class="tf-btn false-btn" onclick="checkTF(this,false,${q.answer})">❌ False</button>
+  </div>`;
+}
+
+function renderMood(q,el){
+  const moods=[{v:'Happy',e:'😊'},{v:'Sad',e:'😢'},{v:'Scary',e:'😨'},{v:'Exciting',e:'🤩'},
+    {v:'Angry',e:'😠'},{v:'Inspiring',e:'💫'},{v:'Warm and cozy',e:'🥰'},{v:'Interesting',e:'🤔'}];
+  el.innerHTML=`<div class="mood-opts">${(q.opts||[]).map(o=>{
+    const m=moods.find(x=>x.v===o)||{e:'📖'};
+    return `<button class="mood-btn" onclick="checkOpt(this,'${o.replace(/'/g,"\\'")}','${q.answer.replace(/'/g,"\\'")}')">
+      <div style="font-size:1.5rem;margin-bottom:4px">${m.e}</div>${o}</button>`;
+  }).join('')}</div>`;
+}
+
+function renderFill(q,el){
+  const displayed=q.sentence.replace(q.blank,`<span class="fill-blank">${q.blank[0]}____</span>`);
+  el.innerHTML=`<div class="fill-sentence">${displayed}</div>
+    <div class="opts">${q.opts.map(o=>`<button class="opt" onclick="checkOpt(this,'${o}','${q.answer}')">
+      ${o}</button>`).join('')}</div>`;
+}
+
+function renderSequence(q,el){
+  const shuffled=shuffle([...q.sentences]);
+  G.seqState={placed:[],shuffled,available:[...shuffled]};
+  el.innerHTML=`<div class="seq-instruction">Tap sentences to place them in order ↓</div>
+    <div class="seq-slots" id="seq-slots">${q.sentences.map((_,i)=>
+      `<div class="seq-slot" id="slot-${i}" onclick="removeFromSlot(${i})">
+        <div class="slot-num">${i+1}</div>
+        <span style="font-size:.75rem;color:rgba(255,255,255,.2);font-family:'Lora',serif">Tap a sentence below...</span>
+      </div>`).join('')}</div>
+    <div class="seq-bank" id="seq-bank">${shuffled.map((s,i)=>
+      `<div class="seq-sentence" id="seq-${i}" onclick="tapSequence(${i})">
+        <div class="seq-num">${String.fromCharCode(65+i)}</div>
+        <span>${s}</span>
+      </div>`).join('')}</div>
+    <button onclick="submitSequence()" style="width:100%;padding:10px;margin-top:4px;
+      background:linear-gradient(135deg,rgba(146,64,14,.6),rgba(232,160,32,.4));
+      border:1.5px solid rgba(246,192,74,.3);border-radius:11px;
+      font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:900;
+      color:var(--amber);cursor:pointer">Check Order ✓</button>`;
+}
+
+function tapSequence(idx){
+  if(G.answered)return;
+  const el=document.getElementById(`seq-${idx}`);
+  if(el.classList.contains('placed'))return;
+  const sentence=G.seqState.shuffled[idx];
+  const nextSlot=G.seqState.placed.length;
+  if(nextSlot>=G.questions[G.qIdx].sentences.length)return;
+  G.seqState.placed.push({idx,sentence});
+  el.classList.add('placed');
+  const slot=document.getElementById(`slot-${nextSlot}`);
+  slot.className='seq-slot filled';
+  slot.innerHTML=`<div class="slot-num">${nextSlot+1}</div><span>${sentence}</span>`;
+}
+
+function removeFromSlot(slotIdx){
+  if(G.answered)return;
+  const placed=G.seqState.placed;
+  if(slotIdx>=placed.length)return;
+  const removed=placed.splice(slotIdx,1)[0];
+  G.seqState.placed=placed;
+  // Restore bank item
+  const bankEl=document.getElementById(`seq-${removed.idx}`);
+  if(bankEl)bankEl.classList.remove('placed');
+  // Re-render slots from slotIdx onwards
+  for(let i=slotIdx;i<G.questions[G.qIdx].sentences.length;i++){
+    const slot=document.getElementById(`slot-${i}`);
+    if(i<placed.length){
+      slot.className='seq-slot filled';
+      slot.innerHTML=`<div class="slot-num">${i+1}</div><span>${placed[i].sentence}</span>`;
+    } else {
+      slot.className='seq-slot';
+      slot.innerHTML=`<div class="slot-num">${i+1}</div><span style="font-size:.75rem;color:rgba(255,255,255,.2);font-family:'Lora',serif">Tap a sentence below...</span>`;
+    }
+  }
+}
+
+function submitSequence(){
+  if(G.answered)return;
+  const q=G.questions[G.qIdx];
+  const placed=G.seqState.placed;
+  if(placed.length<q.sentences.length){
+    // Flash unplaced slots
+    for(let i=placed.length;i<q.sentences.length;i++){
+      const slot=document.getElementById(`slot-${i}`);
+      slot.style.borderColor='var(--red)';
+      setTimeout(()=>slot.style.borderColor='',800);
+    }
+    return;
+  }
+  // Score it
+  const placedSentences=placed.map(p=>p.sentence);
+  let correctCount=0;
+  const missed=[];
+  placedSentences.forEach((s,i)=>{
+    if(s===q.answer[i]){
+      correctCount++;
+      const slot=document.getElementById(`slot-${i}`);
+      if(slot)slot.classList.add('correct-order');
+    } else {
+      missed.push(i);
+      const slot=document.getElementById(`slot-${i}`);
+      if(slot)slot.classList.add('wrong-order');
+      G.missedSentences.push(i);
+    }
+  });
+  G.answered=true;
+  // Partial credit
+  const total=q.sentences.length;
+  const pct=correctCount/total;
+  const base=20+Math.min(G.round-1,3)*5;
+  const earned=Math.floor(base*pct);
+  const isCorrect=correctCount===total;
+  G.stars+=earned;G.roundStars+=earned;G.totalAsked++;
+  if(isCorrect){
+    G.correct++;G.totalCorrect++;G.streak++;
+    if(G.streak>G.bestStreak)G.bestStreak=G.streak;
+    if(G.streak>G.sessionBestStreak)G.sessionBestStreak=G.streak;
+    checkLifeRestore();
+  } else {
+    G.streak=0;G.lifeRestoreStreak=0;
+    if(correctCount<2){G.lives--;updateLives();if(G.lives<=0){showExplanation(false,'seq',correctCount,total,()=>endGame());return;}}
+  }
+  document.getElementById('g-stars').textContent=G.stars.toLocaleString();
+  updateStreakBadge();updateLives();
+  showExplanation(isCorrect?true:pct>=0.5?'partial':false,'seq',correctCount,total,()=>{G.qIdx++;loadQuestion();});
+}
+
+// ── Answer handlers ───────────────────────────────────────────────
+function checkOpt(btn,chosen,correct){
+  if(G.answered)return;
+  G.answered=true;
+  clearTimeout(G.hintTimer);
+  document.querySelectorAll('.opt,.mood-btn').forEach(b=>b.disabled=true);
+  if(chosen===correct){btn.classList.add('correct');processResult(true);}
+  else{btn.classList.add('wrong');processResult(false);}
+}
+
+function checkTF(btn,chosen,correct){
+  if(G.answered)return;
+  G.answered=true;
+  clearTimeout(G.hintTimer);
+  document.querySelectorAll('.tf-btn').forEach(b=>b.disabled=true);
+  const isCorrect=(chosen===correct)||(chosen===true&&correct===true)||(chosen===false&&correct===false);
+  if(isCorrect){btn.classList.add('correct');processResult(true);}
+  else{btn.classList.add('wrong');processResult(false);}
+}
+
+function processResult(isCorrect){
+  const hintPenalty=G.hintUsed?0.5:1;
+  let earned=0;
+  if(isCorrect===true){
+    const base=10+Math.min(G.round-1,4)*5;
+    const streakBonus=G.streak>=7?20:G.streak>=5?12:G.streak>=3?6:0;
+    earned=Math.floor((base+streakBonus)*hintPenalty);
+    G.stars+=earned;G.roundStars+=earned;
+    G.correct++;G.totalCorrect++;G.totalAsked++;
+    G.streak++;
+    if(G.streak>G.bestStreak)G.bestStreak=G.streak;
+    if(G.streak>G.sessionBestStreak)G.sessionBestStreak=G.streak;
+    checkLifeRestore();
+    updateStreakBadge();
+    const combos=[{s:3,t:'BOOKWORM! 📚',sub:'3 correct!'},{s:5,t:'STORY MASTER! ⭐',sub:'5 in a row!'},{s:7,t:'LITERARY GENIUS! 🌟',sub:'7 in a row!'}];
+    const c=combos.slice().reverse().find(c=>G.streak===c.s);
+    if(c)showPopup('combo',c.t,c.sub);
+  } else {
+    G.lives--;G.streak=0;G.totalAsked++;
+    G.lifeRestoreStreak=0;
+    updateStreakBadge();updateLives();
+    if(G.lives<=0){showExplanation(false,'mcq',0,1,()=>endGame());return;}
+  }
+  document.getElementById('g-stars').textContent=G.stars.toLocaleString();
+  updateLives();
+  showExplanation(isCorrect,'mcq',0,1,()=>{G.qIdx++;loadQuestion();});
+}
+
+function showExplanation(isCorrect,type,correctCount,total,onNext){
+  const q=G.questions[G.qIdx];
+  const ec=document.getElementById('explanation-card');
+  const isPartial=isCorrect==='partial';
+  const cls=isCorrect===true?'ok':isPartial?'partial':'no';
+  document.getElementById('ex-icon').textContent=isCorrect===true?'✅':isPartial?'⭐':'❌';
+  if(type==='seq'){
+    document.getElementById('ex-answer').innerHTML=`<span>${correctCount}/${total}</span> sentences in correct order`;
+  } else {
+    document.getElementById('ex-answer').innerHTML=`Answer: <span>${q.answer}</span>`;
+  }
+  // Explanation
+  const explanations={
+    inference:`This is an inference question — the answer isn't stated directly. You have to think about the character's motivation.`,
+    predict:`Prediction questions ask you to use clues in the story to guess what happens next.`,
+    character:`Character feeling questions look at what the character does or says to understand how they feel.`,
+    truefalse:`Always go back and check the exact words in the story for true/false questions.`,
+    vocabulary:`Context clues — the words around an unknown word help you figure out its meaning.`,
+    fill:`Fill-in-the-blank questions test whether you understand which word fits the meaning of the sentence.`,
+    title:`A good title captures the MAIN IDEA of the whole story, not just one detail.`,
+    whosaid:`Check the story for speech marks — they show exactly who said what.`,
+    mood:`The mood of a story is the overall feeling it gives the reader.`,
+    sequence:`Sequencing means putting events in the order they happened.`,
+  };
+  document.getElementById('ex-explain').textContent=explanations[q.mode]||'';
+  // New word
+  if(q.word){
+    document.getElementById('ex-word-txt').textContent=`${q.word.word.toUpperCase()} — ${q.word.def}`;
+    document.getElementById('ex-word').className='ex-word show';
+  } else {
+    document.getElementById('ex-word').className='ex-word';
+  }
+  const nextBtn=document.getElementById('ex-next');
+  nextBtn.className=`ex-next ${cls}`;
+  nextBtn.textContent=G.qIdx>=G.questions.length-1||G.lives<=0?'See Results →':'Next Question →';
+  ec.className=`explanation-card show ${cls}`;
+  ec.style.display='block';
+  window._exNextFn=onNext;
+  setTimeout(()=>ec.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function advanceQuestion(){
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('hint-box').className='hint-box';
+  document.getElementById('hint-btn').style.display='none';
+  clearTimeout(G.hintTimer);
+  if(window._exNextFn){window._exNextFn();window._exNextFn=null;}
+}
+
+// ── Hint ──────────────────────────────────────────────────────────
+function useHint(){
+  if(G.hintUsed||G.answered)return;
+  G.hintUsed=true;
+  const btn=document.getElementById('hint-btn');
+  btn.className='hint-btn used';btn.textContent='💡 Used';
+  document.getElementById('hint-txt').textContent=G.questions[G.qIdx].hint||'Re-read the story carefully.';
+  document.getElementById('hint-box').className='hint-box show';
+}
+
+// ── Show picture ──────────────────────────────────────────────────
+function showPicture(){
+  const q=encodeURIComponent(G.story.pic||G.story.title);
+  window.open('https://www.google.com/search?tbm=isch&q='+q,'_blank');
+}
+
+// ── Life restore ──────────────────────────────────────────────────
+function checkLifeRestore(){
+  if(G.lives>=3)return;
+  G.lifeRestoreStreak++;
+  if(G.lifeRestoreStreak>=3){G.lifeRestoreStreak=0;G.lives=Math.min(3,G.lives+1);updateLives();showPopup('life','❤️ Life Restored!','3 correct in a row!');}
+}
+
+// ── UI ────────────────────────────────────────────────────────────
+function updateLives(){let h='';for(let i=0;i<3;i++)h+=i<G.lives?'❤️':'🖤';document.getElementById('lives-display').textContent=h;}
+function updateStreakBadge(){
+  const el=document.getElementById('streak-badge');
+  el.textContent=`${G.streak} 📚`;
+  el.className=`streak-badge${G.streak>=7?' s7':G.streak>=5?' s5':G.streak>=3?' s3':''}`;
+}
+function showPopup(type,text,sub){
+  const el=document.getElementById(type+'-popup');if(!el)return;
+  if(type==='combo'){document.getElementById('combo-text').textContent=text;document.getElementById('combo-sub').textContent=sub;}
+  el.className=`popup-overlay ${type} show`;
+  setTimeout(()=>{el.className=`popup-overlay ${type} hide`;},1500);
+  setTimeout(()=>{el.className=`popup-overlay ${type}`;},1800);
+}
+
+// ── Round end ─────────────────────────────────────────────────────
+function endRound(){
+  const acc=G.totalAsked>0?Math.round(G.totalCorrect/G.totalAsked*100):0;
+  document.getElementById('re-icon').textContent=G.correct>=6?'🏆':G.correct>=4?'⭐':G.correct>=2?'📚':'🌱';
+  document.getElementById('re-title').textContent=`"${G.story.title}" Complete!`;
+  document.getElementById('re-correct').textContent=G.correct;
+  document.getElementById('re-acc').textContent=acc+'%';
+  document.getElementById('re-stars-r').textContent=G.roundStars.toLocaleString();
+  document.getElementById('re-streak-r').textContent=G.bestStreak;
+  document.getElementById('re-msg').textContent=G.correct>=6?'Brilliant reading! 🌟':G.correct>=4?'Great comprehension! 💪':G.correct>=2?'Good effort! 📈':'Keep reading! 🌱';
+  document.getElementById('re-next-btn').textContent='Next Story →';
+  // Story review with highlights
+  const review=document.getElementById('round-story-review');
+  const storyHtml=G.story.sentences.map((s,i)=>{
+    const missed=G.missedSentences.includes(i);
+    return `<span class="rs-sentence ${missed?'missed':''}">${s} </span>`;
+  }).join('');
+  review.innerHTML=`<div class="rs-title">📖 ${G.story.title}
+    ${G.missedSentences.length?'<span style="font-size:.6rem;font-weight:700;color:#FF9090;margin-left:6px">Red = missed sequence</span>':''}</div>
+    <div class="rs-story">${storyHtml}</div>
+    <div class="rs-fact"><div class="rs-fact-lbl">💡 Did you know?</div><div class="rs-fact-txt">${G.story.fact}</div></div>`;
+  showScreen('roundEndScreen');
+}
+
+function nextRound(){
+  G.round++;G.qIdx=0;G.correct=0;G.streak=0;G.bestStreak=0;G.lifeRestoreStreak=0;
+  showScreen('gameScreen');
+  loadStory();
+}
+
+// ── Game over ─────────────────────────────────────────────────────
+async function endGame(){
+  showScreen('gameOverScreen');
+  const total=G.stars;
+  document.getElementById('go-score').textContent=total.toLocaleString()+' ⭐';
+  document.getElementById('go-earned').textContent=`+${total.toLocaleString()} stars saved`;
+  document.getElementById('go-stories').textContent=G.round;
+  document.getElementById('go-correct').textContent=G.totalCorrect;
+  document.getElementById('go-streak').textContent=G.sessionBestStreak;
+  const isNewBest=total>personalBest;if(isNewBest)personalBest=total;
+  document.getElementById('go-pb').textContent=personalBest.toLocaleString();
+  document.getElementById('new-best-banner').style.display=isNewBest?'block':'none';
+  document.getElementById('go-msg').textContent=total>=400?'You are a Story Legend! 🏆':total>=250?'Outstanding reader! 🌟':total>=120?'Great reading! 💪':'Keep reading every day! 🌱';
+  document.getElementById('go-trophy').textContent=total>=400?'🏆':total>=250?'⭐':total>=120?'📚':'🌱';
+  if(playerId&&total>0){
+    try{
+      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,amount:total,reason:`Story Sequencer — ${G.round} stories, ${G.totalCorrect} correct`,category:'game'}});
+      const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.story-sequencer`);
+      if(rows&&rows.length){
+        await db(`game_scores?player_id=eq.${playerId}&game_key=eq.story-sequencer`,{method:'PATCH',prefer:'return=minimal',body:{best_score:isNewBest?total:rows[0].best_score,best_round:G.round,total_plays:(rows[0].total_plays||0)+1,last_played:new Date().toISOString()}});
+      } else {
+        await db('game_scores',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,game_key:'story-sequencer',best_score:total,best_round:G.round,total_plays:1}});
+      }
+    }catch(e){}
+  }
+}
+
+function restartGame(){startGame();}
+function goHome(){window.location.href='index.html?player='+playerName;}
+function confirmQuit(){if(confirm('Quit Story Sequencer? Progress will be lost.'))goHome();}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+init();
+</script>
+</body>
+</html>
