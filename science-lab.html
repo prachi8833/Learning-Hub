@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Science Lab 🔬 — Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#2BBFB8;--teal2:#1A9990;--amber:#F6C04A;--amber2:#E8A020;
+  --red:#E84545;--green:#27AE60;--purple:#7C5CBF;--orange:#F07830;
+  --neon:#39FF14;--cyan:#00F5FF;--pink:#FF006E;--lime:#CCFF00;
+  --gc:rgba(8,18,28,0.85);--gb:rgba(255,255,255,0.10);
+  --r:16px;--shadow:0 4px 24px rgba(0,0,0,0.5);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden}
+body{background:#060e18;display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+.bg{position:fixed;inset:0;z-index:0;background:#060e18;overflow:hidden}
+.bg-atom{position:absolute;border-radius:50%;border:1px solid;opacity:0.06;animation:atomSpin linear infinite}
+@keyframes atomSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.bg-particle{position:absolute;border-radius:50%;animation:particleFloat ease-in-out infinite alternate}
+@keyframes particleFloat{from{transform:translateY(0) scale(1);opacity:.06}to{transform:translateY(-30px) scale(1.2);opacity:.14}}
+
+.wrap{position:relative;z-index:1;width:100%;max-width:600px;padding:12px;
+  display:flex;flex-direction:column;gap:10px;max-height:100vh;overflow-y:auto}
+.wrap::-webkit-scrollbar{display:none}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:10px;background:var(--gc);backdrop-filter:blur(14px);
+  border:1px solid var(--gb);border-radius:var(--r);padding:12px 16px;box-shadow:var(--shadow);flex-shrink:0}
+.back-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.1);border:none;
+  color:#fff;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hdr-title{flex:1;font-size:1rem;font-weight:900;color:#fff}
+.hdr-sub{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.45)}
+.lives{display:flex;gap:2px;font-size:1rem}
+.star-count{font-size:.9rem;font-weight:900;color:var(--amber);white-space:nowrap}
+
+/* INFO ROW */
+.info-row{display:flex;gap:8px;flex-shrink:0}
+.info-box{flex:1;background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
+  border-radius:12px;padding:8px 10px;text-align:center;box-shadow:var(--shadow)}
+.ib-val{font-size:1rem;font-weight:900;color:#fff;line-height:1}
+.ib-lbl{font-size:.52rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px;text-transform:uppercase}
+.ib-val.cyan{color:var(--cyan)}.ib-val.amber{color:var(--amber)}
+.streak-badge{display:inline-flex;align-items:center;gap:3px;border-radius:99px;padding:3px 9px;
+  font-size:.7rem;font-weight:900;transition:all .3s;background:rgba(0,245,255,.1);
+  border:1px solid rgba(0,245,255,.25);color:var(--cyan)}
+.streak-badge.s3{background:rgba(57,255,20,.1);border-color:rgba(57,255,20,.3);color:var(--neon)}
+.streak-badge.s5{background:rgba(204,255,0,.1);border-color:rgba(204,255,0,.3);color:var(--lime)}
+.streak-badge.s7{background:rgba(255,0,110,.1);border-color:rgba(255,0,110,.3);color:#FF6BA8;animation:mp .6s ease infinite alternate}
+@keyframes mp{from{transform:scale(1)}to{transform:scale(1.08)}}
+
+/* POPUPS */
+.popup-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
+  z-index:999;text-align:center;pointer-events:none;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  background:rgba(6,14,24,0.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-radius:24px;padding:22px 36px;box-shadow:0 8px 40px rgba(0,0,0,0.7)}
+.popup-overlay.combo{border:1.5px solid rgba(0,245,255,0.25)}
+.popup-overlay.life{border:1.5px solid rgba(232,69,122,0.35);box-shadow:0 8px 40px rgba(232,69,122,0.2)}
+.popup-overlay.show{transform:translate(-50%,-50%) scale(1)}
+.popup-overlay.hide{transform:translate(-50%,-50%) scale(0);opacity:0}
+.po-text{font-size:2rem;font-weight:900;white-space:nowrap}
+.po-sub{font-size:.88rem;font-weight:800;color:rgba(255,255,255,.65);margin-top:4px}
+
+/* GAME CARD */
+.game-card{background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
+  border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+.q-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.topic-tag{font-size:.65rem;font-weight:900;border-radius:99px;padding:4px 13px;border:1px solid}
+.topic-tag.experiment{background:rgba(57,255,20,.1);color:var(--neon);border-color:rgba(57,255,20,.25)}
+.topic-tag.classification{background:rgba(0,245,255,.1);color:var(--cyan);border-color:rgba(0,245,255,.25)}
+.topic-tag.states{background:rgba(246,192,74,.1);color:var(--amber);border-color:rgba(246,192,74,.25)}
+.topic-tag.lifecycle{background:rgba(39,174,96,.1);color:#7DFFB0;border-color:rgba(39,174,96,.25)}
+.topic-tag.foodchain{background:rgba(240,120,48,.1);color:#FFB060;border-color:rgba(240,120,48,.25)}
+.topic-tag.body{background:rgba(232,69,122,.1);color:#FF8FAA;border-color:rgba(232,69,122,.25)}
+.topic-tag.space{background:rgba(124,92,191,.1);color:#C8A8FF;border-color:rgba(124,92,191,.25)}
+.topic-tag.forces{background:rgba(0,245,255,.1);color:var(--cyan);border-color:rgba(0,245,255,.25)}
+.topic-tag.weather{background:rgba(74,144,217,.1);color:#90CAF9;border-color:rgba(74,144,217,.25)}
+.topic-tag.machines{background:rgba(246,192,74,.1);color:var(--amber);border-color:rgba(246,192,74,.25)}
+.topic-tag.light{background:rgba(204,255,0,.1);color:var(--lime);border-color:rgba(204,255,0,.25)}
+.topic-tag.hypothesis{background:rgba(255,0,110,.1);color:#FF8FAA;border-color:rgba(255,0,110,.25)}
+.q-grade{font-size:.6rem;font-weight:800;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px}
+.question{font-size:1.4rem;font-weight:900;color:#fff;margin-bottom:14px;text-align:center;
+  line-height:1.35;min-height:44px;display:flex;align-items:center;justify-content:center}
+.question.small{font-size:1.05rem}
+
+/* MCQ */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opts.single{grid-template-columns:1fr}
+.opt{padding:12px 10px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:13px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;
+  color:#fff;cursor:pointer;transition:all .15s;text-align:center;word-break:break-word}
+.opt:hover:not(:disabled){background:rgba(0,245,255,.1);border-color:var(--cyan);transform:translateY(-2px)}
+.opt.correct{background:rgba(39,174,96,.2)!important;border-color:var(--green)!important;color:#90FFB0!important}
+.opt.wrong{background:rgba(232,69,69,.15)!important;border-color:var(--red)!important;color:#FF9090!important;animation:shake .3s ease}
+.opt.hypothesis{background:rgba(124,92,191,.1);border-color:rgba(124,92,191,.25);color:#C8A8FF}
+.opt.hypothesis:hover{background:rgba(124,92,191,.2);border-color:#7C5CBF}
+
+/* SEQUENCE */
+.sequence-area{display:flex;flex-direction:column;gap:8px}
+.seq-bank{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:10px}
+.seq-item{padding:9px 14px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);
+  border-radius:11px;font-size:.85rem;font-weight:800;color:#fff;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;gap:6px}
+.seq-item:hover:not(.used){background:rgba(0,245,255,.12);border-color:var(--cyan);transform:translateY(-2px)}
+.seq-item.used{opacity:.25;cursor:default}
+.seq-slots{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.seq-slot{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);
+  border:1.5px dashed rgba(255,255,255,.15);border-radius:11px;padding:10px 14px;min-height:46px;cursor:pointer}
+.seq-slot.filled{background:rgba(0,245,255,.08);border-style:solid;border-color:rgba(0,245,255,.25)}
+.seq-slot .slot-num{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;
+  color:rgba(255,255,255,.5);flex-shrink:0}
+.seq-slot .slot-text{font-size:.82rem;font-weight:800;color:rgba(255,255,255,.5)}
+.seq-slot.filled .slot-text{color:#fff}
+
+/* CLASSIFY */
+.classify-item{font-size:2.8rem;text-align:center;margin-bottom:12px;animation:bounce .8s ease-in-out infinite alternate}
+@keyframes bounce{from{transform:scale(1)}to{transform:scale(1.12)}}
+.classify-bins{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.classify-bins.three{grid-template-columns:1fr 1fr 1fr}
+.classify-bin{padding:12px 8px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:13px;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;
+  color:rgba(255,255,255,.7);cursor:pointer;transition:all .15s;text-align:center}
+.classify-bin:hover:not(:disabled){transform:translateY(-2px);border-color:var(--cyan);background:rgba(0,245,255,.1)}
+.classify-bin.correct{background:rgba(39,174,96,.2)!important;border-color:var(--green)!important;color:#90FFB0!important}
+.classify-bin.wrong{background:rgba(232,69,69,.15)!important;border-color:var(--red)!important;color:#FF9090!important;animation:shake .3s ease}
+
+/* EXPERIMENT */
+.experiment-area{display:flex;flex-direction:column;align-items:center;gap:14px}
+.beakers{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:4px}
+.beaker{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:all .2s}
+.beaker:hover .beaker-body{transform:scale(1.05)}
+.beaker-body{width:64px;height:80px;border-radius:4px 4px 12px 12px;border:2.5px solid;
+  display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;
+  font-size:1.8rem;transition:all .3s;position:relative;overflow:hidden}
+.beaker-liquid{position:absolute;bottom:0;left:0;right:0;border-radius:0 0 10px 10px;transition:height .5s}
+.beaker-emoji{position:relative;z-index:1;font-size:1.6rem}
+.beaker-label{font-size:.65rem;font-weight:900;color:rgba(255,255,255,.6)}
+.plus-sign{font-size:2rem;font-weight:900;color:rgba(255,255,255,.4)}
+.reaction-display{width:100%;min-height:90px;border-radius:14px;display:flex;align-items:center;
+  justify-content:center;background:rgba(255,255,255,.04);border:1.5px dashed rgba(255,255,255,.12);
+  position:relative;overflow:hidden;flex-direction:column;gap:6px}
+.reaction-display.active{border-style:solid}
+.reaction-text{font-size:1rem;font-weight:900;color:#fff;text-align:center;z-index:2;position:relative}
+.reaction-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.6);text-align:center;z-index:2;position:relative}
+
+/* PARTICLES CSS animation */
+.particle{position:absolute;border-radius:50%;pointer-events:none;animation:particleRise linear forwards}
+@keyframes particleRise{0%{transform:translateY(0) scale(1);opacity:.9}100%{transform:translateY(-100px) scale(.3);opacity:0}}
+.spark{position:absolute;pointer-events:none;animation:sparkFly linear forwards}
+@keyframes sparkFly{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+
+/* EXPLANATION */
+.explanation-card{margin-top:12px;border-radius:14px;padding:14px 16px;display:none;animation:slideDown .3s ease}
+.explanation-card.show{display:block}
+.explanation-card.ok{background:rgba(39,174,96,.1);border:1.5px solid rgba(39,174,96,.22)}
+.explanation-card.no{background:rgba(232,69,69,.08);border:1.5px solid rgba(232,69,69,.2)}
+.explanation-card.hyp{background:rgba(124,92,191,.1);border:1.5px solid rgba(124,92,191,.22)}
+.ex-result{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.ex-icon{font-size:1.3rem;flex-shrink:0}
+.ex-answer{font-size:.9rem;font-weight:900;color:#fff}
+.ex-answer span{color:var(--cyan)}
+.ex-explain{font-size:.76rem;font-weight:700;color:rgba(255,255,255,.7);line-height:1.55;margin-bottom:8px}
+.ex-fact{background:rgba(0,245,255,.07);border:1px solid rgba(0,245,255,.18);border-radius:10px;
+  padding:9px 12px;margin-bottom:10px}
+.ex-fact-lbl{font-size:.58rem;font-weight:900;color:var(--cyan);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.ex-fact-txt{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.75);line-height:1.5}
+.ex-next{width:100%;padding:10px;border:none;border-radius:11px;font-family:'Nunito',sans-serif;
+  font-size:.85rem;font-weight:900;cursor:pointer;transition:all .2s;color:#fff}
+.ex-next.ok{background:linear-gradient(135deg,var(--green),#52D08A);box-shadow:0 3px 12px rgba(39,174,96,.3)}
+.ex-next.no{background:linear-gradient(135deg,var(--teal2),var(--teal));box-shadow:0 3px 12px rgba(43,191,184,.3)}
+.ex-next.hyp{background:linear-gradient(135deg,var(--purple),#9B6BDF);box-shadow:0 3px 12px rgba(124,92,191,.3)}
+
+.check-btn{width:100%;margin-top:10px;padding:11px;border:none;border-radius:13px;
+  background:linear-gradient(135deg,var(--teal2),var(--teal));color:#fff;
+  font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:900;cursor:pointer;
+  box-shadow:0 3px 12px rgba(43,191,184,.3)}
+
+
+/* QUESTION IMAGE */
+.q-image-wrap{margin-bottom:12px;border-radius:13px;overflow:hidden;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  display:none;position:relative}
+.q-image-wrap.loaded{display:block}
+.q-image-wrap img{width:100%;max-height:180px;object-fit:cover;display:block;border-radius:12px}
+.q-image-caption{font-size:.58rem;font-weight:700;color:rgba(255,255,255,.35);
+  padding:5px 10px;text-align:center;background:rgba(0,0,0,.3)}
+.q-image-loading{height:100px;display:flex;align-items:center;justify-content:center;
+  font-size:.72rem;font-weight:700;color:rgba(255,255,255,.25)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{0%{transform:scale(.94)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+
+/* SCREENS */
+.screen{display:none}.screen.active{display:flex;flex-direction:column;gap:10px}
+
+/* START */
+.start-card{background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
+  border-radius:var(--r);padding:26px 22px;text-align:center;box-shadow:var(--shadow)}
+.start-icon{font-size:3.5rem;margin-bottom:8px;display:block;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.start-title{font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:4px}
+.start-sub{font-size:.73rem;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:16px;line-height:1.6}
+.topics-grid{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:16px}
+.topic-chip{font-size:.6rem;font-weight:800;border-radius:99px;padding:3px 9px;border:1px solid}
+.rules{display:flex;flex-direction:column;gap:6px;text-align:left;margin-bottom:16px}
+.rule{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.04);border-radius:10px;padding:7px 11px}
+.rule-ico{font-size:.95rem;flex-shrink:0}
+.rule-txt{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.7)}
+.start-btn{width:100%;padding:13px;border:none;border-radius:13px;
+  background:linear-gradient(135deg,#00C8CC,var(--cyan));
+  color:#060e18;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;
+  cursor:pointer;box-shadow:0 4px 20px rgba(0,245,255,.3);transition:all .2s}
+.start-btn:hover{transform:translateY(-2px)}
+.pb-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;
+  font-size:.7rem;font-weight:700;color:rgba(255,255,255,.4)}
+.pb-val{color:var(--amber);font-weight:900}
+
+/* ROUND END */
+.re-card{background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
+  border-radius:var(--r);padding:22px 18px;text-align:center;box-shadow:var(--shadow)}
+.re-icon{font-size:2.8rem;margin-bottom:7px;display:block}
+.re-title{font-size:1.2rem;font-weight:900;color:#fff;margin-bottom:3px}
+.re-stats{display:flex;gap:7px;margin:12px 0}
+.re-stat{flex:1;background:rgba(255,255,255,.06);border-radius:11px;padding:10px;text-align:center}
+.re-sv{font-size:1.2rem;font-weight:900;color:var(--cyan)}
+.re-sl{font-size:.55rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px}
+.topic-breakdown{margin:0 0 12px;text-align:left}
+.tb-title{font-size:.6rem;font-weight:900;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.tb-row{display:flex;align-items:center;gap:7px;margin-bottom:4px}
+.tb-name{font-size:.65rem;font-weight:700;color:rgba(255,255,255,.6);width:90px;flex-shrink:0}
+.tb-bar-bg{flex:1;height:5px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
+.tb-bar-fill{height:100%;border-radius:99px;transition:width .6s}
+.tb-pct{font-size:.58rem;font-weight:800;color:rgba(255,255,255,.4);width:26px;text-align:right;flex-shrink:0}
+.re-btn{width:100%;padding:11px;border:none;border-radius:13px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:900;cursor:pointer;transition:all .2s}
+.re-btn.next{background:linear-gradient(135deg,#00C8CC,var(--cyan));color:#060e18;box-shadow:0 3px 12px rgba(0,245,255,.3)}
+.re-btn.home{background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);margin-top:7px}
+
+/* GAME OVER */
+.go-card{background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
+  border-radius:var(--r);padding:26px 20px;text-align:center;box-shadow:var(--shadow)}
+.go-trophy{font-size:4rem;margin-bottom:8px;display:block;animation:float 2s ease-in-out infinite}
+.go-title{font-size:1.4rem;font-weight:900;color:#fff;margin-bottom:3px}
+.go-score{font-size:2.6rem;font-weight:900;color:var(--cyan);line-height:1}
+.go-earned{font-size:.88rem;font-weight:800;color:#90FFB0;margin-top:4px}
+.go-msg{font-size:.76rem;font-weight:700;color:rgba(255,255,255,.5);margin:8px 0 4px;line-height:1.5}
+.new-best{background:linear-gradient(135deg,rgba(0,245,255,.15),rgba(57,255,20,.1));
+  border:1px solid rgba(0,245,255,.3);border-radius:11px;padding:9px 14px;
+  font-size:.8rem;font-weight:900;color:var(--cyan);margin:8px 0;animation:popIn .4s ease}
+.go-stats{display:flex;gap:7px;margin-bottom:14px}
+.go-stat{flex:1;background:rgba(255,255,255,.06);border-radius:11px;padding:9px;text-align:center}
+.go-sv{font-size:1.1rem;font-weight:900;color:#fff}
+.go-sl{font-size:.52rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px}
+.go-btns{display:flex;flex-direction:column;gap:7px}
+.go-btn{width:100%;padding:11px;border:none;border-radius:13px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:900;cursor:pointer;transition:all .2s}
+.go-btn.play{background:linear-gradient(135deg,#00C8CC,var(--cyan));color:#060e18;box-shadow:0 4px 20px rgba(0,245,255,.3)}
+.go-btn.home{background:rgba(255,255,255,.07);color:rgba(255,255,255,.5)}
+</style>
+</head>
+<body>
+<div class="bg" id="bg-el"></div>
+<div class="popup-overlay combo" id="combo-popup">
+  <div class="po-text" id="combo-text">EUREKA! 🔬</div>
+  <div class="po-sub" id="combo-sub">3 correct!</div>
+</div>
+<div class="popup-overlay life" id="life-popup">
+  <div class="po-text">❤️ Life Restored!</div>
+  <div class="po-sub">3 correct in a row!</div>
+</div>
+
+<div class="wrap">
+  <!-- START -->
+  <div id="startScreen" class="screen active">
+    <div class="start-card">
+      <span class="start-icon">🔬</span>
+      <div class="start-title">Science Lab</div>
+      <div class="start-sub" id="start-greeting">Welcome to the lab, Scientist!</div>
+      <div class="topics-grid" id="topics-grid"></div>
+      <div class="rules">
+        <div class="rule"><span class="rule-ico">🧪</span><span class="rule-txt">10 experiments per round — all topics mixed in</span></div>
+        <div class="rule"><span class="rule-ico">🔮</span><span class="rule-txt">Hypothesis first — predict what will happen, no penalty!</span></div>
+        <div class="rule"><span class="rule-ico">❤️</span><span class="rule-txt">3 lives — get 3 correct in a row to restore a life</span></div>
+        <div class="rule"><span class="rule-ico">🌟</span><span class="rule-txt">Fun science facts after every answer</span></div>
+      </div>
+      <button class="start-btn" onclick="startGame()">🔬 Enter the Lab!</button>
+      <div class="pb-row" id="pb-row" style="display:none">🏆 Personal Best: <span class="pb-val" id="pb-val">0</span> stars</div>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div id="gameScreen" class="screen">
+    <div class="hdr">
+      <button class="back-btn" onclick="confirmQuit()">←</button>
+      <div style="flex:1">
+        <div class="hdr-title">🔬 Science Lab</div>
+        <div class="hdr-sub" id="g-player-label">Riaan · Grade 3</div>
+      </div>
+      <div class="lives" id="lives-display">❤️❤️❤️</div>
+      <div class="star-count">⭐ <span id="g-stars">0</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-box"><div class="ib-val cyan" id="g-round">1</div><div class="ib-lbl">Round</div></div>
+      <div class="info-box"><div class="ib-val" id="g-qnum">1/10</div><div class="ib-lbl">Question</div></div>
+      <div class="info-box" style="flex:1.5">
+        <div class="ib-val" id="g-topic-display" style="font-size:.75rem;color:rgba(255,255,255,.7)">Classification</div>
+        <div class="ib-lbl">Topic</div>
+      </div>
+      <div class="info-box" style="display:flex;align-items:center;justify-content:center">
+        <div id="streak-badge" class="streak-badge">0 🔬</div>
+      </div>
+    </div>
+    <div class="game-card" id="game-card">
+      <div class="q-meta">
+        <span class="topic-tag" id="g-topic-tag">Classification</span>
+        <span class="q-grade" id="g-grade-tag">Grade 3</span>
+      </div>
+      <div id="q-image-wrap" class="q-image-wrap"></div>
+      <div id="q-content"></div>
+      <div id="hint-area" style="text-align:center;margin-top:8px">
+        <button id="hint-btn" style="display:none;padding:6px 16px;background:rgba(0,245,255,.1);
+          border:1.5px solid rgba(0,245,255,.2);border-radius:99px;font-family:'Nunito',sans-serif;
+          font-size:.65rem;font-weight:900;color:var(--cyan);cursor:pointer;transition:all .2s"
+          onclick="useHint()">💡 Hint</button>
+        <div id="hint-box" style="display:none;margin-top:8px;background:rgba(0,245,255,.07);
+          border:1px solid rgba(0,245,255,.18);border-radius:11px;padding:9px 12px">
+          <div id="hint-txt" style="font-size:.75rem;font-weight:700;color:rgba(255,255,255,.7)"></div>
+          <div style="font-size:.6rem;font-weight:800;color:rgba(0,245,255,.5);margin-top:3px">💡 Hint halves your stars for this question</div>
+        </div>
+      </div>
+      <div class="explanation-card" id="explanation-card">
+        <div class="ex-result">
+          <span class="ex-icon" id="ex-icon">✅</span>
+          <span class="ex-answer" id="ex-answer">Correct!</span>
+        </div>
+        <div class="ex-explain" id="ex-explain"></div>
+        <div class="ex-fact" id="ex-fact">
+          <div class="ex-fact-lbl">🔬 Science Fact</div>
+          <div class="ex-fact-txt" id="ex-fact-txt"></div>
+        </div>
+        <button class="ex-next" id="ex-next" onclick="advanceQuestion()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUND END -->
+  <div id="roundEndScreen" class="screen">
+    <div class="re-card">
+      <span class="re-icon" id="re-icon">⭐</span>
+      <div class="re-title" id="re-title">Round 1 Complete!</div>
+      <div class="re-stats">
+        <div class="re-stat"><div class="re-sv" id="re-correct">0</div><div class="re-sl">Correct</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-acc">0%</div><div class="re-sl">Accuracy</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-stars-r">0</div><div class="re-sl">Stars</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-streak-r">0</div><div class="re-sl">Best Streak</div></div>
+      </div>
+      <div class="topic-breakdown" id="topic-breakdown"></div>
+      <div style="font-size:.74rem;font-weight:700;color:rgba(255,255,255,.45);margin-bottom:12px;text-align:center" id="re-msg"></div>
+      <button class="re-btn next" id="re-next-btn" onclick="nextRound()">Round 2 →</button>
+      <button class="re-btn home" onclick="goHome()">🏠 Back to Hub</button>
+    </div>
+  </div>
+
+  <!-- GAME OVER -->
+  <div id="gameOverScreen" class="screen">
+    <div class="go-card">
+      <span class="go-trophy" id="go-trophy">🏆</span>
+      <div class="go-title">Experiment Complete!</div>
+      <div class="go-score" id="go-score">0 ⭐</div>
+      <div class="go-earned" id="go-earned">+0 stars saved</div>
+      <div id="new-best-banner" class="new-best" style="display:none">🏆 NEW PERSONAL BEST!</div>
+      <div class="go-msg" id="go-msg">Great scientist!</div>
+      <div class="go-stats">
+        <div class="go-stat"><div class="go-sv" id="go-rounds">1</div><div class="go-sl">Rounds</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-correct">0</div><div class="go-sl">Correct</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-streak">0</div><div class="go-sl">Best Streak</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-pb">0</div><div class="go-sl">Personal Best</div></div>
+      </div>
+      <div class="go-btns">
+        <button class="go-btn play" onclick="restartGame()">🔬 Try Again</button>
+        <button class="go-btn home" onclick="goHome()">🏠 Back to Hub</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Supabase ──────────────────────────────────────────────────────
+const SB='https://tnhgihzfwqsflpueivwe.supabase.co',KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
+const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':o.prefer||'return=representation',...o.headers},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined}).then(r=>r.json()).catch(()=>[]);
+
+const params=new URLSearchParams(window.location.search);
+const playerName=params.get('player')||'riaan';
+let playerId=null,playerGrade=3,personalBest=0;
+
+// ── Background decoration ─────────────────────────────────────────
+function buildBG(){
+  const bg=document.getElementById('bg-el');
+  const atoms=[
+    {size:200,color:'rgba(0,245,255,.08)',dur:25,x:10,y:10},
+    {size:150,color:'rgba(57,255,20,.06)',dur:35,x:70,y:60},
+    {size:300,color:'rgba(124,92,191,.05)',dur:45,x:30,y:70},
+  ];
+  atoms.forEach(a=>{
+    const el=document.createElement('div');
+    el.className='bg-atom';
+    el.style.cssText=`width:${a.size}px;height:${a.size}px;left:${a.x}%;top:${a.y}%;
+      border-color:${a.color};animation-duration:${a.dur}s;margin-left:-${a.size/2}px;margin-top:-${a.size/2}px`;
+    bg.appendChild(el);
+  });
+  for(let i=0;i<12;i++){
+    const el=document.createElement('div');
+    el.className='bg-particle';
+    const size=rand(3,8);
+    el.style.cssText=`width:${size}px;height:${size}px;left:${rand(0,100)}%;top:${rand(0,100)}%;
+      background:rgba(0,245,255,.15);animation-duration:${rand(3,7)}s;animation-delay:${rand(0,4)}s`;
+    bg.appendChild(el);
+  }
+}
+
+// ── Question Bank ─────────────────────────────────────────────────
+const QUESTIONS={
+  classification:[
+    // Animal classification
+    {q:'🐬 A dolphin is a:',opts:['Mammal','Fish','Reptile','Amphibian'],a:'Mammal',topic:'classification',
+      explain:'Dolphins are mammals — they breathe air, are warm-blooded, and nurse their young with milk.',
+      imgKey:'dolphin',fact:'Dolphins sleep with one eye open and half their brain active to watch for danger!',grade:1},
+    {q:'🐊 A crocodile is a:',opts:['Mammal','Reptile','Amphibian','Bird'],a:'Reptile',topic:'classification',
+      explain:'Crocodiles are reptiles — cold-blooded, scaly skin, lay eggs on land.',
+      imgKey:'crocodile',fact:'Crocodiles have been on Earth for over 200 million years — they outlived the dinosaurs!',grade:1},
+    {q:'🐸 A frog is a:',opts:['Reptile','Fish','Amphibian','Mammal'],a:'Amphibian',topic:'classification',
+      explain:'Frogs are amphibians — they can live on land AND in water, and have moist skin.',
+      imgKey:'frog',fact:'Frogs drink water through their skin — they never actually drink with their mouths!',grade:1},
+    {q:'🦅 An eagle is a:',opts:['Mammal','Insect','Bird','Reptile'],a:'Bird',topic:'classification',
+      explain:'Eagles are birds — they have feathers, wings, beaks, and lay eggs.',
+      imgKey:'eagle',fact:'Bald eagles can spot a fish from 3 kilometres away and dive at 160 km/h!',grade:1},
+    {q:'🦋 A butterfly is a:',opts:['Bird','Insect','Mammal','Reptile'],a:'Insect',topic:'classification',
+      explain:'Butterflies are insects — they have 6 legs, 3 body segments, and an exoskeleton.',
+      imgKey:'butterfly',fact:'Butterflies taste with their feet! They have taste sensors on their legs.',grade:1},
+    {q:'🦈 A shark is a:',opts:['Mammal','Amphibian','Fish','Reptile'],a:'Fish',topic:'classification',
+      explain:'Sharks are fish — they breathe through gills, live fully in water, and are cold-blooded.',
+      imgKey:'shark',fact:'Sharks have been on Earth for over 450 million years — older than trees!',grade:3},
+    {q:'🦇 A bat is a:',opts:['Bird','Insect','Reptile','Mammal'],a:'Mammal',topic:'classification',
+      explain:'Bats are the only flying mammals — warm-blooded and nurse their young with milk.',
+      imgKey:'bat',fact:'A single brown bat can eat up to 1,200 mosquitoes in just one hour!',grade:3},
+    {q:'🐙 An octopus is a:',opts:['Fish','Mammal','Mollusc','Reptile'],a:'Mollusc',topic:'classification',
+      explain:'Octopuses are molluscs — soft-bodied invertebrates related to snails and clams.',
+      fact:'Octopuses have three hearts, blue blood, and can change colour in 0.3 seconds!',grade:3},
+  ],
+  states:[
+    {q:'What state of matter is ICE?',imgKey:'states_matter',opts:['Solid','Liquid','Gas','Plasma'],a:'Solid',topic:'states',
+      explain:'Ice is a solid — it has a fixed shape and fixed volume. The water molecules are locked in place.',
+      imgKey:'states_matter',fact:'Ice is less dense than liquid water, which is why it floats — a property unique among common substances!',grade:1},
+    {q:'What state of matter is STEAM?',imgKey:'states_matter',opts:['Solid','Liquid','Gas','Plasma'],a:'Gas',topic:'states',
+      explain:'Steam is water in gas form — the molecules have enough energy to spread out and move freely.',
+      imgKey:'states_matter',fact:'Steam (water vapour) is actually invisible! The white cloud you see is tiny water droplets, not true steam.',grade:1},
+    {q:'What happens when you HEAT ice?',imgKey:'states_matter',opts:['It melts into liquid','It turns to gas','It gets harder','It disappears'],a:'It melts into liquid',topic:'states',
+      explain:'Heating ice adds energy to the molecules, breaking the bonds and melting it into liquid water.',
+      fact:'The exact temperature at which water freezes and melts is 0°C — called the melting point!',grade:1},
+    {q:'What happens when you COOL water vapour?',imgKey:'water_cycle',opts:['It freezes to ice','It condenses to liquid','It becomes denser gas','Nothing changes'],a:'It condenses to liquid',topic:'states',
+      explain:'Cooling removes energy from water vapour molecules, slowing them down until they condense into liquid.',
+      fact:'This is exactly how clouds form — water vapour rises, cools, and condenses into tiny droplets!',grade:1},
+    {q:'Which state has NO fixed shape or volume?',imgKey:'states_matter',opts:['Solid','Liquid','Gas','All of them'],a:'Gas',topic:'states',
+      explain:'Gases expand to fill any container completely — they have neither fixed shape nor fixed volume.',
+      fact:'Air is a mixture of gases — about 78% nitrogen and 21% oxygen, with tiny amounts of other gases.',grade:3},
+    {q:'What is it called when liquid becomes gas WITHOUT boiling?',imgKey:'water_cycle',opts:['Condensation','Evaporation','Sublimation','Melting'],a:'Evaporation',topic:'states',
+      explain:'Evaporation happens at the surface of a liquid — fast-moving molecules escape into the air.',
+      fact:'Evaporation is why you feel cold after swimming — water evaporates from your skin taking heat with it!',grade:3},
+    {q:'What is SUBLIMATION?',imgKey:'states_matter',opts:['Liquid to gas','Solid directly to gas','Gas to solid','Liquid to solid'],a:'Solid directly to gas',topic:'states',
+      explain:'Sublimation is when a solid transforms directly into gas without becoming liquid first.',
+      fact:'Dry ice (solid CO2) sublimates at room temperature — it goes straight from solid to gas!',grade:3},
+  ],
+  lifecycle:[
+    {q:'What is the FIRST stage of a butterfly life cycle?',opts:['Caterpillar','Egg','Chrysalis','Butterfly'],a:'Egg',topic:'lifecycle',
+      explain:'All butterflies begin as eggs laid on leaves. The egg hatches into a caterpillar.',
+      imgKey:'butterfly_lifecycle',fact:'A butterfly egg is tiny — usually about 1-3mm. The mother chooses leaves that the caterpillar will eat!',grade:1},
+    {q:'What is the THIRD stage of a butterfly life cycle?',opts:['Egg','Caterpillar','Chrysalis','Butterfly'],a:'Chrysalis',topic:'lifecycle',
+      explain:'Egg → Caterpillar → Chrysalis → Butterfly. The chrysalis is the transformation stage.',
+      imgKey:'butterfly_lifecycle',fact:'Inside a chrysalis, the caterpillar essentially dissolves into cells that rearrange into a butterfly!',grade:1},
+    {q:'What is the correct order for a frog life cycle?',opts:['Egg→Tadpole→Froglet→Frog','Tadpole→Egg→Frog→Froglet','Egg→Frog→Tadpole→Froglet','Frog→Egg→Froglet→Tadpole'],a:'Egg→Tadpole→Froglet→Frog',topic:'lifecycle',
+      explain:'Frogs: egg (in water) → tadpole (fish-like, breathes with gills) → froglet (grows legs) → adult frog.',
+      imgKey:'frog_lifecycle',fact:'A tadpole breathes through gills like a fish! As it transforms, it grows lungs to breathe air.',grade:1},
+    {q:'In a plant life cycle, what comes after GERMINATION?',opts:['Flowering','Seed dispersal','Seedling growth','Pollination'],a:'Seedling growth',topic:'lifecycle',
+      explain:'Seed → Germination (sprouting) → Seedling growth → Mature plant → Flowering → Pollination → Seed dispersal.',
+      fact:'Some seeds need to pass through an animal\'s digestive system before they can germinate!',grade:3},
+    {q:'What process transfers pollen between flowers?',opts:['Germination','Pollination','Photosynthesis','Transpiration'],a:'Pollination',topic:'lifecycle',
+      explain:'Pollination is the transfer of pollen from one flower to another, usually by insects, wind, or birds.',
+      fact:'One-third of all our food depends on pollination by bees! Without bees, most fruits and vegetables would disappear.',grade:3},
+  ],
+  foodchain:[
+    {q:'In a food chain, what are PLANTS called?',imgKey:'food_chain',opts:['Consumers','Producers','Predators','Decomposers'],a:'Producers',topic:'foodchain',
+      explain:'Plants are producers — they make their own food from sunlight through photosynthesis.',
+      fact:'Plants produce oxygen as a byproduct of photosynthesis — every breath you take comes from plants!',grade:1},
+    {q:'What eats ONLY plants?',imgKey:'food_chain',opts:['Carnivore','Herbivore','Omnivore','Decomposer'],a:'Herbivore',topic:'foodchain',
+      explain:'Herbivores eat only plants. Examples: cows, rabbits, caterpillars, deer.',
+      fact:'The largest animal on Earth, the blue whale, eats tiny shrimp-like creatures called krill — a herbivore!',grade:1},
+    {q:'What is the correct food chain order?',imgKey:'food_chain',opts:['Grass→Fox→Rabbit','Grass→Rabbit→Fox','Fox→Rabbit→Grass','Rabbit→Grass→Fox'],a:'Grass→Rabbit→Fox',topic:'foodchain',
+      explain:'Energy flows from producer to herbivore to carnivore: Grass (producer) → Rabbit (herbivore) → Fox (carnivore).',
+      imgKey:'food_chain',fact:'Only about 10% of energy passes from one level to the next — that\'s why there are always more plants than animals!',grade:1},
+    {q:'What is an APEX predator?',imgKey:'food_chain',opts:['An animal with no predators','The smallest predator','A plant eater','A decomposer'],a:'An animal with no predators',topic:'foodchain',
+      explain:'Apex predators are at the top of the food chain — no other animal hunts them.',
+      fact:'Removing an apex predator can collapse an entire ecosystem. When wolves were removed from Yellowstone, rivers actually changed course!',grade:3},
+    {q:'What do DECOMPOSERS do in an ecosystem?',imgKey:'food_chain',opts:['Hunt prey','Make food from sunlight','Break down dead matter','Pollinate plants'],a:'Break down dead matter',topic:'foodchain',
+      explain:'Decomposers like fungi and bacteria break down dead plants and animals, returning nutrients to the soil.',
+      fact:'A teaspoon of healthy soil contains more living organisms than there are people on Earth!',grade:3},
+  ],
+  body:[
+    {q:'Which organ pumps blood around your body?',opts:['Lungs','Brain','Heart','Liver'],a:'Heart',topic:'body',
+      explain:'The heart is a muscle that pumps blood continuously — about 100,000 times every day!',
+      imgKey:'heart',fact:'Your heart beats about 100,000 times a day — over 3 billion times in an average lifetime!',grade:1},
+    {q:'Which organs let you breathe?',opts:['Heart','Lungs','Kidneys','Stomach'],a:'Lungs',topic:'body',
+      explain:'The lungs take in oxygen from air and release carbon dioxide — the gas exchange of respiration.',
+      imgKey:'lungs',fact:'Your lungs contain about 300 million tiny air sacs — if spread flat, they would cover a tennis court!',grade:1},
+    {q:'What does the BRAIN do?',opts:['Pumps blood','Digests food','Controls the body','Filters blood'],a:'Controls the body',topic:'body',
+      explain:'The brain is the control centre — it processes information, controls movement, and manages all body functions.',
+      imgKey:'brain',fact:'Your brain uses about 20% of all your body\'s energy — even though it\'s only 2% of your body weight!',grade:1},
+    {q:'Which system carries blood around your body?',imgKey:'heart',opts:['Respiratory','Digestive','Circulatory','Nervous'],a:'Circulatory',topic:'body',
+      explain:'The circulatory system includes the heart, blood, and blood vessels to transport nutrients and oxygen.',
+      fact:'If you laid out all the blood vessels in your body end to end, they would circle the Earth more than twice!',grade:3},
+    {q:'What does the SMALL INTESTINE do?',imgKey:'skeleton',opts:['Pumps blood','Absorbs nutrients','Makes bile','Filters waste'],a:'Absorbs nutrients',topic:'body',
+      explain:'The small intestine absorbs nutrients from digested food into the bloodstream.',
+      fact:'The small intestine is about 6 metres long — nearly as long as a car! Despite the name, it\'s the longest part of your digestive system.',grade:3},
+    {q:'Which system fights infection and disease?',imgKey:'brain',opts:['Circulatory','Nervous','Immune','Skeletal'],a:'Immune',topic:'body',
+      explain:'The immune system defends your body against bacteria, viruses, and other harmful invaders.',
+      fact:'You are born with some immunity from your mother, and your immune system learns to fight new diseases throughout your life!',grade:3},
+  ],
+  space:[
+    {q:'Which is the LARGEST planet in our solar system?',opts:['Saturn','Earth','Jupiter','Neptune'],a:'Jupiter',topic:'space',
+      explain:'Jupiter is the largest planet — so large that all other planets could fit inside it!',
+      imgKey:'jupiter',fact:'Jupiter has a storm called the Great Red Spot that has been raging for over 350 years — bigger than Earth!',grade:1},
+    {q:'Which planet has beautiful rings?',opts:['Jupiter','Mars','Saturn','Uranus'],a:'Saturn',topic:'space',
+      explain:'Saturn is famous for its spectacular rings made of ice and rock particles.',
+      imgKey:'saturn',fact:'Saturn\'s rings are enormous but incredibly thin — up to 282,000 km wide but only 10-100 metres thick!',grade:1},
+    {q:'What is the closest star to Earth?',opts:['Polaris','Alpha Centauri','The Sun','Sirius'],a:'The Sun',topic:'space',
+      explain:'The Sun is our closest star — about 150 million kilometres away.',
+      imgKey:'sun',fact:'Light from the Sun takes about 8 minutes to reach Earth. Light from the next nearest star takes 4.2 YEARS!',grade:1},
+    {q:'Which planet is called the RED planet?',opts:['Venus','Mars','Jupiter','Mercury'],a:'Mars',topic:'space',
+      explain:'Mars appears red because its soil contains iron oxide — essentially rust!',
+      imgKey:'mars',fact:'Mars has the largest volcano in the solar system — Olympus Mons, three times the height of Mount Everest!',grade:1},
+    {q:'How many moons does Earth have?',opts:['0','1','2','4'],a:'1',topic:'space',
+      explain:'Earth has one natural satellite — the Moon. It was formed about 4.5 billion years ago.',
+      imgKey:'moon',fact:'The Moon is slowly moving away from Earth at about 3.8 cm per year — about the same speed as your fingernails grow!',grade:1},
+    {q:'What is a LIGHT YEAR?',imgKey:'solar_system',opts:['One year of sunlight','The distance light travels in one year','The speed of light','The age of a star'],a:'The distance light travels in one year',topic:'space',
+      explain:'A light year is a unit of distance — how far light travels in one year: about 9.46 trillion kilometres!',
+      fact:'The Andromeda Galaxy is 2.5 million light years away — the light you see left before humans existed!',grade:3},
+    {q:'What causes day and night on Earth?',imgKey:'solar_system',opts:['Earth orbiting the Sun','The Moon blocking the Sun','Earth rotating on its axis','Clouds covering the Sun'],a:'Earth rotating on its axis',topic:'space',
+      explain:'Earth spins on its axis once every 24 hours — the side facing the Sun has day, the other side has night.',
+      fact:'Earth spins at about 1,670 km/h at the equator — faster than a commercial jet aircraft!',grade:1},
+    {q:'What is a BLACK HOLE?',imgKey:'black_hole',opts:['A dark planet','A region with gravity so strong nothing can escape','An empty region of space','A dead star that exploded'],a:'A region with gravity so strong nothing can escape',topic:'space',
+      explain:'Black holes form when massive stars collapse — the gravity becomes so powerful that even light cannot escape.',
+      fact:'The supermassive black hole at the centre of our Milky Way galaxy is 4 million times the mass of our Sun!',grade:3},
+  ],
+  forces:[
+    {q:'What force pulls objects toward the centre of the Earth?',imgKey:'gravity',opts:['Magnetism','Friction','Gravity','Tension'],a:'Gravity',topic:'forces',
+      explain:'Gravity is a force of attraction between objects with mass. Earth\'s gravity pulls everything toward its centre.',
+      imgKey:'gravity',fact:'On the Moon, gravity is 6 times weaker than on Earth — that\'s why astronauts can jump so high!',grade:1},
+    {q:'Which falls faster: a heavy ball or a light ball (ignoring air)?',imgKey:'gravity',opts:['Heavy ball','Light ball','They fall at the same speed','Depends on size'],a:'They fall at the same speed',topic:'forces',
+      explain:'Without air resistance, all objects fall at the same rate regardless of mass — proven by Galileo!',
+      fact:'Galileo supposedly dropped two cannon balls of different weights from the Tower of Pisa to prove this!',grade:3},
+    {q:'What force SLOWS DOWN a moving object?',imgKey:'lever',opts:['Gravity','Thrust','Friction','Magnetism'],a:'Friction',topic:'forces',
+      explain:'Friction acts against motion between two surfaces — it converts movement energy into heat.',
+      fact:'Without friction you couldn\'t walk, drive, or even write! Friction between your pencil and paper makes writing possible.',grade:1},
+    {q:'Like poles of a magnet:',imgKey:'magnet',opts:['Attract each other','Repel each other','Have no effect','Spin around'],a:'Repel each other',topic:'forces',
+      explain:'Like poles (N-N or S-S) repel. Opposite poles (N-S) attract. This is the fundamental rule of magnetism.',
+      imgKey:'magnet',fact:'Earth itself is a giant magnet! Its iron core creates a magnetic field that protects us from solar radiation.',grade:1},
+    {q:'What force keeps planets orbiting the Sun?',imgKey:'solar_system',opts:['Friction','Magnetism','Gravity','Thrust'],a:'Gravity',topic:'forces',
+      explain:'The Sun\'s gravity pulls planets toward it, while their orbital speed keeps them moving in a curved path.',
+      fact:'If the Sun suddenly disappeared, Earth would fly off in a straight line — it\'s the Sun\'s gravity that curves our path!',grade:3},
+    {q:'What is INERTIA?',imgKey:'gravity',opts:['A type of friction','The tendency of objects to keep doing what they are doing','The force of gravity','Magnetic attraction'],a:'The tendency of objects to keep doing what they are doing',topic:'forces',
+      explain:'Inertia means a still object stays still, and a moving object keeps moving, unless a force acts on it.',
+      fact:'You experience inertia when a car brakes suddenly — your body keeps moving forward because of inertia!',grade:3},
+  ],
+  weather:[
+    {q:'What is EVAPORATION in the water cycle?',imgKey:'water_cycle',opts:['Rain falling from clouds','Water turning to vapour from heat','Vapour forming clouds','Snow melting'],a:'Water turning to vapour from heat',topic:'weather',
+      explain:'Evaporation is when liquid water absorbs heat energy and turns into water vapour gas.',
+      fact:'Every single day, the Sun evaporates about one trillion tonnes of water from Earth\'s surface!',grade:1},
+    {q:'What is CONDENSATION in the water cycle?',imgKey:'water_cycle',opts:['Rain falling','Water vapour cooling to form droplets','Ice melting','Water soaking into ground'],a:'Water vapour cooling to form droplets',topic:'weather',
+      explain:'Condensation happens when warm water vapour rises, cools, and turns back into tiny liquid water droplets that form clouds.',
+      fact:'A single cumulus cloud can weigh over 500,000 kg — but it stays up because the droplets are so tiny they float!',grade:1},
+    {q:'What causes THUNDER?',imgKey:'lightning',opts:['Clouds bumping together','Rapid air expansion from lightning heat','Rain falling heavily','Strong winds'],a:'Rapid air expansion from lightning heat',topic:'weather',
+      explain:'Lightning superheats the air to 30,000°C instantly — the air expands explosively, creating a shock wave we hear as thunder.',
+      fact:'You can estimate how far away lightning is: count seconds between flash and thunder, divide by 3 = kilometres away!',grade:3},
+    {q:'What type of cloud brings heavy rain?',imgKey:'cumulonimbus',opts:['Cirrus','Cumulus','Cumulonimbus','Stratus'],a:'Cumulonimbus',topic:'weather',
+      explain:'Cumulonimbus are tall, dark storm clouds that can produce heavy rain, lightning, and thunderstorms.',
+      fact:'A single thunderstorm can release energy equivalent to 10 atomic bombs — most of it as rain and wind!',grade:3},
+    {q:'What causes SEASONS on Earth?',imgKey:'solar_system',opts:['Earth\'s distance from the Sun','Earth\'s tilted axis as it orbits the Sun','The Moon\'s gravity','Sunspots on the Sun'],a:'Earth\'s tilted axis as it orbits the Sun',topic:'weather',
+      explain:'Earth is tilted at 23.5 degrees. As it orbits, different hemispheres receive more direct sunlight — this creates seasons.',
+      fact:'In summer the Sun appears higher in the sky — its rays hit more directly, spreading less heat over a smaller area.',grade:3},
+  ],
+  machines:[
+    {q:'A LEVER is used to:',imgKey:'lever',opts:['Move water','Lift or move loads with less effort','Cut objects','Generate electricity'],a:'Lift or move loads with less effort',topic:'machines',
+      explain:'A lever uses a fulcrum (pivot point) to multiply force — a small effort can lift a heavy load.',
+      fact:'Archimedes said "Give me a lever long enough and I shall move the world" — he was mathematically correct!',grade:1},
+    {q:'A PULLEY helps us to:',imgKey:'lever',opts:['Spin objects faster','Lift heavy objects more easily','Measure weight','Create heat'],a:'Lift heavy objects more easily',topic:'machines',
+      explain:'A pulley redirects force and can multiply it — making it easier to lift heavy loads.',
+      fact:'The ancient Egyptians used pulley systems to help build the pyramids — one of the earliest simple machines!',grade:1},
+    {q:'An INCLINED PLANE is basically a:',imgKey:'lever',opts:['Spinning wheel','Ramp','Spinning top','Wedge'],a:'Ramp',topic:'machines',
+      explain:'An inclined plane is a slanted surface (ramp) that reduces the force needed to move objects upward.',
+      fact:'Wheelchair ramps, skateboard ramps, and even roads up mountains are all inclined planes!',grade:1},
+    {q:'A WHEEL AND AXLE works by:',imgKey:'lever',opts:['Using gravity','Reducing friction and transferring force through rotation','Cutting with sharp edges','Using water pressure'],a:'Reducing friction and transferring force through rotation',topic:'machines',
+      explain:'A wheel and axle reduces friction and can multiply force — like a doorknob, steering wheel, or bicycle wheel.',
+      imgKey:'lever',fact:'The wheel was invented about 5,500 years ago in Mesopotamia — but oddly, it wasn\'t first used for transport but for pottery!',grade:3},
+    {q:'Which simple machine is a SCREW based on?',imgKey:'lever',opts:['Lever','Pulley','Inclined plane','Wheel and axle'],a:'Inclined plane',topic:'machines',
+      explain:'A screw is essentially an inclined plane wrapped around a cylinder — the spiral thread is a ramp!',
+      fact:'Screws can hold things together with incredible strength because the inclined plane shape converts rotation into a powerful holding force.',grade:3},
+  ],
+  light:[
+    {q:'Which travels FASTER — light or sound?',imgKey:'lightning',opts:['Sound','Light','They travel at the same speed','It depends on weather'],a:'Light',topic:'light',
+      explain:'Light travels at 300,000 km/s. Sound travels at only about 0.34 km/s — nearly a million times slower!',
+      imgKey:'lightning',fact:'That\'s why you see lightning before you hear thunder — the light arrives almost instantly but sound takes 3 seconds per kilometre!',grade:1},
+    {q:'What happens when light hits a MIRROR?',imgKey:'prism',opts:['It is absorbed','It passes through','It is reflected','It disappears'],a:'It is reflected',topic:'light',
+      explain:'Smooth, shiny surfaces like mirrors reflect light — the angle of reflection equals the angle of incidence.',
+      imgKey:'moon',fact:'The Moon has no light of its own — it simply reflects sunlight! It works like a giant mirror in space.',grade:1},
+    {q:'What are the colours of the RAINBOW in order?',imgKey:'rainbow',opts:['Red Orange Yellow Green Blue Indigo Violet','Blue Red Yellow Green Orange Violet Indigo','Red Yellow Blue Green Orange Violet Indigo','Orange Red Yellow Green Blue Violet Indigo'],a:'Red Orange Yellow Green Blue Indigo Violet',topic:'light',
+      explain:'ROY G BIV: Red, Orange, Yellow, Green, Blue, Indigo, Violet. Each colour has a different wavelength.',
+      imgKey:'rainbow',fact:'A rainbow is actually a full circle — you usually only see the top half because the ground is in the way!',grade:1},
+    {q:'What is REFRACTION?',imgKey:'prism',opts:['Light bouncing off a surface','Light bending as it passes from one medium to another','Light being absorbed by dark objects','Light splitting into colours'],a:'Light bending as it passes from one medium to another',topic:'light',
+      explain:'Refraction is when light changes speed as it enters a new material (like water or glass), causing it to bend.',
+      fact:'A straw in a glass of water appears bent or broken — that\'s refraction making it look displaced!',grade:3},
+    {q:'What splits white light into a rainbow?',imgKey:'prism',opts:['A mirror','A lens','A prism','A black surface'],a:'A prism',topic:'light',
+      explain:'A prism refracts each wavelength of light by a slightly different amount, separating white light into its spectrum of colours.',
+      imgKey:'prism',fact:'Isaac Newton was the first to prove that white light contains all colours by splitting it with a prism in 1666!',grade:3},
+  ],
+};
+
+// Hypothesis experiments
+const EXPERIMENTS=[
+  {sub1:{name:'Baking Soda',emoji:'🥄',color:'#F5F5F5',liquid:'rgba(245,245,245,.6)'},
+   sub2:{name:'Vinegar',emoji:'🧪',color:'#FFEE88',liquid:'rgba(255,238,136,.6)'},
+   hypothesis:'What do you THINK will happen when you mix Baking Soda and Vinegar?',
+   hyp_opts:['It will explode violently','It will bubble and fizz (CO₂ gas)','It will turn red','Nothing will happen'],
+   hyp_answer:'It will bubble and fizz (CO₂ gas)',
+   result:'Fizzing! 🫧',result_color:'rgba(255,255,255,.15)',
+   particles:[{color:'#fff',count:20},{color:'#e8f8ff',count:15}],
+   question:'What gas is produced when baking soda reacts with vinegar?',
+   opts:['Oxygen','Hydrogen','Carbon Dioxide','Nitrogen'],
+   a:'Carbon Dioxide',topic:'experiment',
+   explain:'Baking soda (sodium bicarbonate) reacts with vinegar (acetic acid) to produce CO₂ — the bubbles you see!',
+   imgKey:'baking_soda_vinegar',fact:'This same reaction happens in your stomach! Baking soda is used in antacids to neutralise stomach acid.',grade:1},
+  {sub1:{name:'Salt',emoji:'🧂',color:'#FFFFFF',liquid:'rgba(255,255,255,.5)'},
+   sub2:{name:'Water',emoji:'💧',color:'#88CCFF',liquid:'rgba(136,204,255,.6)'},
+   hypothesis:'What happens when you mix salt into water?',
+   hyp_opts:['Salt dissolves into the water','Salt sinks to the bottom','Salt makes the water boil','Salt creates a new substance'],
+   hyp_answer:'Salt dissolves into the water',
+   result:'Salt dissolves! ✨',result_color:'rgba(136,204,255,.15)',
+   particles:[{color:'#88ccff',count:12}],
+   question:'When salt dissolves in water, what type of mixture is formed?',
+   opts:['Compound','Solution','Suspension','Colloid'],
+   a:'Solution',topic:'experiment',
+   explain:'When salt dissolves evenly in water, it forms a solution — a homogeneous mixture.',
+   imgKey:'states_matter',fact:'Seawater is a salt solution — the ocean contains about 35 grams of salt per litre of water!',grade:3},
+  {sub1:{name:'Oil',emoji:'🫙',color:'#FFD700',liquid:'rgba(255,215,0,.6)'},
+   sub2:{name:'Water',emoji:'💧',color:'#88CCFF',liquid:'rgba(136,204,255,.6)'},
+   hypothesis:'What do you THINK happens when you mix oil and water?',
+   hyp_opts:['They mix completely','They separate into layers','Oil dissolves into water','Water becomes oily'],
+   hyp_answer:'They separate into layers',
+   result:'They separate! 🔀',result_color:'rgba(255,215,0,.1)',
+   particles:[{color:'#FFD700',count:10}],
+   question:'Why do oil and water NOT mix?',
+   opts:['Oil is heavier than water','Oil molecules repel water molecules','Water is too cold','Oil has no colour'],
+   a:'Oil molecules repel water molecules',topic:'experiment',
+   explain:'Water molecules are polar (charged) and oil molecules are non-polar — "like dissolves like" — so they repel each other.',
+   imgKey:'oil_water',fact:'This is why soap works — soap molecules have one end that likes water and one end that likes oil, letting them mix!',grade:3},
+  {sub1:{name:'Red Cabbage','emoji':'🥬',color:'#CC44AA',liquid:'rgba(204,68,170,.5)'},
+   sub2:{name:'Lemon Juice',emoji:'🍋',color:'#FFFF44',liquid:'rgba(255,255,68,.5)'},
+   hypothesis:'What happens when red cabbage juice meets an acid like lemon juice?',
+   hyp_opts:['It turns blue/green','It turns pink/red','It turns black','It creates smoke'],
+   hyp_answer:'It turns pink/red',
+   result:'Turns pink! 🌸',result_color:'rgba(255,100,150,.15)',
+   particles:[{color:'#FF8FA8',count:18},{color:'#FF6B9D',count:10}],
+   question:'Red cabbage juice is a natural pH indicator. Acids turn it:',
+   opts:['Blue/green','Pink/red','Yellow','Black'],
+   a:'Pink/red',topic:'experiment',
+   explain:'Red cabbage contains anthocyanins — natural pigments that change colour depending on pH. Acids turn it pink/red.',
+   imgKey:'states_matter',fact:'You can make a natural pH indicator at home with red cabbage juice — it turns green with bases and pink with acids!',grade:3},
+];
+
+// Simple machines, light, weather questions (additional)
+const EXTRA_Q=[
+  {q:'What is PHOTOSYNTHESIS?',imgKey:'photosynthesis',opts:['How animals breathe','How plants make food from sunlight','How water evaporates','How rocks form'],a:'How plants make food from sunlight',topic:'lifecycle',
+    explain:'Photosynthesis: plants absorb sunlight, water, and CO₂ to produce glucose (food) and oxygen.',
+    fact:'One large tree can produce enough oxygen for 4 people to breathe for a whole year!',grade:1},
+  {q:'What does a plant need for photosynthesis? (select all that apply)',imgKey:'photosynthesis',opts:['Sunlight, Water, CO₂','Sunlight, Oxygen, Soil','Water, Nitrogen, Moonlight','CO₂, Darkness, Warmth'],a:'Sunlight, Water, CO₂',topic:'lifecycle',
+    explain:'The photosynthesis equation: 6CO₂ + 6H₂O + light energy → C₆H₁₂O₆ (glucose) + 6O₂',
+    fact:'Plants are the only organisms that make their own food — every other living thing ultimately depends on them!',grade:3},
+  {q:'What are the BONES in your body called collectively?',imgKey:'skeleton',opts:['The muscular system','The skeletal system','The nervous system','The circulatory system'],a:'The skeletal system',topic:'body',
+    explain:'All your bones together form the skeletal system — 206 bones in an adult human body.',
+    fact:'Babies are born with about 270 bones — many fuse together as you grow into the 206 of an adult!',grade:1},
+  {q:'Which planet is CLOSEST to the Sun?',imgKey:'solar_system',opts:['Venus','Earth','Mars','Mercury'],a:'Mercury',topic:'space',
+    explain:'Mercury is the closest planet to the Sun, but Venus is actually hotter because of its thick atmosphere.',
+    fact:'Mercury has no atmosphere, so temperatures swing from 430°C in the day to -180°C at night!',grade:1},
+  {q:'What is a FOOD WEB?',imgKey:'food_chain',opts:['A single food chain','Multiple food chains interconnected','A spider web made of food','The path food takes through your body'],a:'Multiple food chains interconnected',topic:'foodchain',
+    explain:'A food web shows how multiple food chains in an ecosystem are connected — most animals eat more than one thing.',
+    fact:'Remove any species from a food web and it causes ripple effects throughout the entire ecosystem!',grade:3},
+];
+
+function getAllQuestions(grade){
+  let all=[];
+  Object.values(QUESTIONS).forEach(arr=>all.push(...arr.filter(q=>q.grade<=grade)));
+  all.push(...EXTRA_Q.filter(q=>q.grade<=grade));
+  return shuffle(all);
+}
+
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+
+// ── Curated image library (Wikipedia Commons CC licensed) ────────
+const IMG = {
+  // Experiments
+  baking_soda_vinegar:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/NaHCO3_+_CH3COOH_%E2%86%92_CO2.jpg/320px-NaHCO3_+_CH3COOH_%E2%86%92_CO2.jpg',
+  oil_water:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Oil_water_immiscible.jpg/320px-Oil_water_immiscible.jpg',
+  // Light
+  prism:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Dispersive_Prism_Illustration_by_Spigget.jpg/320px-Dispersive_Prism_Illustration_by_Spigget.jpg',
+  rainbow:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Double-alaskan-rainbow.jpg/320px-Double-alaskan-rainbow.jpg',
+  lightning:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Cloud-to-ground_lightning_strikes_in_a_field_in_Leesburg%2C_Florida_-_DPLA_-_17b2e8a22f5dc55e2bb4e30eae9bd7f0.jpg/320px-Cloud-to-ground_lightning_strikes_in_a_field_in_Leesburg%2C_Florida_-_DPLA_-_17b2e8a22f5dc55e2bb4e30eae9bd7f0.jpg',
+  // Space
+  saturn:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Saturn_during_Equinox.jpg/320px-Saturn_during_Equinox.jpg',
+  jupiter:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Jupiter_and_its_shrunken_Great_Red_Spot.jpg/320px-Jupiter_and_its_shrunken_Great_Red_Spot.jpg',
+  mars:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/OSIRIS_Mars_true_color.jpg/320px-OSIRIS_Mars_true_color.jpg',
+  moon:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/FullMoon2010.jpg/320px-FullMoon2010.jpg',
+  sun:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg/320px-The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg',
+  solar_system:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Planets2013.svg/320px-Planets2013.svg.png',
+  black_hole:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Black_hole_-_Messier_87_crop_max_res.jpg/320px-Black_hole_-_Messier_87_crop_max_res.jpg',
+  // Animals
+  dolphin:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Tursiops_truncatus_01.jpg/320px-Tursiops_truncatus_01.jpg',
+  crocodile:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Nile_crocodile_head.jpg/320px-Nile_crocodile_head.jpg',
+  frog:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Dendrobates_leucomelas_1.jpg/320px-Dendrobates_leucomelas_1.jpg',
+  butterfly:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Monarch_butterfly_showy.jpg/320px-Monarch_butterfly_showy.jpg',
+  shark:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/White_shark.jpg/320px-White_shark.jpg',
+  eagle:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Bald_Eagle_Portrait.jpg/320px-Bald_Eagle_Portrait.jpg',
+  bat:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Little_brown_bat.jpg/320px-Little_brown_bat.jpg',
+  octopus:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Octopus3.jpg/320px-Octopus3.jpg',
+  // Body
+  heart:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Diagram_of_the_human_heart_%28cropped%29.svg/250px-Diagram_of_the_human_heart_%28cropped%29.svg.png',
+  lungs:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Respiratory_system_complete_en.svg/220px-Respiratory_system_complete_en.svg.png',
+  brain:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Human_brain_NIH.jpg/320px-Human_brain_NIH.jpg',
+  skeleton:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Human_skeleton_front_en.svg/180px-Human_skeleton_front_en.svg.png',
+  // Science concepts
+  food_chain:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/FoodChain.jpg/320px-FoodChain.jpg',
+  photosynthesis:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Photosynthesis_en.svg/320px-Photosynthesis_en.svg.png',
+  water_cycle:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Water_cycle_ene.svg/320px-Water_cycle_ene.svg.png',
+  states_matter:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Solid_liquid_gas.jpg/320px-Solid_liquid_gas.jpg',
+  frog_lifecycle:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Frog_Life_Cycle.jpg/320px-Frog_Life_Cycle.jpg',
+  butterfly_lifecycle:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Caterpillar_to_chrysalis.jpg/320px-Caterpillar_to_chrysalis.jpg',
+  // Forces & Machines
+  magnet:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Magnet0873.png/320px-Magnet0873.png',
+  lever:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Simple_machine_-_Lever.jpg/320px-Simple_machine_-_Lever.jpg',
+  gravity:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Newton%27s_apple_tree.jpg/320px-Newton%27s_apple_tree.jpg',
+  // Weather
+  cumulonimbus:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Cumulonimbus_cloud_over_Africa_%28color%29.jpg/320px-Cumulonimbus_cloud_over_Africa_%28color%29.jpg',
+};
+
+function loadQuestionImage(imgKey) {
+  const wrap = document.getElementById('q-image-wrap');
+  if (!wrap) return;
+  if (!imgKey || !IMG[imgKey]) { wrap.style.display='none'; return; }
+  const src = IMG[imgKey];
+  wrap.style.display = 'block';
+  wrap.innerHTML = `<img src="${src}" alt="${imgKey.replace(/_/g,' ')}"
+    onerror="this.parentElement.style.display='none';this.parentElement.classList.remove('loaded')"
+    onload="this.parentElement.classList.add('loaded')"
+    style="width:100%;max-height:180px;object-fit:cover;display:block;border-radius:12px 12px 0 0">
+    <div class="q-image-caption">📷 Image: Wikipedia Commons (CC)</div>`;
+  wrap.classList.add('loaded');
+}
+
+// ── Game state ────────────────────────────────────────────────────
+let G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
+  streak:0,bestStreak:0,sessionBestStreak:0,answered:false,roundStars:0,
+  question:null,qBank:[],bankIdx:0,topicStats:{},
+  lifeRestoreStreak:0,hintUsed:false,hintTimer:null,
+  hypothesisPhase:false,currentExp:null,expIdx:0,experiments:[]};
+
+// ── Init ──────────────────────────────────────────────────────────
+async function init(){
+  buildBG();
+  try{
+    const players=await db('players?select=*');
+    const p=players.find(x=>x.name.toLowerCase()===playerName.toLowerCase());
+    if(p){playerId=p.id;playerGrade=p.grade||3;}
+  }catch(e){}
+  if(playerId){
+    try{
+      const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.science-lab`);
+      if(rows&&rows.length){personalBest=rows[0].best_score||0;
+        document.getElementById('pb-row').style.display='flex';
+        document.getElementById('pb-val').textContent=personalBest.toLocaleString();}
+    }catch(e){}
+  }
+  document.getElementById('start-greeting').textContent=
+    `Welcome to the lab, ${cap(playerName)}! 🔬`;
+  document.getElementById('g-player-label').textContent=
+    `${cap(playerName)} · Grade ${playerGrade}`;
+  const topics=['🧪 Experiments','🐘 Classification','💧 States','🦋 Life Cycles',
+    '🦁 Food Chains','🫀 Body','🪐 Space','⚡ Forces','🌤 Weather','⚙️ Machines','💡 Light'];
+  document.getElementById('topics-grid').innerHTML=topics.map((t,i)=>{
+    const colors=['rgba(57,255,20,.1)','rgba(0,245,255,.1)','rgba(246,192,74,.1)','rgba(39,174,96,.1)',
+      'rgba(240,120,48,.1)','rgba(232,69,122,.1)','rgba(124,92,191,.1)','rgba(0,245,255,.1)',
+      'rgba(74,144,217,.1)','rgba(246,192,74,.1)','rgba(204,255,0,.1)'];
+    const borders=['rgba(57,255,20,.25)','rgba(0,245,255,.25)','rgba(246,192,74,.25)','rgba(39,174,96,.25)',
+      'rgba(240,120,48,.25)','rgba(232,69,122,.25)','rgba(124,92,191,.25)','rgba(0,245,255,.25)',
+      'rgba(74,144,217,.25)','rgba(246,192,74,.25)','rgba(204,255,0,.25)'];
+    const textColors=['var(--neon)','var(--cyan)','var(--amber)','#7DFFB0',
+      '#FFB060','#FF8FAA','#C8A8FF','var(--cyan)','#90CAF9','var(--amber)','var(--lime)'];
+    return `<span class="topic-chip" style="background:${colors[i]};border-color:${borders[i]};color:${textColors[i]}">${t}</span>`;
+  }).join('');
+}
+
+function startGame(){
+  G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
+    streak:0,bestStreak:0,sessionBestStreak:0,answered:false,roundStars:0,
+    question:null,qBank:getAllQuestions(playerGrade),bankIdx:0,topicStats:{},
+    lifeRestoreStreak:0,hintUsed:false,hintTimer:null,
+    hypothesisPhase:false,currentExp:null,expIdx:0,
+    experiments:shuffle([...EXPERIMENTS])};
+  showScreen('gameScreen');
+  loadQuestion();
+}
+
+function loadQuestion(){
+  if(G.qIdx>=10){endRound();return;}
+  G.answered=false;G.hintUsed=false;
+  clearTimeout(G.hintTimer);
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('explanation-card').className='explanation-card';
+  document.getElementById('hint-btn').style.display='none';
+  document.getElementById('hint-box').style.display='none';
+  const imgWrap=document.getElementById('q-image-wrap');if(imgWrap){imgWrap.style.display='none';imgWrap.className='q-image-wrap';imgWrap.innerHTML='';}
+
+  // Every 4th question is an experiment (hypothesis mode)
+  const isExp=G.qIdx%4===2&&G.expIdx<G.experiments.length;
+  if(isExp){
+    G.currentExp=G.experiments[G.expIdx++];
+    G.question={...G.currentExp,isExperiment:true};
+    G.hypothesisPhase=true;
+    renderHypothesis();
+  } else {
+    if(G.bankIdx>=G.qBank.length){G.qBank=getAllQuestions(playerGrade);G.bankIdx=0;}
+    G.question=G.qBank[G.bankIdx++];
+    G.question.isExperiment=false;
+    G.hypothesisPhase=false;
+    renderQuestion();
+  }
+  document.getElementById('g-qnum').textContent=`${G.qIdx+1}/10`;
+  document.getElementById('g-round').textContent=G.round;
+
+  // Hint after 6 seconds
+  G.hintTimer=setTimeout(()=>{
+    if(!G.answered&&!G.hypothesisPhase)
+      document.getElementById('hint-btn').style.display='inline-block';
+  },6000);
+}
+
+// ── Render ────────────────────────────────────────────────────────
+function renderQuestion(){
+  const q=G.question;
+  document.getElementById('g-topic-tag').textContent=topicLabel(q.topic);
+  document.getElementById('g-topic-tag').className=`topic-tag ${q.topic}`;
+  document.getElementById('g-grade-tag').textContent=`Grade ${q.grade}`;
+  document.getElementById('g-topic-display').textContent=topicLabel(q.topic);
+  // Load image if available
+  const wrap=document.getElementById('q-image-wrap');
+  if(wrap){wrap.style.display='none';wrap.className='q-image-wrap';wrap.innerHTML='';}
+  if(q.imgKey)loadQuestionImage(q.imgKey);
+  const el=document.getElementById('q-content');
+  const qClass=q.q.length>60?'question small':'question';
+  el.innerHTML=`<div class="${qClass}">${q.q}</div>
+    <div class="opts ${q.opts.length>4?'single':''}">${q.opts.map(o=>
+      `<button class="opt" onclick="checkOpt(this,'${o.replace(/'/g,"\\'")}','${q.a.replace(/'/g,"\\'")}')">
+        ${o}</button>`).join('')}</div>`;
+}
+
+function renderHypothesis(){
+  const exp=G.currentExp;
+  document.getElementById('g-topic-tag').textContent='🔮 Hypothesis';
+  document.getElementById('g-topic-tag').className='topic-tag hypothesis';
+  document.getElementById('g-grade-tag').textContent='No penalty!';
+  document.getElementById('g-topic-display').textContent='Experiment';
+  const el=document.getElementById('q-content');
+  el.innerHTML=`
+    <div style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.45);text-align:center;margin-bottom:10px">🔮 HYPOTHESIS — What do you think will happen?</div>
+    <div class="experiment-area">
+      <div class="beakers">
+        <div class="beaker">
+          <div class="beaker-body" style="border-color:${exp.sub1.color};background:rgba(255,255,255,.04)">
+            <div class="beaker-liquid" style="height:50%;background:${exp.sub1.liquid}"></div>
+            <span class="beaker-emoji">${exp.sub1.emoji}</span>
+          </div>
+          <div class="beaker-label">${exp.sub1.name}</div>
+        </div>
+        <div class="plus-sign">+</div>
+        <div class="beaker">
+          <div class="beaker-body" style="border-color:${exp.sub2.color};background:rgba(255,255,255,.04)">
+            <div class="beaker-liquid" style="height:50%;background:${exp.sub2.liquid}"></div>
+            <span class="beaker-emoji">${exp.sub2.emoji}</span>
+          </div>
+          <div class="beaker-label">${exp.sub2.name}</div>
+        </div>
+      </div>
+      <div class="reaction-display" id="reaction-display">
+        <div style="font-size:.75rem;font-weight:700;color:rgba(255,255,255,.3)">Make your hypothesis then tap Mix! →</div>
+      </div>
+    </div>
+    <div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.6);text-align:center;margin:10px 0 10px">${exp.hypothesis}</div>
+    <div class="opts">${exp.hyp_opts.map(o=>
+      `<button class="opt hypothesis" onclick="pickHypothesis(this,'${o.replace(/'/g,"\\'")}','${exp.hyp_answer.replace(/'/g,"\\'")}')">
+        ${o}</button>`).join('')}</div>`;
+}
+
+function pickHypothesis(btn,chosen,correct){
+  if(G.answered)return;
+  G.answered=true;
+  document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  btn.style.background='rgba(124,92,191,.3)';
+  btn.style.borderColor='#7C5CBF';
+  // Show animated reaction
+  showReaction(G.currentExp);
+  setTimeout(()=>{
+    showHypothesisResult(chosen===correct,G.currentExp);
+  },2000);
+}
+
+function showReaction(exp){
+  const display=document.getElementById('reaction-display');
+  if(!display)return;
+  display.className='reaction-display active';
+  display.style.background=exp.result_color;
+  display.innerHTML=`<div class="reaction-text">${exp.result}</div>
+    <div class="reaction-sub">${exp.sub1.name} + ${exp.sub2.name}</div>`;
+  // Animate particles
+  exp.particles.forEach(({color,count})=>{
+    for(let i=0;i<count;i++){
+      setTimeout(()=>{
+        const p=document.createElement('div');
+        p.className='particle';
+        const size=rand(4,10);
+        p.style.cssText=`width:${size}px;height:${size}px;background:${color};
+          left:${rand(20,80)}%;bottom:${rand(5,30)}%;
+          animation-duration:${rand(8,18)/10}s;animation-delay:${rand(0,8)/10}s`;
+        display.appendChild(p);
+        setTimeout(()=>p.remove(),2000);
+      },i*80);
+    }
+  });
+}
+
+function showHypothesisResult(wasCorrect,exp){
+  const ec=document.getElementById('explanation-card');
+  document.getElementById('ex-icon').textContent=wasCorrect?'✅':'💡';
+  document.getElementById('ex-answer').innerHTML=wasCorrect
+    ?'Great hypothesis! <span>You predicted correctly!</span>'
+    :`<span>The correct prediction was: ${exp.hyp_answer}</span>`;
+  document.getElementById('ex-explain').textContent=
+    `This is a hypothesis — a scientific prediction. Even if wrong, you still earn stars for thinking like a scientist! Now let\'s find out WHY this happens...`;
+  document.getElementById('ex-fact-txt').textContent=
+    `Scientists make hypotheses ALL the time and are often wrong — that\'s how science works! Every "wrong" result is a discovery.`;
+  const nextBtn=document.getElementById('ex-next');
+  nextBtn.className='ex-next hyp';
+  nextBtn.textContent='🧪 Mix & Find Out Why →';
+  ec.className='explanation-card show hyp';
+  ec.style.display='block';
+  // Give some stars for hypothesising
+  const earned=10;
+  G.stars+=earned;G.roundStars+=earned;
+  document.getElementById('g-stars').textContent=G.stars.toLocaleString();
+  window._exNextFn=()=>{
+    G.answered=false;G.hypothesisPhase=false;
+    renderExperimentQuestion(exp);
+  };
+}
+
+function renderExperimentQuestion(exp){
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('g-topic-tag').textContent='🧪 Experiment';
+  document.getElementById('g-topic-tag').className='topic-tag experiment';
+  document.getElementById('g-grade-tag').textContent=`Grade ${exp.grade}`;
+  const el=document.getElementById('q-content');
+  el.innerHTML=`
+    <div style="font-size:.7rem;font-weight:700;color:rgba(255,255,255,.4);text-align:center;margin-bottom:8px">Now explain the science:</div>
+    <div class="experiment-area" style="margin-bottom:10px">
+      <div class="beakers">
+        <div class="beaker" style="opacity:.7">
+          <div class="beaker-body" style="border-color:${exp.sub1.color};background:rgba(255,255,255,.04)">
+            <div class="beaker-liquid" style="height:50%;background:${exp.sub1.liquid}"></div>
+            <span class="beaker-emoji">${exp.sub1.emoji}</span>
+          </div>
+          <div class="beaker-label">${exp.sub1.name}</div>
+        </div>
+        <div class="plus-sign">+</div>
+        <div class="beaker" style="opacity:.7">
+          <div class="beaker-body" style="border-color:${exp.sub2.color};background:rgba(255,255,255,.04)">
+            <div class="beaker-liquid" style="height:50%;background:${exp.sub2.liquid}"></div>
+            <span class="beaker-emoji">${exp.sub2.emoji}</span>
+          </div>
+          <div class="beaker-label">${exp.sub2.name}</div>
+        </div>
+        <div style="font-size:1.5rem;color:rgba(255,255,255,.4)">=</div>
+        <div style="font-size:1.5rem">${exp.result}</div>
+      </div>
+    </div>
+    <div class="question small">${exp.question}</div>
+    <div class="opts">${exp.opts.map(o=>
+      `<button class="opt" onclick="checkOpt(this,'${o.replace(/'/g,"\\'")}','${exp.a.replace(/'/g,"\\'")}')">
+        ${o}</button>`).join('')}</div>`;
+  G.question={...exp,isExperiment:true};
+  document.getElementById('hint-btn').style.display='none';
+  G.hintTimer=setTimeout(()=>{
+    if(!G.answered)document.getElementById('hint-btn').style.display='inline-block';
+  },6000);
+}
+
+// ── Answer handling ───────────────────────────────────────────────
+function checkOpt(btn,chosen,correct){
+  if(G.answered)return;
+  G.answered=true;
+  clearTimeout(G.hintTimer);
+  document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  if(chosen===correct){btn.classList.add('correct');processResult(true);}
+  else{btn.classList.add('wrong');processResult(false);}
+}
+
+function processResult(isCorrect){
+  const hintPenalty=G.hintUsed?0.5:1;
+  let earned=0;
+  if(isCorrect){
+    const base=10+Math.min(G.round-1,5)*5;
+    const streakBonus=G.streak>=7?20:G.streak>=5?12:G.streak>=3?6:0;
+    earned=Math.floor((base+streakBonus)*hintPenalty);
+    G.stars+=earned;G.roundStars+=earned;
+    G.correct++;G.totalCorrect++;G.totalAsked++;
+    G.streak++;
+    if(G.streak>G.bestStreak)G.bestStreak=G.streak;
+    if(G.streak>G.sessionBestStreak)G.sessionBestStreak=G.streak;
+    checkLifeRestore();
+    updateStreakBadge();
+    const combos=[{s:3,t:'EUREKA! 🔬',sub:'3 correct!'},{s:5,t:'SUPER SCIENTIST! ⚡',sub:'5 in a row!'},{s:7,t:'EINSTEIN MODE! 🌟',sub:'7 in a row!'},{s:10,t:'SCIENCE GOD! 💥',sub:'10 in a row!'}];
+    const c=combos.slice().reverse().find(c=>G.streak===c.s);
+    if(c)showPopup('combo',c.t,c.sub);
+  } else {
+    G.lives--;G.streak=0;G.totalAsked++;
+    G.lifeRestoreStreak=0;
+    updateStreakBadge();updateLives();
+    if(G.lives<=0){showExplanation(false,()=>endGame());return;}
+  }
+  const t=G.question.topic||'classification';
+  if(!G.topicStats[t])G.topicStats[t]={c:0,total:0};
+  G.topicStats[t].total++;
+  if(isCorrect)G.topicStats[t].c++;
+  document.getElementById('g-stars').textContent=G.stars.toLocaleString();
+  updateLives();
+  showExplanation(isCorrect,()=>{G.qIdx++;loadQuestion();});
+}
+
+function showExplanation(isCorrect,onNext){
+  const q=G.question;
+  const ec=document.getElementById('explanation-card');
+  document.getElementById('ex-icon').textContent=isCorrect?'✅':'❌';
+  document.getElementById('ex-answer').innerHTML=`Answer: <span>${q.a}</span>`;
+  document.getElementById('ex-explain').textContent=q.explain||'';
+  document.getElementById('ex-fact-txt').textContent=q.fact||'';
+  const nextBtn=document.getElementById('ex-next');
+  nextBtn.className=`ex-next ${isCorrect?'ok':'no'}`;
+  nextBtn.textContent=G.qIdx>=9||G.lives<=0?'See Results →':'Next Experiment →';
+  ec.className=`explanation-card show ${isCorrect?'ok':'no'}`;
+  ec.style.display='block';
+  window._exNextFn=onNext;
+  setTimeout(()=>ec.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function advanceQuestion(){
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('hint-box').style.display='none';
+  document.getElementById('hint-btn').style.display='none';
+  clearTimeout(G.hintTimer);
+  if(window._exNextFn){window._exNextFn();window._exNextFn=null;}
+}
+
+// ── Hint ──────────────────────────────────────────────────────────
+function useHint(){
+  if(G.hintUsed||G.answered)return;
+  G.hintUsed=true;
+  const btn=document.getElementById('hint-btn');
+  btn.textContent='💡 Used';btn.style.opacity='.5';btn.style.cursor='default';
+  const q=G.question;
+  let hint='Think carefully about the topic: '+topicLabel(q.topic||'science');
+  if(q.opts&&q.opts.length)hint=`The answer starts with "${q.a[0]}" — it\'s one of the ${q.opts.length} options above.`;
+  document.getElementById('hint-txt').textContent=hint;
+  document.getElementById('hint-box').style.display='block';
+}
+
+// ── Life restore ──────────────────────────────────────────────────
+function checkLifeRestore(){
+  if(G.lives>=3)return;
+  G.lifeRestoreStreak++;
+  if(G.lifeRestoreStreak>=3){G.lifeRestoreStreak=0;G.lives=Math.min(3,G.lives+1);updateLives();showPopup('life','❤️ Life Restored!','3 correct in a row!');}
+}
+
+// ── UI ────────────────────────────────────────────────────────────
+function updateLives(){let h='';for(let i=0;i<3;i++)h+=i<G.lives?'❤️':'🖤';document.getElementById('lives-display').textContent=h;}
+function updateStreakBadge(){
+  const el=document.getElementById('streak-badge');
+  el.textContent=`${G.streak} 🔬`;
+  el.className=`streak-badge${G.streak>=7?' s7':G.streak>=5?' s5':G.streak>=3?' s3':''}`;
+}
+function showPopup(type,text,sub){
+  const el=document.getElementById(type+'-popup');
+  if(!el)return;
+  if(type==='combo'){document.getElementById('combo-text').textContent=text;document.getElementById('combo-sub').textContent=sub;}
+  el.className=`popup-overlay ${type} show`;
+  setTimeout(()=>{el.className=`popup-overlay ${type} hide`;},1500);
+  setTimeout(()=>{el.className=`popup-overlay ${type}`;},1800);
+}
+function topicLabel(t){
+  return{classification:'🐘 Classification',states:'💧 States of Matter',lifecycle:'🦋 Life Cycle',
+    foodchain:'🦁 Food Chain',body:'🫀 Body Systems',space:'🪐 Space Science',
+    forces:'⚡ Forces',weather:'🌤 Weather',machines:'⚙️ Machines',light:'💡 Light & Sound',
+    experiment:'🧪 Experiment'}[t]||'🔬 Science';
+}
+
+// ── Round end ─────────────────────────────────────────────────────
+function endRound(){
+  const acc=G.totalAsked>0?Math.round(G.totalCorrect/G.totalAsked*100):0;
+  document.getElementById('re-icon').textContent=G.correct>=8?'🏆':G.correct>=5?'⭐':G.correct>=3?'🔬':'🌱';
+  document.getElementById('re-title').textContent=`Round ${G.round} Complete!`;
+  document.getElementById('re-correct').textContent=G.correct;
+  document.getElementById('re-acc').textContent=acc+'%';
+  document.getElementById('re-stars-r').textContent=G.roundStars.toLocaleString();
+  document.getElementById('re-streak-r').textContent=G.bestStreak;
+  document.getElementById('re-msg').textContent=G.correct>=8?'Brilliant scientist! 🌟':G.correct>=5?'Great lab work! 💪':G.correct>=3?'Good effort! 📈':'Keep experimenting! 🌱';
+  document.getElementById('re-next-btn').textContent=`Round ${G.round+1} →`;
+  const topics=Object.entries(G.topicStats).filter(([,v])=>v.total>0);
+  const tb=document.getElementById('topic-breakdown');
+  tb.innerHTML=topics.length?`<div class="tb-title">Topic Accuracy This Round</div>`+
+    topics.map(([name,{c,total}])=>{const pct=Math.round(c/total*100);
+      return `<div class="tb-row"><div class="tb-name">${topicLabel(name)}</div>
+        <div class="tb-bar-bg"><div class="tb-bar-fill" style="width:${pct}%;background:${pct>=80?'var(--green)':pct>=50?'var(--cyan)':'var(--red)'}"></div></div>
+        <div class="tb-pct">${pct}%</div></div>`;}).join(''):'';
+  showScreen('roundEndScreen');
+}
+
+function nextRound(){
+  G.round++;G.qIdx=0;G.roundStars=0;G.correct=0;G.streak=0;G.bestStreak=0;
+  G.topicStats={};G.lifeRestoreStreak=0;
+  showScreen('gameScreen');loadQuestion();
+}
+
+// ── Game over ─────────────────────────────────────────────────────
+async function endGame(){
+  showScreen('gameOverScreen');
+  const total=G.stars;
+  document.getElementById('go-score').textContent=total.toLocaleString()+' ⭐';
+  document.getElementById('go-earned').textContent=`+${total.toLocaleString()} stars saved`;
+  document.getElementById('go-rounds').textContent=G.round;
+  document.getElementById('go-correct').textContent=G.totalCorrect;
+  document.getElementById('go-streak').textContent=G.sessionBestStreak;
+  const isNewBest=total>personalBest;
+  if(isNewBest)personalBest=total;
+  document.getElementById('go-pb').textContent=personalBest.toLocaleString();
+  document.getElementById('new-best-banner').style.display=isNewBest?'block':'none';
+  document.getElementById('go-msg').textContent=total>=500?'You are a Science Legend! 🏆':total>=300?'Outstanding scientist! 🌟':total>=150?'Great lab work! 💪':'Keep experimenting! 🌱';
+  document.getElementById('go-trophy').textContent=total>=500?'🏆':total>=300?'⭐':total>=150?'🔬':'🌱';
+  if(playerId&&total>0){
+    try{
+      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{
+        player_id:playerId,amount:total,
+        reason:`Science Lab — Round ${G.round}, ${G.totalCorrect} correct`,category:'game'}});
+      const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.science-lab`);
+      if(rows&&rows.length){
+        await db(`game_scores?player_id=eq.${playerId}&game_key=eq.science-lab`,
+          {method:'PATCH',prefer:'return=minimal',body:{
+            best_score:isNewBest?total:rows[0].best_score,
+            best_round:G.round,total_plays:(rows[0].total_plays||0)+1,
+            last_played:new Date().toISOString()}});
+      } else {
+        await db('game_scores',{method:'POST',prefer:'return=minimal',body:{
+          player_id:playerId,game_key:'science-lab',
+          best_score:total,best_round:G.round,total_plays:1}});
+      }
+    }catch(e){}
+  }
+}
+
+function restartGame(){startGame();}
+function goHome(){window.location.href='index.html?player='+playerName;}
+function confirmQuit(){if(confirm('Quit Science Lab? Progress will be lost.'))goHome();}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+init();
+</script>
+</body>
+</html>

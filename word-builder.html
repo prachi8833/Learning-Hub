@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Builder 🔤 — Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#2BBFB8;--teal2:#1A9990;--amber:#F6C04A;--amber2:#E8A020;
+  --red:#E84545;--green:#27AE60;--purple:#7C5CBF;--orange:#F07830;
+  --blue:#4A90D9;--pink:#E8457A;
+  --gc:rgba(12,28,18,0.80);--gb:rgba(255,255,255,0.11);
+  --r:16px;--shadow:0 4px 24px rgba(0,0,0,0.4);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden}
+body{background:#0a1a10;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.bg{position:fixed;inset:0;z-index:0;
+  background:url('https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/bg-castle-forest-day-Learn.png') center/cover no-repeat}
+.bg::after{content:'';position:absolute;inset:0;background:rgba(4,10,6,0.78)}
+.wrap{position:relative;z-index:1;width:100%;max-width:600px;padding:12px;
+  display:flex;flex-direction:column;gap:10px;max-height:100vh;overflow-y:auto}
+.wrap::-webkit-scrollbar{display:none}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:10px;background:var(--gc);backdrop-filter:blur(14px);
+  border:1px solid var(--gb);border-radius:var(--r);padding:12px 16px;box-shadow:var(--shadow);flex-shrink:0}
+.back-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.1);border:none;
+  color:#fff;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hdr-title{flex:1;font-size:1rem;font-weight:900;color:#fff}
+.hdr-sub{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.45)}
+.lives{display:flex;gap:2px;font-size:1rem}
+.star-count{font-size:.9rem;font-weight:900;color:var(--amber);white-space:nowrap}
+
+/* INFO ROW */
+.info-row{display:flex;gap:8px;flex-shrink:0}
+.info-box{flex:1;background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
+  border-radius:12px;padding:8px 10px;text-align:center;box-shadow:var(--shadow)}
+.ib-val{font-size:1rem;font-weight:900;color:#fff;line-height:1}
+.ib-lbl{font-size:.52rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px;text-transform:uppercase}
+.ib-val.amber{color:var(--amber)}.ib-val.teal{color:var(--teal)}.ib-val.purple{color:#C8A8FF}
+
+/* STREAK */
+.streak-badge{display:inline-flex;align-items:center;gap:3px;border-radius:99px;padding:3px 9px;
+  font-size:.7rem;font-weight:900;transition:all .3s;background:rgba(246,192,74,.15);
+  border:1px solid rgba(246,192,74,.3);color:var(--amber)}
+.streak-badge.s3{background:rgba(43,191,184,.18);border-color:rgba(43,191,184,.35);color:var(--teal)}
+.streak-badge.s5{background:rgba(124,92,191,.18);border-color:rgba(124,92,191,.35);color:#C8A8FF}
+.streak-badge.s7{background:rgba(232,69,122,.18);border-color:rgba(232,69,122,.35);color:#FFB0D0;animation:mp .6s ease infinite alternate}
+@keyframes mp{from{transform:scale(1)}to{transform:scale(1.08)}}
+
+/* TIMER */
+.timer-wrap{background:rgba(255,255,255,.08);border-radius:99px;height:8px;overflow:hidden;flex-shrink:0}
+.timer-bar{height:100%;border-radius:99px;transition:width .08s linear,background .3s}
+
+/* COMBO */
+.combo-announce{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
+  z-index:999;text-align:center;pointer-events:none;transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  background:rgba(8,20,12,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1.5px solid rgba(255,255,255,0.12);border-radius:24px;
+  padding:20px 36px;box-shadow:0 8px 40px rgba(0,0,0,0.6)}
+.combo-announce.show{transform:translate(-50%,-50%) scale(1)}
+.combo-announce.hide{transform:translate(-50%,-50%) scale(0);opacity:0}
+.ca-text{font-size:2.2rem;font-weight:900;white-space:nowrap}
+.ca-sub{font-size:.9rem;font-weight:800;color:rgba(255,255,255,.7);margin-top:4px}
+/* LIFE RESTORE */
+.life-restore{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
+  z-index:998;text-align:center;pointer-events:none;transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  background:rgba(8,20,12,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1.5px solid rgba(232,69,122,0.3);border-radius:24px;
+  padding:20px 36px;box-shadow:0 8px 40px rgba(232,69,122,0.25)}
+.life-restore.show{transform:translate(-50%,-50%) scale(1)}
+.life-restore.hide{transform:translate(-50%,-50%) scale(0);opacity:0}
+.lr-text{font-size:2rem;font-weight:900;color:#FF8FAA;white-space:nowrap}
+.lr-sub{font-size:.85rem;font-weight:800;color:rgba(255,255,255,.65);margin-top:4px}
+
+/* HINT */
+.hint-btn-float{display:none;margin:10px auto 0;
+  padding:6px 16px;background:rgba(246,192,74,.12);border:1.5px solid rgba(246,192,74,.25);
+  border-radius:99px;font-family:'Nunito',sans-serif;font-size:.65rem;font-weight:900;
+  color:var(--amber);cursor:pointer;transition:all .2s}
+.hint-btn-float:hover{background:rgba(246,192,74,.22)}
+.hint-btn-float.used{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.3);cursor:default}
+.hint-box{margin-top:10px;background:rgba(246,192,74,.08);border:1px solid rgba(246,192,74,.2);
+  border-radius:11px;padding:10px 13px;display:none;animation:slideDown .3s ease}
+.hint-box.show{display:block}
+.hint-box-txt{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.7);line-height:1.5}
+.hint-cost{font-size:.62rem;font-weight:800;color:rgba(246,192,74,.6);margin-top:3px}
+
+
+/* GAME CARD */
+.game-card{background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
+  border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+.q-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mode-tag{font-size:.65rem;font-weight:900;border-radius:99px;padding:4px 12px;border:1px solid}
+.mode-tag.scramble{background:rgba(43,191,184,.12);color:var(--teal);border-color:rgba(43,191,184,.25)}
+.mode-tag.synonym{background:rgba(74,144,217,.12);color:#90CAF9;border-color:rgba(74,144,217,.25)}
+.mode-tag.antonym{background:rgba(232,69,122,.12);color:#FFB0D0;border-color:rgba(232,69,122,.25)}
+.mode-tag.fill{background:rgba(246,192,74,.12);color:var(--amber);border-color:rgba(246,192,74,.25)}
+.mode-tag.pronunciation{background:rgba(124,92,191,.12);color:#C8A8FF;border-color:rgba(124,92,191,.25)}
+.mode-tag.plural{background:rgba(240,120,48,.12);color:#FFB060;border-color:rgba(240,120,48,.25)}
+.mode-tag.definition{background:rgba(39,174,96,.12);color:#90FFB0;border-color:rgba(39,174,96,.25)}
+.mode-tag.emoji{background:rgba(246,192,74,.15);color:var(--amber);border-color:rgba(246,192,74,.3)}
+.mode-tag.homophone{background:rgba(232,69,69,.12);color:#FF9090;border-color:rgba(232,69,69,.25)}
+.mode-tag.sentence{background:rgba(43,191,184,.12);color:var(--teal);border-color:rgba(43,191,184,.25)}
+.mode-tag.rhyme{background:rgba(232,69,122,.12);color:#FFB0D0;border-color:rgba(232,69,122,.25)}
+.mode-tag.compound{background:rgba(240,120,48,.12);color:#FFB060;border-color:rgba(240,120,48,.25)}
+.mode-tag.prefix{background:rgba(74,144,217,.12);color:#90CAF9;border-color:rgba(74,144,217,.25)}
+.mode-tag.wordfamily{background:rgba(39,174,96,.12);color:#90FFB0;border-color:rgba(39,174,96,.25)}
+.mode-tag.audio{background:rgba(124,92,191,.12);color:#C8A8FF;border-color:rgba(124,92,191,.25)}
+.q-cat{font-size:.6rem;font-weight:800;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px}
+.question{font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:14px;text-align:center;
+  line-height:1.35;min-height:44px;display:flex;align-items:center;justify-content:center}
+.question.small{font-size:1.1rem}
+
+/* EMOJI DISPLAY */
+.emoji-display{font-size:3.5rem;text-align:center;margin-bottom:12px;animation:bounce .6s ease infinite alternate}
+@keyframes bounce{from{transform:scale(1)}to{transform:scale(1.1)}}
+
+/* SYLLABLE BAR */
+.syllable-bar{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.syl{background:rgba(124,92,191,.15);border:1px solid rgba(124,92,191,.3);color:#C8A8FF;
+  font-size:1rem;font-weight:900;border-radius:8px;padding:5px 10px}
+.syl.stress{background:rgba(124,92,191,.35);border-color:#7C5CBF;color:#fff;font-size:1.1rem}
+.speak-btn{display:flex;align-items:center;gap:6px;background:rgba(124,92,191,.15);
+  border:1.5px solid rgba(124,92,191,.3);border-radius:99px;padding:7px 16px;
+  font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:900;color:#C8A8FF;cursor:pointer;
+  margin:0 auto 12px;transition:all .2s}
+.speak-btn:hover{background:rgba(124,92,191,.25)}
+.speak-btn.speaking{background:rgba(124,92,191,.3);border-color:#7C5CBF;animation:pulse .8s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* SCRAMBLE TILES */
+.scramble-area{display:flex;flex-direction:column;gap:10px}
+.answer-slots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;min-height:52px;
+  background:rgba(255,255,255,.04);border-radius:12px;padding:10px;border:1.5px dashed rgba(255,255,255,.12)}
+.letter-slot{width:40px;height:44px;border-radius:9px;background:rgba(43,191,184,.15);
+  border:2px solid rgba(43,191,184,.35);display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;font-weight:900;color:#fff;cursor:pointer;transition:all .2s;flex-shrink:0}
+.letter-slot:hover{background:rgba(43,191,184,.25);transform:translateY(-2px)}
+.letter-slot.empty{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.15);color:transparent}
+.tiles-row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.tile{width:42px;height:46px;border-radius:10px;background:rgba(255,255,255,.1);
+  border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;
+  font-size:1.25rem;font-weight:900;color:#fff;cursor:pointer;transition:all .2s;flex-shrink:0;
+  user-select:none}
+.tile:hover:not(.used){background:rgba(246,192,74,.2);border-color:var(--amber);transform:translateY(-3px)}
+.tile.used{opacity:.25;cursor:default;transform:none}
+.tile.dragging{opacity:.5;transform:scale(1.1)}
+
+/* KEYBOARD AREA */
+.keyboard-wrap{display:flex;gap:8px;align-items:center}
+.answer-input{flex:1;padding:11px 14px;background:rgba(255,255,255,.08);
+  border:2px solid rgba(255,255,255,.15);border-radius:13px;font-family:'Nunito',sans-serif;
+  font-size:1.3rem;font-weight:900;color:#fff;text-align:center;outline:none;
+  transition:border-color .2s;-webkit-appearance:none;text-transform:uppercase}
+.answer-input:focus{border-color:var(--teal)}
+.answer-input.correct{border-color:var(--green);background:rgba(39,174,96,.15)}
+.answer-input.wrong{border-color:var(--red);background:rgba(232,69,69,.15);animation:shake .3s ease}
+.submit-btn{padding:11px 14px;background:linear-gradient(135deg,var(--teal2),var(--teal));
+  border:none;border-radius:13px;color:#fff;font-family:'Nunito',sans-serif;font-size:.78rem;
+  font-weight:900;cursor:pointer;white-space:nowrap}
+
+/* MCQ OPTIONS */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt{padding:12px 10px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:13px;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:800;
+  color:#fff;cursor:pointer;transition:all .15s;text-align:center;word-break:break-word}
+.opt:hover:not(:disabled){background:rgba(43,191,184,.15);border-color:var(--teal);transform:translateY(-2px)}
+.opt.correct{background:rgba(39,174,96,.2)!important;border-color:var(--green)!important;color:#90FFB0!important}
+.opt.wrong{background:rgba(232,69,69,.15)!important;border-color:var(--red)!important;color:#FF9090!important;animation:shake .3s ease}
+
+/* SENTENCE BUILDER */
+.sentence-words{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:10px}
+.sent-word{padding:8px 13px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);
+  border-radius:10px;font-size:.9rem;font-weight:800;color:#fff;cursor:pointer;transition:all .2s}
+.sent-word:hover:not(.used){background:rgba(43,191,184,.18);border-color:var(--teal);transform:translateY(-2px)}
+.sent-word.used{opacity:.25;cursor:default}
+.sentence-slots{display:flex;flex-wrap:wrap;gap:6px;min-height:46px;
+  background:rgba(255,255,255,.04);border-radius:12px;padding:10px;
+  border:1.5px dashed rgba(255,255,255,.15);margin-bottom:10px;align-items:center}
+.sent-slot{padding:7px 12px;background:rgba(43,191,184,.15);border:1.5px solid rgba(43,191,184,.3);
+  border-radius:9px;font-size:.88rem;font-weight:800;color:#fff;cursor:pointer;transition:all .2s}
+.sent-slot:hover{background:rgba(232,69,69,.15);border-color:var(--red)}
+
+/* HINT */
+.hint-strip{display:flex;align-items:center;gap:6px;margin-bottom:10px;
+  background:rgba(246,192,74,.08);border:1px solid rgba(246,192,74,.18);border-radius:10px;padding:8px 12px}
+.hint-ico{font-size:.9rem}
+.hint-txt{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.6)}
+.hint-btn{margin-left:auto;padding:4px 10px;background:rgba(246,192,74,.15);border:1px solid rgba(246,192,74,.25);
+  border-radius:99px;font-family:'Nunito',sans-serif;font-size:.6rem;font-weight:900;color:var(--amber);cursor:pointer}
+
+/* EXPLANATION */
+.explanation-card{margin-top:12px;border-radius:14px;padding:14px 16px;animation:slideDown .3s ease;display:none}
+.explanation-card.show{display:block}
+.explanation-card.ok{background:rgba(39,174,96,.12);border:1.5px solid rgba(39,174,96,.25)}
+.explanation-card.no{background:rgba(232,69,69,.1);border:1.5px solid rgba(232,69,69,.22)}
+.ex-result{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.ex-icon{font-size:1.3rem;flex-shrink:0}
+.ex-answer{font-size:.92rem;font-weight:900;color:#fff}
+.ex-answer span{color:var(--amber)}
+.ex-explain{font-size:.76rem;font-weight:700;color:rgba(255,255,255,.7);line-height:1.55;margin-bottom:10px}
+.ex-word-detail{background:rgba(255,255,255,.05);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.ewd-row{display:flex;gap:8px;margin-bottom:4px;align-items:baseline}
+.ewd-lbl{font-size:.6rem;font-weight:900;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;width:60px;flex-shrink:0}
+.ewd-val{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.75)}
+.ex-next{width:100%;padding:10px;border:none;border-radius:11px;font-family:'Nunito',sans-serif;
+  font-size:.85rem;font-weight:900;cursor:pointer;transition:all .2s;color:#fff}
+.ex-next.ok{background:linear-gradient(135deg,var(--green),#52D08A);box-shadow:0 3px 12px rgba(39,174,96,.3)}
+.ex-next.no{background:linear-gradient(135deg,var(--teal2),var(--teal));box-shadow:0 3px 12px rgba(43,191,184,.3)}
+.ex-next.pron{background:linear-gradient(135deg,var(--purple),#9B6BDF);box-shadow:0 3px 12px rgba(124,92,191,.3)}
+
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{0%{transform:scale(.94)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+
+/* SCREENS */
+.screen{display:none}.screen.active{display:flex;flex-direction:column;gap:10px}
+
+/* START */
+.start-card{background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
+  border-radius:var(--r);padding:26px 22px;text-align:center;box-shadow:var(--shadow)}
+.start-icon{font-size:3.5rem;margin-bottom:8px;display:block;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.start-title{font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:4px}
+.start-sub{font-size:.73rem;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:16px;line-height:1.6}
+.modes-grid{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:16px}
+.mode-chip{font-size:.6rem;font-weight:800;border-radius:99px;padding:3px 9px;border:1px solid}
+.rules{display:flex;flex-direction:column;gap:6px;text-align:left;margin-bottom:16px}
+.rule{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.05);border-radius:10px;padding:7px 11px}
+.rule-ico{font-size:.95rem;flex-shrink:0}
+.rule-txt{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.7)}
+.start-btn{width:100%;padding:13px;border:none;border-radius:13px;
+  background:linear-gradient(135deg,#8B5CF6,var(--purple));
+  color:#fff;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;
+  cursor:pointer;box-shadow:0 4px 20px rgba(124,92,191,.4);transition:all .2s}
+.start-btn:hover{transform:translateY(-2px)}
+.pb-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;
+  font-size:.7rem;font-weight:700;color:rgba(255,255,255,.4)}
+.pb-val{color:var(--amber);font-weight:900}
+
+/* ROUND END */
+.re-card{background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
+  border-radius:var(--r);padding:22px 18px;text-align:center;box-shadow:var(--shadow)}
+.re-icon{font-size:2.8rem;margin-bottom:7px;display:block}
+.re-title{font-size:1.2rem;font-weight:900;color:#fff;margin-bottom:3px}
+.re-stats{display:flex;gap:7px;margin:12px 0}
+.re-stat{flex:1;background:rgba(255,255,255,.06);border-radius:11px;padding:10px;text-align:center}
+.re-sv{font-size:1.2rem;font-weight:900;color:var(--amber)}
+.re-sl{font-size:.55rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px}
+.mode-breakdown{margin:0 0 12px;text-align:left}
+.mb-title{font-size:.6rem;font-weight:900;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.mb-row{display:flex;align-items:center;gap:7px;margin-bottom:4px}
+.mb-name{font-size:.65rem;font-weight:700;color:rgba(255,255,255,.6);width:90px;flex-shrink:0}
+.mb-bar-bg{flex:1;height:5px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden}
+.mb-bar-fill{height:100%;border-radius:99px;transition:width .6s}
+.mb-pct{font-size:.58rem;font-weight:800;color:rgba(255,255,255,.4);width:26px;text-align:right;flex-shrink:0}
+.re-btn{width:100%;padding:11px;border:none;border-radius:13px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:900;cursor:pointer;transition:all .2s}
+.re-btn.next{background:linear-gradient(135deg,#8B5CF6,var(--purple));color:#fff;box-shadow:0 3px 12px rgba(124,92,191,.3)}
+.re-btn.home{background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);margin-top:7px}
+
+/* GAME OVER */
+.go-card{background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
+  border-radius:var(--r);padding:26px 20px;text-align:center;box-shadow:var(--shadow)}
+.go-trophy{font-size:4rem;margin-bottom:8px;display:block;animation:float 2s ease-in-out infinite}
+.go-title{font-size:1.4rem;font-weight:900;color:#fff;margin-bottom:3px}
+.go-score{font-size:2.6rem;font-weight:900;color:var(--amber);line-height:1}
+.go-earned{font-size:.88rem;font-weight:800;color:#90FFB0;margin-top:4px}
+.go-msg{font-size:.76rem;font-weight:700;color:rgba(255,255,255,.5);margin:8px 0 4px;line-height:1.5}
+.new-best{background:linear-gradient(135deg,rgba(124,92,191,.25),rgba(139,92,246,.2));
+  border:1px solid rgba(124,92,191,.35);border-radius:11px;padding:9px 14px;
+  font-size:.8rem;font-weight:900;color:#C8A8FF;margin:8px 0;animation:popIn .4s ease}
+.go-stats{display:flex;gap:7px;margin-bottom:14px}
+.go-stat{flex:1;background:rgba(255,255,255,.06);border-radius:11px;padding:9px;text-align:center}
+.go-sv{font-size:1.1rem;font-weight:900;color:#fff}
+.go-sl{font-size:.52rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px}
+.go-btns{display:flex;flex-direction:column;gap:7px}
+.go-btn{width:100%;padding:11px;border:none;border-radius:13px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:900;cursor:pointer;transition:all .2s}
+.go-btn.play{background:linear-gradient(135deg,#8B5CF6,var(--purple));color:#fff;box-shadow:0 4px 20px rgba(124,92,191,.4)}
+.go-btn.home{background:rgba(255,255,255,.07);color:rgba(255,255,255,.5)}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="combo-announce" id="combo-announce">
+  <div class="ca-text" id="ca-text">WORD WIZARD! 🔤</div>
+  <div class="ca-sub" id="ca-sub">3 in a row!</div>
+</div>
+<div class="life-restore" id="life-restore">
+  <div class="lr-text">❤️ Life Restored!</div>
+  <div class="lr-sub">3 correct in a row!</div>
+</div>
+
+<div class="wrap">
+  <!-- START -->
+  <div id="startScreen" class="screen active">
+    <div class="start-card">
+      <span class="start-icon">🔤</span>
+      <div class="start-title">Word Builder</div>
+      <div class="start-sub" id="start-greeting">Ready to explore the world of words?</div>
+      <div class="modes-grid" id="modes-grid"></div>
+      <div class="rules">
+        <div class="rule"><span class="rule-ico">🔀</span><span class="rule-txt">15 questions per round — all different word challenges mixed in</span></div>
+        <div class="rule"><span class="rule-ico">🔊</span><span class="rule-txt">Hear words spoken aloud with syllable breakdown</span></div>
+        <div class="rule"><span class="rule-ico">❤️</span><span class="rule-txt">3 lives — wrong answer loses one heart</span></div>
+        <div class="rule"><span class="rule-ico">💡</span><span class="rule-txt">Every answer shows a full explanation</span></div>
+        <div class="rule"><span class="rule-ico">📈</span><span class="rule-txt">Words get harder each round</span></div>
+      </div>
+      <button class="start-btn" onclick="startGame()">🔤 Start Building!</button>
+      <div class="pb-row" id="pb-row" style="display:none">🏆 Personal Best: <span class="pb-val" id="pb-val">0</span> stars</div>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div id="gameScreen" class="screen">
+    <div class="hdr">
+      <button class="back-btn" onclick="confirmQuit()">←</button>
+      <div style="flex:1">
+        <div class="hdr-title">🔤 Word Builder</div>
+        <div class="hdr-sub" id="g-player-label">Riaan · Grade 3</div>
+      </div>
+      <div class="lives" id="lives-display">❤️❤️❤️</div>
+      <div class="star-count">⭐ <span id="g-stars">0</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-box"><div class="ib-val teal" id="g-round">1</div><div class="ib-lbl">Round</div></div>
+      <div class="info-box"><div class="ib-val" id="g-qnum">1/15</div><div class="ib-lbl">Question</div></div>
+      <div class="info-box" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 10px">
+        <div id="gt-wrap" style="position:relative;width:38px;height:38px">
+          <svg width="38" height="38" viewBox="0 0 38 38" style="transform:rotate(-90deg)">
+            <circle cx="19" cy="19" r="15" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="3.5"/>
+            <circle cx="19" cy="19" r="15" fill="none" stroke="#C8A8FF" stroke-width="3.5"
+              stroke-linecap="round" stroke-dasharray="94.2" id="gt-ring" stroke-dashoffset="0"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+            font-size:.72rem;font-weight:900;color:#C8A8FF" id="gt-num">25</div>
+        </div>
+        <div class="ib-lbl">Secs</div>
+      </div>
+      <div class="info-box" style="display:flex;align-items:center;justify-content:center">
+        <div id="streak-badge" class="streak-badge">0 🔥</div>
+      </div>
+    </div>
+    <div class="timer-wrap" id="timer-wrap-el"><div class="timer-bar" id="q-timer-bar" style="width:100%"></div></div>
+    <div class="game-card" id="game-card">
+      <div class="q-meta">
+        <span class="mode-tag" id="g-mode-tag">Scramble</span>
+        <span class="q-cat" id="g-cat-tag">Animals</span>
+      </div>
+      <!-- Dynamic content injected here -->
+      <div id="q-content"></div>
+      <!-- HINT (shows below answer area, above explanation) -->
+      <!-- EXPLANATION -->
+      <div id="hint-area" style="text-align:center">
+        <button class="hint-btn-float" id="hint-btn" onclick="useHint()">💡 Hint</button>
+        <div class="hint-box" id="hint-box"><div class="hint-box-txt" id="hint-txt"></div><div class="hint-cost">💡 Using a hint halves your stars for this question</div></div>
+      </div>
+      <div class="explanation-card" id="explanation-card">
+        <div class="ex-result">
+          <span class="ex-icon" id="ex-icon">✅</span>
+          <span class="ex-answer" id="ex-answer">Answer: <span>CAT</span></span>
+        </div>
+        <div class="ex-explain" id="ex-explain"></div>
+        <div class="ex-word-detail" id="ex-word-detail"></div>
+        <button class="ex-next" id="ex-next" onclick="advanceQuestion()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUND END -->
+  <div id="roundEndScreen" class="screen">
+    <div class="re-card">
+      <span class="re-icon" id="re-icon">⭐</span>
+      <div class="re-title" id="re-title">Round 1 Complete!</div>
+      <div class="re-stats">
+        <div class="re-stat"><div class="re-sv" id="re-correct">0</div><div class="re-sl">Correct</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-acc">0%</div><div class="re-sl">Accuracy</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-stars-r">0</div><div class="re-sl">Stars</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-streak-r">0</div><div class="re-sl">Best Streak</div></div>
+      </div>
+      <div class="mode-breakdown" id="mode-breakdown"></div>
+      <div style="font-size:.74rem;font-weight:700;color:rgba(255,255,255,.45);margin-bottom:12px;text-align:center" id="re-msg"></div>
+      <button class="re-btn next" id="re-next-btn" onclick="nextRound()">Round 2 →</button>
+      <button class="re-btn home" onclick="goHome()">🏠 Back to Hub</button>
+    </div>
+  </div>
+
+  <!-- GAME OVER -->
+  <div id="gameOverScreen" class="screen">
+    <div class="go-card">
+      <span class="go-trophy" id="go-trophy">🏆</span>
+      <div class="go-title">Word Master!</div>
+      <div class="go-score" id="go-score">0 ⭐</div>
+      <div class="go-earned" id="go-earned">+0 stars saved</div>
+      <div id="new-best-banner" class="new-best" style="display:none">🏆 NEW PERSONAL BEST!</div>
+      <div class="go-msg" id="go-msg">Great effort!</div>
+      <div class="go-stats">
+        <div class="go-stat"><div class="go-sv" id="go-rounds">1</div><div class="go-sl">Rounds</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-correct">0</div><div class="go-sl">Correct</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-best-streak">0</div><div class="go-sl">Best Streak</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-pb">0</div><div class="go-sl">Personal Best</div></div>
+      </div>
+      <div class="go-btns">
+        <button class="go-btn play" onclick="restartGame()">🔤 Play Again</button>
+        <button class="go-btn home" onclick="goHome()">🏠 Back to Hub</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Supabase ──────────────────────────────────────────────────────
+const SB='https://tnhgihzfwqsflpueivwe.supabase.co',KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
+const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':o.prefer||'return=representation',...o.headers},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined}).then(r=>r.json()).catch(()=>[]);
+
+const params=new URLSearchParams(window.location.search);
+const playerName=params.get('player')||'riaan';
+let playerId=null,playerGrade=3,personalBest=0;
+
+// ── Word Bank ─────────────────────────────────────────────────────
+const WORDS={
+  // grade 1 words
+  G1:[
+    {w:'CAT',syl:'cat',stress:0,cat:'Animals',emoji:'🐱',def:'A small furry pet that meows',syn:'kitten',ant:null,plural:'cats',family:['cat','cats','catty'],rhyme:'hat'},
+    {w:'DOG',syl:'dog',stress:0,cat:'Animals',emoji:'🐶',def:'A loyal pet that barks',syn:'puppy',ant:null,plural:'dogs',family:['dog','dogs','doggy'],rhyme:'log'},
+    {w:'SUN',syl:'sun',stress:0,cat:'Nature',emoji:'☀️',def:'The bright star that gives us light and warmth',syn:'star',ant:'moon',plural:'suns',family:['sun','sunny','sunlight'],rhyme:'run'},
+    {w:'BIG',syl:'big',stress:0,cat:'Describing',emoji:'🐘',def:'Large in size',syn:'large',ant:'small',plural:null,family:['big','bigger','biggest'],rhyme:'pig'},
+    {w:'HOT',syl:'hot',stress:0,cat:'Describing',emoji:'🔥',def:'Having a high temperature',syn:'warm',ant:'cold',plural:null,family:['hot','hotter','hottest'],rhyme:'pot'},
+    {w:'FISH',syl:'fish',stress:0,cat:'Animals',emoji:'🐟',def:'An animal that lives in water and breathes through gills',syn:null,ant:null,plural:'fish',family:['fish','fishing','fisherman'],rhyme:'dish'},
+    {w:'RED',syl:'red',stress:0,cat:'Colors',emoji:'🔴',def:'The color of blood or fire',syn:'crimson',ant:'green',plural:null,family:['red','reddish','redden'],rhyme:'bed'},
+    {w:'BIRD',syl:'bird',stress:0,cat:'Animals',emoji:'🐦',def:'An animal with wings and feathers that usually can fly',syn:null,ant:null,plural:'birds',family:['bird','birds','birdy'],rhyme:'word'},
+    {w:'BLUE',syl:'blue',stress:0,cat:'Colors',emoji:'🔵',def:'The color of the sky and ocean',syn:'azure',ant:'orange',plural:null,family:['blue','blues','blueish'],rhyme:'clue'},
+    {w:'FROG',syl:'frog',stress:0,cat:'Animals',emoji:'🐸',def:'A small green animal that jumps and lives near water',syn:null,ant:null,plural:'frogs',family:['frog','frogs','froggy'],rhyme:'log'},
+    {w:'FAST',syl:'fast',stress:0,cat:'Describing',emoji:'💨',def:'Moving quickly',syn:'quick',ant:'slow',plural:null,family:['fast','faster','fastest'],rhyme:'last'},
+    {w:'MILK',syl:'milk',stress:0,cat:'Food',emoji:'🥛',def:'A white drink that comes from cows',syn:null,ant:null,plural:null,family:['milk','milky','milkman'],rhyme:'silk'},
+    {w:'RAIN',syl:'rain',stress:0,cat:'Nature',emoji:'🌧️',def:'Water that falls from clouds in the sky',syn:'shower',ant:'sunshine',plural:null,family:['rain','rainy','rainbow'],rhyme:'train'},
+    {w:'STAR',syl:'star',stress:0,cat:'Nature',emoji:'⭐',def:'A bright object in the night sky made of burning gas',syn:null,ant:null,plural:'stars',family:['star','stars','starry'],rhyme:'car'},
+    {w:'TREE',syl:'tree',stress:0,cat:'Nature',emoji:'🌳',def:'A tall plant with a trunk, branches, and leaves',syn:'plant',ant:null,plural:'trees',family:['tree','trees','treetop'],rhyme:'free'},
+    {w:'CAKE',syl:'cake',stress:0,cat:'Food',emoji:'🎂',def:'A sweet baked food often eaten at birthdays',syn:'pastry',ant:null,plural:'cakes',family:['cake','cakes','bake'],rhyme:'lake'},
+    {w:'JUMP',syl:'jump',stress:0,cat:'Actions',emoji:'🏃',def:'To push off the ground and go up into the air',syn:'leap',ant:'land',plural:null,family:['jump','jumps','jumping'],rhyme:'bump'},
+    {w:'LEAF',syl:'leaf',stress:0,cat:'Nature',emoji:'🍃',def:'The flat green part of a plant that makes food from sunlight',syn:null,ant:null,plural:'leaves',family:['leaf','leaves','leafy'],rhyme:'reef'},
+    {w:'SNOW',syl:'snow',stress:0,cat:'Nature',emoji:'❄️',def:'Soft white frozen water that falls from clouds in winter',syn:'frost',ant:'sun',plural:null,family:['snow','snowy','snowball'],rhyme:'glow'},
+    {w:'BOOK',syl:'book',stress:0,cat:'Objects',emoji:'📚',def:'Pages with words bound together that you can read',syn:'text',ant:null,plural:'books',family:['book','books','bookshelf'],rhyme:'cook'},
+  ],
+  // grade 3+ words
+  G3:[
+    {w:'ELEPHANT',syl:'el·e·phant',stress:0,cat:'Animals',emoji:'🐘',def:'The largest land animal with a long trunk and tusks',syn:'pachyderm',ant:null,plural:'elephants',family:['elephant','elephants','elephantine'],rhyme:null},
+    {w:'ANCIENT',syl:'an·cient',stress:0,cat:'Describing',emoji:'🏛️',def:'Very very old, from a long time ago',syn:'old',ant:'modern',plural:null,family:['ancient','ancients','anciently'],rhyme:null},
+    {w:'BRAVE',syl:'brave',stress:0,cat:'Describing',emoji:'🦁',def:'Not afraid of danger; having courage',syn:'courageous',ant:'cowardly',plural:null,family:['brave','bravery','bravely'],rhyme:'cave'},
+    {w:'GENTLE',syl:'gen·tle',stress:0,cat:'Describing',emoji:'🕊️',def:'Soft, kind, and careful',syn:'kind',ant:'rough',plural:null,family:['gentle','gently','gentleness'],rhyme:null},
+    {w:'ENORMOUS',syl:'e·nor·mous',stress:1,cat:'Describing',emoji:'🏔️',def:'Extremely large, much bigger than normal',syn:'huge',ant:'tiny',plural:null,family:['enormous','enormously','enormity'],rhyme:null},
+    {w:'MIGRATE',syl:'mi·grate',stress:0,cat:'Actions',emoji:'🦅',def:'To move from one place to another, especially seasonally',syn:'travel',ant:'stay',plural:null,family:['migrate','migration','migratory'],rhyme:null},
+    {w:'HABITAT',syl:'hab·i·tat',stress:0,cat:'Science',emoji:'🌿',def:'The natural home of an animal or plant',syn:'environment',ant:null,plural:'habitats',family:['habitat','inhabit','habitation'],rhyme:null},
+    {w:'GENEROUS',syl:'gen·er·ous',stress:0,cat:'Describing',emoji:'🎁',def:'Happy to give things to others; not selfish',syn:'kind',ant:'selfish',plural:null,family:['generous','generosity','generously'],rhyme:null},
+    {w:'PREDICT',syl:'pre·dict',stress:1,cat:'Actions',emoji:'🔮',def:'To say what you think will happen in the future',syn:'forecast',ant:null,plural:null,family:['predict','prediction','predictable'],rhyme:null},
+    {w:'NOCTURNAL',syl:'noc·tur·nal',stress:1,cat:'Science',emoji:'🦉',def:'Active at night and sleeping during the day',syn:'nighttime',ant:'diurnal',plural:null,family:['nocturnal','nocturnally'],rhyme:null},
+    {w:'CAMOUFLAGE',syl:'cam·ou·flage',stress:0,cat:'Science',emoji:'🦎',def:'The ability to blend in with surroundings to hide',syn:'disguise',ant:'reveal',plural:null,family:['camouflage','camouflaged','camouflaging'],rhyme:null},
+    {w:'DEMOCRACY',syl:'de·moc·ra·cy',stress:1,cat:'Social Studies',emoji:'🗳️',def:'A system of government where people vote for their leaders',syn:'republic',ant:'dictatorship',plural:'democracies',family:['democracy','democratic','democrat'],rhyme:null},
+    {w:'PHOTOSYNTHESIS',syl:'pho·to·syn·the·sis',stress:2,cat:'Science',emoji:'🌱',def:'The process by which plants make food from sunlight',syn:null,ant:null,plural:null,family:['photosynthesis','photosynthesize','photosynthetic'],rhyme:null},
+    {w:'ANCIENT',syl:'an·cient',stress:0,cat:'History',emoji:'🏺',def:'Belonging to the very distant past',syn:'old',ant:'modern',plural:null,family:['ancient','antiquity','antique'],rhyme:null},
+    {w:'HIBERNATE',syl:'hi·ber·nate',stress:0,cat:'Science',emoji:'🐻',def:'To spend the winter in a deep sleep to save energy',syn:'sleep',ant:'migrate',plural:null,family:['hibernate','hibernation','hibernating'],rhyme:null},
+    {w:'RESILIENT',syl:'re·sil·ient',stress:1,cat:'Describing',emoji:'💪',def:'Able to recover quickly from difficulties; tough',syn:'strong',ant:'fragile',plural:null,family:['resilient','resilience','resiliently'],rhyme:null},
+    {w:'ATMOSPHERE',syl:'at·mos·phere',stress:0,cat:'Science',emoji:'🌍',def:'The layer of gases surrounding a planet',syn:'air',ant:null,plural:'atmospheres',family:['atmosphere','atmospheric','atmospherically'],rhyme:null},
+    {w:'CONSEQUENCE',syl:'con·se·quence',stress:0,cat:'Describing',emoji:'⚖️',def:'A result or effect of an action',syn:'result',ant:'cause',plural:'consequences',family:['consequence','consequent','consequently'],rhyme:null},
+    {w:'COLLABORATION',syl:'col·lab·o·ra·tion',stress:3,cat:'Actions',emoji:'🤝',def:'Working together with others to achieve something',syn:'teamwork',ant:'competition',plural:'collaborations',family:['collaborate','collaboration','collaborative'],rhyme:null},
+    {w:'SYMMETRY',syl:'sym·me·try',stress:0,cat:'Math',emoji:'🦋',def:'When two halves of something are mirror images of each other',syn:'balance',ant:'asymmetry',plural:'symmetries',family:['symmetry','symmetrical','symmetrically'],rhyme:null},
+  ]
+};
+
+// ── Homophones, Compounds, Prefixes ──────────────────────────────
+const HOMOPHONES_G1=[
+  {pair:['THERE','THEIR','THEY\'RE'],sentence:'___ going to the park today.',answer:'THEY\'RE',explain:'THEY\'RE = they are. THEIR = belonging to them. THERE = a place.'},
+  {pair:['TO','TOO','TWO'],sentence:'I want ___ come with you.',answer:'TO',explain:'TO = towards. TOO = also/as well. TWO = the number 2.'},
+  {pair:['SUN','SON'],sentence:'The ___ rises in the east.',answer:'SUN',explain:'SUN = the star in our sky. SON = a male child.'},
+  {pair:['SEA','SEE'],sentence:'Can you ___ the birds?',answer:'SEE',explain:'SEE = to look at. SEA = the ocean.'},
+  {pair:['HEAR','HERE'],sentence:'Come over ___.',answer:'HERE',explain:'HERE = in this place. HEAR = to listen.'},
+];
+const HOMOPHONES_G3=[
+  {pair:['AFFECT','EFFECT'],sentence:'Exercise has a positive ___ on your health.',answer:'EFFECT',explain:'EFFECT is usually a noun (the result). AFFECT is usually a verb (to influence).'},
+  {pair:['PRINCIPAL','PRINCIPLE'],sentence:'Our school ___ gave a speech.',answer:'PRINCIPAL',explain:'PRINCIPAL = head of a school or main person. PRINCIPLE = a rule or belief.'},
+  {pair:['STATIONARY','STATIONERY'],sentence:'I bought new ___ at the shop.',answer:'STATIONERY',explain:'STATIONERY = pens, paper, writing materials. STATIONARY = not moving.'},
+  {pair:['ACCEPT','EXCEPT'],sentence:'Everyone was invited ___ Karan.',answer:'EXCEPT',explain:'EXCEPT = not including. ACCEPT = to receive willingly.'},
+  {pair:['DESERT','DESSERT'],sentence:'I ate chocolate ___ after dinner.',answer:'DESSERT',explain:'DESSERT (2 S\'s) = sweet food after a meal. DESERT (1 S) = a hot dry sandy land.'},
+];
+
+const COMPOUNDS_G1=[
+  {parts:['RAIN','BOW'],answer:'RAINBOW',emoji:'🌈',explain:'RAIN + BOW = RAINBOW. A colourful arc you see after rain!'},
+  {parts:['SUN','FLOWER'],answer:'SUNFLOWER',emoji:'🌻',explain:'SUN + FLOWER = SUNFLOWER. A tall yellow flower that faces the sun.'},
+  {parts:['BUTTER','FLY'],answer:'BUTTERFLY',emoji:'🦋',explain:'BUTTER + FLY = BUTTERFLY. A beautiful insect with colourful wings.'},
+  {parts:['STAR','FISH'],answer:'STARFISH',emoji:'⭐',explain:'STAR + FISH = STARFISH. A star-shaped sea creature.'},
+  {parts:['FIRE','FLY'],answer:'FIREFLY',emoji:'✨',explain:'FIRE + FLY = FIREFLY. An insect that glows in the dark!'},
+];
+const COMPOUNDS_G3=[
+  {parts:['PHOTO','SYNTHESIS'],answer:'PHOTOSYNTHESIS',emoji:'🌱',explain:'PHOTO (light) + SYNTHESIS (making) = PHOTOSYNTHESIS. How plants make food from sunlight!'},
+  {parts:['UNDER','GROUND'],answer:'UNDERGROUND',emoji:'🚇',explain:'UNDER + GROUND = UNDERGROUND. Below the surface of the earth.'},
+  {parts:['OVER','WHELM'],answer:'OVERWHELM',emoji:'😤',explain:'OVER + WHELM = OVERWHELM. To have too much to handle at once.'},
+  {parts:['BREAK','THROUGH'],answer:'BREAKTHROUGH',emoji:'💡',explain:'BREAK + THROUGH = BREAKTHROUGH. An important new discovery.'},
+  {parts:['WATER','FALL'],answer:'WATERFALL',emoji:'💧',explain:'WATER + FALL = WATERFALL. Water falling from a height.'},
+];
+
+const PREFIXES_G1=[
+  {prefix:'UN',base:'HAPPY',answer:'UNHAPPY',explain:'UN- means NOT. UNHAPPY = not happy. Other examples: unkind, unsafe, unclear.'},
+  {prefix:'RE',base:'DO',answer:'REDO',explain:'RE- means AGAIN. REDO = do again. Other examples: rewrite, replay, return.'},
+  {prefix:'PRE',base:'SCHOOL',answer:'PRESCHOOL',explain:'PRE- means BEFORE. PRESCHOOL = before regular school. Other examples: preview, prepay.'},
+];
+const PREFIXES_G3=[
+  {prefix:'DIS',base:'AGREE',answer:'DISAGREE',explain:'DIS- means NOT or OPPOSITE. DISAGREE = to not agree. Other examples: disappear, dishonest.'},
+  {prefix:'MIS',base:'UNDERSTAND',answer:'MISUNDERSTAND',explain:'MIS- means WRONGLY. MISUNDERSTAND = to understand wrongly. Other examples: mislead, misspell.'},
+  {prefix:'OVER',base:'CONFIDENT',answer:'OVERCONFIDENT',explain:'OVER- means TOO MUCH. OVERCONFIDENT = too confident. Other examples: overeat, overwork.'},
+  {prefix:'INTER',base:'NATIONAL',answer:'INTERNATIONAL',explain:'INTER- means BETWEEN. INTERNATIONAL = between nations. Other examples: internet, interview.'},
+];
+
+const SENTENCES_G1=[
+  {words:['The','cat','sat','on','the','mat'],answer:'The cat sat on the mat',explain:'Subject (The cat) + verb (sat) + where (on the mat). A simple sentence!'},
+  {words:['I','love','to','read','books'],answer:'I love to read books',explain:'I (subject) + love (verb) + to read books (what I love). Short and clear!'},
+  {words:['The','dog','runs','very','fast'],answer:'The dog runs very fast',explain:'The dog (subject) + runs (verb) + very fast (how it runs).'},
+  {words:['She','has','big','blue','eyes'],answer:'She has big blue eyes',explain:'She (subject) + has (verb) + big blue eyes (what she has).'},
+];
+const SENTENCES_G3=[
+  {words:['Ancient','civilisations','built','enormous','temples'],answer:'Ancient civilisations built enormous temples',explain:'Ancient civilisations (subject) + built (past tense verb) + enormous temples (what they built).'},
+  {words:['The','resilient','salmon','migrate','upstream','every','autumn'],answer:'The resilient salmon migrate upstream every autumn',explain:'The resilient salmon (subject) + migrate upstream (verb + direction) + every autumn (when).'},
+  {words:['Photosynthesis','allows','plants','to','make','their','own','food'],answer:'Photosynthesis allows plants to make their own food',explain:'Photosynthesis (subject) + allows plants (verb + object) + to make their own food (purpose).'},
+];
+
+// ── Word family questions ─────────────────────────────────────────
+const FAMILIES_G1=[
+  {base:'RUN',chain:['RUN','RUNS','RUNNING','RUNNER'],blank:3,answer:'RUNNER',explain:'Word family of RUN: run → runs → running → runner. Adding -ER makes a person who runs!'},
+  {base:'PLAY',chain:['PLAY','PLAYS','PLAYING','PLAYER'],blank:3,answer:'PLAYER',explain:'Word family of PLAY: play → plays → playing → player. A player is someone who plays!'},
+  {base:'TEACH',chain:['TEACH','TEACHES','TEACHING','TEACHER'],blank:3,answer:'TEACHER',explain:'Word family of TEACH: teach → teaches → teaching → teacher. A teacher teaches!'},
+];
+const FAMILIES_G3=[
+  {base:'MIGRATE',chain:['MIGRATE','MIGRATION','MIGRATORY','IMMIGRANT'],blank:2,answer:'MIGRATORY',explain:'MIGRATE (verb) → MIGRATION (noun) → MIGRATORY (adjective) → IMMIGRANT (person). All share the root word!'},
+  {base:'PHOTOGRAPH',chain:['PHOTOGRAPH','PHOTOGRAPHY','PHOTOGRAPHER','PHOTOGRAPHIC'],blank:2,answer:'PHOTOGRAPHER',explain:'PHOTO means light + GRAPH means writing. A photographer uses light to write images!'},
+  {base:'DEMOCRACY',chain:['DEMOCRACY','DEMOCRATIC','DEMOCRATISE','DEMOCRAT'],blank:1,answer:'DEMOCRATIC',explain:'DEMO (people) + CRACY (rule). DEMOCRATIC describes a system where people rule!'},
+];
+
+// ── All mode types ────────────────────────────────────────────────
+const ALL_MODES=['scramble','synonym','antonym','fill','pronunciation','plural',
+  'definition','emoji','homophone','sentence','rhyme','compound','prefix','wordfamily','audio'];
+
+const MODE_LABELS={
+  scramble:'🔀 Scramble',synonym:'🔵 Synonym',antonym:'🔴 Antonym',
+  fill:'📝 Fill Blank',pronunciation:'🔊 Pronunciation',plural:'📚 Plural/Singular',
+  definition:'📖 Definition',emoji:'😄 Emoji Clue',homophone:'👂 Homophone',
+  sentence:'📝 Sentence',rhyme:'🎵 Rhyme',compound:'🔗 Compound',
+  prefix:'✂️ Prefix',wordfamily:'🌳 Word Family',audio:'🎤 Spell It'
+};
+
+// ── Game State ────────────────────────────────────────────────────
+let G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
+  streak:0,bestStreak:0,sessionBestStreak:0,
+  qTimer:0,qInterval:null,qMaxTime:25,answered:false,roundStars:0,
+  question:null,wordBank:[],bankIdx:0,modeStats:{},
+  scrambleState:{slots:[],tiles:[],tapMode:'tap-order'},
+  sentenceState:{placed:[],available:[]}};
+
+function getWordBank(){
+  const base=playerGrade<=1?[...WORDS.G1]:[...WORDS.G1,...WORDS.G3];
+  return shuffle(base);
+}
+
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1).toLowerCase();}
+function capAll(s){return s;}
+
+// ── Speech ────────────────────────────────────────────────────────
+function speak(text){
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text.toLowerCase());
+  u.rate=0.85;u.pitch=1;u.lang='en-CA';
+  window.speechSynthesis.speak(u);
+}
+
+// ── Question Generation ───────────────────────────────────────────
+function pickWord(){
+  if(G.bankIdx>=G.wordBank.length){G.wordBank=getWordBank();G.bankIdx=0;}
+  return G.wordBank[G.bankIdx++];
+}
+
+function pickMode(word){
+  // Grade 1 gets simpler modes more often
+  let pool;
+  if(playerGrade<=1){
+    pool=['scramble','scramble','fill','fill','pronunciation','plural','definition','emoji','homophone','rhyme','compound','prefix','wordfamily','audio','scramble'];
+  } else {
+    pool=[...ALL_MODES,'scramble','synonym','antonym','definition'];
+  }
+  // Filter by availability
+  const avail=pool.filter(m=>{
+    if(m==='synonym'&&!word.syn)return false;
+    if(m==='antonym'&&!word.ant)return false;
+    if(m==='rhyme'&&(!word.rhyme||playerGrade>2))return false;
+    if(m==='plural'&&!word.plural)return false;
+    return true;
+  });
+  return avail[Math.floor(Math.random()*avail.length)]||'scramble';
+}
+
+function buildQuestion(){
+  const word=pickWord();
+  const mode=pickMode(word);
+  // Timer ONLY for scramble, based on word length. Everything else = untimed.
+  const TIMED_MODES=['scramble'];
+  if(TIMED_MODES.includes(mode)){
+    const wlen=word.w.length;
+    G.qMaxTime=wlen<=4?20:wlen<=6?25:wlen<=8?35:45;
+  } else {
+    G.qMaxTime=999; // untimed
+  }
+  return {word,mode};
+}
+
+// ── Render Question ───────────────────────────────────────────────
+function renderQuestion(){
+  const {word,mode}=G.question;
+  const el=document.getElementById('q-content');
+  el.innerHTML='';
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('explanation-card').className='explanation-card';
+  document.getElementById('g-mode-tag').textContent=MODE_LABELS[mode]||mode;
+  document.getElementById('g-mode-tag').className=`mode-tag ${mode}`;
+  document.getElementById('g-cat-tag').textContent=word.cat||'';
+
+  if(mode==='scramble')renderScramble(word,el);
+  else if(mode==='synonym')renderMCQ('synonym',word,el);
+  else if(mode==='antonym')renderMCQ('antonym',word,el);
+  else if(mode==='fill')renderFill(word,el);
+  else if(mode==='pronunciation')renderPronunciation(word,el);
+  else if(mode==='plural')renderPlural(word,el);
+  else if(mode==='definition')renderDefinition(word,el);
+  else if(mode==='emoji')renderEmoji(word,el);
+  else if(mode==='homophone')renderHomophone(el);
+  else if(mode==='sentence')renderSentence(el);
+  else if(mode==='rhyme')renderRhyme(word,el);
+  else if(mode==='compound')renderCompound(el);
+  else if(mode==='prefix')renderPrefix(el);
+  else if(mode==='wordfamily')renderWordFamily(el);
+  else if(mode==='audio')renderAudio(word,el);
+}
+
+function renderScramble(word,el){
+  // Pick scramble sub-mode
+  const subModes=['tap-order','keyboard','tap-arrange'];
+  const sub=subModes[G.qIdx%3];
+  G.scrambleState.tapMode=sub;
+  const letters=shuffle(word.w.split(''));
+
+  let html=`<div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:12px">
+    Unscramble the ${word.cat} word:</div>`;
+
+  if(sub==='keyboard'){
+    html+=`<div class="tiles-row" style="margin-bottom:14px">${letters.map(l=>`<div class="tile">${l}</div>`).join('')}</div>
+    <div class="keyboard-wrap">
+      <input class="answer-input" type="text" id="answer-input" placeholder="Type the word"
+        autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
+        onkeydown="handleKey(event)" maxlength="${word.w.length}">
+      <button class="submit-btn" onclick="submitKeyboard()">Enter ↵</button>
+    </div>`;
+    el.innerHTML=html;
+    setTimeout(()=>document.getElementById('answer-input')?.focus(),100);
+  } else if(sub==='tap-order'){
+    // Tap letters in correct order
+    G.scrambleState.tiles=letters;
+    G.scrambleState.slots=Array(word.w.length).fill(null);
+    G.scrambleState.tapped=[];
+    html+=`<div style="font-size:.68rem;font-weight:700;color:rgba(255,255,255,.35);text-align:center;margin-bottom:8px">Tap the letters in the correct order:</div>
+    <div class="answer-slots" id="answer-slots">${Array(word.w.length).fill('<div class="letter-slot empty">_</div>').join('')}</div>
+    <div class="tiles-row" id="tiles-row">${letters.map((l,i)=>`<div class="tile" id="tile-${i}" onclick="tapLetterOrder(${i},'${l}')">${l}</div>`).join('')}</div>
+    <button onclick="clearScramble()" style="margin:8px auto;display:block;padding:5px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:99px;font-family:'Nunito',sans-serif;font-size:.65rem;font-weight:800;color:rgba(255,255,255,.45);cursor:pointer">Clear ↺</button>`;
+    el.innerHTML=html;
+  } else {
+    // Tap to arrange (tap any order, slots fill left to right, tap slot to remove)
+    G.scrambleState.tiles=letters;
+    G.scrambleState.placed=[];
+    html+=`<div style="font-size:.68rem;font-weight:700;color:rgba(255,255,255,.35);text-align:center;margin-bottom:8px">Tap letters to build the word:</div>
+    <div class="answer-slots" id="answer-slots">${Array(word.w.length).fill('<div class="letter-slot empty">_</div>').join('')}</div>
+    <div class="tiles-row" id="tiles-row">${letters.map((l,i)=>`<div class="tile" id="tile-${i}" onclick="tapLetterArrange(${i},'${l}')">${l}</div>`).join('')}</div>
+    <button onclick="clearScramble()" style="margin:8px auto;display:block;padding:5px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:99px;font-family:'Nunito',sans-serif;font-size:.65rem;font-weight:800;color:rgba(255,255,255,.45);cursor:pointer">Clear ↺</button>`;
+    el.innerHTML=html;
+  }
+}
+
+function tapLetterOrder(idx,letter){
+  if(G.answered)return;
+  const word=G.question.word.w;
+  const tapped=G.scrambleState.tapped||[];
+  const pos=tapped.length;
+  if(pos>=word.length)return;
+  // Check if correct letter for this position
+  if(letter===word[pos]){
+    tapped.push(letter);
+    G.scrambleState.tapped=tapped;
+    document.getElementById(`tile-${idx}`).classList.add('used');
+    const slots=document.getElementById('answer-slots');
+    const slotEls=slots.querySelectorAll('.letter-slot');
+    slotEls[pos].textContent=letter;
+    slotEls[pos].classList.remove('empty');
+    slotEls[pos].style.background='rgba(43,191,184,.2)';
+    if(tapped.length===word.length){
+      setTimeout(()=>processResult(true),300);
+    }
+  } else {
+    // Wrong letter - flash red
+    const tile=document.getElementById(`tile-${idx}`);
+    tile.style.background='rgba(232,69,69,.3)';
+    tile.style.borderColor='var(--red)';
+    setTimeout(()=>{tile.style.background='';tile.style.borderColor='';},500);
+    processResult(false);
+  }
+}
+
+function tapLetterArrange(idx,letter){
+  if(G.answered)return;
+  const placed=G.scrambleState.placed||[];
+  const word=G.question.word.w;
+  if(placed.length>=word.length)return;
+  placed.push({idx,letter});
+  G.scrambleState.placed=placed;
+  document.getElementById(`tile-${idx}`).classList.add('used');
+  const slots=document.getElementById('answer-slots');
+  const slotEls=slots.querySelectorAll('.letter-slot');
+  const pos=placed.length-1;
+  slotEls[pos].textContent=letter;
+  slotEls[pos].classList.remove('empty');
+  slotEls[pos].style.cursor='pointer';
+  slotEls[pos].onclick=()=>removeArrangeSlot(pos);
+  if(placed.length===word.length){
+    const formed=placed.map(p=>p.letter).join('');
+    setTimeout(()=>processResult(formed===word),300);
+  }
+}
+
+function removeArrangeSlot(pos){
+  if(G.answered)return;
+  const placed=G.scrambleState.placed;
+  const removed=placed.splice(pos,1)[0];
+  G.scrambleState.placed=placed;
+  document.getElementById(`tile-${removed.idx}`)?.classList.remove('used');
+  // Re-render slots
+  const slots=document.getElementById('answer-slots');
+  const slotEls=slots.querySelectorAll('.letter-slot');
+  placed.forEach((p,i)=>{slotEls[i].textContent=p.letter;slotEls[i].classList.remove('empty');});
+  for(let i=placed.length;i<slotEls.length;i++){slotEls[i].textContent='_';slotEls[i].classList.add('empty');}
+}
+
+function clearScramble(){
+  G.scrambleState.tapped=[];
+  G.scrambleState.placed=[];
+  const word=G.question.word.w;
+  const slots=document.getElementById('answer-slots');
+  if(slots){
+    const slotEls=slots.querySelectorAll('.letter-slot');
+    slotEls.forEach(s=>{s.textContent='_';s.classList.add('empty');s.style.background='';s.onclick=null;});
+  }
+  document.querySelectorAll('.tile').forEach(t=>t.classList.remove('used'));
+}
+
+function renderMCQ(type,word,el){
+  const isAnt=type==='antonym';
+  const correct=isAnt?word.ant:word.syn;
+  const prompt=isAnt?`What is the OPPOSITE of:`:`Another word for:`;
+  // Generate wrong options from other words
+  const others=G.wordBank.filter(w=>w.w!==word.w&&(isAnt?w.ant:w.syn));
+  const wrongs=shuffle(others).slice(0,3).map(w=>isAnt?w.ant:w.syn);
+  while(wrongs.length<3)wrongs.push(['enormous','tiny','brave','gentle','ancient','rapid'][wrongs.length]);
+  const opts=shuffle([correct,...wrongs.slice(0,3)]);
+  el.innerHTML=`<div style="font-size:.8rem;font-weight:700;color:rgba(255,255,255,.55);text-align:center;margin-bottom:8px">${prompt}</div>
+    <div class="question">${word.w}</div>
+    <div class="opts">${opts.map(o=>`<button class="opt" onclick="checkOpt(this,'${o}','${correct}')">${cap(o)}</button>`).join('')}</div>`;
+}
+
+function renderFill(word,el){
+  const sentences={
+    CAT:'The ___ sat quietly on the windowsill.',DOG:'My ___ barked at the postman.',
+    SUN:'The ___ shines brightly in the sky.',BIG:'The ___ elephant drank from the river.',
+    ELEPHANT:'The ___ used its trunk to pick up fruit.',ANCIENT:'Archaeologists discovered an ___ temple.',
+    BRAVE:'The ___ knight crossed the dark forest.',ENORMOUS:'They found an ___ diamond in the cave.',
+    MIGRATE:'Birds ___ south every winter to stay warm.',HABITAT:'The polar bear\'s ___ is the Arctic.',
+    GENTLE:'Be ___ with the baby rabbit.',GENEROUS:'She was ___ and shared her lunch.',
+    DEFAULT:`The ___ ${word.cat.toLowerCase()} was very interesting.`
+  };
+  const sent=(sentences[word.w]||sentences.DEFAULT).replace('DEFAULT',word.w.toLowerCase());
+  const blank=sent.replace(`${word.w.toLowerCase()}`,`___ `).replace(word.w,`___`);
+  const others=shuffle(G.wordBank.filter(w=>w.w!==word.w&&w.cat===word.cat)).slice(0,3).map(w=>cap(w.w));
+  while(others.length<3)others.push(['quickly','gently','bright'][others.length]||'large');
+  const opts=shuffle([cap(word.w),...others.slice(0,3)]);
+  el.innerHTML=`<div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:10px">Fill in the blank:</div>
+    <div class="question small" style="line-height:1.6">"${blank}"</div>
+    <div class="opts" style="margin-top:12px">${opts.map(o=>`<button class="opt" onclick="checkOpt(this,'${o}','${cap(word.w)}')">${o}</button>`).join('')}</div>`;
+}
+
+function renderPronunciation(word,el){
+  const syllables=word.syl.split('·');
+  el.innerHTML=`<div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:10px">Listen and learn how to say:</div>
+    <div class="question" style="font-size:2rem">${word.w}</div>
+    <div class="syllable-bar">${syllables.map((s,i)=>`<div class="syl ${i===word.stress?'stress':''}">${s.toUpperCase()}</div>`).join('<span style="color:rgba(255,255,255,.25);font-size:1.2rem">·</span>')}</div>
+    <button class="speak-btn" id="speak-btn" onclick="speakWord()">🔊 Hear it spoken</button>
+    <div style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:8px">Definition: <span style="color:rgba(255,255,255,.75)">${word.def}</span></div>
+    <div style="font-size:.68rem;font-weight:700;color:rgba(255,255,255,.35);text-align:center;margin-bottom:14px">Category: ${word.cat}</div>
+    <button onclick="pronNext()" style="width:100%;padding:11px;border:none;border-radius:13px;
+      background:linear-gradient(135deg,var(--purple),#9B6BDF);color:#fff;font-family:'Nunito',sans-serif;
+      font-size:.9rem;font-weight:900;cursor:pointer;box-shadow:0 3px 12px rgba(124,92,191,.3)">
+      Got it! Next Question →</button>`;
+  // Auto-speak after a moment
+  setTimeout(()=>speakWord(),600);
+}
+
+function speakWord(){
+  const word=G.question.word.w;
+  const btn=document.getElementById('speak-btn');
+  if(btn){btn.classList.add('speaking');btn.textContent='🔊 Speaking...';}
+  speak(word);
+  setTimeout(()=>{if(btn){btn.classList.remove('speaking');btn.textContent='🔊 Hear it spoken';}},1500);
+}
+
+function renderPlural(word,el){
+  const isToPlural=Math.random()>0.5;
+  if(isToPlural){
+    const others=shuffle(G.wordBank.filter(w=>w.w!==word.w&&w.plural)).slice(0,3).map(w=>w.plural);
+    while(others.length<3)others.push(['cats','dogs','trees'][others.length]||'birds');
+    const opts=shuffle([word.plural,...others.slice(0,3)]);
+    el.innerHTML=`<div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:8px">What is the PLURAL of:</div>
+      <div class="question">${word.w}</div>
+      <div class="opts">${opts.map(o=>`<button class="opt" onclick="checkOpt(this,'${o}','${word.plural}')">${o}</button>`).join('')}</div>`;
+  } else {
+    const others=shuffle(G.wordBank.filter(w=>w.w!==word.w&&w.plural)).slice(0,3).map(w=>w.w);
+    while(others.length<3)others.push(['cat','dog','tree'][others.length]||'bird');
+    const opts=shuffle([word.w,...others.slice(0,3)]);
+    el.innerHTML=`<div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:8px">What is the SINGULAR of:</div>
+      <div class="question">${word.plural.toUpperCase()}</div>
+      <div class="opts">${opts.map(o=>`<button class="opt" onclick="checkOpt(this,'${o}','${word.w}')">${cap(o)}</button>`).join('')}</div>`;
+  }
+}
+
+function renderDefinition(word,el){
+  const others=shuffle(G.wordBank.filter(w=>w.w!==word.w)).slice(0,3).map(w=>w.w);
+  const opts=shuffle([word.w,...others]);
+  el.innerHTML=`<div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:8px">Which word matches this definition?</div>
+    <div style="background:rgba(255,255,255,.06);border-radius:12px;padding:14px 16px;margin-bottom:14px;font-size:.88rem;font-weight:700;color:rgba(255,255,255,.85);line-height:1.6;text-align:center">"${word.def}"</div>
+    <div class="opts">${opts.map(o=>`<button class="opt" onclick="checkOpt(this,'${o}','${word.w}')">${o}</button>`).join('')}</div>`;
+}
+
+function renderEmoji(word,el){
+  const others=shuffle(G.wordBank.filter(w=>w.w!==word.w&&w.emoji)).slice(0,3).map(w=>w.w);
+  const opts=shuffle([word.w,...others]);
+  el.innerHTML=`<div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:8px">What word does this emoji show?</div>
+    <div class="emoji-display">${word.emoji}</div>
+    <div class="opts">${opts.map(o=>`<button class="opt" onclick="checkOpt(this,'${o}','${word.w}')">${o}</button>`).join('')}</div>`;
+}
+
+function renderHomophone(el){
+  const pool=playerGrade<=1?HOMOPHONES_G1:[...HOMOPHONES_G1,...HOMOPHONES_G3];
+  const h=pool[Math.floor(Math.random()*pool.length)];
+  G.question.homophone=h;
+  G.question.word={w:h.answer,syl:h.answer,stress:0,cat:'Homophones',emoji:'👂',
+    def:`The correct homophone for: "${h.sentence}"`,
+    syn:null,ant:null,plural:null,family:null,rhyme:null};
+  el.innerHTML=`<div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:10px">Choose the correct word:</div>
+    <div class="question small" style="line-height:1.6">"${h.sentence}"</div>
+    <div class="opts" style="margin-top:12px">${h.pair.map(o=>`<button class="opt" onclick="checkOpt(this,'${o}','${h.answer}')">${o}</button>`).join('')}</div>`;
+}
+
+function renderSentence(el){
+  const pool=playerGrade<=1?SENTENCES_G1:[...SENTENCES_G1,...SENTENCES_G3];
+  const s=pool[Math.floor(Math.random()*pool.length)];
+  G.question.sentenceData=s;
+  G.question.word={w:s.answer,syl:s.answer,stress:0,cat:'Sentence Building',emoji:'📝',
+    def:'Put the words in the correct order to make a sentence.',
+    syn:null,ant:null,plural:null,family:null,rhyme:null};
+  G.sentenceState={placed:[],available:[...s.words]};
+  const shuffled=shuffle([...s.words]);
+  el.innerHTML=`<div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:10px">Put these words in the correct order:</div>
+    <div class="sentence-slots" id="sentence-slots"><span style="font-size:.72rem;color:rgba(255,255,255,.25)">Tap words to build your sentence...</span></div>
+    <div class="sentence-words" id="sentence-words">${shuffled.map((w,i)=>`<div class="sent-word" id="sw-${i}" onclick="tapSentWord('${w}',${i})">${w}</div>`).join('')}</div>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <button onclick="clearSentence()" style="padding:6px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:99px;font-family:'Nunito',sans-serif;font-size:.65rem;font-weight:800;color:rgba(255,255,255,.45);cursor:pointer">Clear ↺</button>
+      <button onclick="submitSentence()" style="padding:6px 14px;background:rgba(43,191,184,.15);border:1px solid rgba(43,191,184,.25);border-radius:99px;font-family:'Nunito',sans-serif;font-size:.65rem;font-weight:800;color:var(--teal);cursor:pointer">Check ✓</button>
+    </div>`;
+}
+
+function tapSentWord(word,idx){
+  if(G.answered)return;
+  const el=document.getElementById(`sw-${idx}`);
+  if(el.classList.contains('used'))return;
+  el.classList.add('used');
+  G.sentenceState.placed.push({word,idx});
+  const slots=document.getElementById('sentence-slots');
+  // Clear placeholder
+  if(slots.querySelector('span'))slots.innerHTML='';
+  const chip=document.createElement('div');
+  chip.className='sent-slot';chip.textContent=word;
+  chip.onclick=()=>removeSentSlot(chip,idx,word);
+  slots.appendChild(chip);
+}
+
+function removeSentSlot(chip,idx,word){
+  if(G.answered)return;
+  chip.remove();
+  G.sentenceState.placed=G.sentenceState.placed.filter(p=>!(p.idx===idx&&p.word===word));
+  const el=document.getElementById(`sw-${idx}`);
+  if(el)el.classList.remove('used');
+  const slots=document.getElementById('sentence-slots');
+  if(!slots.children.length)slots.innerHTML='<span style="font-size:.72rem;color:rgba(255,255,255,.25)">Tap words to build your sentence...</span>';
+}
+
+function clearSentence(){
+  G.sentenceState.placed=[];
+  const slots=document.getElementById('sentence-slots');
+  slots.innerHTML='<span style="font-size:.72rem;color:rgba(255,255,255,.25)">Tap words to build your sentence...</span>';
+  document.querySelectorAll('.sent-word').forEach(w=>w.classList.remove('used'));
+}
+
+function submitSentence(){
+  if(G.answered)return;
+  const formed=G.sentenceState.placed.map(p=>p.word).join(' ');
+  const correct=G.question.sentenceData.answer;
+  processResult(formed.toLowerCase()===correct.toLowerCase());
+}
+
+function renderRhyme(word,el){
+  const rhyme=word.rhyme;
+  const others=shuffle(G.wordBank.filter(w=>w.w!==word.w&&w.rhyme&&w.rhyme!==rhyme)).slice(0,3).map(w=>w.rhyme);
+  while(others.length<3)others.push(['day','say','way'][others.length]||'play');
+  const opts=shuffle([rhyme,...others.slice(0,3)]);
+  el.innerHTML=`<div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:8px">Which word RHYMES with:</div>
+    <div class="question">${word.w}</div>
+    <div class="opts">${opts.map(o=>`<button class="opt" onclick="checkOpt(this,'${o}','${rhyme}')">${o.toUpperCase()}</button>`).join('')}</div>`;
+}
+
+function renderCompound(el){
+  const pool=playerGrade<=1?COMPOUNDS_G1:[...COMPOUNDS_G1,...COMPOUNDS_G3];
+  const c=pool[Math.floor(Math.random()*pool.length)];
+  G.question.compound=c;
+  G.question.word={w:c.answer,syl:c.answer,stress:0,cat:'Compound Words',emoji:c.emoji,
+    def:`${c.parts[0]} + ${c.parts[1]} = ?`,syn:null,ant:null,plural:null,family:null,rhyme:null};
+  const others=shuffle(pool.filter(p=>p.answer!==c.answer)).slice(0,3).map(p=>p.answer);
+  const opts=shuffle([c.answer,...others]);
+  el.innerHTML=`<div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:12px">Combine these words to make a compound word:</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px">
+      <div style="background:rgba(240,120,48,.15);border:1.5px solid rgba(240,120,48,.3);border-radius:11px;padding:10px 16px;font-size:1.2rem;font-weight:900;color:#FFB060">${c.parts[0]}</div>
+      <span style="font-size:1.5rem;color:rgba(255,255,255,.4)">+</span>
+      <div style="background:rgba(240,120,48,.15);border:1.5px solid rgba(240,120,48,.3);border-radius:11px;padding:10px 16px;font-size:1.2rem;font-weight:900;color:#FFB060">${c.parts[1]}</div>
+      <span style="font-size:1.5rem;color:rgba(255,255,255,.4)">=</span>
+      <div style="background:rgba(255,255,255,.06);border:1.5px dashed rgba(255,255,255,.2);border-radius:11px;padding:10px 16px;font-size:1.2rem;font-weight:900;color:rgba(255,255,255,.3)">?</div>
+    </div>
+    <div class="opts">${opts.map(o=>`<button class="opt" onclick="checkOpt(this,'${o}','${c.answer}')">${o}</button>`).join('')}</div>`;
+}
+
+function renderPrefix(el){
+  const pool=playerGrade<=1?PREFIXES_G1:[...PREFIXES_G1,...PREFIXES_G3];
+  const p=pool[Math.floor(Math.random()*pool.length)];
+  G.question.prefixData=p;
+  G.question.word={w:p.answer,syl:p.answer,stress:0,cat:'Prefix',emoji:'✂️',
+    def:`Add ${p.prefix}- to ${p.base}`,syn:null,ant:null,plural:null,family:null,rhyme:null};
+  const others=shuffle(pool.filter(x=>x.answer!==p.answer)).slice(0,3).map(x=>x.answer);
+  const opts=shuffle([p.answer,...others]);
+  el.innerHTML=`<div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:12px">Add the prefix to make a new word:</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px">
+      <div style="background:rgba(74,144,217,.2);border:1.5px solid rgba(74,144,217,.35);border-radius:11px;padding:10px 16px;font-size:1.2rem;font-weight:900;color:#90CAF9">${p.prefix}-</div>
+      <span style="font-size:1.5rem;color:rgba(255,255,255,.4)">+</span>
+      <div style="background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);border-radius:11px;padding:10px 16px;font-size:1.2rem;font-weight:900;color:#fff">${p.base}</div>
+    </div>
+    <div class="opts">${opts.map(o=>`<button class="opt" onclick="checkOpt(this,'${o}','${p.answer}')">${o}</button>`).join('')}</div>`;
+}
+
+function renderWordFamily(el){
+  const pool=playerGrade<=1?FAMILIES_G1:[...FAMILIES_G1,...FAMILIES_G3];
+  const f=pool[Math.floor(Math.random()*pool.length)];
+  G.question.familyData=f;
+  G.question.word={w:f.answer,syl:f.answer,stress:0,cat:'Word Family',emoji:'🌳',
+    def:`Complete the word family starting with ${f.base}`,syn:null,ant:null,plural:null,family:null,rhyme:null};
+  const chain=[...f.chain];chain[f.blank]='___';
+  const others=shuffle(pool.filter(x=>x.answer!==f.answer)).slice(0,3).map(x=>x.answer);
+  const opts=shuffle([f.answer,...others]);
+  el.innerHTML=`<div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:12px">Complete the word family:</div>
+    <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:16px">
+      ${chain.map((w,i)=>`<div style="background:${w==='___'?'rgba(255,255,255,.04)':'rgba(39,174,96,.1)'};border:1.5px solid ${w==='___'?'rgba(255,255,255,.18) dashed':'rgba(39,174,96,.25)'};border-style:${w==='___'?'dashed':'solid'};border-radius:10px;padding:8px 12px;font-size:.85rem;font-weight:900;color:${w==='___'?'rgba(255,255,255,.3)':'#90FFB0'}">${w}</div>${i<chain.length-1?'<span style="color:rgba(255,255,255,.25);font-size:1.1rem;display:flex;align-items:center">→</span>':''}`).join('')}
+    </div>
+    <div class="opts">${opts.map(o=>`<button class="opt" onclick="checkOpt(this,'${o}','${f.answer}')">${o}</button>`).join('')}</div>`;
+}
+
+function renderAudio(word,el){
+  el.innerHTML=`<div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:10px">Listen to the word, then spell it:</div>
+    <button class="speak-btn" id="speak-btn" onclick="speakWord()" style="margin-bottom:14px">🔊 Hear the word</button>
+    <div style="font-size:.68rem;font-weight:700;color:rgba(255,255,255,.35);text-align:center;margin-bottom:10px">Category hint: ${word.cat}</div>
+    <div class="keyboard-wrap">
+      <input class="answer-input" type="text" id="answer-input" placeholder="Type what you hear"
+        autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
+        onkeydown="handleKey(event)" maxlength="20">
+      <button class="submit-btn" onclick="submitKeyboard()">Check ✓</button>
+    </div>`;
+  setTimeout(()=>speakWord(),500);
+  setTimeout(()=>document.getElementById('answer-input')?.focus(),200);
+}
+
+// ── Answer handlers ───────────────────────────────────────────────
+function checkOpt(btn,chosen,correct){
+  if(G.answered)return;
+  document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  if(chosen===correct){btn.classList.add('correct');processResult(true);}
+  else{btn.classList.add('wrong');processResult(false);}
+}
+
+function handleKey(e){if(e.key==='Enter')submitKeyboard();}
+function submitKeyboard(){
+  const inp=document.getElementById('answer-input');
+  if(!inp||G.answered)return;
+  const val=inp.value.trim().toUpperCase();
+  if(!val)return;
+  G.answered=true;
+  const correct=G.question.word.w.toUpperCase();
+  inp.className=`answer-input ${val===correct?'correct':'wrong'}`;
+  processResult(val===correct);
+}
+
+// ── Process result ────────────────────────────────────────────────
+function processResult(isCorrect){
+  G.answered=true;
+  clearInterval(G.qInterval);
+  const mode=G.question.mode;
+  const word=G.question.word;
+  let earned=0;
+
+  if(isCorrect){
+    const base=10+Math.min(G.round-1,5)*5;
+    const streakBonus=G.streak>=7?20:G.streak>=5?12:G.streak>=3?6:0;
+    const hintPenalty=G.hintUsed?0.5:1;
+    earned=Math.floor((base+streakBonus)*hintPenalty);
+    G.stars+=earned;G.roundStars+=earned;
+    G.correct++;G.totalCorrect++;G.totalAsked++;
+    G.streak++;
+    if(G.streak>G.bestStreak)G.bestStreak=G.streak;
+    if(G.streak>G.sessionBestStreak)G.sessionBestStreak=G.streak;
+    checkLifeRestore();
+    updateStreakBadge();
+    const combo=COMBOS.slice().reverse().find(c=>G.streak===c.s);
+    if(combo)showCombo(combo.t,combo.sub);
+  } else {
+    G.lives--;G.streak=0;G.totalAsked++;
+    G.lifeRestoreStreak=0;
+    updateStreakBadge();
+    updateLives();
+    if(mode!=='pronunciation'){
+      if(G.lives<=0){showExplanation(false,()=>{endGame();});return;}
+    }
+  }
+
+  if(!G.modeStats[mode])G.modeStats[mode]={c:0,t:0};
+  G.modeStats[mode].t++;
+  if(isCorrect)G.modeStats[mode].c++;
+
+  document.getElementById('g-stars').textContent=G.stars.toLocaleString();
+  updateLives();
+  showExplanation(isCorrect,()=>{G.qIdx++;loadQuestion();});
+}
+
+const COMBOS=[{s:3,t:'WORD WIZARD! 🔤',sub:'3 in a row!'},{s:5,t:'VOCABULARY KING! 👑',sub:'5 in a row!'},{s:7,t:'WORD MASTER! 🌟',sub:'7 in a row!'},{s:10,t:'WORD GOD! 💥',sub:'10 in a row!'}];
+
+function showExplanation(isCorrect,onNext){
+  const word=G.question.word;
+  const mode=G.question.mode;
+  const ec=document.getElementById('explanation-card');
+
+  document.getElementById('ex-icon').textContent=isCorrect?'✅':'❌';
+  document.getElementById('ex-answer').innerHTML=`Answer: <span>${word.w}</span>`;
+
+  // Mode-specific explanation
+  let explain='';
+  if(mode==='pronunciation')explain=`${word.w} is pronounced: ${word.syl.toUpperCase()}. ${word.def}`;
+  else if(mode==='synonym')explain=`${word.w} and ${word.syn} mean the same thing. ${word.def}`;
+  else if(mode==='antonym')explain=`${word.ant} is the opposite of ${word.w}. ${word.def}`;
+  else if(mode==='fill')explain=`"${word.w}" fits the blank. ${word.def}`;
+  else if(mode==='plural')explain=`The plural of ${word.w.toLowerCase()} is ${word.plural}. ${word.plural&&word.plural!==word.w.toLowerCase()+'s'?'This is an irregular plural!':'Add -s to make it plural.'}`;
+  else if(mode==='definition')explain=`${word.w}: ${word.def}`;
+  else if(mode==='emoji')explain=`${word.emoji} = ${word.w}. ${word.def}`;
+  else if(mode==='homophone')explain=G.question.homophone?.explain||'Homophones sound the same but have different spellings and meanings.';
+  else if(mode==='sentence')explain=G.question.sentenceData?.explain||'Word order is important in English sentences.';
+  else if(mode==='rhyme')explain=`${word.w} and ${word.rhyme} rhyme — they have the same ending sound!`;
+  else if(mode==='compound')explain=G.question.compound?.explain||`Two words joined together make a compound word.`;
+  else if(mode==='prefix')explain=G.question.prefixData?.explain||'A prefix is added to the beginning of a word to change its meaning.';
+  else if(mode==='wordfamily')explain=G.question.familyData?.explain||'Words in the same family share a root word.';
+  else if(mode==='audio')explain=`${word.w} is spelled: ${word.w.split('').join(' - ')}. ${word.def}`;
+  else explain=word.def||'';
+
+  document.getElementById('ex-explain').textContent=explain;
+
+  // Word detail panel
+  const detail=document.getElementById('ex-word-detail');
+  let rows='';
+  if(word.syl&&mode!=='pronunciation')rows+=`<div class="ewd-row"><div class="ewd-lbl">Syllables</div><div class="ewd-val">${word.syl.toUpperCase()}</div></div>`;
+  if(word.syn)rows+=`<div class="ewd-row"><div class="ewd-lbl">Synonym</div><div class="ewd-val">${cap(word.syn)}</div></div>`;
+  if(word.ant)rows+=`<div class="ewd-row"><div class="ewd-lbl">Antonym</div><div class="ewd-val">${cap(word.ant)}</div></div>`;
+  if(word.plural)rows+=`<div class="ewd-row"><div class="ewd-lbl">Plural</div><div class="ewd-val">${word.plural}</div></div>`;
+  if(word.family&&word.family.length)rows+=`<div class="ewd-row"><div class="ewd-lbl">Family</div><div class="ewd-val">${word.family.join(' → ')}</div></div>`;
+  detail.innerHTML=rows;
+  detail.style.display=rows?'block':'none';
+
+  const nextBtn=document.getElementById('ex-next');
+  nextBtn.className=`ex-next ${mode==='pronunciation'?'pron':isCorrect?'ok':'no'}`;
+  nextBtn.textContent=G.qIdx>=14||G.lives<=0?'See Results →':'Next →';
+
+  ec.className=`explanation-card show ${mode==='pronunciation'?'ok':isCorrect?'ok':'no'}`;
+  ec.style.display='block';
+  window._exNextFn=onNext;
+  setTimeout(()=>ec.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function advanceQuestion(){
+  clearTimeout(G.hintTimer);
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('hint-box').className='hint-box';
+  const hintBtn=document.getElementById('hint-btn');
+  if(hintBtn)hintBtn.style.display='none';
+  if(window._exNextFn){window._exNextFn();window._exNextFn=null;}
+}
+
+function pronNext(){
+  // Pronunciation counts as correct (learning mode — always reward)
+  clearTimeout(G.hintTimer);
+  clearInterval(G.qInterval);
+  G.answered=true;
+  const base=10+Math.min(G.round-1,5)*5;
+  G.stars+=base;G.roundStars+=base;
+  G.correct++;G.totalCorrect++;G.totalAsked++;
+  G.streak++;
+  if(G.streak>G.bestStreak)G.bestStreak=G.streak;
+  if(G.streak>G.sessionBestStreak)G.sessionBestStreak=G.streak;
+  checkLifeRestore();updateStreakBadge();updateLives();
+  document.getElementById('g-stars').textContent=G.stars.toLocaleString();
+  if(!G.modeStats['pronunciation'])G.modeStats['pronunciation']={c:0,t:0};
+  G.modeStats['pronunciation'].c++;G.modeStats['pronunciation'].t++;
+  G.qIdx++;
+  loadQuestion();
+}
+
+// ── UI helpers ────────────────────────────────────────────────────
+function updateLives(){let h='';for(let i=0;i<3;i++)h+=i<G.lives?'❤️':'🖤';document.getElementById('lives-display').textContent=h;}
+function updateStreakBadge(){
+  const el=document.getElementById('streak-badge');
+  el.textContent=`${G.streak} 🔥`;
+  el.className=`streak-badge${G.streak>=7?' s7':G.streak>=5?' s5':G.streak>=3?' s3':''}`;
+}
+function updateQTimerBar(){
+  if(G.qMaxTime>=999){document.getElementById('q-timer-bar').style.width='100%';return;}
+  const pct=Math.max(0,(G.qTimer/G.qMaxTime)*100);
+  const bar=document.getElementById('q-timer-bar');
+  bar.style.width=pct+'%';
+  bar.style.background=pct>60?'linear-gradient(90deg,var(--green),var(--teal))':pct>30?'linear-gradient(90deg,var(--amber2),var(--amber))':'linear-gradient(90deg,var(--red),#F07070)';
+}
+function updateGlobalTimer(t){
+  const ring=document.getElementById('gt-ring');
+  const num=document.getElementById('gt-num');
+  if(G.qMaxTime>=999){num.textContent='∞';ring.style.strokeDashoffset=0;return;}
+  num.textContent=Math.max(0,Math.ceil(t));
+  ring.style.strokeDashoffset=94.2*(1-t/G.qMaxTime);
+  ring.style.stroke=t<=5?'var(--red)':t<=10?'var(--orange)':'#C8A8FF';
+  num.style.color=t<=5?'var(--red)':t<=10?'var(--orange)':'#C8A8FF';
+}
+function showCombo(text,sub){
+  const el=document.getElementById('combo-announce');
+  document.getElementById('ca-text').textContent=text;
+  document.getElementById('ca-sub').textContent=sub;
+  el.className='combo-announce show';
+  setTimeout(()=>{el.className='combo-announce hide';},1400);
+  setTimeout(()=>{el.className='combo-announce';},1700);
+}
+
+
+// ── Hint system ───────────────────────────────────────────────────
+function getHintText(){
+  const {word,mode}=G.question;
+  if(mode==='scramble'){
+    const w=word.w;
+    return `First letter: ${w[0]}, Last letter: ${w[w.length-1]}, Length: ${w.length} letters`;
+  }
+  if(mode==='synonym')return `The synonym starts with the letter "${word.syn?word.syn[0].toUpperCase():'?'}"`;
+  if(mode==='antonym')return `The antonym starts with the letter "${word.ant?word.ant[0].toUpperCase():'?'}"`;
+  if(mode==='fill')return `Think about the category: ${word.cat}`;
+  if(mode==='definition')return `The word starts with "${word.w[0]}" and has ${word.w.length} letters`;
+  if(mode==='emoji')return `This word starts with "${word.w[0]}" and belongs to: ${word.cat}`;
+  if(mode==='plural')return `Think about how words in the "${word.cat}" category usually change`;
+  if(mode==='homophone'){
+    const h=G.question.homophone;
+    return h?`Think about the MEANING of the word in context, not how it sounds`:'Think about the context of the sentence';
+  }
+  if(mode==='rhyme')return `The answer rhymes with ${word.w} — same ending sound!`;
+  if(mode==='compound'){
+    const c=G.question.compound;
+    return c?`The second part of this compound word is: ${c.parts[1]}`:'Think: what goes with the first word?';
+  }
+  if(mode==='prefix'){
+    const p=G.question.prefixData;
+    return p?`The prefix ${p.prefix}- means: ${p.prefix==='UN'?'NOT':p.prefix==='RE'?'AGAIN':p.prefix==='PRE'?'BEFORE':p.prefix==='DIS'?'NOT/OPPOSITE':p.prefix==='MIS'?'WRONGLY':p.prefix==='OVER'?'TOO MUCH':'changes the meaning'}`:'Think about what the prefix adds to the base word';
+  }
+  if(mode==='wordfamily'){
+    const f=G.question.familyData;
+    return f?`The missing word has ${f.answer.length} letters and starts with "${f.answer[0]}"`:'Look at how the other words in the family change';
+  }
+  if(mode==='audio')return `The word has ${word.w.length} letters and belongs to: ${word.cat}`;
+  if(mode==='sentence')return 'Start with the word that tells WHO or WHAT the sentence is about';
+  return `The answer has ${word.w.length} letters`;
+}
+
+function useHint(){
+  if(G.hintUsed||G.answered)return;
+  G.hintUsed=true;
+  const btn=document.getElementById('hint-btn');
+  const box=document.getElementById('hint-box');
+  const txt=document.getElementById('hint-txt');
+  if(btn)btn.className='hint-btn-float used';
+  if(txt)txt.textContent=getHintText();
+  if(box)box.className='hint-box show';
+}
+
+// ── Life restore ──────────────────────────────────────────────────
+function checkLifeRestore(){
+  if(G.lives>=3)return; // already full
+  G.lifeRestoreStreak++;
+  if(G.lifeRestoreStreak>=3){
+    G.lifeRestoreStreak=0;
+    G.lives=Math.min(3,G.lives+1);
+    updateLives();
+    showLifeRestore();
+  }
+}
+
+function showLifeRestore(){
+  const el=document.getElementById('life-restore');
+  el.className='life-restore show';
+  setTimeout(()=>{el.className='life-restore hide';},1600);
+  setTimeout(()=>{el.className='life-restore';},1900);
+}
+
+// ── Game flow ─────────────────────────────────────────────────────
+function startGame(){
+  G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
+    streak:0,bestStreak:0,sessionBestStreak:0,
+    qTimer:0,qInterval:null,qMaxTime:25,answered:false,roundStars:0,
+    question:null,wordBank:getWordBank(),bankIdx:0,modeStats:{},
+    scrambleState:{slots:[],tiles:[],tapMode:'tap-order'},
+    sentenceState:{placed:[],available:[]},
+    lifeRestoreStreak:0,hintUsed:false,hintTimer:null};
+  document.getElementById('g-player-label').textContent=`${cap(playerName)} · Grade ${playerGrade}`;
+  showScreen('gameScreen');
+  loadQuestion();
+}
+
+function loadQuestion(){
+  if(G.qIdx>=15){endRound();return;}
+  G.answered=false;
+  G.hintUsed=false;
+  clearTimeout(G.hintTimer);
+  G.question=buildQuestion();
+  document.getElementById('g-qnum').textContent=`${G.qIdx+1}/15`;
+  document.getElementById('g-round').textContent=G.round;
+  renderQuestion();
+  // Reset hint UI
+  const hintBtn=document.getElementById('hint-btn');
+  const hintBox=document.getElementById('hint-box');
+  if(hintBtn){hintBtn.style.display='none';hintBtn.className='hint-btn-float';}
+  if(hintBox){hintBox.className='hint-box';}
+  clearInterval(G.qInterval);
+  if(G.qMaxTime<999){
+    // TIMED (scramble only)
+    document.getElementById('timer-wrap-el').style.display='block';
+    document.getElementById('gt-wrap').style.visibility='visible';
+    G.qTimer=G.qMaxTime;updateQTimerBar();updateGlobalTimer(G.qTimer);
+    G.qInterval=setInterval(()=>{
+      G.qTimer-=0.1;updateQTimerBar();updateGlobalTimer(G.qTimer);
+      if(G.qTimer<=0){clearInterval(G.qInterval);timeoutQuestion();}
+    },100);
+  } else {
+    // UNTIMED — hide timer bar, show infinity
+    document.getElementById('timer-wrap-el').style.display='none';
+    document.getElementById('gt-wrap').style.visibility='hidden';
+    document.getElementById('gt-num').textContent='';
+  }
+  // Show hint after 5 seconds (not on pronunciation — it has no answer)
+  if(G.question.mode!=='pronunciation'){
+    G.hintTimer=setTimeout(()=>{
+      if(!G.answered){
+        const btn=document.getElementById('hint-btn');
+        if(btn)btn.style.display='block';
+      }
+    },5000);
+  }
+}
+
+function timeoutQuestion(){
+  if(G.answered)return;
+  document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  G.lives--;G.streak=0;G.totalAsked++;
+  updateLives();updateStreakBadge();
+  const t=G.question.mode;
+  if(!G.modeStats[t])G.modeStats[t]={c:0,total:0};
+  G.modeStats[t].total++;
+  if(G.lives<=0){showExplanation(false,()=>endGame());return;}
+  showExplanation(false,()=>{G.qIdx++;loadQuestion();});
+}
+
+function endRound(){
+  clearInterval(G.qInterval);
+  const acc=G.totalAsked>0?Math.round(G.totalCorrect/G.totalAsked*100):0;
+  document.getElementById('re-icon').textContent=G.correct>=12?'🏆':G.correct>=8?'⭐':G.correct>=5?'💪':'🌱';
+  document.getElementById('re-title').textContent=`Round ${G.round} Complete!`;
+  document.getElementById('re-correct').textContent=G.correct;
+  document.getElementById('re-acc').textContent=acc+'%';
+  document.getElementById('re-stars-r').textContent=G.roundStars.toLocaleString();
+  document.getElementById('re-streak-r').textContent=G.bestStreak;
+  document.getElementById('re-msg').textContent=G.correct>=12?'Amazing vocabulary! 🌟':G.correct>=8?'Great word work! 💪':G.correct>=5?'Good effort! 📈':'Keep practising! 🌱';
+  document.getElementById('re-next-btn').textContent=`Round ${G.round+1} →`;
+  const modes=Object.entries(G.modeStats).filter(([,v])=>v.t>0);
+  const mb=document.getElementById('mode-breakdown');
+  mb.innerHTML=modes.length?`<div class="mb-title">Mode Accuracy This Round</div>`+
+    modes.map(([name,{c,t}])=>{const pct=Math.round(c/t*100);return `<div class="mb-row"><div class="mb-name">${MODE_LABELS[name]||name}</div><div class="mb-bar-bg"><div class="mb-bar-fill" style="width:${pct}%;background:${pct>=80?'var(--green)':pct>=50?'var(--amber)':'var(--red)'}"></div></div><div class="mb-pct">${pct}%</div></div>`;}).join(''):'';
+  showScreen('roundEndScreen');
+}
+
+function nextRound(){G.round++;G.qIdx=0;G.roundStars=0;G.correct=0;G.streak=0;G.bestStreak=0;G.modeStats={};showScreen('gameScreen');loadQuestion();}
+
+async function endGame(){
+  clearInterval(G.qInterval);
+  showScreen('gameOverScreen');
+  const total=G.stars;
+  document.getElementById('go-score').textContent=total.toLocaleString()+' ⭐';
+  document.getElementById('go-earned').textContent=`+${total.toLocaleString()} stars saved to your account`;
+  document.getElementById('go-rounds').textContent=G.round;
+  document.getElementById('go-correct').textContent=G.totalCorrect;
+  document.getElementById('go-best-streak').textContent=G.sessionBestStreak;
+  const isNewBest=total>personalBest;
+  if(isNewBest)personalBest=total;
+  document.getElementById('go-pb').textContent=personalBest.toLocaleString();
+  document.getElementById('new-best-banner').style.display=isNewBest?'block':'none';
+  document.getElementById('go-msg').textContent=total>=500?'You are a Word Legend! 📚':total>=300?'Outstanding vocabulary! 🌟':total>=150?'Great word skills! 💪':'Keep reading and practising! 🌱';
+  document.getElementById('go-trophy').textContent=total>=500?'🏆':total>=300?'⭐':total>=150?'💪':'🌱';
+  if(playerId&&total>0){
+    try{
+      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,amount:total,reason:`Word Builder — ${G.round} rounds, ${G.totalCorrect} correct`,category:'game'}});
+      const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.word-builder`);
+      if(rows&&rows.length){
+        await db(`game_scores?player_id=eq.${playerId}&game_key=eq.word-builder`,{method:'PATCH',prefer:'return=minimal',body:{best_score:isNewBest?total:rows[0].best_score,best_round:G.round,total_plays:(rows[0].total_plays||0)+1,last_played:new Date().toISOString()}});
+      } else {
+        await db('game_scores',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,game_key:'word-builder',best_score:total,best_round:G.round,total_plays:1}});
+      }
+    }catch(e){}
+  }
+}
+
+function restartGame(){startGame();}
+function goHome(){window.location.href='index.html?player='+playerName;}
+function confirmQuit(){if(confirm('Quit Word Builder? Progress will be lost.'))goHome();}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+// ── Init ──────────────────────────────────────────────────────────
+async function init(){
+  try{
+    const players=await db('players?select=*');
+    const p=players.find(x=>x.name.toLowerCase()===playerName.toLowerCase());
+    if(p){playerId=p.id;playerGrade=p.grade||3;}
+  }catch(e){}
+  if(playerId){
+    try{
+      const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.word-builder`);
+      if(rows&&rows.length){personalBest=rows[0].best_score||0;document.getElementById('pb-row').style.display='flex';document.getElementById('pb-val').textContent=personalBest.toLocaleString();}
+    }catch(e){}
+  }
+  document.getElementById('start-greeting').textContent=`Ready to explore the world of words, ${cap(playerName)}? 📚`;
+  const modes=playerGrade<=1
+    ?['🔀 Scramble','📝 Fill Blank','🔊 Pronunciation','📚 Plural','😄 Emoji','🎵 Rhyme','🔗 Compound','✂️ Prefix']
+    :['🔀 Scramble','🔵 Synonym','🔴 Antonym','📝 Fill Blank','🔊 Pronunciation','📚 Plural','📖 Definition','😄 Emoji','👂 Homophone','📝 Sentence','🔗 Compound','✂️ Prefix','🌳 Word Family','🎤 Spell It'];
+  const colors=['rgba(43,191,184,.15)','rgba(74,144,217,.15)','rgba(232,69,122,.15)','rgba(246,192,74,.15)','rgba(124,92,191,.15)','rgba(240,120,48,.15)'];
+  const borders=['rgba(43,191,184,.3)','rgba(74,144,217,.3)','rgba(232,69,122,.3)','rgba(246,192,74,.3)','rgba(124,92,191,.3)','rgba(240,120,48,.3)'];
+  const textColors=['var(--teal)','#90CAF9','#FFB0D0','var(--amber)','#C8A8FF','#FFB060'];
+  document.getElementById('modes-grid').innerHTML=modes.map((m,i)=>{
+    const ci=i%colors.length;
+    return `<span class="mode-chip" style="background:${colors[ci]};border-color:${borders[ci]};color:${textColors[ci]}">${m}</span>`;
+  }).join('');
+}
+
+init();
+</script>
+</body>
+</html>
