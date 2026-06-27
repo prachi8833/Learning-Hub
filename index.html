@@ -222,6 +222,49 @@ body{background:#0a1a10}
 .redeem-popup-cost{font-size:2rem;font-weight:900;color:var(--amber);text-align:center;margin:10px 0}
 .redeem-popup-bal{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.45);text-align:center;margin-bottom:14px}
 .redeem-popup-after{font-size:.78rem;font-weight:800;color:var(--teal);text-align:center;margin-bottom:18px}
+/* ── PROFILE ENHANCEMENTS ──────────────────────────── */
+.week-stat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px;text-align:center;transition:all .2s}
+.week-stat:hover{background:rgba(255,255,255,.09)}
+.week-stat-val{font-size:1.4rem;font-weight:900;color:#fff;line-height:1}
+.week-stat-lbl{font-size:.58rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:4px}
+.week-stat-change{font-size:.6rem;font-weight:800;margin-top:3px}
+.week-stat-change.up{color:#52D08A}.week-stat-change.down{color:#F07070}.week-stat-change.same{color:rgba(255,255,255,.3)}
+.subj-perf-card{border-radius:12px;padding:13px;text-align:center;position:relative;overflow:hidden}
+.subj-perf-card.best{background:linear-gradient(135deg,rgba(39,174,96,.2),rgba(39,174,96,.08));border:1px solid rgba(39,174,96,.25)}
+.subj-perf-card.improved{background:linear-gradient(135deg,rgba(43,191,184,.2),rgba(43,191,184,.08));border:1px solid rgba(43,191,184,.25)}
+.subj-perf-card.practice{background:linear-gradient(135deg,rgba(246,192,74,.15),rgba(246,192,74,.06));border:1px solid rgba(246,192,74,.2)}
+.subj-perf-card.fav{background:linear-gradient(135deg,rgba(232,69,122,.15),rgba(232,69,122,.06));border:1px solid rgba(232,69,122,.2)}
+.spc-tag{font-size:.52rem;font-weight:900;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.subj-perf-card.best .spc-tag{color:#52D08A}.subj-perf-card.improved .spc-tag{color:var(--teal)}.subj-perf-card.practice .spc-tag{color:var(--amber)}.subj-perf-card.fav .spc-tag{color:var(--pink)}
+.spc-icon{font-size:1.6rem;margin-bottom:4px;display:block}.spc-name{font-size:.78rem;font-weight:900;color:#fff}.spc-score{font-size:.65rem;font-weight:700;color:rgba(255,255,255,.5);margin-top:2px}
+.perf-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:.65rem;font-weight:800}
+.perf-pill.strong{background:rgba(39,174,96,.18);color:#52D08A;border:1px solid rgba(39,174,96,.25)}
+.perf-pill.growing{background:rgba(246,192,74,.18);color:var(--amber);border:1px solid rgba(246,192,74,.25)}
+.perf-pill.needs{background:rgba(232,69,69,.14);color:#FF9090;border:1px solid rgba(232,69,69,.2)}
+.stat-ring-wrap{text-align:center}
+.stat-ring-label{font-size:.65rem;font-weight:800;color:rgba(255,255,255,.6);margin-top:5px}
+.stat-ring-val{font-size:.7rem;font-weight:900;margin-top:1px}
+.trophy-card{text-align:center;padding:10px 6px;border-radius:12px;transition:all .2s;cursor:default;position:relative}
+.trophy-card.earned{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.trophy-card.earned:hover{transform:translateY(-4px);background:rgba(255,255,255,.1);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.trophy-card.locked{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);opacity:.4;filter:grayscale(85%)}
+.trophy-img{width:56px;height:56px;object-fit:contain;display:block;margin:0 auto 6px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.4))}
+.trophy-card.earned .trophy-img{filter:drop-shadow(0 4px 12px rgba(246,192,74,.45))}
+.trophy-name{font-size:.6rem;font-weight:900;color:#fff;line-height:1.2}.trophy-desc{font-size:.52rem;font-weight:700;color:rgba(255,255,255,.35);margin-top:2px;line-height:1.3}.trophy-date{font-size:.5rem;font-weight:700;color:var(--amber);margin-top:3px}
+.journey-tl{display:flex;gap:0;align-items:flex-start;padding:8px 4px 4px;min-width:max-content}
+.tl-item{display:flex;flex-direction:column;align-items:center;width:90px;position:relative}
+.tl-item:not(:last-child)::after{content:'';position:absolute;top:16px;left:calc(50% + 16px);width:calc(100% - 32px);height:2px;background:rgba(255,255,255,.1)}
+.tl-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;z-index:1;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.tl-dot.join{background:linear-gradient(135deg,var(--teal2),var(--teal))}.tl-dot.level{background:linear-gradient(135deg,var(--green),#52D08A)}.tl-dot.badge{background:linear-gradient(135deg,var(--amber2),var(--amber))}.tl-dot.streak{background:linear-gradient(135deg,#F07830,var(--orange))}.tl-dot.perfect{background:linear-gradient(135deg,var(--purple),#A88AE8)}
+.tl-label{font-size:.58rem;font-weight:800;color:#fff;text-align:center;margin-top:6px;line-height:1.3}.tl-date{font-size:.5rem;font-weight:700;color:rgba(255,255,255,.3);text-align:center;margin-top:2px}
+.streak-ms-next{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:8px}
+.streak-ms-bar{height:8px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:6px 0}
+.streak-ms-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#F07830,var(--amber));transition:width .8s}
+.streak-ms-badges{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.streak-ms-badge{display:flex;align-items:center;gap:5px;font-size:.62rem;font-weight:800;padding:4px 9px;border-radius:99px;background:rgba(255,255,255,.06)}
+.streak-ms-badge.earned-badge{background:rgba(246,192,74,.15);color:var(--amber)}.streak-ms-badge.locked-badge{color:rgba(255,255,255,.3)}
+
+/* ── KID PIN SCREEN ──────────────────────────────── */
 #kidPin{position:fixed;inset:0;z-index:1100;background:rgba(4,14,8,.88);backdrop-filter:blur(22px);display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px}
 .kp-av{width:80px;height:80px;border-radius:50%;border:3px solid rgba(255,255,255,.18);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:3rem;background:rgba(40,56,112,.45);box-shadow:0 0 0 6px rgba(255,255,255,.06),0 8px 24px rgba(0,0,0,.4)}
 .kp-av img{width:100%;height:100%;object-fit:cover}
@@ -1465,6 +1508,7 @@ body{background:#0a1a10}
 
       <!-- PROFILE -->
       <div id="profileScreen" class="screen">
+        <!-- HERO -->
         <div class="prof-hero">
           <div class="ph-ring" id="pr-av" onclick="triggerAvatarUpload()" title="Change photo">
             <span class="ph-ring-emoji" id="pr-av-emoji">♑</span>
@@ -1480,27 +1524,29 @@ body{background:#0a1a10}
               <div class="ph-pill"><div class="ph-pv" id="pp-bad">0</div><div class="ph-pl">Badges</div></div>
               <div class="ph-pill"><div class="ph-pv" id="pp-lv">1</div><div class="ph-pl">Level</div></div>
             </div>
+            <!-- Daily Tara quote -->
+            <div id="pr-tara-quote" style="margin-top:10px;font-size:.72rem;font-weight:700;color:var(--amber);font-style:italic;opacity:.85"></div>
           </div>
         </div>
+
         <div class="pgrid">
+
+          <!-- ROW 1: Journey + Streak Milestone + About Me -->
           <div class="card jcard">
             <div class="card-ttl">🗺️ My Journey</div>
             <div class="jlvl">
               <div class="lvl-hex"><div class="lh-num" id="j-lv">1</div><div class="lh-wd">Level</div></div>
-              <div><div class="lvl-title" id="j-ttl">Explorer</div><div class="lvl-sub">Keep going! ⭐</div></div>
+              <div><div class="lvl-title" id="j-ttl">Explorer</div><div class="lvl-sub" id="j-sub">Keep going! ⭐</div></div>
             </div>
-            <div class="xp-bg"><div class="xp-fill" id="xp-fill" style="width:30%"></div></div>
-            <div class="xp-txt" id="xp-txt">0 / 200 XP · Keep going! ⭐</div>
+            <div class="xp-bg"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+            <div class="xp-txt" id="xp-txt">0 / 200 XP</div>
           </div>
-          <div class="card">
-            <div class="card-ttl">💫 My Strengths</div>
-            <div style="margin-top:11px">
-              <div class="str-row"><span class="str-ico">⭐</span><span class="str-lbl">Problem Solver</span><span class="str-lv">Level 1</span></div>
-              <div class="str-row"><span class="str-ico">💡</span><span class="str-lbl">Curious Mind</span><span class="str-lv">Level 1</span></div>
-              <div class="str-row"><span class="str-ico">🎯</span><span class="str-lbl">Consistent</span><span class="str-lv">Level 1</span></div>
-              <div class="str-row"><span class="str-ico">🎨</span><span class="str-lbl">Creative Thinker</span><span class="str-lv">Level 1</span></div>
-            </div>
+
+          <div class="card" id="streak-milestone-card">
+            <div class="card-ttl">🔥 Streak Milestone</div>
+            <div id="streak-milestone-body" style="margin-top:11px"></div>
           </div>
+
           <div class="card">
             <div class="card-hdr"><div class="card-ttl">✏️ About Me</div><span style="cursor:pointer" onclick="editAbout()">✏️</span></div>
             <div class="about-txt" id="about-txt">I love learning and exploring new things every day! 🌟</div>
@@ -1508,29 +1554,49 @@ body{background:#0a1a10}
             <button class="star-req-btn" style="margin-top:12px" onclick="showStarRequest()">⭐ Request Stars for a Good Deed</button>
             <button class="wish-req-btn" style="margin-top:8px" onclick="showWishRequest()">🎁 Request Something for My Wish List</button>
           </div>
-          <div class="card ach-card">
-            <div class="card-hdr"><div class="card-ttl">🏅 My Achievements</div><span class="card-lnk">View all →</span></div>
-            <div class="ach-scroll" id="ach-scroll"></div>
+
+          <!-- ROW 2: Weekly Summary (full width) -->
+          <div class="card" style="grid-column:1/-1">
+            <div class="card-hdr"><div class="card-ttl">📅 This Week's Summary</div><span id="week-compare" style="font-size:.65rem;font-weight:700;color:rgba(255,255,255,.4)"></span></div>
+            <div id="weekly-summary" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:4px"></div>
           </div>
+
+          <!-- ROW 3: Subject Performance (full width) -->
+          <div class="card" style="grid-column:1/-1">
+            <div class="card-ttl" style="margin-bottom:14px">🎯 Subject Performance</div>
+            <div id="subj-perf-highlights" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px"></div>
+            <div id="subj-perf-pills" style="display:flex;gap:7px;flex-wrap:wrap"></div>
+          </div>
+
+          <!-- ROW 4: Learning Progress + My Stats (circles) -->
           <div class="card prog-bars-card">
-            <div class="card-hdr"><div class="card-ttl">📈 Learning Progress</div><span class="card-lnk">View all →</span></div>
+            <div class="card-hdr"><div class="card-ttl">📈 Learning Progress</div></div>
             <div style="margin-top:9px" id="pr-bars"></div>
           </div>
-          <div class="card">
-            <div class="card-hdr"><div class="card-ttl">🏆 Trophies</div><span class="card-lnk">View all →</span></div>
-            <div class="badges-shelf">
-              <div class="tr-item"><span class="tr-ico" style="filter:drop-shadow(0 4px 8px rgba(200,150,0,.5))">🏆</span></div>
-              <div class="tr-item" style="margin-bottom:7px"><span class="tr-ico">💎</span></div>
-              <div class="tr-item"><span class="tr-ico">🥈</span></div>
-              <div class="tr-item" style="margin-bottom:14px"><span class="tr-ico">🎖️</span></div>
-              <div class="tr-item"><span class="tr-ico">🥉</span></div>
-            </div>
+
+          <div class="card" style="grid-column:span 2">
+            <div class="card-hdr"><div class="card-ttl">📊 My Stats</div></div>
+            <div id="stats-rings" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:12px"></div>
           </div>
-          <div class="card radar-card" style="padding:18px">
-            <div class="card-ttl" style="color:rgba(255,255,255,.65)">📊 My Stats</div>
-            <div class="radar-wrap"><svg width="155" height="155" viewBox="0 0 155 155" id="radar-svg"></svg></div>
-            <div class="radar-q">"Small steps every day lead to big achievements! ⭐"</div>
+
+          <!-- ROW 5: Achievements (full width) -->
+          <div class="card ach-card" style="grid-column:1/-1">
+            <div class="card-hdr"><div class="card-ttl">🏅 My Achievements</div></div>
+            <div class="ach-scroll" id="ach-scroll"></div>
           </div>
+
+          <!-- ROW 6: Trophies (full width) -->
+          <div class="card" style="grid-column:1/-1">
+            <div class="card-hdr"><div class="card-ttl">🏆 Trophies</div><span class="card-lnk" id="trophy-count"></span></div>
+            <div id="trophy-shelf" style="display:grid;grid-template-columns:repeat(8,1fr);gap:12px;margin-top:12px"></div>
+          </div>
+
+          <!-- ROW 7: Journey Timeline (full width) -->
+          <div class="card" style="grid-column:1/-1">
+            <div class="card-ttl" style="margin-bottom:14px">⏳ My Learning Journey</div>
+            <div id="journey-timeline" style="overflow-x:auto;padding-bottom:8px"></div>
+          </div>
+
         </div>
       </div>
 
@@ -2945,6 +3011,378 @@ function showNotifs(){}
 function showTaraTip(){const tips=['Namaste! Every question makes you smarter! 🙏','Shabash! Keep going — stars become gifts! ⭐','Ek aur lesson aur tum champion ban jaoge! 🏆','Great work! Your parents are proud! 💚','Learning is the best superpower! 🦸'];showMod(`<div style="text-align:center;padding:12px 0"><div style="font-size:4rem;margin-bottom:11px;display:inline-block;animation:taraFloat 2s ease-in-out infinite">⭐</div><div style="font-size:.95rem;font-weight:800;color:#fff;line-height:1.6">${tips[Math.floor(Math.random()*tips.length)]}</div><button class="mb" onclick="closeMod()" style="margin-top:14px">Thanks Tara! 💫</button></div>`);}
 function showMod(h){document.getElementById('mc').innerHTML=h;document.getElementById('mov').classList.add('open');}
 function closeMod(){document.getElementById('mov').classList.remove('open');}
+
+// ─── PROFILE ────────────────────────────────────────────────
+
+const TROPHY_BASE=IMG_BASE;
+const TROPHIES=[
+  {id:'bronze',name:'Bronze',img:'Bronze.png',desc:'Earn 100 stars',condition:s=>s.stars>=100},
+  {id:'silver',name:'Silver',img:'Silver.png',desc:'Earn 500 stars',condition:s=>s.stars>=500},
+  {id:'gold',name:'Gold',img:'Gold.png',desc:'Earn 1,000 stars',condition:s=>s.stars>=1000},
+  {id:'diamond',name:'Diamond',img:'Diamond.png',desc:'Earn 2,500 stars',condition:s=>s.stars>=2500},
+  {id:'platinum',name:'Platinum',img:'Platinum.png',desc:'Earn 5,000 stars',condition:s=>s.stars>=5000},
+  {id:'master',name:'Master',img:'Master.png',desc:'7 day streak',condition:s=>s.streak>=7},
+  {id:'champion',name:'Champion',img:'Champion.png',desc:'30 day streak',condition:s=>s.streak>=30},
+  {id:'legend',name:'Legend',img:'Legend.png',desc:'Earn 10,000 stars',condition:s=>s.stars>=10000},
+];
+
+const STREAK_MILESTONES=[
+  {days:3,icon:'🔥',label:'3 Days'},
+  {days:7,icon:'⚡',label:'Week Warrior'},
+  {days:14,icon:'💪',label:'2 Weeks'},
+  {days:30,icon:'🏆',label:'Month Master'},
+  {days:60,icon:'👑',label:'Champion'},
+  {days:100,icon:'⭐',label:'Legend'},
+];
+
+const LEVEL_TITLES=['Seedling','Explorer','Adventurer','Scholar','Champion','Master','Prodigy','Genius','Legend','Grandmaster'];
+
+async function renderProfile(){
+  const p=S.player;if(!p)return;
+
+  // Avatar
+  const avEl=document.getElementById('pr-av');
+  const emojiEl=document.getElementById('pr-av-emoji');
+  if(p.avatar_url){
+    if(emojiEl)emojiEl.style.display='none';
+    let img=avEl.querySelector('img.av-photo');
+    if(!img){img=document.createElement('img');img.className='av-photo';avEl.insertBefore(img,avEl.querySelector('.ph-ring-overlay'));}
+    img.src=p.avatar_url;
+    img.style.cssText='width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:50%;z-index:1';
+  } else {
+    if(emojiEl){emojiEl.style.display='';emojiEl.textContent=p.avatar||'⭐';}
+  }
+
+  // Basic info
+  document.getElementById('pr-nm').textContent=p.name;
+  document.getElementById('pr-badge').textContent=`Grade ${p.grade}`;
+  document.getElementById('pr-sub').textContent=`Age ${p.age||''} · ${p.zodiac||''} ${p.avatar||''} · Dreamer & Explorer ✨`;
+  document.getElementById('pr-stars').textContent=`⭐ ${S.stars.toLocaleString()} Stars`;
+  document.getElementById('pp-str').textContent=S.streak;
+  document.getElementById('pp-bad').textContent=S.earnedBadges.length;
+
+  // Level
+  const tlv=Object.values(S.levelProgress).reduce((a,l)=>a+(l.current_level-1),0);
+  const lv=Math.max(1,Math.min(10,Math.floor(tlv/3)+1));
+  const xpInLevel=S.stars%200;
+  document.getElementById('pp-lv').textContent=lv;
+  document.getElementById('j-lv').textContent=lv;
+  document.getElementById('j-ttl').textContent=LEVEL_TITLES[lv-1]||'Legend';
+  document.getElementById('j-sub').textContent=`Level ${lv} · ${LEVEL_TITLES[lv-1]||'Master'}`;
+  document.getElementById('xp-fill').style.width=(xpInLevel/2)+'%';
+  document.getElementById('xp-txt').textContent=`${xpInLevel} / 200 XP · Keep going! ⭐`;
+
+  // Daily quote in hero
+  const quote=getQuote('daily_start');
+  const qEl=document.getElementById('pr-tara-quote');
+  if(qEl)qEl.textContent=`⭐ ${quote}`;
+
+  // Fetch sessions data for stats
+  let sessions=[];
+  try{sessions=await db(`sessions?player_id=eq.${p.id}&select=*&order=created_at.desc&limit=200`);}catch(e){}
+  if(!Array.isArray(sessions))sessions=[];
+
+  // Fetch this week & last week star logs
+  const now=new Date();
+  const weekAgo=new Date(now);weekAgo.setDate(now.getDate()-7);
+  const twoWeeksAgo=new Date(now);twoWeeksAgo.setDate(now.getDate()-14);
+  let thisWeekLogs=[],lastWeekLogs=[],thisWeekTasks=[],thisWeekSessions=[];
+  try{
+    thisWeekLogs=await db(`stars_log?player_id=eq.${p.id}&created_at=gte.${weekAgo.toISOString()}&select=amount`);
+    lastWeekLogs=await db(`stars_log?player_id=eq.${p.id}&created_at=gte.${twoWeeksAgo.toISOString()}&created_at=lt.${weekAgo.toISOString()}&select=amount`);
+    thisWeekTasks=await db(`task_completions?player_id=eq.${p.id}&created_at=gte.${weekAgo.toISOString()}&status=eq.approved&select=id`);
+    thisWeekSessions=sessions.filter(s=>new Date(s.created_at)>=weekAgo);
+  }catch(e){}
+
+  const thisWeekStars=Math.max(0,(Array.isArray(thisWeekLogs)?thisWeekLogs:[]).reduce((a,l)=>a+Math.max(0,l.amount),0));
+  const lastWeekStars=Math.max(0,(Array.isArray(lastWeekLogs)?lastWeekLogs:[]).reduce((a,l)=>a+Math.max(0,l.amount),0));
+  const thisWeekTaskCount=Array.isArray(thisWeekTasks)?thisWeekTasks.length:0;
+  const thisWeekQuizzes=thisWeekSessions.length;
+  const bestScore=thisWeekSessions.length?Math.max(...thisWeekSessions.map(s=>Math.round((s.score/Math.max(s.total,1))*100))):0;
+  const daysActive=new Set(thisWeekSessions.map(s=>s.created_at?.slice(0,10))).size+new Set((Array.isArray(thisWeekTasks)?thisWeekTasks:[]).map(t=>t.id?.slice(0,10))).size;
+
+  renderWeeklySummary(thisWeekStars,lastWeekStars,thisWeekTaskCount,thisWeekQuizzes,bestScore,Math.min(daysActive,7));
+  renderStreakMilestone();
+  renderSubjectPerformance(sessions);
+  renderStatsRings(sessions);
+  renderTrophies();
+  renderAchs(sessions);
+  renderPBars();
+  renderJourneyTimeline(sessions);
+}
+
+function renderWeeklySummary(stars,lastStars,tasks,quizzes,best,days){
+  const el=document.getElementById('weekly-summary');if(!el)return;
+  const starDiff=stars-lastStars;
+  const cmpEl=document.getElementById('week-compare');
+  if(cmpEl)cmpEl.textContent=starDiff>0?`↑ ${starDiff} more than last week`:starDiff<0?`↓ ${Math.abs(starDiff)} less than last week`:'Same as last week';
+
+  const stats=[
+    {val:stars.toLocaleString(),lbl:'⭐ Stars Earned',change:starDiff,ico:'⭐'},
+    {val:tasks,lbl:'✅ Tasks Done',change:null,ico:'✅'},
+    {val:quizzes,lbl:'🧠 Quizzes',change:null,ico:'🧠'},
+    {val:best+'%',lbl:'🏆 Best Score',change:null,ico:'🏆'},
+    {val:days+'/7',lbl:'📅 Days Active',change:null,ico:'📅'},
+  ];
+  el.innerHTML=stats.map(s=>{
+    const ch=s.change!==null?(s.change>0?`<div class="week-stat-change up">↑ ${s.change} vs last week</div>`:s.change<0?`<div class="week-stat-change down">↓ ${Math.abs(s.change)} vs last week</div>`:`<div class="week-stat-change same">Same as last week</div>`):'';
+    return `<div class="week-stat"><div class="week-stat-val">${s.val}</div><div class="week-stat-lbl">${s.lbl}</div>${ch}</div>`;
+  }).join('');
+}
+
+function renderStreakMilestone(){
+  const el=document.getElementById('streak-milestone-body');if(!el)return;
+  const streak=S.streak||0;
+  const next=STREAK_MILESTONES.find(m=>m.days>streak)||STREAK_MILESTONES[STREAK_MILESTONES.length-1];
+  const prev=STREAK_MILESTONES.filter(m=>m.days<=streak).pop()||{days:0};
+  const pct=next.days>0?Math.min(100,Math.round((streak-prev.days)/(next.days-prev.days)*100)):100;
+  el.innerHTML=`
+    <div class="streak-ms-next">🔥 ${streak} day streak · Next: <strong>${next.label}</strong> at ${next.days} days</div>
+    <div class="streak-ms-bar"><div class="streak-ms-fill" style="width:${pct}%"></div></div>
+    <div style="font-size:.6rem;color:rgba(255,255,255,.35);margin-bottom:8px">${next.days-streak} more days to go!</div>
+    <div class="streak-ms-badges">
+      ${STREAK_MILESTONES.map(m=>`<div class="streak-ms-badge ${streak>=m.days?'earned-badge':'locked-badge'}">${m.icon} ${m.label}</div>`).join('')}
+    </div>`;
+}
+
+function renderSubjectPerformance(sessions){
+  const hEl=document.getElementById('subj-perf-highlights');
+  const pEl=document.getElementById('subj-perf-pills');
+  if(!hEl||!pEl)return;
+
+  // Calculate per-subject stats
+  const subjStats={};
+  sessions.forEach(s=>{
+    if(!subjStats[s.subject_key])subjStats[s.subject_key]={total:0,sum:0,count:0};
+    const pct=Math.round((s.score/Math.max(s.total,1))*100);
+    subjStats[s.subject_key].sum+=pct;
+    subjStats[s.subject_key].count++;
+    subjStats[s.subject_key].total+=s.total||0;
+  });
+
+  // Find subject objects
+  const subjArr=Object.entries(subjStats).map(([key,v])=>{
+    const subj=S.subjects.find(x=>x.key===key)||{key,name:key,icon:'📚'};
+    return {...subj,avg:Math.round(v.sum/v.count),count:v.count};
+  }).filter(x=>x.count>0);
+
+  if(!subjArr.length){
+    hEl.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:18px;color:rgba(255,255,255,.3);font-size:.78rem">Play some quizzes to see your performance! 🎮</div>';
+    pEl.innerHTML='';return;
+  }
+
+  const best=subjArr.reduce((a,b)=>a.avg>b.avg?a:b);
+  const fav=subjArr.reduce((a,b)=>a.count>b.count?a:b);
+  const practice=subjArr.reduce((a,b)=>a.avg<b.avg?a:b);
+  // Most improved: last 5 vs earlier sessions
+  const recent=sessions.slice(0,5);
+  const older=sessions.slice(5,20);
+  let improved=best;
+  if(older.length){
+    const recentAvg={};recent.forEach(s=>{if(!recentAvg[s.subject_key])recentAvg[s.subject_key]=[];recentAvg[s.subject_key].push(Math.round(s.score/Math.max(s.total,1)*100));});
+    const olderAvg={};older.forEach(s=>{if(!olderAvg[s.subject_key])olderAvg[s.subject_key]=[];olderAvg[s.subject_key].push(Math.round(s.score/Math.max(s.total,1)*100));});
+    let maxGain=-999;
+    Object.keys(recentAvg).forEach(k=>{
+      if(!olderAvg[k])return;
+      const ra=recentAvg[k].reduce((a,b)=>a+b,0)/recentAvg[k].length;
+      const oa=olderAvg[k].reduce((a,b)=>a+b,0)/olderAvg[k].length;
+      if(ra-oa>maxGain){maxGain=ra-oa;improved=S.subjects.find(x=>x.key===k)||{key:k,name:k,icon:'📈',avg:Math.round(ra)};}
+    });
+  }
+
+  hEl.innerHTML=[
+    {cls:'best',tag:'🏆 Best Subject',s:best,detail:`Avg ${best.avg}%`},
+    {cls:'improved',tag:'📈 Most Improved',s:improved,detail:`Getting better!`},
+    {cls:'practice',tag:'💪 Keep Practising',s:practice,detail:`Avg ${practice.avg}% · You got this!`},
+    {cls:'fav',tag:'❤️ Most Played',s:fav,detail:`${fav.count} quizzes played`},
+  ].map(({cls,tag,s,detail})=>`<div class="subj-perf-card ${cls}">
+    <div class="spc-tag">${tag}</div>
+    <span class="spc-icon">${s.icon||'📚'}</span>
+    <div class="spc-name">${s.name||s.key}</div>
+    <div class="spc-score">${detail}</div>
+  </div>`).join('');
+
+  // Pill badges for all subjects
+  pEl.innerHTML=subjArr.sort((a,b)=>b.avg-a.avg).map(s=>{
+    const tier=s.avg>=80?'strong':s.avg>=60?'growing':'needs';
+    const tierIcon=tier==='strong'?'🟢':tier==='growing'?'🟡':'🔴';
+    return `<div class="perf-pill ${tier}">${tierIcon} ${s.icon||'📚'} ${s.name||s.key} · ${s.avg}%</div>`;
+  }).join('');
+}
+
+function renderStatsRings(sessions){
+  const el=document.getElementById('stats-rings');if(!el)return;
+
+  // Calculate real stats from sessions
+  const allScores=sessions.map(s=>Math.round(s.score/Math.max(s.total,1)*100));
+  const knowledge=allScores.length?Math.round(allScores.reduce((a,b)=>a+b,0)/allScores.length):0;
+
+  const creativeKeys=['art','music','stories','creative','festivals'];
+  const creativeScores=sessions.filter(s=>creativeKeys.includes(s.subject_key)).map(s=>Math.round(s.score/Math.max(s.total,1)*100));
+  const creativity=creativeScores.length?Math.round(creativeScores.reduce((a,b)=>a+b,0)/creativeScores.length):Math.round(knowledge*0.85);
+
+  const totalTasks=S.tasks.length||1;
+  const doneTasks=Object.values(S.tc).filter(v=>v==='approved').length;
+  const consistency=Math.min(100,Math.round((doneTasks/totalTasks)*100+(S.streak>0?Math.min(30,S.streak):0)));
+
+  const readingKeys=['reading','english'];
+  const readingScores=sessions.filter(s=>readingKeys.includes(s.subject_key)).map(s=>Math.round(s.score/Math.max(s.total,1)*100));
+  const reading=readingScores.length?Math.round(readingScores.reduce((a,b)=>a+b,0)/readingScores.length):Math.round(knowledge*0.9);
+
+  const perfectSessions=sessions.filter(s=>Math.round(s.score/Math.max(s.total,1)*100)===100).length;
+  const focus=sessions.length?Math.min(100,Math.round((sessions.filter(s=>s.passed).length/sessions.length)*100)):0;
+
+  const kindnessBase=40;
+  const goodDeeds=Math.min(30,S.stars>0?Math.floor(S.stars/100):0);
+  const kindness=Math.min(100,kindnessBase+goodDeeds);
+
+  const stats=[
+    {label:'Knowledge',val:knowledge,color:'#2BBFB8'},
+    {label:'Creativity',val:creativity,color:'#7C5CBF'},
+    {label:'Consistency',val:consistency,color:'#F07830'},
+    {label:'Kindness',val:kindness,color:'#E8457A'},
+    {label:'Focus',val:focus,color:'#3A8FD4'},
+    {label:'Reading',val:reading,color:'#27AE60'},
+  ];
+
+  el.innerHTML=stats.map(s=>{
+    const r=28,circ=2*Math.PI*r;
+    const filled=circ*(s.val/100);
+    const empty=circ-filled;
+    return `<div class="stat-ring-wrap">
+      <svg width="72" height="72" viewBox="0 0 72 72" style="transform:rotate(-90deg)">
+        <circle cx="36" cy="36" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="6"/>
+        <circle cx="36" cy="36" r="${r}" fill="none" stroke="${s.color}" stroke-width="6"
+          stroke-linecap="round" stroke-dasharray="${filled} ${empty}"
+          style="filter:drop-shadow(0 0 4px ${s.color}88);transition:stroke-dasharray .8s"/>
+        <text x="36" y="36" text-anchor="middle" dominant-baseline="middle"
+          font-size="12" font-weight="900" font-family="Nunito" fill="white"
+          style="transform:rotate(90deg);transform-origin:36px 36px">${s.val}%</text>
+      </svg>
+      <div class="stat-ring-label">${s.label}</div>
+      <div class="stat-ring-val" style="color:${s.color}">${s.val>=80?'⭐':s.val>=60?'💪':'🌱'}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderTrophies(){
+  const el=document.getElementById('trophy-shelf');if(!el)return;
+  const cntEl=document.getElementById('trophy-count');
+  const earned=TROPHIES.filter(t=>t.condition(S));
+  if(cntEl)cntEl.textContent=`${earned.length} / ${TROPHIES.length} earned`;
+
+  el.innerHTML=TROPHIES.map(t=>{
+    const isEarned=t.condition(S);
+    return `<div class="trophy-card ${isEarned?'earned':'locked'}" title="${t.name}: ${t.desc}">
+      <img src="${TROPHY_BASE}${t.img}" alt="${t.name}" class="trophy-img"
+           onerror="this.style.opacity='.3';this.style.fontSize='2rem'">
+      <div class="trophy-name">${t.name}</div>
+      <div class="trophy-desc">${t.desc}</div>
+      ${isEarned?`<div class="trophy-date">✓ Earned!</div>`:`<div class="trophy-desc" style="margin-top:3px">🔒 Locked</div>`}
+    </div>`;
+  }).join('');
+}
+
+function renderAchs(sessions){
+  const el=document.getElementById('ach-scroll');if(!el)return;
+  const morningTasks=Object.keys(S.tc).filter(id=>{const t=S.tasks.find(x=>x.id===id);return t?.time_block==='morning'&&S.tc[id]==='approved';}).length;
+  const readingSessions=sessions.filter(s=>['reading','english'].includes(s.subject_key)).length;
+  const mathPerfect=sessions.filter(s=>s.subject_key==='math'&&Math.round(s.score/Math.max(s.total,1)*100)===100).length;
+  const hasPerf=sessions.some(s=>Math.round(s.score/Math.max(s.total,1)*100)===100);
+  const achs=[
+    {e:'🌅',n:'Early Bird',d:'10 morning tasks',earned:morningTasks>=10,progress:`${Math.min(morningTasks,10)}/10`},
+    {e:'⭐',n:'Star Collector',d:'500 stars total',earned:S.stars>=500,progress:`${Math.min(S.stars,500)}/500`},
+    {e:'🔥',n:'Streak Master',d:'7 day streak',earned:S.streak>=7,progress:`${Math.min(S.streak,7)}/7 days`},
+    {e:'📚',n:'Bookworm',d:'5 reading sessions',earned:readingSessions>=5,progress:`${Math.min(readingSessions,5)}/5`},
+    {e:'🧮',n:'Math Whiz',d:'5 perfect math scores',earned:mathPerfect>=5,progress:`${Math.min(mathPerfect,5)}/5`},
+    {e:'💚',n:'Kind Heart',d:'Good deeds rewarded',earned:S.stars>200,progress:'By parent'},
+    {e:'💎',n:'Diamond',d:'2,500 stars earned',earned:S.stars>=2500,progress:`${Math.min(S.stars,2500)}/2500`},
+    {e:'🏆',n:'Perfect Score',d:'100% on a quiz',earned:hasPerf,progress:hasPerf?'Achieved!':'Not yet'},
+  ];
+  el.innerHTML=achs.map(x=>`<div class="ach-chip ${x.earned?'earned':''}">
+    <span class="ac-ico">${x.e}</span>
+    <div class="ac-nm">${x.n}</div>
+    <div class="ac-ds">${x.d}</div>
+    <div style="font-size:.5rem;font-weight:700;color:${x.earned?'var(--amber)':'rgba(255,255,255,.25)'};margin-top:3px">${x.earned?'✓ Earned!':x.progress}</div>
+  </div>`).join('');
+}
+
+function renderPBars(){
+  const el=document.getElementById('pr-bars');if(!el)return;
+  el.innerHTML=S.subjects.slice(0,8).map(s=>{
+    const lv=S.levelProgress[s.key]?.current_level||1;
+    const pct=Math.round((lv-1)/10*100);
+    const col=subjectColor(s);
+    return `<div class="pb-row">
+      <div class="pb-ico">${s.icon}</div>
+      <div class="pb-inf">
+        <div class="pb-nm">${s.name}</div>
+        <div class="pb-bg"><div class="pb-fill" style="width:${pct}%;background:${col}"></div></div>
+      </div>
+      <div class="pb-pct">${pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+function renderJourneyTimeline(sessions){
+  const el=document.getElementById('journey-timeline');if(!el)return;
+  const p=S.player;
+  const events=[];
+
+  // Joined
+  events.push({type:'join',icon:'🌱',label:'Started Learning',date:p.created_at||new Date().toISOString()});
+
+  // Level ups (estimate from level_progress)
+  Object.entries(S.levelProgress).forEach(([key,lp])=>{
+    if(lp.current_level>1){
+      const subj=S.subjects.find(s=>s.key===key);
+      events.push({type:'level',icon:'⬆️',label:`${subj?.name||key} Level ${lp.current_level}`,date:lp.updated_at||new Date().toISOString()});
+    }
+  });
+
+  // Perfect scores
+  const perfSessions=sessions.filter(s=>Math.round(s.score/Math.max(s.total,1)*100)===100).slice(0,3);
+  perfSessions.forEach(s=>{
+    const subj=S.subjects.find(x=>x.key===s.subject_key);
+    events.push({type:'perfect',icon:'⭐',label:`Perfect ${subj?.name||s.subject_key}!`,date:s.created_at});
+  });
+
+  // Streak milestones
+  STREAK_MILESTONES.filter(m=>S.streak>=m.days).forEach(m=>{
+    events.push({type:'streak',icon:m.icon,label:m.label+' Streak!',date:new Date().toISOString()});
+  });
+
+  // Trophy earns
+  TROPHIES.filter(t=>t.condition(S)).forEach(t=>{
+    events.push({type:'badge',icon:'🏆',label:t.name+' Trophy!',date:new Date().toISOString()});
+  });
+
+  // Sort by date
+  events.sort((a,b)=>new Date(a.date)-new Date(b.date));
+
+  if(!events.length){el.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:.78rem;padding:12px">Start learning to build your journey! 🌱</div>';return;}
+
+  el.innerHTML=`<div class="journey-tl">${events.map(e=>`
+    <div class="tl-item">
+      <div class="tl-dot ${e.type}">${e.icon}</div>
+      <div class="tl-label">${e.label}</div>
+      <div class="tl-date">${new Date(e.date).toLocaleDateString('en-CA',{month:'short',day:'numeric'})}</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function editAbout(){
+  showMod(`<div class="mt">✏️ About Me</div>
+    <textarea class="mi" id="ab-ta" style="height:110px;resize:none">${document.getElementById('about-txt').textContent}</textarea>
+    <input class="mi" type="text" id="ab-em" placeholder="Emoji e.g. 🚀 🌍" value="${document.getElementById('about-em').textContent}">
+    <button class="mb" onclick="saveAbout()">Save ✓</button>
+    <button class="mb s" style="margin-top:7px" onclick="closeMod()">Cancel</button>`);
+}
+function saveAbout(){
+  document.getElementById('about-txt').textContent=document.getElementById('ab-ta').value;
+  document.getElementById('about-em').textContent=document.getElementById('ab-em').value;
+  closeMod();
+}
 
 // ─── READING ────────────────────────────────────────────────────────
 let RD={passages:[],currentPassage:null,recognition:null,listening:false,transcript:'',starsEarned:0,taskId:null};
