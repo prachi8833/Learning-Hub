@@ -24,7 +24,7 @@ body{background:#0a1a10}
 .shell{display:flex;height:100vh;width:100vw;overflow:hidden;position:relative;z-index:1}
 
 /* SIDEBAR */
-.sidebar{width:190px;min-width:190px;background:rgba(4,12,6,0.35);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;position:relative;z-index:10}
+.sidebar{width:190px;min-width:190px;background:rgba(4,12,6,0.18);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-right:1px solid rgba(255,255,255,0.06);box-shadow:inset -1px 0 0 rgba(43,191,184,0.08),1px 0 18px rgba(0,0,0,0.18);display:flex;flex-direction:column;position:relative;z-index:10}
 .sb-stars{position:absolute;top:0;left:0;right:0;height:250px;pointer-events:none}
 .star-dot{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d,3s) ease-in-out infinite var(--dl,0s)}
 @keyframes twinkle{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:.9;transform:scale(1.5)}}
@@ -253,9 +253,11 @@ body{background:#0a1a10}
    LEARN SCREEN subject cards (horizontal scroll)
    slightly wider, same style
    ═══════════════════════ */
-.isl-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;margin-top:11px}
-.isl-row::-webkit-scrollbar{height:4px}
-.isl-row::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:99px}
+.isl-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:12px;margin-top:11px;scrollbar-width:thin;scrollbar-color:rgba(43,191,184,.45) rgba(255,255,255,.06)}
+.isl-row::-webkit-scrollbar{height:6px;border-radius:99px}
+.isl-row::-webkit-scrollbar-track{background:rgba(255,255,255,.06);border-radius:99px}
+.isl-row::-webkit-scrollbar-thumb{background:rgba(43,191,184,.45);border-radius:99px}
+.isl-row::-webkit-scrollbar-thumb:hover{background:rgba(43,191,184,.75)}
 
 .lscard{
   flex-shrink:0;width:148px;position:relative;border-radius:14px;overflow:hidden;
@@ -299,6 +301,36 @@ body{background:#0a1a10}
 .wi-nm{font-size:.6rem;font-weight:900;color:#fff;line-height:1.2}
 .wi-co{font-size:.58rem;font-weight:800;color:var(--amber);margin-top:2px}
 .wi.goal-active .wi-img{border-color:var(--teal);box-shadow:0 0 0 2px rgba(43,191,184,.35)}
+
+/* ═══════════════════════
+   LEARN TAB ENHANCEMENTS
+   ═══════════════════════ */
+
+/* Subject filter tabs */
+.subj-filters{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap}
+.sf-tab{flex-shrink:0;padding:5px 13px;border-radius:99px;font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:800;cursor:pointer;border:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);transition:all .2s}
+.sf-tab:hover{background:rgba(255,255,255,.11);color:rgba(255,255,255,.8)}
+.sf-tab.active{background:rgba(43,191,184,.18);border-color:rgba(43,191,184,.45);color:var(--teal);box-shadow:0 2px 10px rgba(43,191,184,.15)}
+
+/* "New" badge on subject cards */
+.scard-new{position:absolute;top:6px;right:6px;z-index:10;background:linear-gradient(135deg,var(--amber2),var(--amber));color:#1A2B1E;font-size:.45rem;font-weight:900;border-radius:99px;padding:2px 6px;text-transform:uppercase;letter-spacing:.5px;box-shadow:0 2px 8px rgba(246,192,74,.4)}
+
+/* Tara suggestion banner */
+.tara-suggest{display:flex;align-items:center;gap:13px;background:linear-gradient(135deg,rgba(43,191,184,.12),rgba(124,92,191,.1));border:1px solid rgba(43,191,184,.2);border-radius:14px;padding:13px 16px;margin-bottom:10px;position:relative;overflow:hidden;cursor:pointer;transition:all .2s}
+.tara-suggest:hover{background:linear-gradient(135deg,rgba(43,191,184,.2),rgba(124,92,191,.18));transform:translateY(-2px)}
+.tara-suggest::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--teal),var(--purple));border-radius:3px 0 0 3px}
+.ts-ico{font-size:2rem;flex-shrink:0;animation:taraFloat 3s ease-in-out infinite}
+.ts-lbl{font-size:.55rem;font-weight:900;color:var(--teal);text-transform:uppercase;letter-spacing:.8px;margin-bottom:2px}
+.ts-msg{font-size:.78rem;font-weight:800;color:#fff;line-height:1.4}
+.ts-sub{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.45);margin-top:2px}
+.ts-btn{flex-shrink:0;padding:7px 14px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--teal2),var(--teal));color:#fff;font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:900;cursor:pointer;white-space:nowrap;box-shadow:0 3px 10px rgba(43,191,184,.3)}
+
+/* Streak nudge bar */
+.streak-nudge{display:flex;align-items:center;gap:11px;background:rgba(240,120,48,.1);border:1px solid rgba(240,120,48,.2);border-radius:12px;padding:10px 14px;margin-top:10px}
+.sn-ico{font-size:1.3rem;flex-shrink:0}
+.sn-txt{flex:1;font-size:.72rem;font-weight:800;color:rgba(255,255,255,.8)}
+.sn-txt b{color:var(--orange)}
+.sn-btn{flex-shrink:0;padding:5px 12px;border:none;border-radius:8px;background:var(--orange);color:#fff;font-family:'Nunito',sans-serif;font-size:.65rem;font-weight:900;cursor:pointer}
 
 /* TASKS */
 .tasks-layout{display:grid;grid-template-columns:1fr 370px;gap:18px;padding:22px}
@@ -862,8 +894,32 @@ body{background:#0a1a10}
                 <div class="card-ttl">⭐ Explore by Subject</div>
                 <span class="card-lnk" onclick="navTo('learn')">View all →</span>
               </div>
-              <p style="font-size:.68rem;color:rgba(255,255,255,.38);font-weight:700;margin-bottom:3px">Choose a world and start your adventure</p>
+              <p style="font-size:.68rem;color:rgba(255,255,255,.38);font-weight:700;margin-bottom:8px">Choose a world and start your adventure</p>
+              <!-- Subject filter tabs -->
+              <div class="subj-filters" id="l-filters">
+                <button class="sf-tab active" onclick="filterSubjects('all',this)">⭐ All</button>
+                <button class="sf-tab" onclick="filterSubjects('core',this)">📚 Core</button>
+                <button class="sf-tab" onclick="filterSubjects('cultural',this)">🕉️ Cultural</button>
+                <button class="sf-tab" onclick="filterSubjects('science',this)">🔬 Science</button>
+                <button class="sf-tab" onclick="filterSubjects('creative',this)">🎨 Creative</button>
+              </div>
+              <!-- Tara suggestion banner -->
+              <div class="tara-suggest" id="tara-suggest" onclick="startSuggestedSubject()">
+                <div class="ts-ico">⭐</div>
+                <div style="flex:1">
+                  <div class="ts-lbl">Tara Suggests</div>
+                  <div class="ts-msg" id="ts-msg">Try something new today!</div>
+                  <div class="ts-sub" id="ts-sub">You haven't explored this subject yet</div>
+                </div>
+                <button class="ts-btn">Start Now →</button>
+              </div>
               <div class="isl-row" id="l-islands"></div>
+              <!-- Streak nudge -->
+              <div class="streak-nudge" id="streak-nudge">
+                <div class="sn-ico">🔥</div>
+                <div class="sn-txt">Complete <b id="sn-needed">2 more subjects</b> to keep your streak alive!</div>
+                <button class="sn-btn" onclick="startSubject(S.subjects[0]?.key)">Go! →</button>
+              </div>
             </div>
             <div class="card">
               <div class="card-hdr">
@@ -1641,8 +1697,7 @@ function buildGarden(){
 
 // LEARN screen
 function renderLearn(){
-  // ALL subjects in horizontal scroll
-  renderIslands();
+  renderIslands('all');
   renderContCards();renderSkills();buildSMD();renderRAch();
   document.getElementById('l-streak').textContent=`${S.streak} Days`;
   const total=S.subjects.length*10;
@@ -1654,12 +1709,72 @@ function renderLearn(){
   document.getElementById('op-ring').style.strokeDashoffset=301-(301*pct/100);
   const fs=S.subjects[0];
   if(fs){document.getElementById('cl-ico').textContent=fs.icon;document.getElementById('cl-nm').textContent=fs.name;document.getElementById('cl-lv').textContent=`Level ${S.levelProgress[fs.key]?.current_level||1}`;}
+  // Tara suggestion — find least-played subject
+  const unplayed=S.subjects.find(s=>!S.levelProgress[s.key]||S.levelProgress[s.key].current_level<=1);
+  const suggest=unplayed||S.subjects[Math.floor(Math.random()*Math.min(S.subjects.length,4))];
+  if(suggest){
+    const el=document.getElementById('tara-suggest');
+    if(el){el.dataset.key=suggest.key;}
+    const msg=document.getElementById('ts-msg');
+    const sub=document.getElementById('ts-sub');
+    if(msg)msg.textContent=`Try ${suggest.name} today! ${suggest.icon}`;
+    if(sub)sub.textContent=unplayed?`You haven't explored this subject yet 🌱`:`Great subject to practise! 💪`;
+  }
+  // Streak nudge
+  const todaySessions=Object.keys(S.tc).length;
+  const needed=Math.max(0,3-todaySessions);
+  const nudgeEl=document.getElementById('streak-nudge');
+  const neededEl=document.getElementById('sn-needed');
+  if(nudgeEl){nudgeEl.style.display=needed>0?'flex':'none';}
+  if(neededEl)neededEl.textContent=needed===1?'1 more subject':`${needed} more subjects`;
 }
 
-// ALL subjects in Learn scroll using shared lscard style
-function renderIslands(){
+// Subject filter categories
+const SUBJ_CATS={
+  core:['math','english','reading','writing','social'],
+  cultural:['hindi','hinduism','festivals','values','stories'],
+  science:['science','biology','earth','space','weather','animals','plants','body','water'],
+  creative:['art','music','coding','creative','health'],
+};
+
+function filterSubjects(cat,btn){
+  document.querySelectorAll('.sf-tab').forEach(t=>t.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderIslands(cat);
+}
+
+function startSuggestedSubject(){
+  const el=document.getElementById('tara-suggest');
+  const key=el?.dataset?.key;
+  if(key)startSubject(key);
+}
+
+// ALL subjects in Learn scroll — with optional category filter and New badge
+function renderIslands(cat='all'){
   const el=document.getElementById('l-islands');if(!el)return;
-  el.innerHTML=S.subjects.map(s=>buildSCard(s,'learn')).join('');
+  const filtered=cat==='all'?S.subjects:S.subjects.filter(s=>SUBJ_CATS[cat]?.includes(s.key));
+  if(!filtered.length){el.innerHTML='<div style="color:rgba(255,255,255,.35);font-size:.75rem;font-weight:700;padding:18px 4px">No subjects in this category yet.</div>';return;}
+  el.innerHTML=filtered.map(s=>{
+    const isNew=!S.levelProgress[s.key]||S.levelProgress[s.key].current_level<=1;
+    const lv=S.levelProgress[s.key]?.current_level||1;
+    const pct=Math.round((lv-1)/10*100);
+    const img=subjectImg(s.key);
+    const col=subjectColor(s);
+    const grad=subjectGrad(s);
+    return `<div class="lscard" style="--sc-color:${col};--sc-grad:${grad}" onclick="startSubject('${s.key}')">
+      ${isNew?'<div class="scard-new">NEW</div>':''}
+      <div class="lscard-img">
+        ${img?`<img src="${img}" alt="${s.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:``}
+        <div class="lscard-img-fallback" style="${img?'display:none':''};background:${grad}"><span>${s.icon||'📖'}</span></div>
+      </div>
+      <div class="lscard-body">
+        <div class="lscard-nm">${s.name}</div>
+        <span class="lscard-pill">Lv${lv}</span>
+        <div class="lscard-pb"><div class="lscard-pf" style="width:${pct}%"></div></div>
+        <div class="lscard-pct">${pct}%</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function renderContCards(){
