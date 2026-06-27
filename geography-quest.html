@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Geography Quest 🗺️ — Learning Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="leaflet.min.css"/>
+<link rel="stylesheet" href="leaflet.css"/>
 <style>
 :root{
   --teal:#2BBFB8;--teal2:#1A9990;--amber:#F6C04A;--amber2:#E8A020;
@@ -21,7 +21,7 @@ body{background:#060c18;display:flex;flex-direction:column;align-items:center;ju
              radial-gradient(ellipse at 80% 20%,rgba(74,144,217,.06) 0%,transparent 60%),
              #060c18}
 
-.wrap{position:relative;z-index:1;width:100%;max-width:640px;padding:10px;
+.wrap{position:relative;z-index:1;width:100%;max-width:780px;padding:10px;
   display:flex;flex-direction:column;gap:8px;max-height:100vh;overflow-y:auto}
 .wrap::-webkit-scrollbar{display:none}
 
@@ -64,9 +64,9 @@ body{background:#060c18;display:flex;flex-direction:column;align-items:center;ju
 .po-sub{font-size:.85rem;font-weight:800;color:rgba(255,255,255,.65);margin-top:3px}
 
 /* MAP */
-.map-wrap{border-radius:var(--r);overflow:hidden;border:1.5px solid rgba(255,255,255,.1);
-  box-shadow:var(--shadow);flex-shrink:0;position:relative}
-#map{height:240px;width:100%;background:#0a1628}
+.map-wrap{border-radius:var(--r);overflow:hidden;border:2px solid rgba(74,144,217,.35);
+  box-shadow:var(--shadow),0 0 20px rgba(74,144,217,.15);flex-shrink:0;position:relative}
+#map{height:380px;width:100%;background:#0a1628}
 .map-instruction{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:1000;
   background:rgba(6,12,24,.88);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);
   border-radius:99px;padding:5px 14px;font-size:.68rem;font-weight:800;color:rgba(255,255,255,.8);
@@ -78,8 +78,8 @@ body{background:#060c18;display:flex;flex-direction:column;align-items:center;ju
 .attempt-badge.show{display:block}
 
 /* QUESTION CARD */
-.q-card{background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
-  border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
+.q-card{background:var(--gc);backdrop-filter:blur(14px);border:1.5px solid rgba(74,144,217,.2);
+  border-radius:var(--r);padding:16px;box-shadow:var(--shadow),0 0 14px rgba(74,144,217,.08)}
 .q-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .mode-tag{font-size:.63rem;font-weight:900;border-radius:99px;padding:3px 11px;border:1px solid}
 .mode-tag.clickcountry{background:rgba(74,144,217,.12);color:#90CAF9;border-color:rgba(74,144,217,.25)}
@@ -367,9 +367,9 @@ body{background:#060c18;display:flex;flex-direction:column;align-items:center;ju
   </div>
 </div>
 
-<script src="leaflet.min.js"></script>
+<script src="leaflet.js"></script>
 <script>
-function loadLeaflet(cb){cb();} // Leaflet already loaded locally
+function loadLeaflet(cb){cb();}
 </script>
 <script>
 const SB='https://tnhgihzfwqsflpueivwe.supabase.co',KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
