@@ -396,6 +396,7 @@ function initMap(){
     attribution:'© OpenStreetMap © CARTO',maxZoom:6,subdomains:'abcd',noWrap:true
   }).addTo(map);
   map.setView([20,10],2);
+  map.setMaxZoom(5);
 }
 
 function loadGeoJSON(){
@@ -406,9 +407,23 @@ function loadGeoJSON(){
         style:()=>({color:'#4A90D9',weight:0.8,fillColor:'#C8DCF0',fillOpacity:0.7}),
         onEachFeature:(feature,layer)=>{
           layer.on({
-            mouseover:e=>{if(mapClickEnabled){e.target.setStyle({fillColor:'#4A90D9',fillOpacity:0.5});}},
-            mouseout:e=>{if(mapClickEnabled){geojsonLayer.resetStyle(e.target);}},
-            click:e=>{if(mapClickEnabled&&mapClickHandler){mapClickHandler(feature.properties.name,layer,e);}}
+            mouseover:e=>{
+              if(mapClickEnabled){
+                e.target.setStyle({fillColor:'#4A90D9',fillOpacity:0.6,weight:2,color:'#1565C0'});
+                e.target.bringToFront();
+              }
+            },
+            mouseout:e=>{
+              if(mapClickEnabled&&!e.target._highlighted){
+                geojsonLayer.resetStyle(e.target);
+              }
+            },
+            click:e=>{
+              if(mapClickEnabled&&mapClickHandler){
+                L.DomEvent.stopPropagation(e);
+                mapClickHandler(feature.properties.name,layer,e);
+              }
+            }
           });
         }
       }).addTo(map);
@@ -427,22 +442,71 @@ function disableMapClick(){
   document.getElementById('map-instruction').className='map-instruction';
 }
 
+// Name aliases for GeoJSON mismatches
+const NAME_ALIASES={
+  'United States':'United States of America',
+  'United Kingdom':'United Kingdom of Great Britain and Northern Ireland',
+  'Russia':'Russian Federation',
+  'South Korea':'Republic of Korea',
+  'North Korea':'Democratic People's Republic of Korea',
+  'Iran':'Islamic Republic of Iran',
+  'Syria':'Syrian Arab Republic',
+  'Tanzania':'United Republic of Tanzania',
+  'Bolivia':'Bolivia (Plurinational State of)',
+  'Venezuela':'Venezuela (Bolivarian Republic of)',
+  'Czech Republic':'Czechia',
+  'Macedonia':'North Macedonia',
+  'East Timor':'Timor-Leste',
+  'Ivory Coast':'Côte d'Ivoire',
+  'Congo':'Democratic Republic of the Congo',
+};
+
+function resolveCountryName(name){
+  return NAME_ALIASES[name]||name;
+}
+
 function highlightCountry(name,color){
   if(!geojsonLayer)return;
+  const resolved=resolveCountryName(name);
   geojsonLayer.eachLayer(layer=>{
-    if(layer.feature&&layer.feature.properties.name===name){
-      layer.setStyle({fillColor:color,fillOpacity:0.85,color:color,weight:2});
+    if(!layer.feature)return;
+    const n=layer.feature.properties.name;
+    if(n===name||n===resolved||n.includes(name)||name.includes(n)){
+      layer.setStyle({fillColor:color,fillOpacity:0.85,color:color==='#52D08A'?'#27AE60':color==='#F6C04A'?'#E8A020':'#E84545',weight:2.5});
+      layer._highlighted=true;
+      layer.bringToFront();
     }
   });
 }
 
-function resetAllStyles(){
-  if(geojsonLayer)geojsonLayer.resetStyle();
+function highlightContinent(q){
+  if(!geojsonLayer||!q)return;
+  // For continent questions highlight all countries in that continent softly
+  const cont=CONTINENTS.find(c=>c.name===q.answer);
+  if(!cont)return;
+  cont.countries.forEach(cn=>highlightCountry(cn,'rgba(74,144,217,0.4)'));
 }
 
-function flyToLocation(lat,lng,zoom=4){
-  map.flyTo([lat,lng],zoom,{duration:1.5});
+function addPinMarker(lat,lng,label,color){
+  if(!map)return;
+  if(currentMarker)map.removeLayer(currentMarker);
+  const icon=L.divIcon({
+    html:`<div style="background:${color};border:3px solid #fff;border-radius:50% 50% 50% 0;
+      width:18px;height:18px;transform:rotate(-45deg);
+      box-shadow:0 2px 8px rgba(0,0,0,.4)"></div>`,
+    iconSize:[18,18],iconAnchor:[9,18],className:''
+  });
+  currentMarker=L.marker([lat,lng],{icon}).addTo(map)
+    .bindPopup(`<b style="color:#1A2B22">${label}</b>`,{className:'geo-popup'}).openPopup();
 }
+
+function resetAllStyles(){
+  if(!geojsonLayer)return;
+  geojsonLayer.eachLayer(l=>{l._highlighted=false;});
+  geojsonLayer.resetStyle();
+}
+
+function flyToLocation(lat,lng,zoom=4){/* zoom disabled */}
 
 function addMarker(lat,lng,label,color='#F6C04A'){
   if(currentMarker)map.removeLayer(currentMarker);
@@ -815,8 +879,7 @@ function loadQuestion(){
   // Render answer area
   renderAnswerArea();
 
-  // Fly map to region
-  if(map)map.flyTo([q.lat,q.lng],q.zoom||3,{duration:1.2});
+  // Map stays at world view — no zoom
 
   // Hint after 7 seconds
   G.hintTimer=setTimeout(()=>{
@@ -854,32 +917,59 @@ function renderAnswerArea(){
 function handleMapClick(clickedName,layer,e){
   if(G.answered)return;
   const q=G.question;
-  // For continents, check if clicked country is on that continent
+  const resolved=resolveCountryName(q.answer);
   let isCorrect=false;
   if(q.mode==='clickcontinent'){
     const cont=CONTINENTS.find(c=>c.name===q.answer);
     isCorrect=cont&&cont.countries.includes(clickedName);
-    if(!isCorrect&&clickedName===q.answer)isCorrect=true;
-    // Also check by continent name match
+    if(!isCorrect&&(clickedName===q.answer||clickedName===resolved))isCorrect=true;
     const country=COUNTRIES.find(c=>c.name===clickedName);
     if(country&&country.continent.includes(q.answer))isCorrect=true;
   } else {
-    isCorrect=clickedName===q.answer;
+    // Fuzzy match for clickcountry
+    const rClicked=resolveCountryName(clickedName);
+    isCorrect=clickedName===q.answer||rClicked===q.answer||
+      clickedName===resolved||rClicked===resolved||
+      clickedName.includes(q.answer)||q.answer.includes(clickedName);
   }
   if(isCorrect){
-    layer.setStyle({fillColor:'#52D08A',fillOpacity:0.85,color:'#27AE60',weight:2.5});
+    // Green pulse on correct
+    layer._highlighted=true;
+    layer.setStyle({fillColor:'#52D08A',fillOpacity:0.9,color:'#27AE60',weight:3});
+    // If continent question, highlight all continent countries in teal
+    if(q.mode==='clickcontinent'){
+      const cont=CONTINENTS.find(c=>c.name===q.answer);
+      if(cont)setTimeout(()=>cont.countries.forEach(cn=>{
+        if(cn!==clickedName)highlightCountry(cn,'#A8E6CF');
+      }),300);
+    }
     processResult(true);
   } else {
-    layer.setStyle({fillColor:'#FF9090',fillOpacity:0.7,color:'#E84545',weight:2.5});
-    setTimeout(()=>geojsonLayer&&geojsonLayer.resetStyle(layer),800);
+    // Red flash on wrong
+    layer.setStyle({fillColor:'#FF9090',fillOpacity:0.75,color:'#E84545',weight:2.5});
+    setTimeout(()=>{
+      if(!layer._highlighted){geojsonLayer&&geojsonLayer.resetStyle(layer);}
+    },900);
     handleWrongAttempt();
   }
 }
 
 function checkMCQ(btn,chosen,correct){
   if(G.answered)return;
-  if(chosen===correct){btn.classList.add('correct');processResult(true);}
-  else{btn.classList.add('wrong');handleWrongAttempt(btn);}
+  if(chosen===correct){
+    btn.classList.add('correct');
+    // Highlight the answer country on map
+    const q=G.question;
+    const countryToHighlight=q.mode==='continent_of'?null:
+      (q.mode==='capital'||q.mode==='flag'||q.mode==='landmark'||q.mode==='neighbour')?
+      (q.mode==='continent_of'?null:COUNTRIES.find(c=>c.name===q.answer||c.capital===q.answer)):null;
+    if(countryToHighlight)highlightCountry(countryToHighlight.name,'#52D08A');
+    else if(q.mode==='capital'||q.mode==='flag'||q.mode==='landmark')highlightCountry(q.answer,'#52D08A');
+    processResult(true);
+  } else {
+    btn.classList.add('wrong');
+    handleWrongAttempt(btn);
+  }
 }
 
 function handleWrongAttempt(btn){
@@ -936,17 +1026,17 @@ function processResult(isCorrect){
     if(c)showPopup('combo',c.t,c.sub);
     // Highlight correct on map
     highlightCountry(G.question.answer,'#52D08A');
+    if(G.question.lat)addPinMarker(G.question.lat,G.question.lng,G.question.answer,'#52D08A');
   } else {
     G.lives--;G.streak=0;G.totalAsked++;
     G.lifeRestoreStreak=0;
     updateStreakBadge();updateLives();
-    // Fly to correct location and show marker
+    // Show correct location without zooming
     const q=G.question;
-    flyToLocation(q.lat,q.lng,q.zoom||4);
     setTimeout(()=>{
-      addMarker(q.lat,q.lng,`✅ ${q.answer}`,'#F6C04A');
       highlightCountry(q.answer,'#F6C04A');
-    },1200);
+      addPinMarker(q.lat,q.lng,q.answer,'#F6C04A');
+    },300);
     if(G.lives<=0){showExplanation(false,()=>endGame());return;}
   }
   document.getElementById('g-stars').textContent=G.stars.toLocaleString();
@@ -985,11 +1075,8 @@ function useHint(){
   document.getElementById('hint-btn').className='hint-btn used';
   document.getElementById('hint-txt').textContent=G.question.hint||'Think carefully about the location on the map!';
   document.getElementById('hint-box').className='hint-box show';
-  // For map questions, zoom closer
-  if(['clickcountry','clickcontinent'].includes(G.question.mode)){
-    const q=G.question;
-    map.flyTo([q.lat,q.lng],5,{duration:1});
-  }
+  // Hint: highlight countries in region softly
+  if(G.question)highlightContinent(G.question);
 }
 
 // ── Show Picture ──────────────────────────────────────────────────
