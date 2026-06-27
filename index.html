@@ -432,12 +432,17 @@ body{background:#0a1a10}
 .cal-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:5px}
 .cal-hd{text-align:center;font-size:.58rem;font-weight:900;color:rgba(255,255,255,.35);padding:2px 0}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.cal-cell{aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer;transition:all .15s;position:relative}
+.cal-cell{aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer;transition:all .15s;position:relative;flex-direction:column;gap:1px}
 .cal-cell:hover{background:rgba(255,255,255,.09)}
-.cal-cell.today{background:var(--teal);color:#fff;font-weight:900}
+.cal-cell.today{background:linear-gradient(135deg,var(--teal2),var(--teal));color:#fff;font-weight:900;box-shadow:0 0 0 3px rgba(43,191,184,.25),0 4px 14px rgba(43,191,184,.35);animation:todayPulse 2.5s ease-in-out infinite}
+@keyframes todayPulse{0%,100%{box-shadow:0 0 0 3px rgba(43,191,184,.25),0 4px 14px rgba(43,191,184,.35)}50%{box-shadow:0 0 0 5px rgba(43,191,184,.15),0 4px 18px rgba(43,191,184,.5)}}
 .cal-cell.other{color:rgba(255,255,255,.18)}
-.cal-dot{position:absolute;bottom:1px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%}
-.cal-dot.p{background:var(--green)}.cal-dot.g{background:var(--amber)}.cal-dot.s{background:var(--orange)}.cal-dot.m{background:var(--red)}
+.cal-cell.has-dot{padding-bottom:3px}
+.cal-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.cal-dot.p{background:var(--green);box-shadow:0 0 4px rgba(39,174,96,.6)}
+.cal-dot.g{background:var(--amber);box-shadow:0 0 4px rgba(246,192,74,.6)}
+.cal-dot.s{background:var(--orange);box-shadow:0 0 4px rgba(240,120,48,.6)}
+.cal-dot.m{background:var(--red);box-shadow:0 0 4px rgba(232,69,69,.6)}
 .cal-leg{display:flex;gap:9px;flex-wrap:wrap;margin-top:11px}
 .cl-item{display:flex;align-items:center;gap:4px;font-size:.58rem;font-weight:700;color:rgba(255,255,255,.4)}
 .cl-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
@@ -447,12 +452,13 @@ body{background:#0a1a10}
 .ws-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:9px}
 .ws-day{text-align:center}
 .ws-dn{font-size:.56rem;font-weight:800;color:rgba(255,255,255,.35);margin-bottom:5px}
-.ws-star{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:.8rem;font-weight:900;color:#fff}
-.ws-star.full{background:linear-gradient(135deg,var(--green),#52D08A)}
-.ws-star.part{background:linear-gradient(135deg,var(--amber2),var(--amber))}
-.ws-star.miss{background:linear-gradient(135deg,var(--red),#F07070)}
-.ws-star.cur{background:linear-gradient(135deg,var(--teal2),var(--teal));animation:iPulse 2s infinite}
-.ws-star.fut{background:rgba(255,255,255,.07);color:rgba(255,255,255,.25)}
+.ws-star{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:.85rem;font-weight:900;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25);transition:transform .2s}
+.ws-star:hover{transform:scale(1.12)}
+.ws-star.full{background:linear-gradient(135deg,var(--green),#52D08A);box-shadow:0 3px 10px rgba(39,174,96,.4)}
+.ws-star.part{background:linear-gradient(135deg,var(--amber2),var(--amber));box-shadow:0 3px 10px rgba(246,192,74,.35)}
+.ws-star.miss{background:linear-gradient(135deg,var(--red),#F07070);box-shadow:0 3px 10px rgba(232,69,69,.35)}
+.ws-star.cur{background:linear-gradient(135deg,var(--teal2),var(--teal));box-shadow:0 3px 10px rgba(43,191,184,.4);animation:iPulse 2s infinite}
+.ws-star.fut{background:rgba(255,255,255,.07);color:rgba(255,255,255,.25);box-shadow:none}
 .ws-sc{font-size:.52rem;font-weight:700;color:rgba(255,255,255,.3);margin-top:3px}
 
 /* GARDEN */
@@ -461,11 +467,13 @@ body{background:#0a1a10}
 .gc-ttl{font-size:.78rem;font-weight:900;color:#7DFFB0}
 .gc-sub{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.4)}
 .gc-cnt{font-size:.95rem;font-weight:900;color:var(--orange);display:flex;align-items:center;gap:3px}
-.garden-row{display:flex;gap:7px;align-items:flex-end;justify-content:center}
-.fp{text-align:center}
-.fe{font-size:1.5rem;display:block;animation:fWave var(--fd,3s) ease-in-out infinite var(--fdl,0s)}
-@keyframes fWave{0%,100%{transform:rotate(-5deg) scale(1)}50%{transform:rotate(5deg) scale(1.1)}}
-.fd{font-size:.55rem;font-weight:800;color:rgba(255,255,255,.4);margin-top:2px}
+.garden-row{display:flex;gap:6px;align-items:flex-end;justify-content:space-between}
+.fp{text-align:center;flex:1}
+.fp-img{width:38px;height:38px;object-fit:contain;display:block;margin:0 auto;animation:fWave var(--fd,3s) ease-in-out infinite var(--fdl,0s);filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))}
+.fp-img.active-plant{filter:drop-shadow(0 4px 10px rgba(43,191,184,.5));animation:fWave 2.5s ease-in-out infinite}
+@keyframes fWave{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5px) scale(1.05)}}
+.fd{font-size:.5rem;font-weight:800;color:rgba(255,255,255,.4);margin-top:3px}
+.fd.today-lbl{color:var(--teal);font-weight:900}
 .gv-btn{width:100%;margin-top:11px;padding:8px;background:rgba(39,174,96,.12);border:1.5px solid rgba(39,174,96,.22);border-radius:10px;color:#7DFFB0;font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
 
 /* REWARDS */
@@ -1860,7 +1868,7 @@ function renderTasks(){
   document.getElementById('ds-bar').style.width=pct+'%';
   document.getElementById('ds-pct').textContent=pct+'%';
   const c=138.2;document.getElementById('ds-ring').style.strokeDashoffset=c-(c*pct/100);
-  buildCalendar();buildWS();
+  buildCalendar();buildWS();buildGarden();
 }
 
 async function tapTask(id,stars){
@@ -1872,11 +1880,55 @@ async function tapTask(id,stars){
   }catch(e){}
 }
 
-function buildCalendar(){
+// Plant images mapped to streak stage
+const PLANT_IMGS={
+  none:   IMG_BASE+'Not_Started.png',
+  sprout: IMG_BASE+'Sprouting.png',
+  bud:    IMG_BASE+'Ready_to_Bloom.png',
+  strong: IMG_BASE+'Growing_Strong.png',
+  bloom:  IMG_BASE+'Blooming.png',
+};
+function plantForStreak(streak){
+  if(streak>=14)return'bloom';
+  if(streak>=6) return'strong';
+  if(streak>=3) return'bud';
+  if(streak>=1) return'sprout';
+  return'none';
+}
+function plantForDay(completedTasks,totalTasks){
+  if(!totalTasks)return'none';
+  const pct=completedTasks/totalTasks;
+  if(pct>=1)  return'bloom';
+  if(pct>=.75)return'strong';
+  if(pct>=.5) return'bud';
+  if(pct>=.25)return'sprout';
+  return'none';
+}
+
+async function buildCalendar(){
   const y=S.calY,m=S.calM;
   const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
   const mn=document.getElementById('cal-mn');if(mn)mn.textContent=`${months[m]} ${y}`;
   const grid=document.getElementById('cal-grid');if(!grid)return;
+
+  // Fetch completions for this calendar month from Supabase
+  const monthStart=`${y}-${String(m+1).padStart(2,'0')}-01`;
+  const monthEnd=`${y}-${String(m+1).padStart(2,'0')}-${new Date(y,m+1,0).getDate()}`;
+  let completionMap={}; // date string → {done, total}
+  try{
+    if(S.player){
+      const rows=await db(`task_completions?player_id=eq.${S.player.id}&completion_date=gte.${monthStart}&completion_date=lte.${monthEnd}&select=completion_date,status`);
+      if(Array.isArray(rows)){
+        rows.forEach(r=>{
+          if(!completionMap[r.completion_date])completionMap[r.completion_date]={done:0,total:0};
+          completionMap[r.completion_date].total++;
+          if(r.status==='approved')completionMap[r.completion_date].done++;
+        });
+      }
+    }
+  }catch(e){}
+
+  const totalTasks=S.tasks.length||6;
   const first=new Date(y,m,1).getDay(),off=first===0?6:first-1;
   const dim=new Date(y,m+1,0).getDate(),td=new Date();
   let html='';
@@ -1884,27 +1936,136 @@ function buildCalendar(){
   for(let d=1;d<=dim;d++){
     const isTd=d===td.getDate()&&m===td.getMonth()&&y===td.getFullYear();
     const isPast=new Date(y,m,d)<new Date(td.getFullYear(),td.getMonth(),td.getDate());
-    const dot=isPast&&!isTd?(Math.random()>.3?'p':'g'):'';
-    html+=`<div class="cal-cell ${isTd?'today':''}">${d}${dot?`<div class="cal-dot ${dot}"></div>`:''}</div>`;
+    const dateStr=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const comp=completionMap[dateStr];
+    let dot='';
+    if(isPast&&!isTd&&comp){
+      const pct=comp.done/Math.max(comp.total,1);
+      dot=pct>=1?'p':pct>=.66?'g':pct>=.33?'s':'m';
+    } else if(isPast&&!isTd&&!comp){
+      dot='m'; // missed — no completions at all
+    }
+    html+=`<div class="cal-cell ${isTd?'today':''} ${dot?'has-dot':''}">${d}${dot?`<div class="cal-dot ${dot}"></div>`:''}</div>`;
   }
   grid.innerHTML=html;
 }
+
 function calPrev(){S.calM--;if(S.calM<0){S.calM=11;S.calY--;}buildCalendar();}
 function calNext(){S.calM++;if(S.calM>11){S.calM=0;S.calY++;}buildCalendar();}
 
-function buildWS(){
+async function buildWS(){
   const el=document.getElementById('ws-grid');if(!el)return;
-  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const st=['full','full','part','full','miss','cur','fut'];
-  const sc=['6/6','5/6','3/6','6/6','2/6','4/6','–'];
-  el.innerHTML=days.map((d,i)=>`<div class="ws-day"><div class="ws-dn">${d}</div><div class="ws-star ${st[i]}">${{full:'⭐',part:'⭐',miss:'✕',cur:'★',fut:'○'}[st[i]]}</div><div class="ws-sc">${sc[i]}</div></div>`).join('');
-  const wl=document.getElementById('ws-lbl');if(wl)wl.textContent='4 of 6 days completed';
+  const wl=document.getElementById('ws-lbl');
+
+  // Get Mon–Sun of current week
+  const now=new Date();
+  const dow=now.getDay()===0?6:now.getDay()-1; // 0=Mon
+  const weekDates=Array.from({length:7},(_,i)=>{
+    const d=new Date(now);d.setDate(now.getDate()-dow+i);return d;
+  });
+
+  // Fetch completions for the whole week
+  const weekStart=weekDates[0].toISOString().split('T')[0];
+  const weekEnd=weekDates[6].toISOString().split('T')[0];
+  let compMap={};
+  try{
+    if(S.player){
+      const rows=await db(`task_completions?player_id=eq.${S.player.id}&completion_date=gte.${weekStart}&completion_date=lte.${weekEnd}&select=completion_date,status`);
+      if(Array.isArray(rows)){
+        rows.forEach(r=>{
+          if(!compMap[r.completion_date])compMap[r.completion_date]={done:0,total:0};
+          compMap[r.completion_date].total++;
+          if(r.status==='approved')compMap[r.completion_date].done++;
+        });
+      }
+    }
+  }catch(e){}
+
+  const totalTasks=S.tasks.length||6;
+  const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const todayStr=now.toISOString().split('T')[0];
+  let daysGood=0;
+
+  el.innerHTML=weekDates.map((d,i)=>{
+    const ds=d.toISOString().split('T')[0];
+    const isToday=ds===todayStr;
+    const isFuture=d>now&&!isToday;
+    const comp=compMap[ds];
+    let status='fut',icon='○',score='–';
+    if(isToday){
+      status='cur';icon='★';
+      if(comp){score=`${comp.done}/${totalTasks}`;}
+      else score=`0/${totalTasks}`;
+    } else if(isFuture){
+      status='fut';icon='○';score='–';
+    } else {
+      // past day
+      if(comp&&comp.done>=totalTasks){status='full';icon='⭐';daysGood++;score=`${comp.done}/${totalTasks}`;}
+      else if(comp&&comp.done>0){status='part';icon='⭐';daysGood++;score=`${comp.done}/${totalTasks}`;}
+      else{status='miss';icon='✕';score='0';}
+    }
+    return `<div class="ws-day"><div class="ws-dn">${dayNames[i]}</div><div class="ws-star ${status}">${icon}</div><div class="ws-sc">${score}</div></div>`;
+  }).join('');
+
+  if(wl)wl.textContent=`${daysGood} of 6 days completed`;
 }
 
-function buildGarden(){
+async function buildGarden(){
   const el=document.getElementById('garden-row');if(!el)return;
-  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Today'];
-  el.innerHTML=days.map((d,i)=>`<div class="fp"><img src="${IMG_BASE+streakPlants[Math.min(i<(S.streak||0)?i:0,11)]}" style="width:40px;height:40px;object-fit:contain" class="fe" alt="${d}"><div class="fd">${d}</div></div>`).join('');
+
+  // Get the last 7 days
+  const now=new Date();
+  const days=Array.from({length:7},(_,i)=>{
+    const d=new Date(now);d.setDate(now.getDate()-6+i);return d;
+  });
+  const startStr=days[0].toISOString().split('T')[0];
+  const endStr=days[6].toISOString().split('T')[0];
+  const todayStr=now.toISOString().split('T')[0];
+
+  let compMap={};
+  try{
+    if(S.player){
+      const rows=await db(`task_completions?player_id=eq.${S.player.id}&completion_date=gte.${startStr}&completion_date=lte.${endStr}&select=completion_date,status`);
+      if(Array.isArray(rows)){
+        rows.forEach(r=>{
+          if(!compMap[r.completion_date])compMap[r.completion_date]={done:0,total:0};
+          compMap[r.completion_date].total++;
+          if(r.status==='approved')compMap[r.completion_date].done++;
+        });
+      }
+    }
+  }catch(e){}
+
+  const totalTasks=S.tasks.length||6;
+  const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+  el.innerHTML=days.map((d,i)=>{
+    const ds=d.toISOString().split('T')[0];
+    const isToday=ds===todayStr;
+    const isFuture=d>now&&!isToday;
+    const comp=compMap[ds];
+    let stage;
+    if(isFuture){stage='none';}
+    else if(isToday){
+      // Today: use current streak for plant stage
+      stage=plantForDay(comp?.done||0,totalTasks);
+    } else {
+      stage=plantForDay(comp?.done||0,totalTasks);
+    }
+    const label=isToday?'Today':dayNames[(d.getDay()+6)%7];
+    const delay=(i*0.15).toFixed(2);
+    return `<div class="fp">
+      <img src="${PLANT_IMGS[stage]}" alt="${label}"
+           class="fp-img${isToday?' active-plant':''}"
+           style="--fd:${2+i*0.2}s;--fdl:${delay}s"
+           onerror="this.style.opacity='.3'">
+      <div class="fd${isToday?' today-lbl':''}">${label}</div>
+    </div>`;
+  }).join('');
+
+  // Update streak count in header
+  const sc=document.getElementById('g-streak');
+  if(sc)sc.textContent=S.streak||0;
 }
 
 // LEARN screen
