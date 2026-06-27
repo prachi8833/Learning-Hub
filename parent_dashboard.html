@@ -194,7 +194,9 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
         <div class="card-title"><span>✅ Pending Task Approvals</span><button class="btn btn-green btn-sm" onclick="approveAllPending()">✓ Approve All</button></div>
         <div id="pending-list"></div>
       </div>
-      <div class="card"><div class="card-title"><span>🎁 Pending Redemptions</span></div><div id="redemption-list"></div></div>
+      <div class="card"><div class="card-title"><span>🎁 Pending Reward Redemptions</span></div><div id="redemption-list"></div></div>
+      <div class="card"><div class="card-title"><span>⭐ Pending Star Requests (Good Deeds)</span></div><div id="star-request-list"></div></div>
+      <div class="card"><div class="card-title"><span>🎁 Pending Wish List Requests</span></div><div id="wish-request-list"></div></div>
     </div>
 
     <!-- TASKS -->
@@ -458,7 +460,14 @@ async function renderOverview(){
 }
 
 async function loadPending(){
-  const[pending]=await Promise.all([db('task_completions?status=eq.pending&select=*&order=created_at.desc')]);
+  const[pending,redemptions,starReqs,wishReqs]=await Promise.all([
+    db('task_completions?status=eq.pending&select=*&order=created_at.desc'),
+    db('redemptions?status=eq.pending&select=*&order=created_at.desc'),
+    db('star_requests?status=eq.pending&select=*&order=created_at.desc'),
+    db('wish_requests?status=eq.pending&select=*&order=created_at.desc')
+  ]);
+
+  // Task approvals
   const pEl=document.getElementById('pending-list');
   pEl.innerHTML=(Array.isArray(pending)?pending:[]).length
     ?pending.map(pc=>{
@@ -472,25 +481,180 @@ async function loadPending(){
         </div>
         <div style="display:flex;gap:6px;flex-shrink:0">
           <button class="btn btn-green btn-sm" onclick="approveTask('${pc.id}','${pc.player_id}',${task?.stars_value||15})">✓ Approve</button>
-          <button class="btn btn-red btn-sm" onclick="rejectTask('${pc.id}')">✕ Reject</button>
+          <button class="btn btn-red btn-sm" onclick="rejectTask('${pc.id}','${pc.player_id}')">✕ Reject</button>
         </div>
       </div>`;}).join('')
     :`<div class="empty-state"><span class="es-icon">🎉</span>No pending task approvals!</div>`;
-  document.getElementById('redemption-list').innerHTML=`<div class="empty-state"><span class="es-icon">🎁</span>No pending redemptions</div>`;
+
+  // Reward redemptions
+  const rEl=document.getElementById('redemption-list');
+  rEl.innerHTML=(Array.isArray(redemptions)?redemptions:[]).length
+    ?redemptions.map(r=>{
+      const player=D.players.find(p=>p.id===r.player_id);
+      const reward=D.rewardShop.find(x=>x.id===r.reward_id);
+      return `<div style="display:flex;align-items:center;gap:10px;padding:11px 12px;background:rgba(232,69,122,.06);border-radius:10px;margin-bottom:8px;border:1px solid rgba(232,69,122,.15)">
+        <div style="flex:1">
+          <div style="font-size:.72rem;font-weight:900;color:var(--pink)">${player?.avatar||'⭐'} ${player?.name||'?'}</div>
+          <div style="font-size:.82rem;font-weight:800;color:#fff;margin-top:1px">🎁 ${reward?.title||'Reward'} · ${r.stars_spent?.toLocaleString()||0} ⭐</div>
+          <div style="font-size:.62rem;color:var(--light)">${new Date(r.created_at).toLocaleString()}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button class="btn btn-green btn-sm" onclick="approveRedemption('${r.id}','${r.player_id}',${r.stars_spent||0},'${(reward?.title||'Reward').replace(/'/g,"\\'")}')">✓ Approve</button>
+          <button class="btn btn-red btn-sm" onclick="rejectRedemption('${r.id}','${r.player_id}','${(reward?.title||'Reward').replace(/'/g,"\\'")}')">✕ Reject</button>
+        </div>
+      </div>`;}).join('')
+    :`<div class="empty-state"><span class="es-icon">🎁</span>No pending redemptions!</div>`;
+
+  // Star requests
+  const srEl=document.getElementById('star-request-list');
+  srEl.innerHTML=(Array.isArray(starReqs)?starReqs:[]).length
+    ?starReqs.map(r=>{
+      const player=D.players.find(p=>p.id===r.player_id);
+      return `<div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:rgba(246,192,74,.06);border-radius:10px;margin-bottom:8px;border:1px solid rgba(246,192,74,.15)">
+        <div style="flex:1">
+          <div style="font-size:.72rem;font-weight:900;color:var(--amber)">${player?.avatar||'⭐'} ${player?.name||'?'} · requested ${r.requested_amount} ⭐</div>
+          <div style="font-size:.8rem;font-weight:700;color:rgba(255,255,255,.8);margin-top:4px;line-height:1.4">"${r.description}"</div>
+          <div style="font-size:.62rem;color:var(--light);margin-top:3px">${new Date(r.created_at).toLocaleString()}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+          <button class="btn btn-green btn-sm" onclick="approveStarRequest('${r.id}','${r.player_id}',${r.requested_amount})">✓ Approve</button>
+          <button class="btn btn-amber btn-sm" onclick="approveStarRequestCustom('${r.id}','${r.player_id}',${r.requested_amount},'${(player?.name||'?')}')">✏️ Custom</button>
+          <button class="btn btn-red btn-sm" onclick="rejectStarRequest('${r.id}','${r.player_id}')">✕ Reject</button>
+        </div>
+      </div>`;}).join('')
+    :`<div class="empty-state"><span class="es-icon">⭐</span>No star requests!</div>`;
+
+  // Wish requests
+  const wrEl=document.getElementById('wish-request-list');
+  wrEl.innerHTML=(Array.isArray(wishReqs)?wishReqs:[]).length
+    ?wishReqs.map(r=>{
+      const player=D.players.find(p=>p.id===r.player_id);
+      return `<div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:rgba(43,191,184,.06);border-radius:10px;margin-bottom:8px;border:1px solid rgba(43,191,184,.15)">
+        <div style="flex:1">
+          <div style="font-size:.72rem;font-weight:900;color:var(--teal)">${player?.avatar||'⭐'} ${player?.name||'?'} wants something!</div>
+          <div style="font-size:.8rem;font-weight:700;color:rgba(255,255,255,.8);margin-top:4px;line-height:1.4">"${r.description}"</div>
+          <div style="font-size:.62rem;color:var(--light);margin-top:3px">${new Date(r.created_at).toLocaleString()}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+          <button class="btn btn-green btn-sm" onclick="approveWishRequest('${r.id}','${r.player_id}','${(r.description||'').replace(/'/g,"\\'").slice(0,40)}')">✓ Add to List</button>
+          <button class="btn btn-red btn-sm" onclick="rejectWishRequest('${r.id}','${r.player_id}')">✕ Decline</button>
+        </div>
+      </div>`;}).join('')
+    :`<div class="empty-state"><span class="es-icon">🎁</span>No wish requests!</div>`;
+
+  // Update badge count
+  const total=(Array.isArray(pending)?pending.length:0)+(Array.isArray(redemptions)?redemptions.length:0)+(Array.isArray(starReqs)?starReqs.length:0)+(Array.isArray(wishReqs)?wishReqs.length:0);
+  const nb=document.getElementById('nav-pending-badge');
+  if(nb){nb.style.display=total>0?'block':'none';if(total>0)nb.textContent=total;}
 }
 async function approveTask(cid,pid,stars){
   await db(`task_completions?id=eq.${cid}`,{method:'PATCH',prefer:'return=minimal',body:{status:'approved',approved_at:new Date().toISOString()}});
   await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:pid,amount:parseInt(stars),reason:'Task approved by parent',category:'task'}});
+  await sendKidNotif(pid,`✅ Your task was approved! +${stars} ⭐ added!`,'success','✅');
   toast('Task approved! ✅');loadPending();renderOverview();
 }
-async function rejectTask(cid){
+async function rejectTask(cid,pid){
   await db(`task_completions?id=eq.${cid}`,{method:'PATCH',prefer:'return=minimal',body:{status:'rejected'}});
+  if(pid)await sendKidNotif(pid,'❌ A task was not approved this time. Keep trying!','warning','❌');
   toast('Task rejected','info');loadPending();
 }
 async function approveAllPending(){
   const pending=await db('task_completions?status=eq.pending&select=*');
   for(const pc of pending){const task=D.tasks.find(t=>t.id===pc.task_id);await approveTask(pc.id,pc.player_id,task?.stars_value||15);}
   toast(`All tasks approved! ✅`);
+}
+
+// Reward redemption approve/reject
+async function approveRedemption(rid,pid,stars,title){
+  await db(`redemptions?id=eq.${rid}`,{method:'PATCH',prefer:'return=minimal',body:{status:'approved',approved_at:new Date().toISOString()}});
+  await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:pid,amount:-parseInt(stars),reason:`Redeemed: ${title}`,category:'spend'}});
+  await sendKidNotif(pid,`🎉 "${title}" approved! ${stars} ⭐ deducted. Enjoy!`,'success','🎉');
+  toast(`Redemption approved! ${stars} ⭐ deducted`);loadPending();renderOverview();
+}
+async function rejectRedemption(rid,pid,title){
+  showModal(`<div class="modal-title">✕ Reject Redemption <button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:12px">Add a note for ${D.players.find(p=>p.id===pid)?.name||'the kid'} explaining why:</div>
+    <textarea class="form-input" id="rej-note" placeholder="e.g. You need to complete 2 more chores first!" style="height:80px;resize:none;margin-bottom:12px"></textarea>
+    <button class="btn btn-red" style="width:100%" onclick="submitRejectRedemption('${rid}','${pid}','${title.replace(/'/g,"\\'")}')">✕ Reject & Notify</button>`);
+}
+async function submitRejectRedemption(rid,pid,title){
+  const note=document.getElementById('rej-note').value.trim()||'Not approved this time.';
+  await db(`redemptions?id=eq.${rid}`,{method:'PATCH',prefer:'return=minimal',body:{status:'rejected',parent_note:note}});
+  await sendKidNotif(pid,`❌ "${title}" was not approved. Parent says: "${note}"`,'warning','❌');
+  toast('Redemption rejected','info');closeModal();loadPending();
+}
+
+// Star request approve/reject
+async function approveStarRequest(rid,pid,amount){
+  await db(`star_requests?id=eq.${rid}`,{method:'PATCH',prefer:'return=minimal',body:{status:'approved',approved_amount:amount}});
+  await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:pid,amount:parseInt(amount),reason:'Good deed approved by parent',category:'bonus'}});
+  await sendKidNotif(pid,`⭐ Your good deed was rewarded! +${amount} stars added! Well done!`,'success','⭐');
+  toast(`+${amount} stars approved! ⭐`);loadPending();renderOverview();
+}
+async function approveStarRequestCustom(rid,pid,suggested,name){
+  showModal(`<div class="modal-title">⭐ Approve Star Request <button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:12px">${name} requested ${suggested} stars. How many would you like to give?</div>
+    <input class="form-input" type="number" id="custom-stars" value="${suggested}" min="1" max="500" style="margin-bottom:8px">
+    <input class="form-input" type="text" id="custom-note" placeholder="Add a note (optional) e.g. Great job helping today!" style="margin-bottom:12px">
+    <button class="btn btn-green" style="width:100%" onclick="submitCustomStarApproval('${rid}','${pid}')">✓ Approve with Custom Amount</button>`);
+}
+async function submitCustomStarApproval(rid,pid){
+  const amount=parseInt(document.getElementById('custom-stars').value)||0;
+  const note=document.getElementById('custom-note').value.trim();
+  if(!amount){toast('Enter a valid amount','error');return;}
+  await db(`star_requests?id=eq.${rid}`,{method:'PATCH',prefer:'return=minimal',body:{status:'approved',approved_amount:amount,parent_note:note}});
+  await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:pid,amount,reason:(note||'Good deed approved by parent'),category:'bonus'}});
+  await sendKidNotif(pid,`⭐ Your good deed was rewarded! +${amount} stars!${note?' Parent says: "'+note+'"':''}`,'success','⭐');
+  toast(`+${amount} stars approved! ⭐`);closeModal();loadPending();renderOverview();
+}
+async function rejectStarRequest(rid,pid){
+  showModal(`<div class="modal-title">✕ Reject Star Request <button class="modal-close" onclick="closeModal()">✕</button></div>
+    <textarea class="form-input" id="rej-sr-note" placeholder="e.g. Let\'s talk about this first!" style="height:80px;resize:none;margin-bottom:12px"></textarea>
+    <button class="btn btn-red" style="width:100%" onclick="submitRejectStarReq('${rid}','${pid}')">✕ Reject & Notify</button>`);
+}
+async function submitRejectStarReq(rid,pid){
+  const note=document.getElementById('rej-sr-note').value.trim()||'Not approved this time.';
+  await db(`star_requests?id=eq.${rid}`,{method:'PATCH',prefer:'return=minimal',body:{status:'rejected',parent_note:note}});
+  await sendKidNotif(pid,`Your star request was reviewed. Parent says: "${note}"`,'warning','💬');
+  toast('Star request rejected','info');closeModal();loadPending();
+}
+
+// Wish request approve/reject
+async function approveWishRequest(rid,pid,desc){
+  // Add to wish list automatically
+  const player=D.players.find(p=>p.id===pid);
+  showModal(`<div class="modal-title">🎁 Add to Wish List <button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div style="font-size:.78rem;color:rgba(255,255,255,.6);margin-bottom:12px">${player?.name||'Kid'} requested: "${desc}"</div>
+    <div class="form-group"><label class="form-label">Gift Name</label><input class="form-input" id="awr-title" value="${desc.slice(0,50)}"></div>
+    <div class="form-group"><label class="form-label">Star Cost</label><input class="form-input" type="number" id="awr-cost" placeholder="e.g. 1500" min="100"></div>
+    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitApproveWishReq('${rid}','${pid}')">✓ Add to Wish List</button>`);
+}
+async function submitApproveWishReq(rid,pid){
+  const title=document.getElementById('awr-title').value.trim();
+  const cost=parseInt(document.getElementById('awr-cost').value);
+  if(!title||!cost){toast('Fill in name and cost','error');return;}
+  const player=D.players.find(p=>p.id===pid);
+  await db('wish_list',{method:'POST',prefer:'return=minimal',body:{player_id:pid,title,star_cost:cost,assigned_to:player?.name?.toLowerCase()||'both',active:true,gifted:false}});
+  await db(`wish_requests?id=eq.${rid}`,{method:'PATCH',prefer:'return=minimal',body:{status:'approved',parent_note:'Added to wish list!'}});
+  await sendKidNotif(pid,`🎁 "${title}" has been added to your wish list! Start saving! ⭐`,'success','🎁');
+  toast('Added to wish list! 🎁');closeModal();loadPending();loadWishList();
+}
+async function rejectWishRequest(rid,pid){
+  showModal(`<div class="modal-title">✕ Decline Wish Request <button class="modal-close" onclick="closeModal()">✕</button></div>
+    <textarea class="form-input" id="rej-wr-note" placeholder="e.g. Maybe for your birthday! Or: Let\'s discuss this." style="height:80px;resize:none;margin-bottom:12px"></textarea>
+    <button class="btn btn-red" style="width:100%" onclick="submitRejectWishReq('${rid}','${pid}')">✕ Decline & Notify</button>`);
+}
+async function submitRejectWishReq(rid,pid){
+  const note=document.getElementById('rej-wr-note').value.trim()||'Not added this time.';
+  await db(`wish_requests?id=eq.${rid}`,{method:'PATCH',prefer:'return=minimal',body:{status:'rejected',parent_note:note}});
+  await sendKidNotif(pid,`Your wish request was reviewed. Parent says: "${note}"`,'info','💬');
+  toast('Wish request declined','info');closeModal();loadPending();
+}
+
+// Send notification to kid
+async function sendKidNotif(playerId,message,type,icon){
+  type=type||'info';icon=icon||'🔔';
+  try{await db('kid_notifications',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,message,type,icon,read:false}});}catch(e){}
 }
 
 function filterTaskBlock(b,btn){
@@ -765,10 +929,37 @@ function editReward(id){
       <div class="form-group"><label class="form-label">Icon</label><input class="form-input" id="er-icon" value="${r.icon||'🎁'}"></div>
     </div>
     <div class="form-group"><label class="form-label">Star Cost</label><input class="form-input" type="number" id="er-cost" value="${r.star_cost}"></div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="er-weekend" ${r.weekend_deal?'checked':''} style="width:16px;height:16px">
+          🔥 Weekend Deal
+        </label>
+      </div>
+      <div class="form-group"><label class="form-label">Discount %</label><input class="form-input" type="number" id="er-discount" value="${r.weekend_discount_pct||20}" min="5" max="60"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="er-limited" ${r.is_limited?'checked':''} style="width:16px;height:16px">
+          ⏰ Limited Time
+        </label>
+      </div>
+      <div class="form-group"><label class="form-label">Expires At</label><input class="form-input" type="datetime-local" id="er-expires" value="${r.expires_at?r.expires_at.slice(0,16):''}"></div>
+    </div>
     <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitEditReward('${id}')">💾 Save</button>`);
 }
 async function submitEditReward(id){
-  const body={title:document.getElementById('er-title').value,icon:document.getElementById('er-icon').value,star_cost:parseInt(document.getElementById('er-cost').value)};
+  const expiresVal=document.getElementById('er-expires')?.value;
+  const body={
+    title:document.getElementById('er-title').value,
+    icon:document.getElementById('er-icon').value,
+    star_cost:parseInt(document.getElementById('er-cost').value),
+    weekend_deal:document.getElementById('er-weekend')?.checked||false,
+    weekend_discount_pct:parseInt(document.getElementById('er-discount')?.value)||20,
+    is_limited:document.getElementById('er-limited')?.checked||false,
+    expires_at:expiresVal?new Date(expiresVal).toISOString():null,
+  };
   await db(`reward_shop?id=eq.${id}`,{method:'PATCH',prefer:'return=minimal',body});
   D.rewardShop=D.rewardShop.map(r=>r.id===id?{...r,...body}:r);
   toast('Reward updated! ✅');closeModal();loadRewards();
