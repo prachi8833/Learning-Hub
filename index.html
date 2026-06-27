@@ -112,7 +112,116 @@ body{background:#0a1a10}
 .tb-left h1{font-size:1.4rem;font-weight:900;color:#fff;line-height:1.1;text-shadow:0 2px 10px rgba(0,0,0,.4)}
 .tb-left p{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.55);margin-top:1px}
 .tb-right{display:flex;align-items:center;gap:9px}
-/* ── KID PIN SCREEN ──────────────────────────────── */
+/* ── REWARD SYSTEM ──────────────────────────────────── */
+
+/* Goal Hero Banner */
+.goal-hero{
+  background:linear-gradient(135deg,rgba(8,30,16,.85),rgba(12,40,22,.9));
+  border:1px solid rgba(246,192,74,.25);border-radius:20px;
+  padding:0;overflow:hidden;position:relative;
+  box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 0 1px rgba(246,192,74,.1);
+}
+.goal-hero-img{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  opacity:.18;filter:blur(2px);
+}
+.goal-hero-body{position:relative;z-index:2;padding:20px 22px;display:flex;align-items:center;gap:18px}
+.goal-hero-thumb{
+  width:88px;height:78px;border-radius:14px;overflow:hidden;flex-shrink:0;
+  background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;
+  font-size:2.5rem;border:2px solid rgba(246,192,74,.25);
+  box-shadow:0 4px 16px rgba(0,0,0,.4);
+}
+.goal-hero-thumb img{width:100%;height:100%;object-fit:cover}
+.goal-hero-inf{flex:1;min-width:0}
+.goal-hero-tag{font-size:.58rem;font-weight:900;color:var(--amber);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.goal-hero-name{font-size:1.15rem;font-weight:900;color:#fff;line-height:1.2;margin-bottom:2px}
+.goal-hero-cost{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:10px}
+.goal-hero-bar-bg{height:10px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-bottom:5px}
+.goal-hero-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--amber2),var(--amber));transition:width 1s cubic-bezier(.34,1.56,.64,1);position:relative}
+.goal-hero-bar::after{content:'';position:absolute;right:0;top:0;bottom:0;width:20px;background:rgba(255,255,255,.4);border-radius:99px;animation:shimmer 1.5s ease-in-out infinite}
+.goal-hero-pct{display:flex;justify-content:space-between;font-size:.68rem;font-weight:800}
+.goal-hero-pct span:first-child{color:var(--amber)}
+.goal-hero-pct span:last-child{color:rgba(255,255,255,.4)}
+.goal-hero-switch{flex-shrink:0;text-align:center}
+.goal-hero-stars{font-size:1.5rem;font-weight:900;color:var(--amber);line-height:1;margin-bottom:2px}
+.goal-hero-slbl{font-size:.58rem;font-weight:700;color:rgba(255,255,255,.4)}
+.goal-switch-btn{margin-top:8px;padding:6px 12px;border:1px solid rgba(255,255,255,.15);border-radius:99px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);font-family:'Nunito',sans-serif;font-size:.62rem;font-weight:800;cursor:pointer;transition:all .2s;white-space:nowrap}
+.goal-switch-btn:hover{background:rgba(255,255,255,.14);color:#fff}
+.goal-celebrate{position:absolute;inset:0;z-index:10;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);border-radius:20px;flex-direction:column;gap:8px}
+.goal-celebrate.show{display:flex}
+
+/* Weekend deal badge */
+.rc-weekend{position:absolute;top:7px;right:7px;background:linear-gradient(135deg,#E8457A,#F07830);color:#fff;font-size:.48rem;font-weight:900;border-radius:99px;padding:2px 7px;text-transform:uppercase;letter-spacing:.3px;animation:wkPulse 1.5s ease-in-out infinite}
+@keyframes wkPulse{0%,100%{box-shadow:0 0 0 0 rgba(232,69,122,.4)}50%{box-shadow:0 0 0 4px rgba(232,69,122,0)}}
+
+/* Limited time countdown on card */
+.rc-limited-timer{font-size:.55rem;font-weight:800;color:var(--orange);margin-bottom:5px;display:flex;align-items:center;justify-content:center;gap:3px}
+
+/* Star request button */
+.star-req-btn{
+  width:100%;padding:13px;border:1.5px dashed rgba(246,192,74,.35);
+  border-radius:var(--r);background:rgba(246,192,74,.06);
+  color:var(--amber);font-family:'Nunito',sans-serif;font-size:.82rem;
+  font-weight:800;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.star-req-btn:hover{background:rgba(246,192,74,.12);border-color:rgba(246,192,74,.55)}
+
+/* Wish request button */
+.wish-req-btn{
+  width:100%;padding:11px;border:1.5px dashed rgba(43,191,184,.3);
+  border-radius:var(--r);background:rgba(43,191,184,.06);
+  color:var(--teal);font-family:'Nunito',sans-serif;font-size:.78rem;
+  font-weight:800;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+}
+.wish-req-btn:hover{background:rgba(43,191,184,.12);border-color:rgba(43,191,184,.5)}
+
+/* Weekend deals banner */
+.weekend-banner{
+  background:linear-gradient(135deg,rgba(232,69,122,.2),rgba(240,120,48,.15));
+  border:1px solid rgba(232,69,122,.3);border-radius:var(--r);
+  padding:14px 18px;display:flex;align-items:center;gap:14px;
+  animation:wkPulse 2s ease-in-out infinite;
+}
+.wb-ico{font-size:1.8rem;flex-shrink:0}
+.wb-inf{flex:1}
+.wb-ttl{font-size:.82rem;font-weight:900;color:#fff;margin-bottom:2px}
+.wb-sub{font-size:.66rem;font-weight:700;color:rgba(255,255,255,.55)}
+.wb-time{font-size:.72rem;font-weight:900;color:var(--pink)}
+
+/* Notification bell badge */
+.notif-count{position:absolute;top:-2px;right:-2px;width:16px;height:16px;border-radius:50%;background:var(--red);color:#fff;font-size:.48rem;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid rgba(0,0,0,.3)}
+
+/* Notification dropdown */
+.notif-dropdown{
+  position:absolute;top:calc(100% + 8px);right:0;
+  background:rgba(8,24,14,.97);backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.1);border-radius:16px;
+  width:300px;max-height:400px;overflow-y:auto;
+  box-shadow:0 12px 36px rgba(0,0,0,.5);display:none;z-index:100;
+}
+.notif-dropdown.open{display:block}
+.notif-dropdown::-webkit-scrollbar{width:3px}
+.notif-dropdown::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:99px}
+.nd-hdr{padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.07)}
+.nd-ttl{font-size:.78rem;font-weight:900;color:#fff}
+.nd-clear{font-size:.62rem;font-weight:700;color:var(--teal);cursor:pointer}
+.nd-item{display:flex;align-items:flex-start;gap:10px;padding:11px 16px;border-bottom:1px solid rgba(255,255,255,.05);transition:background .15s;cursor:pointer}
+.nd-item:hover{background:rgba(255,255,255,.05)}
+.nd-item.unread{background:rgba(43,191,184,.06)}
+.nd-item:last-child{border-bottom:none}
+.nd-ico{font-size:1.1rem;flex-shrink:0;margin-top:1px}
+.nd-msg{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.8);line-height:1.4;flex:1}
+.nd-time{font-size:.58rem;font-weight:700;color:rgba(255,255,255,.3);margin-top:2px}
+.nd-empty{padding:20px;text-align:center;font-size:.75rem;font-weight:700;color:rgba(255,255,255,.3)}
+
+/* Redemption confirm popup */
+.redeem-popup-cost{font-size:2rem;font-weight:900;color:var(--amber);text-align:center;margin:10px 0}
+.redeem-popup-bal{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.45);text-align:center;margin-bottom:14px}
+.redeem-popup-after{font-size:.78rem;font-weight:800;color:var(--teal);text-align:center;margin-bottom:18px}
 #kidPin{position:fixed;inset:0;z-index:1100;background:rgba(4,14,8,.88);backdrop-filter:blur(22px);display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px}
 .kp-av{width:80px;height:80px;border-radius:50%;border:3px solid rgba(255,255,255,.18);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:3rem;background:rgba(40,56,112,.45);box-shadow:0 0 0 6px rgba(255,255,255,.06),0 8px 24px rgba(0,0,0,.4)}
 .kp-av img{width:100%;height:100%;object-fit:cover}
@@ -1016,7 +1125,17 @@ body{background:#0a1a10}
             </div>
           </div>
         </div>
-        <div class="notif-btn" onclick="showNotifs()">🔔<div class="notif-dot"></div></div>
+        <div class="notif-btn" id="notif-btn" onclick="toggleNotifDD(event)" style="position:relative">
+          🔔
+          <div class="notif-count" id="notif-count" style="display:none">0</div>
+          <div class="notif-dropdown" id="notif-dropdown">
+            <div class="nd-hdr">
+              <span class="nd-ttl">🔔 Notifications</span>
+              <span class="nd-clear" onclick="clearAllNotifs(event)">Clear all</span>
+            </div>
+            <div id="nd-list"><div class="nd-empty">All caught up! 🎉</div></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1267,29 +1386,48 @@ body{background:#0a1a10}
       <!-- REWARDS -->
       <div id="rewardsScreen" class="screen">
         <div class="rew-layout">
-          <div class="rew-top">
-            <div class="bal-card">
-              <span class="bal-ico">⭐</span>
-              <div class="bal-val" id="r-bal">0</div>
-              <div class="bal-lbl">Stars</div>
-              <div class="bal-sub">✨ Keep learning, keep earning!</div>
-            </div>
-            <div class="unlock-card">
-              <div class="ul-gift">🎁</div>
-              <div class="ul-inf">
-                <div class="ul-ttl">Next Reward Unlock</div>
-                <div class="ul-bar-bg"><div class="ul-bar" id="ul-bar" style="width:0%"></div></div>
-                <div class="ul-txt" id="ul-txt">Set a goal to unlock rewards!</div>
+
+          <!-- ACTIVE GOAL HERO -->
+          <div class="goal-hero" id="goal-hero">
+            <div class="goal-hero-img" id="goal-hero-img"></div>
+            <div class="goal-hero-body">
+              <div class="goal-hero-thumb" id="goal-hero-thumb">🎁</div>
+              <div class="goal-hero-inf">
+                <div class="goal-hero-tag">🎯 Your Current Goal</div>
+                <div class="goal-hero-name" id="goal-hero-name">Set a goal to start saving!</div>
+                <div class="goal-hero-cost" id="goal-hero-cost">Scroll down to pick a wish list item</div>
+                <div class="goal-hero-bar-bg"><div class="goal-hero-bar" id="goal-hero-bar" style="width:0%"></div></div>
+                <div class="goal-hero-pct"><span id="goal-hero-pct">0%</span><span id="goal-hero-remain">Set a goal below ↓</span></div>
+              </div>
+              <div class="goal-hero-switch">
+                <div class="goal-hero-stars" id="r-bal">0</div>
+                <div class="goal-hero-slbl">Your Stars ⭐</div>
+                <button class="goal-switch-btn" onclick="scrollToWishList()">Switch Goal 🔄</button>
               </div>
             </div>
-            <div class="earn-card">
-              <div class="card-ttl" style="display:block;margin-bottom:11px">✨ How to earn stars?</div>
-              <div class="earn-row"><div class="earn-dot" style="background:var(--green)"></div><span class="earn-lbl">Complete tasks</span><span class="earn-val">+10–50 ⭐</span></div>
-              <div class="earn-row"><div class="earn-dot" style="background:var(--teal)"></div><span class="earn-lbl">Learn new things</span><span class="earn-val">+10–100 ⭐</span></div>
-              <div class="earn-row"><div class="earn-dot" style="background:var(--purple)"></div><span class="earn-lbl">Read &amp; practise</span><span class="earn-val">+15–40 ⭐</span></div>
-              <div class="earn-row"><div class="earn-dot" style="background:var(--amber)"></div><span class="earn-lbl">Daily consistency</span><span class="earn-val">+20–60 ⭐</span></div>
+            <div class="goal-celebrate" id="goal-celebrate">
+              <div style="font-size:3.5rem">🎉</div>
+              <div style="font-size:1.1rem;font-weight:900;color:#fff">Goal Reached!</div>
+              <div style="font-size:.78rem;color:rgba(255,255,255,.6)">Tell a parent to get your reward!</div>
             </div>
           </div>
+
+          <!-- WEEKEND DEAL BANNER (shown only during weekend deals) -->
+          <div class="weekend-banner" id="weekend-banner" style="display:none">
+            <div class="wb-ico">🔥</div>
+            <div class="wb-inf">
+              <div class="wb-ttl">Weekend Deals are LIVE!</div>
+              <div class="wb-sub">Selected rewards are discounted — ends Sunday midnight!</div>
+            </div>
+            <div class="wb-time" id="wb-time">23:59:59</div>
+          </div>
+
+          <!-- STAR REQUEST BUTTON -->
+          <button class="star-req-btn" onclick="showStarRequest()">
+            ⭐ Request Stars for a Good Deed
+          </button>
+
+          <!-- CATEGORY TABS -->
           <div class="cat-tabs" id="cat-tabs">
             <button class="ctab active" onclick="filterR('all',this)">⭐ All</button>
             <button class="ctab" onclick="filterR('toy',this)">🎮 Toys &amp; Games</button>
@@ -1298,22 +1436,29 @@ body{background:#0a1a10}
             <button class="ctab" onclick="filterR('experience',this)">🎈 Experiences</button>
           </div>
           <div class="rew-grid" id="r-grid"></div>
+
+          <!-- WISH LIST GOALS -->
           <div id="r-wish-section" style="display:none">
-            <div style="font-size:.7rem;font-weight:900;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">🎁 Wish List Goals</div>
+            <div style="font-size:.7rem;font-weight:900;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px" id="wish-section-anchor">🎁 Wish List Goals — Tap to set as your goal</div>
             <div class="rew-grid" id="r-wish-grid"></div>
           </div>
-          <div class="cd-banner">
-            <div class="cd-txt"><h3>💫 Save Your Stars, Get More!</h3><p>Wait for special offers and limited time rewards! 🎁</p></div>
-            <div class="cd-timer">
-              <div class="cd-unit"><span class="cd-num" id="cd-d">02</span><div class="cd-lbl">Days</div></div>
-              <div class="cd-sep">:</div>
-              <div class="cd-unit"><span class="cd-num" id="cd-h">14</span><div class="cd-lbl">Hours</div></div>
-              <div class="cd-sep">:</div>
-              <div class="cd-unit"><span class="cd-num" id="cd-m">36</span><div class="cd-lbl">Mins</div></div>
-              <div class="cd-sep">:</div>
-              <div class="cd-unit"><span class="cd-num" id="cd-s">08</span><div class="cd-lbl">Secs</div></div>
+
+          <!-- COUNTDOWN BANNER -->
+          <div class="cd-banner" id="cd-banner">
+            <div class="cd-txt">
+              <h3 id="cd-title">💫 Weekend Deals Coming!</h3>
+              <p id="cd-subtitle">Save your stars — special offers every weekend! 🎁</p>
             </div>
-            <button class="cd-vbtn">View Upcoming Offers ›</button>
+            <div class="cd-timer">
+              <div class="cd-unit"><span class="cd-num" id="cd-d">00</span><div class="cd-lbl">Days</div></div>
+              <div class="cd-sep">:</div>
+              <div class="cd-unit"><span class="cd-num" id="cd-h">00</span><div class="cd-lbl">Hours</div></div>
+              <div class="cd-sep">:</div>
+              <div class="cd-unit"><span class="cd-num" id="cd-m">00</span><div class="cd-lbl">Mins</div></div>
+              <div class="cd-sep">:</div>
+              <div class="cd-unit"><span class="cd-num" id="cd-s">00</span><div class="cd-lbl">Secs</div></div>
+            </div>
+            <button class="cd-vbtn" onclick="filterR('experience',document.querySelector('.ctab:last-child'))">View Deals ›</button>
           </div>
         </div>
       </div>
@@ -1360,6 +1505,8 @@ body{background:#0a1a10}
             <div class="card-hdr"><div class="card-ttl">✏️ About Me</div><span style="cursor:pointer" onclick="editAbout()">✏️</span></div>
             <div class="about-txt" id="about-txt">I love learning and exploring new things every day! 🌟</div>
             <div class="about-em" id="about-em">🌍</div>
+            <button class="star-req-btn" style="margin-top:12px" onclick="showStarRequest()">⭐ Request Stars for a Good Deed</button>
+            <button class="wish-req-btn" style="margin-top:8px" onclick="showWishRequest()">🎁 Request Something for My Wish List</button>
           </div>
           <div class="card ach-card">
             <div class="card-hdr"><div class="card-ttl">🏅 My Achievements</div><span class="card-lnk">View all →</span></div>
@@ -1715,7 +1862,9 @@ async function doLogin(p){
   document.getElementById('app').style.display='flex';
   if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='flex';
   setBG('home');
-  await loadPlayer();renderAll();
+  await loadPlayer();
+  await loadNotifications();
+  renderAll();
   updateChipDD();
 }
 function backToPlayerSelect(){
@@ -2577,244 +2726,222 @@ function renderRAch(){
 
 function startCurrentLesson(){const s=S.subjects[0];if(s)startSubject(s.key);}
 
+// ─── REWARD SYSTEM ──────────────────────────────────────────
+
+function isWeekendDeal(){const now=new Date();const day=now.getDay();const hr=now.getHours();return(day===5&&hr>=18)||(day===6)||(day===0);}
+function getWeekendDealPrice(cost,pct){return Math.round(cost*(1-(pct||20)/100));}
+function nextWeekendStart(){const now=new Date();const day=now.getDay();let d=((5-day+7)%7)||7;if(day===5&&now.getHours()<18)d=0;const n=new Date(now);n.setDate(now.getDate()+d);n.setHours(18,0,0,0);return n;}
+function nextSundayMidnight(){const now=new Date();const day=now.getDay();const d=(1-day+7)%7||7;const n=new Date(now);n.setDate(now.getDate()+d);n.setHours(0,0,0,0);return n;}
+
+function buildCountdown(){
+  function tick(){
+    const now=new Date();const isWknd=isWeekendDeal();
+    const wb=document.getElementById('weekend-banner');if(wb)wb.style.display=isWknd?'flex':'none';
+    const tgt=isWknd?nextSundayMidnight():nextWeekendStart();
+    const diff=Math.max(0,tgt-now);
+    const d=Math.floor(diff/864e5),h=Math.floor(diff%864e5/36e5),mi=Math.floor(diff%36e5/6e4),s=Math.floor(diff%6e4/1e3);
+    ['d','h','m','s'].forEach((k,i)=>{const el=document.getElementById('cd-'+k);if(el)el.textContent=String([d,h,mi,s][i]).padStart(2,'0');});
+    const wbt=document.getElementById('wb-time');
+    if(wbt&&isWknd){const d2=Math.max(0,nextSundayMidnight()-now);const hh=Math.floor(d2/36e5),mm=Math.floor(d2%36e5/6e4),ss=Math.floor(d2%6e4/1e3);wbt.textContent=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');}
+    const cdTitle=document.getElementById('cd-title');const cdSub=document.getElementById('cd-subtitle');
+    if(cdTitle)cdTitle.textContent=isWknd?'🔥 Weekend Deals are LIVE!':'💫 Weekend Deals Coming!';
+    if(cdSub)cdSub.textContent=isWknd?'Special discounts active — ends Sunday midnight!':'Save your stars — special offers every weekend! 🎁';
+  }
+  tick();setInterval(tick,1000);
+}
+
 function renderRewards(){
   document.getElementById('r-bal').textContent=S.stars.toLocaleString();
-  renderRGrid(S.rewardShop,'all');
-  renderWishGrid();
-  if(S.activeGoal){
-    const item=S.wishList.find(w=>w.id===S.activeGoal.wish_list_id);
-    if(item){const earned=Math.max(0,S.stars-(S.activeGoal.stars_at_start||0));const pct=Math.min(100,Math.round(earned/item.star_cost*100));document.getElementById('ul-bar').style.width=pct+'%';document.getElementById('ul-txt').textContent=`${S.stars.toLocaleString()} / ${item.star_cost.toLocaleString()} · ${Math.max(0,item.star_cost-earned).toLocaleString()} more to go!`;}
+  renderGoalHero();renderRGrid(S.rewardShop,'all');renderWishGrid();
+}
+
+function renderGoalHero(){
+  if(!S.activeGoal){
+    document.getElementById('goal-hero-name').textContent='Set a goal to start saving!';
+    document.getElementById('goal-hero-cost').textContent='Scroll down to pick a wish list item ↓';
+    document.getElementById('goal-hero-bar').style.width='0%';
+    document.getElementById('goal-hero-pct').textContent='0%';
+    document.getElementById('goal-hero-remain').textContent='No goal set yet';
+    document.getElementById('goal-hero-thumb').textContent='🎁';
+    document.getElementById('goal-hero-img').style.backgroundImage='';
+    document.getElementById('goal-celebrate').classList.remove('show');
+    return;
   }
+  const item=S.wishList.find(w=>w.id===S.activeGoal.wish_list_id);if(!item)return;
+  const earned=Math.max(0,S.stars-(S.activeGoal.stars_at_start||0));
+  const pct=Math.min(100,Math.round(earned/item.star_cost*100));
+  const remain=Math.max(0,item.star_cost-S.stars+(S.activeGoal.stars_at_start||0));
+  document.getElementById('goal-hero-name').textContent=item.title;
+  document.getElementById('goal-hero-cost').textContent=item.star_cost.toLocaleString()+' ⭐ total goal';
+  document.getElementById('goal-hero-bar').style.width=pct+'%';
+  document.getElementById('goal-hero-pct').textContent=pct+'%';
+  document.getElementById('goal-hero-remain').textContent=remain>0?(remain.toLocaleString()+' more stars to go!'):'🎉 Goal reached!';
+  const thumb=document.getElementById('goal-hero-thumb');
+  if(item.image_url){thumb.innerHTML='<img src="'+item.image_url+'">'}else{thumb.textContent=item.icon||'🎁';}
+  if(item.image_url)document.getElementById('goal-hero-img').style.backgroundImage='url("'+item.image_url+'")';
+  if(pct>=100)document.getElementById('goal-celebrate').classList.add('show');
+  else document.getElementById('goal-celebrate').classList.remove('show');
+}
+
+function scrollToWishList(){
+  setTimeout(()=>{const el=document.getElementById('wish-section-anchor');if(el)el.scrollIntoView({behavior:'smooth'});},300);
 }
 
 function renderWishGrid(){
   const el=document.getElementById('r-wish-grid');if(!el)return;
   const ws=document.getElementById('r-wish-section');
-  const items=S.wishList.filter(w=>!w.assigned_to||w.assigned_to==='both'||w.assigned_to===S.player.name.toLowerCase());
+  const items=S.wishList.filter(w=>!w.assigned_to||w.assigned_to==='both'||w.assigned_to===S.player?.name?.toLowerCase());
   if(!items.length){if(ws)ws.style.display='none';return;}
   if(ws)ws.style.display='block';
   el.innerHTML=items.map(w=>{
     const isGoal=S.activeGoal?.wish_list_id===w.id;
-    const earned=isGoal?Math.max(0,S.stars-(S.activeGoal?.stars_at_start||0)):0;
-    const pct=isGoal?Math.min(100,Math.round(earned/w.star_cost*100)):0;
-    return `<div class="rc"><div class="rc-img">${w.image_url?`<img src="${w.image_url}" style="width:100%;height:100%;object-fit:cover;border-radius:9px">`:(w.icon||'🎁')}</div><div class="rc-nm">${w.title}</div><div class="rc-co">${(w.star_cost||0).toLocaleString()} ⭐</div><div style="height:4px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-bottom:9px"><div style="height:100%;background:var(--amber);border-radius:99px;width:${pct}%"></div></div><button class="rc-btn ${isGoal?'can':'cant'}" style="${isGoal?'background:var(--teal2)':''}" onclick="setGoal('${w.id}')">${isGoal?'🎯 Current Goal':'Set as Goal'}</button></div>`;
+    const pct=isGoal?Math.min(100,Math.round(Math.max(0,S.stars-(S.activeGoal?.stars_at_start||0))/w.star_cost*100)):Math.min(100,Math.round(S.stars/w.star_cost*100));
+    return '<div class="rc"'+( isGoal?' style="border-color:rgba(43,191,184,.4);background:rgba(43,191,184,.08)"':'')
+      +'>'+(isGoal?'<span class="rc-badge new">🎯 Goal</span>':'')+
+      '<div class="rc-img">'+( w.image_url?'<img src="'+w.image_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:9px">':(w.icon||'🎁'))+'</div>'+
+      '<div class="rc-nm">'+( w.title.length>30?w.title.slice(0,28)+'…':w.title)+'</div>'+
+      '<div class="rc-co">'+w.star_cost.toLocaleString()+' ⭐</div>'+
+      '<div style="height:5px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-bottom:6px"><div style="height:100%;background:'+( isGoal?'var(--teal)':'var(--amber)')+';border-radius:99px;width:'+pct+'%;transition:width .6s"></div></div>'+
+      '<div style="font-size:.58rem;font-weight:700;color:rgba(255,255,255,.35);margin-bottom:8px">'+pct+'% saved</div>'+
+      '<button class="rc-btn '+( isGoal?'can':'cant')+'"'+( isGoal?' style="background:var(--teal2)"':'')
+      +' onclick="setGoal(\''+w.id+'\')">'+(isGoal?'🎯 Current Goal':'Set as Goal')+'</button></div>';
   }).join('');
 }
 
 function renderRGrid(items,cat){
   const el=document.getElementById('r-grid');if(!el)return;
+  const now=new Date();const isWknd=isWeekendDeal();
   const filtered=cat==='all'?items:items.filter(r=>r.category===cat);
-  if(!filtered.length){el.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:32px;color:rgba(255,255,255,.3);font-size:.82rem;font-weight:700"><span style="font-size:2.5rem;display:block;margin-bottom:10px">🛍️</span>No rewards yet — ask a parent to add some!</div>`;return;}
-  const bgs=['pop','pop','new','pop','new','pop','new','pop'];
-  el.innerHTML=filtered.map((r,i)=>{
-    const can=S.stars>=r.star_cost,b=bgs[i%bgs.length];
-    return `<div class="rc">${b?`<span class="rc-badge ${b}">${b==='pop'?'Popular':'New'}</span>`:''}<div class="rc-img">${r.image_url?`<img src="${r.image_url}">`:(r.icon||'🎁')}</div><div class="rc-nm">${r.title}</div><div class="rc-co">${(r.star_cost||0).toLocaleString()} ⭐</div><button class="rc-btn ${can?'can':'cant'}" onclick="${can?`redeemR('${r.id}','${esc(r.title)}',${r.star_cost})`:'void(0)'}">${can?'View Details':'Need more ⭐'}</button></div>`;
+  const active=filtered.filter(r=>!r.expires_at||new Date(r.expires_at)>now);
+  const forKid=active.filter(r=>!r.assigned_to||r.assigned_to==='both'||r.assigned_to===S.player?.name?.toLowerCase());
+  if(!forKid.length){el.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:32px;color:rgba(255,255,255,.3);font-size:.82rem;font-weight:700"><span style="font-size:2.5rem;display:block;margin-bottom:10px">🛍️</span>No rewards yet — ask a parent to add some!</div>';return;}
+  el.innerHTML=forKid.map(r=>{
+    const isWkndDeal=isWknd&&r.weekend_deal;
+    const cost=isWkndDeal?getWeekendDealPrice(r.star_cost,r.weekend_discount_pct):r.star_cost;
+    const can=S.stars>=cost;
+    const isLimited=r.is_limited&&r.expires_at;
+    let timerHtml='';
+    if(isLimited){const diff=Math.max(0,new Date(r.expires_at)-now);const h=Math.floor(diff/36e5),m=Math.floor(diff%36e5/6e4);timerHtml='<div class="rc-limited-timer">⏰ '+h+'h '+m+'m left</div>';}
+    return '<div class="rc"'+( isLimited?' style="border-color:rgba(240,120,48,.3)"':'')
+      +'>'+( isWkndDeal?'<span class="rc-weekend">🔥 Deal</span>':'')+
+      (r.is_limited&&!isWkndDeal?'<span class="rc-badge new">Limited</span>':'')+
+      '<div class="rc-img">'+( r.image_url?'<img src="'+r.image_url+'">':(r.icon||'🎁'))+'</div>'+
+      timerHtml+
+      '<div class="rc-nm">'+r.title+'</div>'+
+      '<div class="rc-co">'+( isWkndDeal?'<span style="text-decoration:line-through;opacity:.45;font-size:.62rem">'+r.star_cost+' </span>':'')+
+      ' '+cost.toLocaleString()+' ⭐'+( isWkndDeal?' <span style="color:var(--pink);font-size:.6rem">-'+(r.weekend_discount_pct||20)+'%</span>':'')+'</div>'+
+      '<button class="rc-btn '+( can?'can':'cant')+'" onclick="'+( can?'confirmRedeem(\''+r.id+'\',\''+r.title.replace(/'/g,'\\\'')+'\','+cost+','+r.star_cost+')':'void(0)')+'">'+( can?'Redeem ✨':'Need more ⭐')+'</button></div>';
   }).join('');
 }
 
-function filterR(cat,btn){document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderRGrid(S.rewardShop,cat);}
+function filterR(cat,btn){document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));if(btn)btn.classList.add('active');renderRGrid(S.rewardShop,cat);}
 
-async function redeemR(id,title,cost){
-  if(S.stars<cost||!confirm(`Redeem "${title}" for ${cost.toLocaleString()} ⭐?`))return;
+function confirmRedeem(id,title,cost,originalCost){
+  const esc2=s=>(s||'').replace(/'/g,"\\'");
+  showMod('<div style="text-align:center;padding:4px 0">'+
+    '<div style="font-size:1.05rem;font-weight:900;color:#fff;margin-bottom:4px">Redeem this reward?</div>'+
+    '<div style="font-size:.88rem;font-weight:700;color:rgba(255,255,255,.55);margin-bottom:14px">'+title+'</div>'+
+    '<div class="redeem-popup-cost">'+cost.toLocaleString()+' ⭐</div>'+
+    '<div class="redeem-popup-bal">Your balance: '+S.stars.toLocaleString()+' ⭐</div>'+
+    '<div class="redeem-popup-after">After approval: '+(S.stars-cost).toLocaleString()+' ⭐</div>'+
+    '<div style="font-size:.72rem;color:rgba(255,255,255,.4);margin-bottom:16px">Stars deducted only when a parent approves ✅</div>'+
+    '<div style="display:flex;gap:9px">'+
+    '<button class="mb" onclick="submitRedeem(\''+id+'\',\''+esc2(title)+'\','+cost+')" style="flex:1;background:linear-gradient(135deg,var(--pink),#F06090)">Yes, Redeem! 🎉</button>'+
+    '<button class="mb s" onclick="closeMod()" style="flex:1">Cancel</button></div></div>');
+}
+
+async function submitRedeem(id,title,cost){
+  closeMod();
   try{
+    const existing=await db('redemptions?player_id=eq.'+S.player.id+'&reward_id=eq.'+id+'&status=eq.pending');
+    if(existing.length>0){showMod('<div style="text-align:center;padding:12px 0"><div style="font-size:2.5rem;margin-bottom:9px">⏳</div><div style="font-size:.95rem;font-weight:900;color:#fff;margin-bottom:5px">Already Requested!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">Your request for <strong>'+title+'</strong> is still waiting for parent approval.</div><button class="mb" onclick="closeMod()">OK</button></div>');return;}
     await db('redemptions',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,reward_id:id,stars_spent:cost,status:'pending'}});
-    await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:-cost,reason:`Redeemed: ${title}`,category:'spend'}});
-    S.stars-=cost;
-    showMod(`<div style="text-align:center;padding:12px 0"><div style="font-size:3.5rem;margin-bottom:9px">🎉</div><div style="font-size:1.1rem;font-weight:900;color:#fff;margin-bottom:5px">Request sent!</div><div style="font-size:.8rem;color:rgba(255,255,255,.5);margin-bottom:14px">Ask a parent to approve <strong>${title}</strong>!</div><button class="mb" onclick="closeMod()">Awesome! 🌟</button></div>`);
-    renderRewards();
-  }catch(e){}
+    await sendNotif(S.player.id,'⏳ Your request for "'+title+'" is with a parent for approval!','info','⏳');
+    await loadNotifications();
+    showMod('<div style="text-align:center;padding:12px 0"><div style="font-size:3rem;margin-bottom:9px">📨</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Request Sent!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">Ask a parent to approve <strong>'+title+'</strong>!<br>Stars deducted when approved.</div><button class="mb" onclick="closeMod()">Awesome! 🌟</button></div>');
+  }catch(e){showMod('<div style="text-align:center;padding:12px 0"><div style="font-size:2rem">⚠️</div><div style="font-size:.82rem;color:#FF9090;margin-top:8px">Something went wrong. Try again!</div><button class="mb" onclick="closeMod()" style="margin-top:12px">OK</button></div>');}
 }
 
 async function setGoal(wid){
   if(!wid)return;
   try{
-    const ex=await db(`active_goals?player_id=eq.${S.player.id}`);
-    if(ex.length)await db(`active_goals?player_id=eq.${S.player.id}`,{method:'PATCH',prefer:'return=minimal',body:{wish_list_id:wid,stars_at_start:S.stars}});
+    const ex=await db('active_goals?player_id=eq.'+S.player.id);
+    if(ex.length)await db('active_goals?player_id=eq.'+S.player.id,{method:'PATCH',prefer:'return=minimal',body:{wish_list_id:wid,stars_at_start:S.stars}});
     else await db('active_goals',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,wish_list_id:wid,stars_at_start:S.stars}});
-    S.activeGoal={wish_list_id:wid,stars_at_start:S.stars};renderGoal();renderRewards();
+    S.activeGoal={wish_list_id:wid,stars_at_start:S.stars};
+    renderGoalHero();renderWishGrid();renderGoal();
   }catch(e){}
 }
 
-function buildCountdown(){
-  const tgt=new Date();tgt.setDate(tgt.getDate()+2);tgt.setHours(14,36,8,0);
-  function tick(){const now=new Date(),diff=Math.max(0,tgt-now);const d=Math.floor(diff/864e5),h=Math.floor(diff%864e5/36e5),mi=Math.floor(diff%36e5/6e4),s=Math.floor(diff%6e4/1e3);['d','h','m','s'].forEach((k,i)=>{const el=document.getElementById('cd-'+k);if(el)el.textContent=String([d,h,mi,s][i]).padStart(2,'0');});}
-  tick();setInterval(tick,1000);
+function showStarRequest(){
+  showMod('<div style="text-align:center;margin-bottom:16px"><div style="font-size:2.5rem;margin-bottom:6px">⭐</div><div style="font-size:1rem;font-weight:900;color:#fff">Request Stars</div><div style="font-size:.72rem;color:rgba(255,255,255,.4);margin-top:2px">Tell us about your good deed!</div></div>'+
+  '<textarea class="mi" id="sr-desc" placeholder="What did you do? e.g. Helped clean the kitchen, got praised by my teacher..." style="height:90px;resize:none;width:100%;margin-bottom:9px"></textarea>'+
+  '<div style="font-size:.7rem;font-weight:800;color:rgba(255,255,255,.45);margin-bottom:6px">How many stars do you think you deserve?</div>'+
+  '<input class="mi" type="number" id="sr-amt" placeholder="e.g. 50" min="1" max="500" style="margin-bottom:14px">'+
+  '<div style="display:flex;gap:9px"><button class="mb" onclick="submitStarRequest()" style="flex:1">Send Request ⭐</button><button class="mb s" onclick="closeMod()" style="flex:1">Cancel</button></div>');
 }
 
-function renderProfile(){
-  const p=S.player;if(!p)return;
-  // Avatar — image or emoji
-  const avEl=document.getElementById('pr-av');
-  const emojiEl=document.getElementById('pr-av-emoji');
-  if(p.avatar_url){
-    if(emojiEl)emojiEl.style.display='none';
-    let img=avEl.querySelector('img');
-    if(!img){img=document.createElement('img');avEl.insertBefore(img,avEl.querySelector('.ph-ring-overlay'));}
-    img.src=p.avatar_url;
-    img.style.cssText='width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:50%';
-  } else {
-    if(emojiEl){emojiEl.style.display='';emojiEl.textContent=p.avatar||'⭐';}
-    const img=avEl.querySelector('img');if(img)img.remove();
-  }
-  document.getElementById('pr-nm').textContent=p.name;
-  document.getElementById('pr-badge').textContent=`Grade ${p.grade}`;
-  document.getElementById('pr-sub').textContent=`Age ${p.age} · ${p.zodiac||''} ${p.avatar||''} · Dreamer & Explorer ✨`;
-  document.getElementById('pr-stars').textContent=`⭐ ${S.stars.toLocaleString()} Stars`;
-  document.getElementById('pp-str').textContent=S.streak;
-  document.getElementById('pp-bad').textContent=S.earnedBadges.length;
-  const tlv=Object.values(S.levelProgress).reduce((a,l)=>a+(l.current_level-1),0);
-  const lv=Math.max(1,Math.min(10,Math.floor(tlv/3)+1));
-  document.getElementById('pp-lv').textContent=lv;
-  document.getElementById('j-lv').textContent=lv;
-  document.getElementById('xp-fill').style.width=(S.stars%200)/2+'%';
-  document.getElementById('xp-txt').textContent=`${S.stars%200} / 200 XP · Keep going! ⭐`;
-  renderAchs();renderPBars();buildRadar([85,75,80,88,90]);
-}
-
-function renderAchs(){
-  const el=document.getElementById('ach-scroll');if(!el)return;
-  const a=[{e:'🌅',n:'Early Bird',d:'10 morning tasks',earned:true},{e:'⭐',n:'Star Collector',d:'500 stars',earned:S.stars>=500},{e:'🔥',n:'Streak Master',d:'7 days streak',earned:S.streak>=7},{e:'📚',n:'Bookworm',d:'Read 10 books',earned:false},{e:'🧮',n:'Math Whiz',d:'100% in 5 quizzes',earned:false},{e:'💚',n:'Kind Heart',d:'Helped a friend',earned:true}];
-  el.innerHTML=a.map(x=>`<div class="ach-chip ${x.earned?'earned':''}"><span class="ac-ico">${x.e}</span><div class="ac-nm">${x.n}</div><div class="ac-ds">${x.d}</div></div>`).join('');
-}
-
-function renderPBars(){
-  const el=document.getElementById('pr-bars');if(!el)return;
-  el.innerHTML=S.subjects.slice(0,6).map(s=>{
-    const lv=S.levelProgress[s.key]?.current_level||1;
-    const pct=Math.round((lv-1)/10*100);
-    const col=subjectColor(s);
-    return `<div class="pb-row"><div class="pb-ico">${s.icon}</div><div class="pb-inf"><div class="pb-nm">${s.name}</div><div class="pb-bg"><div class="pb-fill" style="width:${pct}%;background:${col}"></div></div></div><div class="pb-pct">${pct}%</div></div>`;
-  }).join('');
-}
-
-function buildRadar(vals){
-  const svg=document.getElementById('radar-svg');if(!svg)return;
-  const cx=77.5,cy=77.5,r=52,labels=['Knowledge','Creativity','Consistency','Kindness','Focus'],n=5;
-  const axes=Array.from({length:n},(_,i)=>{const a=(i/n)*Math.PI*2-Math.PI/2;return[cx+Math.cos(a)*r,cy+Math.sin(a)*r];});
-  const pts=vals.map((v,i)=>{const a=(i/n)*Math.PI*2-Math.PI/2;return[cx+Math.cos(a)*r*(v/100),cy+Math.sin(a)*r*(v/100)];});
-  let h='';
-  [.25,.5,.75,1].forEach(f=>{h+=`<polygon points="${Array.from({length:n},(_,i)=>{const a=(i/n)*Math.PI*2-Math.PI/2;return`${cx+Math.cos(a)*r*f},${cy+Math.sin(a)*r*f}`;}).join(' ')}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1"/>`;});
-  axes.forEach(([x,y])=>{h+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,.08)" stroke-width="1"/>`;});
-  h+=`<polygon points="${pts.map(([x,y])=>`${x},${y}`).join(' ')}" fill="rgba(246,192,74,.16)" stroke="#F6C04A" stroke-width="2"/>`;
-  pts.forEach(([x,y])=>{h+=`<circle cx="${x}" cy="${y}" r="3" fill="#F6C04A"/>`;});
-  axes.forEach(([x,y],i)=>{const lx=cx+(x-cx)*1.32,ly=cy+(y-cy)*1.32;h+=`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" fill="rgba(255,255,255,.4)" font-size="7.5" font-family="Nunito" font-weight="700">${labels[i]}</text><text x="${lx}" y="${ly+10}" text-anchor="middle" dominant-baseline="middle" fill="#F6C04A" font-size="7.5" font-family="Nunito" font-weight="800">${vals[i]}%</text>`;});
-  svg.innerHTML=h;
-}
-
-function editAbout(){showMod(`<div class="mt">✏️ About Me</div><textarea class="mi" id="ab-ta" style="height:110px;resize:none">${document.getElementById('about-txt').textContent}</textarea><input class="mi" type="text" id="ab-em" placeholder="Emoji e.g. 🚀 🌍" value="${document.getElementById('about-em').textContent}"><button class="mb" onclick="saveAbout()">Save ✓</button><button class="mb s" style="margin-top:7px" onclick="closeMod()">Cancel</button>`);}
-function saveAbout(){document.getElementById('about-txt').textContent=document.getElementById('ab-ta').value;document.getElementById('about-em').textContent=document.getElementById('ab-em').value;closeMod();}
-
-async function startSubject(key){
-  const s=S.subjects.find(x=>x.key===key);if(!s)return;
-  S.quizSubj=s;
-  document.getElementById('quiz').style.display='flex';
-  if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='none';
-  document.getElementById('q-subj').textContent=s.name;
-  const targetGrade=gradeAhead(S.player.grade);
+async function submitStarRequest(){
+  const desc=document.getElementById('sr-desc')?.value.trim();
+  const amt=parseInt(document.getElementById('sr-amt')?.value);
+  if(!desc){showMod('<div style="text-align:center;padding:12px"><div style="color:#FF9090;margin-bottom:12px">Please describe what you did! 📝</div><button class="mb" onclick="showStarRequest()">← Back</button></div>');return;}
+  if(!amt||amt<1){showMod('<div style="text-align:center;padding:12px"><div style="color:#FF9090;margin-bottom:12px">Please enter how many stars you'd like!</div><button class="mb" onclick="showStarRequest()">← Back</button></div>');return;}
   try{
-    let qs=await db(`questions?subject_key=eq.${key}&active=eq.true&grade=lte.${targetGrade}&limit=50`);
-    if(Array.isArray(qs)&&qs.length)qs=shuf(qs).slice(0,15);
-    if(!Array.isArray(qs)||!qs.length)qs=[
-      {id:'q1',subject_key:'math',grade:3,level:1,topic:'addition',question:'What is 5 + 7?',answer:'12',wrong1:'10',wrong2:'11',wrong3:'13',explanation:'5 + 7 = 12',active:true},
-      {id:'q2',subject_key:'math',grade:1,level:1,topic:'counting',question:'What is 2 + 3?',answer:'5',wrong1:'4',wrong2:'6',wrong3:'7',explanation:'2 + 3 = 5',active:true},
-      {id:'q3',subject_key:'science',grade:3,level:1,topic:'plants',question:'What do plants need to grow?',answer:'sunlight, water and soil',wrong1:'darkness and ice',wrong2:'only water',wrong3:'only sunlight',explanation:'Plants need sunlight, water, and soil',active:true},
-      {id:'q4',subject_key:'reading',grade:3,level:1,topic:'vocabulary',question:'What word means the opposite of hot?',answer:'cold',wrong1:'warm',wrong2:'cool',wrong3:'boiling',explanation:'Hot and cold are opposites',active:true},
-      {id:'q5',subject_key:'social',grade:3,level:1,topic:'canada',question:'What is the capital city of Canada?',answer:'Ottawa',wrong1:'Toronto',wrong2:'Vancouver',wrong3:'Montreal',explanation:'Ottawa is the capital city',active:true},
-      {id:'q6',subject_key:'coding',grade:3,level:1,topic:'basics',question:'What do we call instructions for a computer?',answer:'program',wrong1:'story',wrong2:'picture',wrong3:'song',explanation:'A program tells computers what to do',active:true},
-      {id:'q7',subject_key:'writing',grade:3,level:1,topic:'punctuation',question:'Which mark ends a question?',answer:'?',wrong1:'.',wrong2:'!',wrong3:',',explanation:'A question mark ends a question',active:true}
-    ].filter(q=>q.subject_key===key);
-    if(!qs.length){
-      document.getElementById('quiz').style.display='none';
-      showMod(`<div style="text-align:center;padding:12px"><div style="font-size:3rem;margin-bottom:9px">🚧</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Questions Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">Adding questions for <strong>${s.name}</strong> soon!</div><button class="mb" onclick="closeMod()">OK!</button></div>`);
-      return;
-    }
-    S.quizBatch=shuf(qs);S.quizIdx=0;S.quizScore=0;S.quizSE=0;loadQ();
-  }catch(e){document.getElementById('quiz').style.display='none';}
+    const ex=await db('star_requests?player_id=eq.'+S.player.id+'&status=eq.pending');
+    if(ex.length>0){showMod('<div style="text-align:center;padding:12px 0"><div style="font-size:2rem;margin-bottom:9px">⏳</div><div style="font-size:.9rem;font-weight:900;color:#fff;margin-bottom:5px">Already Waiting!</div><div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-bottom:14px">You have a star request pending. Wait for a parent to respond first!</div><button class="mb" onclick="closeMod()">OK</button></div>');return;}
+    await db('star_requests',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,description:desc,requested_amount:amt,status:'pending'}});
+    await sendNotif(S.player.id,'⭐ Your star request has been sent to a parent!','success','⭐');
+    await loadNotifications();
+    showMod('<div style="text-align:center;padding:12px 0"><div style="font-size:3rem;margin-bottom:9px">📨</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Request Sent!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">A parent will review your good deed and add stars!</div><button class="mb" onclick="closeMod()">Thanks! 🌟</button></div>');
+  }catch(e){closeMod();}
 }
 
-function loadQ(){
-  S.quizAns=false;
-  const q=S.quizBatch[S.quizIdx],total=S.quizBatch.length;
-  document.getElementById('q-cnt').textContent=`Q ${S.quizIdx+1} of ${total}`;
-  document.getElementById('q-prog').style.width=(S.quizIdx/total*100)+'%';
-  document.getElementById('q-tag').textContent=`Grade ${q.grade} · Level ${q.level}`;
-  document.getElementById('q-txt').textContent=q.question;
-  document.getElementById('q-fb').className='q-fb';
-  document.getElementById('q-nxt').style.display='none';
-  document.getElementById('q-stl').textContent=S.quizSE;
-  const opts=shuf([q.answer,q.wrong1,q.wrong2,q.wrong3]);
-  document.getElementById('q-opts').innerHTML=opts.map((o,i)=>`<button class="q-opt" onclick="pickQ(this,'${esc(o)}','${esc(q.answer)}',${q.level})"><span class="q-let">${['A','B','C','D'][i]}</span>${o}</button>`).join('');
+function showWishRequest(){
+  showMod('<div style="text-align:center;margin-bottom:16px"><div style="font-size:2.5rem;margin-bottom:6px">🎁</div><div style="font-size:1rem;font-weight:900;color:#fff">Request a Wish List Item</div><div style="font-size:.72rem;color:rgba(255,255,255,.4);margin-top:2px">Tell us what you'd love to have!</div></div>'+
+  '<textarea class="mi" id="wr-desc" placeholder="What would you like? Describe it, add a link, or explain why you want it..." style="height:110px;resize:none;width:100%;margin-bottom:14px"></textarea>'+
+  '<div style="display:flex;gap:9px"><button class="mb" onclick="submitWishRequest()" style="flex:1">Send Request 🎁</button><button class="mb s" onclick="closeMod()" style="flex:1">Cancel</button></div>');
 }
 
-function pickQ(btn,chosen,correct,lv){
-  if(S.quizAns)return;S.quizAns=true;
-  document.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
-  const stars=lv<=2?10:lv<=4?15:lv<=6?20:25;
-  const fb=document.getElementById('q-fb');
-  if(chosen===correct){
-    btn.classList.add('correct');fb.className='q-fb ok';fb.textContent=getQuote('success');
-    S.quizScore++;S.quizSE+=stars;document.getElementById('q-stl').textContent=S.quizSE;
-  }else{
-    btn.classList.add('wrong');fb.className='q-fb no';
-    const exp=S.quizBatch[S.quizIdx]?.explanation;
-    fb.textContent=getQuote('wrong_answer')+(exp?' — '+exp:'');
-    document.querySelectorAll('.q-opt').forEach(b=>{if(b.textContent.trim().slice(1).trim()===correct)b.classList.add('correct');});
-  }
-  document.getElementById('q-nxt').style.display='block';
-}
-
-function qNext(){S.quizIdx++;if(S.quizIdx>=S.quizBatch.length){showQRes();return;}loadQ();}
-
-async function showQRes(){
-  const total=S.quizBatch.length,pct=Math.round(S.quizScore/total*100);
-  const passed=pct>=80,perf=pct===100;
-  const ts=S.quizSE+(perf?300:passed?100:0);
+async function submitWishRequest(){
+  const desc=document.getElementById('wr-desc')?.value.trim();
+  if(!desc||desc.length<5){showMod('<div style="text-align:center;padding:12px"><div style="color:#FF9090;margin-bottom:12px">Please describe what you want! 📝</div><button class="mb" onclick="showWishRequest()">← Back</button></div>');return;}
   try{
-    await db('sessions',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,subject_key:S.quizSubj.key,level:S.levelProgress[S.quizSubj.key]?.current_level||1,score:S.quizScore,total,stars_earned:ts,passed,perfect:perf}});
-    await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:ts,reason:`${S.quizSubj.name} quiz — ${S.quizScore}/${total}`,category:'learning'}});
-    S.stars+=ts;
-    if(passed){
-      const nl=(S.levelProgress[S.quizSubj.key]?.current_level||1)+1;
-      if(S.levelProgress[S.quizSubj.key])await db(`level_progress?player_id=eq.${S.player.id}&subject_key=eq.${S.quizSubj.key}`,{method:'PATCH',prefer:'return=minimal',body:{current_level:Math.min(nl,10)}});
-      else await db('level_progress',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,subject_key:S.quizSubj.key,current_level:2}});
-      S.levelProgress[S.quizSubj.key]={...(S.levelProgress[S.quizSubj.key]||{}),current_level:Math.min(nl,10)};
+    await db('wish_requests',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,description:desc,status:'pending'}});
+    await sendNotif(S.player.id,'🎁 Your wish list request has been sent to a parent!','success','🎁');
+    await loadNotifications();
+    showMod('<div style="text-align:center;padding:12px 0"><div style="font-size:3rem;margin-bottom:9px">🎁</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Wish Sent!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">A parent will review and may add it to your wish list!</div><button class="mb" onclick="closeMod()">Fingers crossed! 🤞</button></div>');
+  }catch(e){closeMod();}
+}
+
+async function sendNotif(playerId,message,type,icon){
+  type=type||'info';icon=icon||'🔔';
+  try{await db('kid_notifications',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,message,type,icon,read:false}});}catch(e){}
+}
+
+async function loadNotifications(){
+  if(!S.player)return;
+  try{
+    const notifs=await db('kid_notifications?player_id=eq.'+S.player.id+'&order=created_at.desc&limit=20');
+    S.notifications=Array.isArray(notifs)?notifs:[];
+    const unread=S.notifications.filter(n=>!n.read).length;
+    const countEl=document.getElementById('notif-count');
+    if(countEl){countEl.style.display=unread>0?'flex':'none';countEl.textContent=unread>9?'9+':unread;}
+    const listEl=document.getElementById('nd-list');
+    if(listEl){
+      if(!S.notifications.length){listEl.innerHTML='<div class="nd-empty">All caught up! 🎉</div>';return;}
+      listEl.innerHTML=S.notifications.map(n=>
+        '<div class="nd-item '+(n.read?'':'unread')+'" onclick="markNotifRead(\''+n.id+'\')"><div class="nd-ico">'+(n.icon||'🔔')+'</div><div><div class="nd-msg">'+n.message+'</div><div class="nd-time">'+timeAgo(n.created_at)+'</div></div></div>'
+      ).join('');
     }
   }catch(e){}
-  document.getElementById('quiz').style.display='none';
-  const rs=document.getElementById('res');rs.style.display='flex';
-  document.getElementById('r-tr').textContent=perf?'🏆':passed?'⭐':'💪';
-  document.getElementById('r-sc').textContent=`${S.quizScore}/${total}`;
-  document.getElementById('r-ea').textContent=`+${ts.toLocaleString()} ⭐ earned`;
-  document.getElementById('r-mg').textContent=perf?getQuote('perfect_score'):passed?getQuote('level_up'):getQuote('wrong_answer');
 }
 
-function retryQuiz(){document.getElementById('res').style.display='none';startSubject(S.quizSubj.key);}
-function closeQuiz(){document.getElementById('quiz').style.display='none';if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='flex';}
-function closeRes(){document.getElementById('res').style.display='none';renderHome();}
+function timeAgo(ts){const diff=Date.now()-new Date(ts);if(diff<6e4)return'just now';if(diff<36e5)return Math.floor(diff/6e4)+'m ago';if(diff<864e5)return Math.floor(diff/36e5)+'h ago';return Math.floor(diff/864e5)+'d ago';}
+async function markNotifRead(id){try{await db('kid_notifications?id=eq.'+id,{method:'PATCH',prefer:'return=minimal',body:{read:true}});}catch(e){}await loadNotifications();}
+async function clearAllNotifs(e){if(e)e.stopPropagation();if(!S.player)return;try{await db('kid_notifications?player_id=eq.'+S.player.id,{method:'PATCH',prefer:'return=minimal',body:{read:true}});}catch(e){}await loadNotifications();}
+function toggleNotifDD(e){e.stopPropagation();const dd=document.getElementById('notif-dropdown');dd.classList.toggle('open');if(dd.classList.contains('open'))loadNotifications();}
+function showNotifs(){}
 
-function showPin(){S.pinE='';updDots();document.getElementById('pin').style.display='flex';}
-function closePin(){document.getElementById('pin').style.display='none';}
-function pk(k){
-  if(k==='back')S.pinE=S.pinE.slice(0,-1);else if(S.pinE.length<4)S.pinE+=k;
-  updDots();
-  if(S.pinE.length===4){
-    if(S.pinE===S.pin){S.pinE='';updDots();document.getElementById('pin').style.display='none';openPD();}
-    else{document.getElementById('pin-err').textContent='Incorrect PIN';setTimeout(()=>{S.pinE='';updDots();document.getElementById('pin-err').textContent='';},800);}
-  }
-}
-function updDots(){for(let i=0;i<4;i++)document.getElementById('p'+i).classList.toggle('on',i<S.pinE.length);}
-function openPD(){window.location.href='parent_dashboard.html';}
-function closePD(){document.getElementById('pdash').style.display='none';}
-
-function addStarsHTML(a){return `<div class="mt">${a?'⭐ Add Bonus Stars':'⚠️ Deduct Stars'}</div><select class="mi" id="sm-p">${S.players.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select><input class="mi" type="number" id="sm-a" placeholder="Number of stars"><input class="mi" type="text" id="sm-r" placeholder="Reason"><button class="mb ${a?'':'d'}" onclick="submitStars(${a})">${a?'Add Stars ⭐':'Deduct Stars ⚠️'}</button><button class="mb s" style="margin-top:7px" onclick="closeMod()">Cancel</button>`;}
-async function submitStars(a){const pid=document.getElementById('sm-p').value;const amt=parseInt(document.getElementById('sm-a').value);const rsn=document.getElementById('sm-r').value;if(!amt||!rsn){alert('Fill all fields');return;}await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:pid,amount:a?amt:-amt,reason:rsn,category:a?'bonus':'deduct'}});if(S.player?.id===pid)S.stars+=a?amt:-amt;closeMod();}
-function addTaskHTML(){return `<div class="mt">➕ New Task</div><input class="mi" type="text" id="nt-t" placeholder="Task name"><input class="mi" type="text" id="nt-i" placeholder="Icon emoji 🧹"><select class="mi" id="nt-b"><option value="morning">Morning</option><option value="learning">Learning</option><option value="afternoon">Afternoon</option><option value="evening">Evening</option><option value="bedtime">Bedtime</option></select><input class="mi" type="number" id="nt-s" placeholder="Stars e.g. 20" value="20"><button class="mb" onclick="addTask()">Add Task ➕</button><button class="mb s" style="margin-top:7px" onclick="closeMod()">Cancel</button>`;}
-async function addTask(){const t=document.getElementById('nt-t').value;const ic=document.getElementById('nt-i').value||'✅';const bl=document.getElementById('nt-b').value;const st=parseInt(document.getElementById('nt-s').value)||20;if(!t)return;const r=await db('tasks',{method:'POST',body:{title:t,icon:ic,time_block:bl,stars_value:st,active:true,day_type:'both'}});if(r[0])S.tasks.push(r[0]);closeMod();}
-function addWishHTML(){return `<div class="mt">🎁 Add Wish List Item</div><select class="mi" id="wl-p">${S.players.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}</select><input class="mi" type="text" id="wl-t" placeholder="Gift name e.g. LEGO Set"><input class="mi" type="number" id="wl-c" placeholder="Star cost e.g. 2500"><input class="mi" type="url" id="wl-i" placeholder="Image URL (optional)"><button class="mb" onclick="addWish()">Add to Wish List 🎁</button><button class="mb s" style="margin-top:7px" onclick="closeMod()">Cancel</button>`;}
-async function addWish(){const pid=document.getElementById('wl-p').value;const t=document.getElementById('wl-t').value;const c=parseInt(document.getElementById('wl-c').value);const img=document.getElementById('wl-i').value;if(!t||!c)return;const body={player_id:pid,title:t,star_cost:c,active:true,gifted:false};if(img)body.image_url=img;const r=await db('wish_list',{method:'POST',body});if(r[0]&&S.player?.id===pid)S.wishList.push(r[0]);closeMod();}
-async function approveAll(){const pend=await db('task_completions?status=eq.pending&select=*');for(const pc of pend){await db(`task_completions?id=eq.${pc.id}`,{method:'PATCH',prefer:'return=minimal',body:{status:'approved',approved_at:new Date().toISOString()}});await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:pc.player_id,amount:S.tasks.find(t=>t.id===pc.task_id)?.stars_value||15,reason:'Task approved',category:'task'}});}}
-
-function showNotifs(){showMod(`<div class="mt">🔔 Notifications</div><div style="padding:9px 0;font-size:.82rem;color:rgba(255,255,255,.55);font-weight:700">Everything looks good! No new notifications.</div><button class="mb" onclick="closeMod()">Close</button>`);}
 function showTaraTip(){const tips=['Namaste! Every question makes you smarter! 🙏','Shabash! Keep going — stars become gifts! ⭐','Ek aur lesson aur tum champion ban jaoge! 🏆','Great work! Your parents are proud! 💚','Learning is the best superpower! 🦸'];showMod(`<div style="text-align:center;padding:12px 0"><div style="font-size:4rem;margin-bottom:11px;display:inline-block;animation:taraFloat 2s ease-in-out infinite">⭐</div><div style="font-size:.95rem;font-weight:800;color:#fff;line-height:1.6">${tips[Math.floor(Math.random()*tips.length)]}</div><button class="mb" onclick="closeMod()" style="margin-top:14px">Thanks Tara! 💫</button></div>`);}
 function showMod(h){document.getElementById('mc').innerHTML=h;document.getElementById('mov').classList.add('open');}
 function closeMod(){document.getElementById('mov').classList.remove('open');}
