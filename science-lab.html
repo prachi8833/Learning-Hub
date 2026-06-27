@@ -813,13 +813,18 @@ function renderQuestion(){
   // Image search button injected after question renders (see below)
   const el=document.getElementById('q-content');
   const qClass=q.q.length>60?'question small':'question';
-  const sq=(q.imgKey||q.topic+' '+q.q.slice(0,35)).replace(/_/g,' ');
+    const sq=encodeURIComponent((q.imgKey||q.topic+' '+q.q.slice(0,35)).replace(/_/g,' '));
   el.innerHTML=`<div class="${qClass}">${q.q}</div>
     <div class="opts ${q.opts.length>4?'single':''}">${q.opts.map(o=>
       `<button class="opt" onclick="checkOpt(this,'${o.replace(/'/g,"\\'")}','${q.a.replace(/'/g,"\\'")}')">
-        ${o}</button>`).join('')}</div>
-    <button onclick="showPicture('${sq}')" class="show-pic-btn">🔍 Show Picture</button>`;
+        ${o}</button>`).join('')}</div>`;
+  const picBtn=document.createElement('button');
+  picBtn.className='show-pic-btn';
+  picBtn.innerHTML='🔍 Show Picture';
+  picBtn.onclick=()=>window.open('https://www.google.com/search?tbm=isch&q='+sq,'_blank');
+  el.appendChild(picBtn);
 }
+
 
 function renderHypothesis(){
   const exp=G.currentExp;
@@ -953,7 +958,14 @@ function renderExperimentQuestion(exp){
     <div class="opts">${exp.opts.map(o=>
       `<button class="opt" onclick="checkOpt(this,'${o.replace(/'/g,"\\'")}','${exp.a.replace(/'/g,"\\'")}')">
         ${o}</button>`).join('')}</div>
-    <button onclick="showPicture('${exp.sub1.name} ${exp.sub2.name} chemical reaction')" class="show-pic-btn">🔍 Show Picture</button>`;
+`;
+  // Add show picture button
+  const expPicBtn=document.createElement('button');
+  expPicBtn.className='show-pic-btn';
+  expPicBtn.textContent='🔍 Show Picture';
+  const expQ=encodeURIComponent(exp.sub1.name+' '+exp.sub2.name+' chemical reaction');
+  expPicBtn.onclick=()=>window.open('https://www.google.com/search?tbm=isch&q='+expQ,'_blank');
+  el.appendChild(expPicBtn);
   G.question={...exp,isExperiment:true};
   document.getElementById('hint-btn').style.display='none';
   G.hintTimer=setTimeout(()=>{
