@@ -112,7 +112,71 @@ body{background:#0a1a10}
 .tb-left h1{font-size:1.4rem;font-weight:900;color:#fff;line-height:1.1;text-shadow:0 2px 10px rgba(0,0,0,.4)}
 .tb-left p{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.55);margin-top:1px}
 .tb-right{display:flex;align-items:center;gap:9px}
-.player-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);backdrop-filter:blur(8px);border-radius:99px;padding:5px 13px 5px 7px}
+/* ── KID PIN SCREEN ──────────────────────────────── */
+#kidPin{position:fixed;inset:0;z-index:1100;background:rgba(4,14,8,.88);backdrop-filter:blur(22px);display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+.kp-av{width:80px;height:80px;border-radius:50%;border:3px solid rgba(255,255,255,.18);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:3rem;background:rgba(40,56,112,.45);box-shadow:0 0 0 6px rgba(255,255,255,.06),0 8px 24px rgba(0,0,0,.4)}
+.kp-av img{width:100%;height:100%;object-fit:cover}
+.kp-name{font-size:1.5rem;font-weight:900;color:#fff;text-align:center}
+.kp-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.4);text-align:center;margin-top:-10px}
+.kp-dots{display:flex;gap:14px}
+.kp-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.2);transition:all .2s}
+.kp-dot.on{background:var(--amber);border-color:var(--amber);box-shadow:0 0 8px rgba(246,192,74,.5)}
+.kp-kp{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:220px}
+.kp-k{aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.09);border:1.5px solid rgba(255,255,255,.12);color:#fff;font-family:'Nunito',sans-serif;font-size:1.3rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.kp-k:hover{background:rgba(255,255,255,.18);transform:scale(1.08)}
+.kp-k:active{transform:scale(.95)}
+.kp-err{color:#FF6B6B;font-size:.78rem;font-weight:800;min-height:20px;text-align:center}
+.kp-err.shake{animation:kpShake .4s ease}
+@keyframes kpShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.kp-back{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.35);cursor:pointer;text-decoration:underline;text-underline-offset:3px;margin-top:4px}
+.kp-back:hover{color:rgba(255,255,255,.6)}
+
+/* ── TOPBAR PLAYER CHIP DROPDOWN ────────────────── */
+.player-chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.18);backdrop-filter:blur(8px);border-radius:99px;padding:5px 13px 5px 7px;cursor:pointer;position:relative;user-select:none}
+.player-chip:hover{background:rgba(255,255,255,.16)}
+.pc-av{width:28px;height:28px;border-radius:50%;background:rgba(43,191,184,.2);display:flex;align-items:center;justify-content:center;font-size:.95rem;overflow:hidden;flex-shrink:0}
+.pc-av img{width:100%;height:100%;object-fit:cover}
+.pc-nm{font-size:.78rem;font-weight:900;color:#fff}
+.pc-arrow{font-size:.6rem;color:rgba(255,255,255,.45);margin-left:2px;transition:transform .2s}
+.player-chip.open .pc-arrow{transform:rotate(180deg)}
+.chip-dropdown{position:absolute;top:calc(100% + 8px);right:0;background:rgba(8,24,14,.96);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.1);border-radius:14px;min-width:190px;overflow:hidden;box-shadow:0 12px 36px rgba(0,0,0,.45);display:none;z-index:100}
+.player-chip.open .chip-dropdown{display:block}
+.chip-dd-item{display:flex;align-items:center;gap:9px;padding:11px 14px;cursor:pointer;transition:background .15s;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.7)}
+.chip-dd-item:hover{background:rgba(255,255,255,.08);color:#fff}
+.chip-dd-item .dd-ico{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;overflow:hidden;background:rgba(255,255,255,.1)}
+.chip-dd-item .dd-ico img{width:100%;height:100%;object-fit:cover}
+.chip-dd-sep{height:1px;background:rgba(255,255,255,.07);margin:2px 0}
+
+/* ── TASK SEARCH ──────────────────────────────────── */
+.task-search{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:99px;padding:8px 14px;margin-bottom:12px;transition:border-color .2s}
+.task-search:focus-within{border-color:rgba(43,191,184,.4)}
+.task-search input{flex:1;border:none;outline:none;background:transparent;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;color:#fff}
+.task-search input::placeholder{color:rgba(255,255,255,.28)}
+.task-search-clear{background:none;border:none;color:rgba(255,255,255,.3);cursor:pointer;font-size:.9rem;padding:0;display:none}
+.task-search-clear.show{display:block}
+
+/* ── AVATAR UPLOAD ──────────────────────────────── */
+.ph-ring{width:96px;height:96px;border-radius:50%;border:2px solid rgba(255,255,255,.18);background:rgba(40,56,112,.45);display:flex;align-items:center;justify-content:center;font-size:3.3rem;flex-shrink:0;box-shadow:0 0 0 7px rgba(255,255,255,.05),0 8px 30px rgba(0,0,0,.4);position:relative;z-index:2;cursor:pointer;overflow:hidden;transition:all .2s}
+.ph-ring:hover .ph-ring-overlay{opacity:1}
+.ph-ring img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.ph-ring-emoji{position:relative;z-index:1}
+.ph-ring-overlay{position:absolute;inset:0;z-index:2;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:900;color:#fff;opacity:0;transition:opacity .2s;border-radius:50%;flex-direction:column;gap:2px}
+
+/* ── CHANGE PIN MODAL ────────────────────────────── */
+#changePinModal{position:fixed;inset:0;z-index:1700;background:rgba(0,0,0,.7);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:20px}
+#changePinModal.open{display:flex}
+.cpm-box{background:rgba(8,24,14,.97);border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:28px 24px;width:100%;max-width:360px;text-align:center}
+.cpm-title{font-size:1.05rem;font-weight:900;color:#fff;margin-bottom:4px}
+.cpm-sub{font-size:.72rem;color:rgba(255,255,255,.4);font-weight:700;margin-bottom:18px}
+.cpm-step{display:none}.cpm-step.active{display:block}
+.cpm-dots{display:flex;gap:12px;justify-content:center;margin:14px 0}
+.cpm-dot{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.2);transition:all .2s}
+.cpm-dot.on{background:var(--teal);border-color:var(--teal)}
+.cpm-kp{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:210px;margin:0 auto}
+.cpm-k{aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.1);color:#fff;font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.cpm-k:hover{background:rgba(255,255,255,.16);transform:scale(1.07)}
+.cpm-err{color:#FF6B6B;font-size:.75rem;font-weight:800;min-height:18px;margin-top:8px}
+.cpm-success{color:#90FFB0;font-size:.85rem;font-weight:800;padding:12px 0}
 .player-chip .pc-av{width:28px;height:28px;border-radius:50%;background:rgba(43,191,184,.2);display:flex;align-items:center;justify-content:center;font-size:.95rem}
 .player-chip .pc-nm{font-size:.78rem;font-weight:900;color:#fff}
 .notif-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;position:relative}
@@ -475,6 +539,67 @@ body{background:#0a1a10}
 .fd{font-size:.5rem;font-weight:800;color:rgba(255,255,255,.4);margin-top:3px}
 .fd.today-lbl{color:var(--teal);font-weight:900}
 .gv-btn{width:100%;margin-top:11px;padding:8px;background:rgba(39,174,96,.12);border:1.5px solid rgba(39,174,96,.22);border-radius:10px;color:#7DFFB0;font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+.gv-btn:hover{background:rgba(39,174,96,.22)}
+
+/* ═══════════════════════════
+   GARDEN FULL MONTH MODAL
+   ═══════════════════════════ */
+#gardenModal{
+  position:fixed;inset:0;z-index:1600;
+  background:rgba(0,0,0,.72);backdrop-filter:blur(12px);
+  display:none;align-items:center;justify-content:center;
+  padding:20px;
+}
+#gardenModal.open{display:flex}
+.gm-box{
+  background:linear-gradient(160deg,rgba(8,30,14,.96),rgba(12,40,20,.98));
+  border:1px solid rgba(39,174,96,.22);border-radius:24px;
+  width:100%;max-width:560px;max-height:88vh;
+  overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.6),0 0 0 1px rgba(39,174,96,.1);
+}
+.gm-box::-webkit-scrollbar{width:4px}
+.gm-box::-webkit-scrollbar-thumb{background:rgba(39,174,96,.3);border-radius:99px}
+.gm-hdr{
+  position:sticky;top:0;z-index:2;
+  padding:18px 20px 14px;
+  background:linear-gradient(180deg,rgba(8,30,14,.99) 80%,transparent 100%);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.gm-hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.gm-title{font-size:1.05rem;font-weight:900;color:#7DFFB0;display:flex;align-items:center;gap:7px}
+.gm-close{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.6);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.gm-close:hover{background:rgba(255,255,255,.16);color:#fff}
+.gm-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.gm-stat{display:flex;align-items:center;gap:5px;font-size:.68rem;font-weight:800;color:rgba(255,255,255,.65)}
+.gm-stat img{width:18px;height:18px;object-fit:contain}
+.gm-nav{display:flex;align-items:center;justify-content:space-between}
+.gm-month{font-size:.9rem;font-weight:900;color:#fff}
+.gm-nbtn{background:rgba(255,255,255,.08);border:none;border-radius:50%;width:28px;height:28px;color:rgba(255,255,255,.65);font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.gm-nbtn:hover{background:rgba(255,255,255,.16)}
+.gm-body{padding:14px 20px 22px}
+.gm-day-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px}
+.gm-dh{text-align:center;font-size:.58rem;font-weight:900;color:rgba(255,255,255,.3);padding:2px 0}
+.gm-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.gm-cell{
+  border-radius:10px;padding:4px 2px 5px;text-align:center;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);
+  transition:all .2s;cursor:default;position:relative;
+}
+.gm-cell.gm-today{
+  background:rgba(43,191,184,.12);
+  border-color:rgba(43,191,184,.4);
+  box-shadow:0 0 10px rgba(43,191,184,.2);
+}
+.gm-cell.gm-other{opacity:.25}
+.gm-cell.gm-has-data{background:rgba(39,174,96,.06);border-color:rgba(39,174,96,.15)}
+.gm-cell img{width:32px;height:32px;object-fit:contain;display:block;margin:0 auto 2px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))}
+.gm-cell.gm-today img{filter:drop-shadow(0 2px 8px rgba(43,191,184,.5))}
+.gm-day-num{font-size:.6rem;font-weight:800;color:rgba(255,255,255,.45);line-height:1}
+.gm-cell.gm-today .gm-day-num{color:var(--teal);font-weight:900}
+.gm-pct{font-size:.48rem;font-weight:700;color:rgba(255,255,255,.3);margin-top:1px}
+.gm-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06)}
+.gm-leg-item{display:flex;align-items:center;gap:5px;font-size:.6rem;font-weight:700;color:rgba(255,255,255,.45)}
+.gm-leg-item img{width:16px;height:16px;object-fit:contain}
 
 /* REWARDS */
 .rew-layout{padding:22px;display:flex;flex-direction:column;gap:18px}
@@ -870,9 +995,26 @@ body{background:#0a1a10}
         <p id="tb-sub">Ready to learn today?</p>
       </div>
       <div class="tb-right">
-        <div class="player-chip">
+        <div class="player-chip" id="player-chip" onclick="toggleChipDD(event)">
           <div class="pc-av" id="tb-av">♑</div>
           <span class="pc-nm" id="tb-nm">Riaan</span>
+          <span class="pc-arrow">▾</span>
+          <div class="chip-dropdown" id="chip-dd">
+            <div class="chip-dd-item" id="dd-switch" onclick="switchPlayer(event)">
+              <div class="dd-ico" id="dd-other-av">♈</div>
+              <span id="dd-other-nm">Switch to Kairav</span>
+            </div>
+            <div class="chip-dd-sep"></div>
+            <div class="chip-dd-item" onclick="showChangePinModal(event)">
+              <div class="dd-ico">🔐</div>
+              <span>Change My PIN</span>
+            </div>
+            <div class="chip-dd-sep"></div>
+            <div class="chip-dd-item" onclick="logoutPlayer(event)">
+              <div class="dd-ico">🚪</div>
+              <span>Switch Player</span>
+            </div>
+          </div>
         </div>
         <div class="notif-btn" onclick="showNotifs()">🔔<div class="notif-dot"></div></div>
       </div>
@@ -1079,6 +1221,11 @@ body{background:#0a1a10}
               <div class="card-hdr">
                 <div class="card-ttl">Today · <span id="t-date" style="color:rgba(255,255,255,.38);font-size:.72rem;font-weight:700;text-transform:none;letter-spacing:0"></span></div>
               </div>
+              <div class="task-search">
+                <span style="color:rgba(255,255,255,.3);font-size:.9rem">🔍</span>
+                <input type="text" id="task-search-input" placeholder="Search tasks..." oninput="filterTasks(this.value)">
+                <button class="task-search-clear" id="task-search-clear" onclick="clearTaskSearch()">✕</button>
+              </div>
               <div id="full-tasks"></div>
             </div>
           </div>
@@ -1111,7 +1258,7 @@ body{background:#0a1a10}
                 <div class="gc-cnt">🔥 <span id="g-streak">0</span></div>
               </div>
               <div class="garden-row" id="garden-row"></div>
-              <button class="gv-btn">📅 View Full Month ›</button>
+              <button class="gv-btn" onclick="showGardenModal()">📅 View Full Month ›</button>
             </div>
           </div>
         </div>
@@ -1174,7 +1321,11 @@ body{background:#0a1a10}
       <!-- PROFILE -->
       <div id="profileScreen" class="screen">
         <div class="prof-hero">
-          <div class="ph-ring" id="pr-av">♑</div>
+          <div class="ph-ring" id="pr-av" onclick="triggerAvatarUpload()" title="Change photo">
+            <span class="ph-ring-emoji" id="pr-av-emoji">♑</span>
+            <div class="ph-ring-overlay">📷<span style="font-size:.5rem">Change</span></div>
+          </div>
+          <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
           <div class="ph-inf">
             <div><span class="ph-nm" id="pr-nm">Riaan</span><span class="ph-badge" id="pr-badge">Grade 3</span></div>
             <div class="ph-sub" id="pr-sub">Age 8 · Capricorn ♑ · Dreamer &amp; Explorer ✨</div>
@@ -1489,9 +1640,18 @@ const FALLBACK_SUBJECTS=[
 const FALLBACK_TASKS=[{id:'t1',title:'Morning Reading',active:true,sort_order:1,icon:'📖',time_block:'morning',stars_value:5},{id:'t2',title:'Math Practice',active:true,sort_order:2,icon:'🔢',time_block:'morning',stars_value:5},{id:'t3',title:'Writing Practice',active:true,sort_order:3,icon:'✏️',time_block:'afternoon',stars_value:5},{id:'t4',title:'Science Activity',active:true,sort_order:4,icon:'🔬',time_block:'afternoon',stars_value:5},{id:'t5',title:'Free Reading',active:true,sort_order:5,icon:'📚',time_block:'evening',stars_value:3},{id:'t6',title:'Coding Practice',active:true,sort_order:6,icon:'💻',time_block:'afternoon',stars_value:5}];
 const FALLBACK_SHOP=[];
 
+// ─── DEFAULT KID PINs (fallback if kid_pin not in DB) ──────
+const DEFAULT_PINS={riaan:'2018',kairav:'2020'};
+let KP={pendingPlayer:null,entry:'',cpmStep:1,cpmParent:'',cpmNew:''};
+
 async function init(){
   Object.values(SCREEN_BG).forEach(u=>{new Image().src=u;});
   buildCalendar();buildGarden();buildWS();buildSMD();buildCountdown();
+  // Close chip dropdown when clicking outside
+  document.addEventListener('click',e=>{
+    const chip=document.getElementById('player-chip');
+    if(chip&&!chip.contains(e.target))chip.classList.remove('open');
+  });
   try{
     S.players=await db('players?select=*&order=name');
     for(const p of S.players){
@@ -1501,16 +1661,195 @@ async function init(){
       if(el)el.textContent=`⭐ ${total.toLocaleString()} stars`;
     }
   }catch(e){}
+  // Auto-login from localStorage
+  const saved=localStorage.getItem('lh_player');
+  if(saved){
+    const p=S.players.find(x=>x.name.toLowerCase()===saved.toLowerCase());
+    if(p){await doLogin(p);return;}
+  }
 }
 
-async function selectPlayer(name){
+// Show kid PIN screen for selected player
+function selectPlayer(name){
   const p=S.players.find(x=>x.name.toLowerCase()===name);if(!p)return;
-  S.player=p;
+  KP.pendingPlayer=p;KP.entry='';
+  document.getElementById('kp-player-name').textContent=p.name;
+  // Avatar
+  const avEl=document.getElementById('kp-av-img');
+  if(p.avatar_url){avEl.innerHTML=`<img src="${p.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;}
+  else{avEl.textContent=p.avatar||'⭐';}
+  updKpDots();
+  document.getElementById('kp-err').textContent='';
   document.getElementById('ps').style.display='none';
+  const kpEl=document.getElementById('kidPin');kpEl.style.display='flex';
+}
+
+function kpKey(k){
+  if(k==='back')KP.entry=KP.entry.slice(0,-1);
+  else if(KP.entry.length<4)KP.entry+=k;
+  updKpDots();
+  if(KP.entry.length===4)setTimeout(checkKidPin,150);
+}
+function updKpDots(){
+  for(let i=0;i<4;i++){const d=document.getElementById('kd'+i);if(d)d.classList.toggle('on',i<KP.entry.length);}
+}
+async function checkKidPin(){
+  const p=KP.pendingPlayer;
+  const correctPin=p.kid_pin||DEFAULT_PINS[p.name.toLowerCase()]||'0000';
+  if(KP.entry===correctPin){
+    document.getElementById('kidPin').style.display='none';
+    await doLogin(p);
+  } else {
+    const errEl=document.getElementById('kp-err');
+    errEl.textContent='Wrong code! Try again 🔒';
+    errEl.classList.add('shake');
+    setTimeout(()=>{errEl.classList.remove('shake');},400);
+    KP.entry='';updKpDots();
+  }
+}
+async function doLogin(p){
+  S.player=p;
+  localStorage.setItem('lh_player',p.name.toLowerCase());
+  document.getElementById('ps').style.display='none';
+  document.getElementById('kidPin').style.display='none';
   document.getElementById('app').style.display='flex';
   if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='flex';
   setBG('home');
   await loadPlayer();renderAll();
+  updateChipDD();
+}
+function backToPlayerSelect(){
+  document.getElementById('kidPin').style.display='none';
+  document.getElementById('ps').style.display='flex';
+  KP.pendingPlayer=null;KP.entry='';
+}
+function logoutPlayer(e){
+  if(e)e.stopPropagation();
+  localStorage.removeItem('lh_player');
+  S.player=null;
+  document.getElementById('player-chip').classList.remove('open');
+  document.getElementById('app').style.display='none';
+  document.getElementById('ps').style.display='flex';
+  document.getElementById('mob-nav').style.display='none';
+}
+function switchPlayer(e){
+  if(e)e.stopPropagation();
+  document.getElementById('player-chip').classList.remove('open');
+  const other=S.players.find(p=>p.id!==S.player?.id);
+  if(other)selectPlayer(other.name.toLowerCase());
+  else logoutPlayer();
+}
+function toggleChipDD(e){
+  e.stopPropagation();
+  document.getElementById('player-chip').classList.toggle('open');
+}
+function updateChipDD(){
+  const p=S.player;if(!p)return;
+  // Topbar avatar
+  const avEl=document.getElementById('tb-av');
+  if(p.avatar_url){avEl.innerHTML=`<img src="${p.avatar_url}">`;}
+  else{avEl.textContent=p.avatar||'⭐';}
+  document.getElementById('tb-nm').textContent=p.name;
+  // Other player in dropdown
+  const other=S.players.find(x=>x.id!==p.id);
+  if(other){
+    const oav=document.getElementById('dd-other-av');
+    if(other.avatar_url)oav.innerHTML=`<img src="${other.avatar_url}">`;
+    else oav.textContent=other.avatar||'⭐';
+    const onm=document.getElementById('dd-other-nm');
+    if(onm)onm.textContent=`Switch to ${other.name}`;
+  }
+}
+
+// ─── CHANGE PIN FLOW ────────────────────────────────────────
+function showChangePinModal(e){
+  if(e)e.stopPropagation();
+  document.getElementById('player-chip').classList.remove('open');
+  KP.cpmStep=1;KP.cpmParent='';KP.cpmNew='';
+  ['step1','step2','step3','step4'].forEach((s,i)=>{
+    document.getElementById('cpm-'+s).classList.toggle('active',i===0);
+  });
+  ['cpm-err1','cpm-err2','cpm-err3'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='';});
+  updCpmDots(1,'');updCpmDots(2,'');updCpmDots(3,'');
+  document.getElementById('changePinModal').classList.add('open');
+}
+function closeChangePinModal(){document.getElementById('changePinModal').classList.remove('open');}
+function updCpmDots(step,val){
+  const pfx=step===1?'cpd':step===2?'cpn':'cpc';
+  for(let i=0;i<4;i++){const d=document.getElementById(pfx+i);if(d)d.classList.toggle('on',i<val.length);}
+}
+function cpmKey(k,step){
+  let cur=step===1?KP.cpmParent:step===2?KP.cpmNew:KP.cpmConfirm||'';
+  if(k==='back')cur=cur.slice(0,-1);
+  else if(cur.length<4)cur+=k;
+  if(step===1)KP.cpmParent=cur;
+  else if(step===2)KP.cpmNew=cur;
+  else KP.cpmConfirm=cur;
+  updCpmDots(step,cur);
+  if(cur.length===4)setTimeout(()=>cpmSubmit(step),150);
+}
+async function cpmSubmit(step){
+  if(step===1){
+    if(KP.cpmParent===S.pin){
+      document.getElementById('cpm-step1').classList.remove('active');
+      document.getElementById('cpm-step2').classList.add('active');
+    } else {
+      document.getElementById('cpm-err1').textContent='Wrong parent PIN!';
+      KP.cpmParent='';updCpmDots(1,'');
+    }
+  } else if(step===2){
+    document.getElementById('cpm-step2').classList.remove('active');
+    document.getElementById('cpm-step3').classList.add('active');
+  } else if(step===3){
+    if(KP.cpmNew===KP.cpmConfirm){
+      try{
+        await db(`players?id=eq.${S.player.id}`,{method:'PATCH',prefer:'return=minimal',body:{kid_pin:KP.cpmNew}});
+        S.player.kid_pin=KP.cpmNew;
+        document.getElementById('cpm-step3').classList.remove('active');
+        document.getElementById('cpm-step4').classList.add('active');
+      }catch(e){document.getElementById('cpm-err3').textContent='Error saving. Try again.';}
+    } else {
+      document.getElementById('cpm-err3').textContent='Codes don\'t match! Try again.';
+      KP.cpmConfirm='';updCpmDots(3,'');
+    }
+  }
+}
+
+// ─── AVATAR UPLOAD ──────────────────────────────────────────
+function triggerAvatarUpload(){
+  document.getElementById('avatar-file-input').click();
+}
+async function uploadAvatar(input){
+  const file=input.files[0];if(!file)return;
+  const ext=file.name.split('.').pop();
+  const path=`${S.player.id}/avatar.${ext}`;
+  try{
+    // Upload to Supabase Storage
+    const res=await fetch(`${SB}/storage/v1/object/Avatars/${path}`,{
+      method:'POST',
+      headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':file.type,'x-upsert':'true'},
+      body:file
+    });
+    if(!res.ok)throw new Error('Upload failed');
+    const url=`${SB}/storage/v1/object/public/Avatars/${path}?t=${Date.now()}`;
+    // Save URL to players table
+    await db(`players?id=eq.${S.player.id}`,{method:'PATCH',prefer:'return=minimal',body:{avatar_url:url}});
+    S.player.avatar_url=url;
+    // Update all avatar displays
+    const prAv=document.getElementById('pr-av');
+    if(prAv){
+      const emoji=prAv.querySelector('.ph-ring-emoji');
+      if(emoji)emoji.style.display='none';
+      let img=prAv.querySelector('img');
+      if(!img){img=document.createElement('img');prAv.insertBefore(img,prAv.querySelector('.ph-ring-overlay'));}
+      img.src=url;img.style.cssText='width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:50%';
+    }
+    updateChipDD();
+    showMod(`<div style="text-align:center;padding:12px 0"><div style="font-size:3rem;margin-bottom:9px">📸</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:14px">Photo updated! Looking great! ⭐</div><button class="mb" onclick="closeMod()">Awesome!</button></div>`);
+  }catch(err){
+    showMod(`<div style="text-align:center;padding:12px 0"><div style="font-size:2rem;margin-bottom:9px">⚠️</div><div style="font-size:.85rem;color:#FF9090;margin-bottom:14px">Upload failed. Try a smaller image.</div><button class="mb" onclick="closeMod()">OK</button></div>`);
+  }
+  input.value='';
 }
 
 async function loadPlayer(){
@@ -1608,9 +1947,57 @@ function updateTB(){
   const hr=new Date().getHours();
   document.getElementById('tb-title').textContent=hr<12?'Good morning! ☀️':hr<17?'Good afternoon! 🌤️':'Good evening! 🌙';
   document.getElementById('tb-sub').textContent=`Ready to learn today, ${p.name}?`;
-  document.getElementById('tb-av').textContent=p.avatar;
+  // Avatar — image or emoji
+  const avEl=document.getElementById('tb-av');
+  if(p.avatar_url){avEl.innerHTML=`<img src="${p.avatar_url}">`;}
+  else{avEl.textContent=p.avatar||'⭐';}
   document.getElementById('tb-nm').textContent=p.name;
   document.getElementById('h-greet').textContent=`Namaste, ${p.name}! 🙏`;
+}
+
+// ─── TASK SEARCH ────────────────────────────────────────────
+let taskSearchQ='';
+function filterTasks(q){
+  taskSearchQ=q.trim().toLowerCase();
+  const clearBtn=document.getElementById('task-search-clear');
+  if(clearBtn)clearBtn.classList.toggle('show',taskSearchQ.length>0);
+  renderTasksFiltered();
+}
+function clearTaskSearch(){
+  taskSearchQ='';
+  const inp=document.getElementById('task-search-input');
+  if(inp)inp.value='';
+  const clearBtn=document.getElementById('task-search-clear');
+  if(clearBtn)clearBtn.classList.remove('show');
+  renderTasksFiltered();
+}
+function renderTasksFiltered(){
+  const blocks=[
+    {k:'morning',l:'Morning',c:'mo',i:'🌅',t:'6:00–10:00 AM'},
+    {k:'learning',l:'Learning',c:'le',i:'🧠',t:'10:00 AM–12:00 PM'},
+    {k:'afternoon',l:'Afternoon',c:'af',i:'☀️',t:'2:30–6:00 PM'},
+    {k:'evening',l:'Evening',c:'ev',i:'🌆',t:'7:00–9:30 PM'},
+    {k:'bedtime',l:'Bedtime',c:'be',i:'🌙',t:'9:00–9:30 PM'}
+  ];
+  let td=0,tt=0,html='';
+  const filtered=taskSearchQ
+    ?S.tasks.filter(t=>t.title.toLowerCase().includes(taskSearchQ))
+    :S.tasks;
+  blocks.forEach(b=>{
+    const ts=filtered.filter(t=>t.time_block===b.k);if(!ts.length)return;
+    html+=`<div class="tb-sec"><div class="tb-hdr ${b.c}"><span style="font-size:1rem">${b.i}</span><span class="tb-hdr-lbl">${b.l.toUpperCase()}</span><span class="tb-hdr-time">${b.t}</span></div>`;
+    ts.forEach(t=>{
+      tt++;const done=S.tc[t.id]==='approved',pend=S.tc[t.id]==='pending';if(done)td++;
+      html+=`<div class="ftrow ${done?'done-r':''}" onclick="tapTask('${t.id}',${t.stars_value})"><div class="t-chk ${done?'done':pend?'pend':''}">${done?'✓':pend?'⏳':''}</div><div class="ft-ico">${t.icon}</div><div class="ft-nm ${done?'done':''}">${t.title}</div><div class="ft-st">+${t.stars_value}⭐</div><div class="ft-tm">${{morning:'7:30 AM',learning:'10:00 AM',afternoon:'3:00 PM',evening:'7:30 PM',bedtime:'9:00 PM'}[b.k]||''}</div></div>`;
+    });
+    html+='</div>';
+  });
+  if(!html&&taskSearchQ)html=`<div class="empty">No tasks matching "${taskSearchQ}" 🔍</div>`;
+  const el=document.getElementById('full-tasks');if(el)el.innerHTML=html;
+  const pct=tt>0?Math.round(td/tt*100):0;
+  const dsBar=document.getElementById('ds-bar');if(dsBar)dsBar.style.width=pct+'%';
+  const dsPct=document.getElementById('ds-pct');if(dsPct)dsPct.textContent=pct+'%';
+  const c=138.2;const dsRing=document.getElementById('ds-ring');if(dsRing)dsRing.style.strokeDashoffset=c-(c*pct/100);
 }
 
 function renderHome(){
@@ -1852,22 +2239,12 @@ function renderTasks(){
   const p=S.player;if(!p)return;
   document.getElementById('ds-msg').textContent=`You've got this, ${p.name}! 💪`;
   document.getElementById('t-date').textContent=new Date().toLocaleDateString('en-CA',{weekday:'short',year:'numeric',month:'long',day:'numeric'});
-  const blocks=[{k:'morning',l:'Morning',c:'mo',i:'🌅',t:'6:00–10:00 AM'},{k:'learning',l:'Learning',c:'le',i:'🧠',t:'10:00 AM–12:00 PM'},{k:'afternoon',l:'Afternoon',c:'af',i:'☀️',t:'2:30–6:00 PM'},{k:'evening',l:'Evening',c:'ev',i:'🌆',t:'7:00–9:30 PM'},{k:'bedtime',l:'Bedtime',c:'be',i:'🌙',t:'9:00–9:30 PM'}];
-  let td=0,tt=0,html='';
-  blocks.forEach(b=>{
-    const ts=S.tasks.filter(t=>t.time_block===b.k&&t.time_block!=='weekly');if(!ts.length)return;
-    html+=`<div class="tb-sec"><div class="tb-hdr ${b.c}"><span style="font-size:1rem">${b.i}</span><span class="tb-hdr-lbl">${b.l.toUpperCase()}</span><span class="tb-hdr-time">${b.t}</span></div>`;
-    ts.forEach(t=>{tt++;const done=S.tc[t.id]==='approved',pend=S.tc[t.id]==='pending';if(done)td++;
-      html+=`<div class="ftrow ${done?'done-r':''}" onclick="tapTask('${t.id}',${t.stars_value})"><div class="t-chk ${done?'done':pend?'pend':''}">${done?'✓':pend?'⏳':''}</div><div class="ft-ico">${t.icon}</div><div class="ft-nm ${done?'done':''}">${t.title}</div><div class="ft-st">+${t.stars_value}⭐</div><div class="ft-tm">${{morning:'7:30 AM',learning:'10:00 AM',afternoon:'3:00 PM',evening:'7:30 PM',bedtime:'9:00 PM'}[b.k]||''}</div></div>`;
-    });
-    html+='</div>';
-  });
-  document.getElementById('full-tasks').innerHTML=html;
-  const pct=tt>0?Math.round(td/tt*100):0;
-  document.getElementById('ds-txt').textContent=`${td} of ${tt} tasks completed`;
-  document.getElementById('ds-bar').style.width=pct+'%';
-  document.getElementById('ds-pct').textContent=pct+'%';
-  const c=138.2;document.getElementById('ds-ring').style.strokeDashoffset=c-(c*pct/100);
+  // Reset search when switching to tasks tab
+  clearTaskSearch();
+  // Compute total for summary ring
+  const total=S.tasks.length,done=Object.values(S.tc).filter(v=>v==='approved').length;
+  document.getElementById('ds-txt').textContent=`${done} of ${total} tasks completed`;
+  renderTasksFiltered();
   buildCalendar();buildWS();buildGarden();
 }
 
@@ -2242,10 +2619,22 @@ function buildCountdown(){
 
 function renderProfile(){
   const p=S.player;if(!p)return;
-  document.getElementById('pr-av').textContent=p.avatar;
+  // Avatar — image or emoji
+  const avEl=document.getElementById('pr-av');
+  const emojiEl=document.getElementById('pr-av-emoji');
+  if(p.avatar_url){
+    if(emojiEl)emojiEl.style.display='none';
+    let img=avEl.querySelector('img');
+    if(!img){img=document.createElement('img');avEl.insertBefore(img,avEl.querySelector('.ph-ring-overlay'));}
+    img.src=p.avatar_url;
+    img.style.cssText='width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:50%';
+  } else {
+    if(emojiEl){emojiEl.style.display='';emojiEl.textContent=p.avatar||'⭐';}
+    const img=avEl.querySelector('img');if(img)img.remove();
+  }
   document.getElementById('pr-nm').textContent=p.name;
   document.getElementById('pr-badge').textContent=`Grade ${p.grade}`;
-  document.getElementById('pr-sub').textContent=`Age ${p.age} · ${p.zodiac} ${p.avatar} · Dreamer & Explorer ✨`;
+  document.getElementById('pr-sub').textContent=`Age ${p.age} · ${p.zodiac||''} ${p.avatar||''} · Dreamer & Explorer ✨`;
   document.getElementById('pr-stars').textContent=`⭐ ${S.stars.toLocaleString()} Stars`;
   document.getElementById('pp-str').textContent=S.streak;
   document.getElementById('pp-bad').textContent=S.earnedBadges.length;
@@ -2493,7 +2882,244 @@ function closeReading(){
   RD.listening=false;renderHome();
 }
 
+// ─── GARDEN FULL MONTH MODAL ────────────────────────────────
+let GM={y:new Date().getFullYear(),m:new Date().getMonth()};
+
+async function showGardenModal(){
+  GM.y=S.calY;GM.m=S.calM;
+  document.getElementById('gardenModal').classList.add('open');
+  // Set legend images dynamically
+  document.querySelectorAll('.gm-leg-item img').forEach((img,i)=>{
+    const stages=['bloom','strong','bud','sprout','none'];
+    img.src=PLANT_IMGS[stages[i]]||'';
+  });
+  await renderGardenModal();
+}
+
+function closeGardenModal(){
+  document.getElementById('gardenModal').classList.remove('open');
+}
+
+function gmPrev(){GM.m--;if(GM.m<0){GM.m=11;GM.y--;}renderGardenModal();}
+function gmNext(){GM.m++;if(GM.m>11){GM.m=0;GM.y++;}renderGardenModal();}
+
+async function renderGardenModal(){
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const mn=document.getElementById('gm-month');
+  if(mn)mn.textContent=`${months[GM.m]} ${GM.y}`;
+  const grid=document.getElementById('gm-grid');if(!grid)return;
+
+  // Show loading state
+  grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:32px;color:rgba(255,255,255,.3);font-size:.8rem">Loading garden...</div>`;
+
+  // Fetch all completions for this month
+  const y=GM.y,m=GM.m;
+  const dim=new Date(y,m+1,0).getDate();
+  const monthStart=`${y}-${String(m+1).padStart(2,'0')}-01`;
+  const monthEnd=`${y}-${String(m+1).padStart(2,'0')}-${dim}`;
+  const today=new Date();
+  const todayStr=today.toISOString().split('T')[0];
+  const totalTasks=Math.max(S.tasks.length,1);
+  let compMap={};
+
+  try{
+    if(S.player){
+      const rows=await db(`task_completions?player_id=eq.${S.player.id}&completion_date=gte.${monthStart}&completion_date=lte.${monthEnd}&select=completion_date,status`);
+      if(Array.isArray(rows)){
+        rows.forEach(r=>{
+          if(!compMap[r.completion_date])compMap[r.completion_date]={done:0,total:0};
+          compMap[r.completion_date].total++;
+          if(r.status==='approved')compMap[r.completion_date].done++;
+        });
+      }
+    }
+  }catch(e){}
+
+  // Count stats
+  const counts={bloom:0,strong:0,bud:0,sprout:0,none:0};
+
+  // Build grid cells
+  const first=new Date(y,m,1).getDay(),off=first===0?6:first-1;
+  let html='';
+
+  // Empty cells for offset
+  for(let i=0;i<off;i++){
+    const prevD=new Date(y,m,0).getDate()-off+i+1;
+    html+=`<div class="gm-cell gm-other">
+      <img src="${PLANT_IMGS.none}" alt="" style="opacity:.3">
+      <div class="gm-day-num">${prevD}</div>
+    </div>`;
+  }
+
+  // Day cells
+  for(let d=1;d<=dim;d++){
+    const dateStr=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday=dateStr===todayStr;
+    const isFuture=new Date(y,m,d)>today&&!isToday;
+    const comp=compMap[dateStr];
+    let stage,pctTxt='';
+
+    if(isFuture){
+      stage='none';
+    } else if(comp&&comp.done>0){
+      const pct=comp.done/totalTasks;
+      pctTxt=`${Math.round(pct*100)}%`;
+      stage=pct>=1?'bloom':pct>=.75?'strong':pct>=.5?'bud':'sprout';
+    } else {
+      stage=isToday?'none':'none'; // today with no tasks = seed
+    }
+
+    counts[stage]++;
+
+    const hasData=stage!=='none'||isToday;
+    html+=`<div class="gm-cell ${isToday?'gm-today':''} ${hasData?'gm-has-data':''}">
+      <img src="${PLANT_IMGS[stage]}" alt="${stage}"
+           onerror="this.style.opacity='.2'"
+           style="${isFuture?'opacity:.3':''}">
+      <div class="gm-day-num">${d}</div>
+      ${pctTxt?`<div class="gm-pct">${pctTxt}</div>`:''}
+    </div>`;
+  }
+
+  grid.innerHTML=html;
+
+  // Update stats bar
+  const statsEl=document.getElementById('gm-stats');
+  if(statsEl){
+    const statDefs=[
+      {stage:'bloom',label:'Blooming',color:'#F06090'},
+      {stage:'strong',label:'Growing',color:'#27AE60'},
+      {stage:'bud',label:'Budding',color:'#7C5CBF'},
+      {stage:'sprout',label:'Sprouting',color:'#2BBFB8'},
+    ];
+    statsEl.innerHTML=statDefs.filter(s=>counts[s.stage]>0).map(s=>`
+      <div class="gm-stat">
+        <img src="${PLANT_IMGS[s.stage]}" alt="" style="width:18px;height:18px;object-fit:contain">
+        <span style="color:${s.color}">${counts[s.stage]}</span>
+        <span>${s.label}</span>
+      </div>`).join('')
+      +`<div class="gm-stat" style="margin-left:auto"><span style="color:rgba(255,255,255,.4)">${counts.none} days left</span></div>`;
+  }
+}
+
 init();
 </script>
+
+<!-- KID PIN SCREEN -->
+<div id="kidPin" style="display:none;flex-direction:column">
+  <div class="kp-av" id="kp-av-img">♑</div>
+  <div class="kp-name" id="kp-player-name">Riaan</div>
+  <div class="kp-sub">Enter your secret code 🔐</div>
+  <div class="kp-dots">
+    <div class="kp-dot" id="kd0"></div><div class="kp-dot" id="kd1"></div>
+    <div class="kp-dot" id="kd2"></div><div class="kp-dot" id="kd3"></div>
+  </div>
+  <div class="kp-kp">
+    <button class="kp-k" onclick="kpKey('1')">1</button><button class="kp-k" onclick="kpKey('2')">2</button><button class="kp-k" onclick="kpKey('3')">3</button>
+    <button class="kp-k" onclick="kpKey('4')">4</button><button class="kp-k" onclick="kpKey('5')">5</button><button class="kp-k" onclick="kpKey('6')">6</button>
+    <button class="kp-k" onclick="kpKey('7')">7</button><button class="kp-k" onclick="kpKey('8')">8</button><button class="kp-k" onclick="kpKey('9')">9</button>
+    <button class="kp-k" onclick="kpKey('back')" style="font-size:.95rem">⌫</button>
+    <button class="kp-k" onclick="kpKey('0')">0</button>
+    <button class="kp-k" onclick="kpKey('back')" style="font-size:.95rem;opacity:.3"> </button>
+  </div>
+  <div class="kp-err" id="kp-err"></div>
+  <div class="kp-back" onclick="backToPlayerSelect()">← Choose a different player</div>
+</div>
+
+<!-- CHANGE PIN MODAL -->
+<div id="changePinModal" onclick="if(event.target===this)closeChangePinModal()">
+  <div class="cpm-box">
+    <div class="cpm-title">🔐 Change My PIN</div>
+    <!-- Step 1: Parent PIN -->
+    <div class="cpm-step active" id="cpm-step1">
+      <div class="cpm-sub">First, enter the Parent PIN to confirm</div>
+      <div class="cpm-dots" id="cpm-dots1">
+        <div class="cpm-dot" id="cpd0"></div><div class="cpm-dot" id="cpd1"></div>
+        <div class="cpm-dot" id="cpd2"></div><div class="cpm-dot" id="cpd3"></div>
+      </div>
+      <div class="cpm-kp">
+        <button class="cpm-k" onclick="cpmKey('1',1)">1</button><button class="cpm-k" onclick="cpmKey('2',1)">2</button><button class="cpm-k" onclick="cpmKey('3',1)">3</button>
+        <button class="cpm-k" onclick="cpmKey('4',1)">4</button><button class="cpm-k" onclick="cpmKey('5',1)">5</button><button class="cpm-k" onclick="cpmKey('6',1)">6</button>
+        <button class="cpm-k" onclick="cpmKey('7',1)">7</button><button class="cpm-k" onclick="cpmKey('8',1)">8</button><button class="cpm-k" onclick="cpmKey('9',1)">9</button>
+        <button class="cpm-k" onclick="cpmKey('back',1)" style="font-size:.95rem">⌫</button>
+        <button class="cpm-k" onclick="cpmKey('0',1)">0</button>
+        <button class="cpm-k" onclick="closeChangePinModal()" style="font-size:.75rem;color:rgba(255,255,255,.4)">✕</button>
+      </div>
+      <div class="cpm-err" id="cpm-err1"></div>
+    </div>
+    <!-- Step 2: New PIN -->
+    <div class="cpm-step" id="cpm-step2">
+      <div class="cpm-sub">Enter your new secret code</div>
+      <div class="cpm-dots" id="cpm-dots2">
+        <div class="cpm-dot" id="cpn0"></div><div class="cpm-dot" id="cpn1"></div>
+        <div class="cpm-dot" id="cpn2"></div><div class="cpm-dot" id="cpn3"></div>
+      </div>
+      <div class="cpm-kp">
+        <button class="cpm-k" onclick="cpmKey('1',2)">1</button><button class="cpm-k" onclick="cpmKey('2',2)">2</button><button class="cpm-k" onclick="cpmKey('3',2)">3</button>
+        <button class="cpm-k" onclick="cpmKey('4',2)">4</button><button class="cpm-k" onclick="cpmKey('5',2)">5</button><button class="cpm-k" onclick="cpmKey('6',2)">6</button>
+        <button class="cpm-k" onclick="cpmKey('7',2)">7</button><button class="cpm-k" onclick="cpmKey('8',2)">8</button><button class="cpm-k" onclick="cpmKey('9',2)">9</button>
+        <button class="cpm-k" onclick="cpmKey('back',2)" style="font-size:.95rem">⌫</button>
+        <button class="cpm-k" onclick="cpmKey('0',2)">0</button>
+        <div></div>
+      </div>
+      <div class="cpm-err" id="cpm-err2"></div>
+    </div>
+    <!-- Step 3: Confirm new PIN -->
+    <div class="cpm-step" id="cpm-step3">
+      <div class="cpm-sub">Enter your new code again to confirm</div>
+      <div class="cpm-dots" id="cpm-dots3">
+        <div class="cpm-dot" id="cpc0"></div><div class="cpm-dot" id="cpc1"></div>
+        <div class="cpm-dot" id="cpc2"></div><div class="cpm-dot" id="cpc3"></div>
+      </div>
+      <div class="cpm-kp">
+        <button class="cpm-k" onclick="cpmKey('1',3)">1</button><button class="cpm-k" onclick="cpmKey('2',3)">2</button><button class="cpm-k" onclick="cpmKey('3',3)">3</button>
+        <button class="cpm-k" onclick="cpmKey('4',3)">4</button><button class="cpm-k" onclick="cpmKey('5',3)">5</button><button class="cpm-k" onclick="cpmKey('6',3)">6</button>
+        <button class="cpm-k" onclick="cpmKey('7',3)">7</button><button class="cpm-k" onclick="cpmKey('8',3)">8</button><button class="cpm-k" onclick="cpmKey('9',3)">9</button>
+        <button class="cpm-k" onclick="cpmKey('back',3)" style="font-size:.95rem">⌫</button>
+        <button class="cpm-k" onclick="cpmKey('0',3)">0</button>
+        <div></div>
+      </div>
+      <div class="cpm-err" id="cpm-err3"></div>
+    </div>
+    <!-- Step 4: Success -->
+    <div class="cpm-step" id="cpm-step4">
+      <div style="font-size:3rem;margin-bottom:8px">🎉</div>
+      <div class="cpm-success">PIN changed successfully!</div>
+      <button class="mb" style="margin-top:14px" onclick="closeChangePinModal()">Awesome! 🌟</button>
+    </div>
+  </div>
+</div>
+
+<!-- GARDEN FULL MONTH MODAL -->
+<div id="gardenModal" onclick="if(event.target===this)closeGardenModal()">
+  <div class="gm-box">
+    <div class="gm-hdr">
+      <div class="gm-hdr-top">
+        <div class="gm-title">🌱 Monthly Garden</div>
+        <button class="gm-close" onclick="closeGardenModal()">✕</button>
+      </div>
+      <div class="gm-stats" id="gm-stats"></div>
+      <div class="gm-nav">
+        <button class="gm-nbtn" onclick="gmPrev()">‹</button>
+        <div class="gm-month" id="gm-month">June 2026</div>
+        <button class="gm-nbtn" onclick="gmNext()">›</button>
+      </div>
+    </div>
+    <div class="gm-body">
+      <div class="gm-day-hdr">
+        <div class="gm-dh">Mon</div><div class="gm-dh">Tue</div><div class="gm-dh">Wed</div>
+        <div class="gm-dh">Thu</div><div class="gm-dh">Fri</div><div class="gm-dh">Sat</div><div class="gm-dh">Sun</div>
+      </div>
+      <div class="gm-grid" id="gm-grid"></div>
+      <div class="gm-legend">
+        <div class="gm-leg-item"><img src="${PLANT_IMGS?.bloom||''}" onerror="this.style.display='none'" alt="">Blooming (100%)</div>
+        <div class="gm-leg-item"><img src="${PLANT_IMGS?.strong||''}" onerror="this.style.display='none'" alt="">Growing Strong (75%+)</div>
+        <div class="gm-leg-item"><img src="${PLANT_IMGS?.bud||''}" onerror="this.style.display='none'" alt="">Ready to Bloom (50%+)</div>
+        <div class="gm-leg-item"><img src="${PLANT_IMGS?.sprout||''}" onerror="this.style.display='none'" alt="">Sprouting (25%+)</div>
+        <div class="gm-leg-item"><img src="${PLANT_IMGS?.none||''}" onerror="this.style.display='none'" alt="">Not Started</div>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
