@@ -1821,33 +1821,57 @@ function triggerAvatarUpload(){
 }
 async function uploadAvatar(input){
   const file=input.files[0];if(!file)return;
-  const ext=file.name.split('.').pop();
+  // Validate size (max 3MB)
+  if(file.size>3*1024*1024){
+    showMod(`<div style="text-align:center;padding:12px 0"><div style="font-size:2rem;margin-bottom:9px">⚠️</div><div style="font-size:.85rem;color:#FF9090;margin-bottom:14px">Image too large. Please choose a photo under 3MB.</div><button class="mb" onclick="closeMod()">OK</button></div>`);
+    input.value='';return;
+  }
+  const ext=file.name.split('.').pop().toLowerCase();
   const path=`${S.player.id}/avatar.${ext}`;
+  showMod(`<div style="text-align:center;padding:24px"><div style="font-size:2rem;margin-bottom:9px">📤</div><div style="font-size:.85rem;color:rgba(255,255,255,.7)">Uploading photo...</div></div>`);
   try{
-    // Upload to Supabase Storage
+    // Supabase Storage: use PUT with x-upsert to overwrite existing
     const res=await fetch(`${SB}/storage/v1/object/Avatars/${path}`,{
-      method:'POST',
-      headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':file.type,'x-upsert':'true'},
+      method:'PUT',
+      headers:{
+        'apikey':KEY,
+        'Authorization':`Bearer ${KEY}`,
+        'Content-Type':file.type||'image/jpeg',
+        'x-upsert':'true',
+      },
       body:file
     });
-    if(!res.ok)throw new Error('Upload failed');
+    const resJson=await res.json().catch(()=>({}));
+    if(!res.ok){
+      console.error('Upload error:',resJson);
+      throw new Error(resJson.message||'Upload failed');
+    }
+    // Cache-bust with timestamp so browser doesn't serve old image
     const url=`${SB}/storage/v1/object/public/Avatars/${path}?t=${Date.now()}`;
     // Save URL to players table
     await db(`players?id=eq.${S.player.id}`,{method:'PATCH',prefer:'return=minimal',body:{avatar_url:url}});
     S.player.avatar_url=url;
-    // Update all avatar displays
+    // Update profile ring
     const prAv=document.getElementById('pr-av');
     if(prAv){
       const emoji=prAv.querySelector('.ph-ring-emoji');
       if(emoji)emoji.style.display='none';
-      let img=prAv.querySelector('img');
-      if(!img){img=document.createElement('img');prAv.insertBefore(img,prAv.querySelector('.ph-ring-overlay'));}
-      img.src=url;img.style.cssText='width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:50%';
+      let img=prAv.querySelector('img.av-photo');
+      if(!img){
+        img=document.createElement('img');
+        img.className='av-photo';
+        prAv.insertBefore(img,prAv.querySelector('.ph-ring-overlay'));
+      }
+      img.src=url;
+      img.style.cssText='width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:50%;z-index:1';
     }
     updateChipDD();
-    showMod(`<div style="text-align:center;padding:12px 0"><div style="font-size:3rem;margin-bottom:9px">📸</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:14px">Photo updated! Looking great! ⭐</div><button class="mb" onclick="closeMod()">Awesome!</button></div>`);
+    closeMod();
+    showMod(`<div style="text-align:center;padding:12px 0"><div style="font-size:3rem;margin-bottom:9px">📸</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Photo updated!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">Looking great, ${S.player.name}! ⭐</div><button class="mb" onclick="closeMod()">Awesome!</button></div>`);
   }catch(err){
-    showMod(`<div style="text-align:center;padding:12px 0"><div style="font-size:2rem;margin-bottom:9px">⚠️</div><div style="font-size:.85rem;color:#FF9090;margin-bottom:14px">Upload failed. Try a smaller image.</div><button class="mb" onclick="closeMod()">OK</button></div>`);
+    console.error('Avatar upload failed:',err);
+    closeMod();
+    showMod(`<div style="text-align:center;padding:12px 0"><div style="font-size:2rem;margin-bottom:9px">⚠️</div><div style="font-size:.85rem;color:#FF9090;margin-bottom:14px">Upload failed: ${err.message||'Please try again.'}</div><button class="mb" onclick="closeMod()">OK</button></div>`);
   }
   input.value='';
 }
