@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geography Quest 🗺️ — Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="leaflet.min.css"/>
+<style>
+:root{
+  --teal:#2BBFB8;--teal2:#1A9990;--amber:#F6C04A;--amber2:#E8A020;
+  --red:#E84545;--green:#27AE60;--purple:#7C5CBF;--orange:#F07830;
+  --blue:#4A90D9;--gc:rgba(8,16,32,0.88);--gb:rgba(255,255,255,0.10);
+  --r:16px;--shadow:0 4px 24px rgba(0,0,0,0.5);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden}
+body{background:#060c18;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.bg{position:fixed;inset:0;z-index:0;
+  background:radial-gradient(ellipse at 20% 50%,rgba(43,191,184,.06) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 20%,rgba(74,144,217,.06) 0%,transparent 60%),
+             #060c18}
+
+.wrap{position:relative;z-index:1;width:100%;max-width:640px;padding:10px;
+  display:flex;flex-direction:column;gap:8px;max-height:100vh;overflow-y:auto}
+.wrap::-webkit-scrollbar{display:none}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:10px;background:var(--gc);backdrop-filter:blur(14px);
+  border:1px solid var(--gb);border-radius:var(--r);padding:11px 15px;box-shadow:var(--shadow);flex-shrink:0}
+.back-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.1);border:none;
+  color:#fff;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hdr-title{flex:1;font-size:1rem;font-weight:900;color:#fff}
+.hdr-sub{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.45)}
+.lives{display:flex;gap:2px;font-size:1rem}
+.star-count{font-size:.9rem;font-weight:900;color:var(--amber);white-space:nowrap}
+
+/* INFO ROW */
+.info-row{display:flex;gap:7px;flex-shrink:0}
+.info-box{flex:1;background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
+  border-radius:11px;padding:7px 9px;text-align:center;box-shadow:var(--shadow)}
+.ib-val{font-size:.95rem;font-weight:900;color:#fff;line-height:1}
+.ib-lbl{font-size:.5rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px;text-transform:uppercase}
+.ib-val.blue{color:#90CAF9}.ib-val.amber{color:var(--amber)}
+.streak-badge{display:inline-flex;align-items:center;gap:3px;border-radius:99px;padding:3px 9px;
+  font-size:.7rem;font-weight:900;background:rgba(74,144,217,.15);
+  border:1px solid rgba(74,144,217,.3);color:#90CAF9;transition:all .3s}
+.streak-badge.s3{background:rgba(43,191,184,.15);border-color:rgba(43,191,184,.3);color:var(--teal)}
+.streak-badge.s5{background:rgba(246,192,74,.15);border-color:rgba(246,192,74,.3);color:var(--amber)}
+.streak-badge.s7{background:rgba(232,69,122,.15);border-color:rgba(232,69,122,.3);color:#FF8FAA;animation:mp .6s ease infinite alternate}
+@keyframes mp{from{transform:scale(1)}to{transform:scale(1.08)}}
+
+/* POPUPS */
+.popup-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
+  z-index:9999;text-align:center;pointer-events:none;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  background:rgba(6,12,24,0.95);backdrop-filter:blur(18px);
+  border-radius:24px;padding:20px 32px;box-shadow:0 8px 40px rgba(0,0,0,0.7)}
+.popup-overlay.combo{border:1.5px solid rgba(74,144,217,0.3)}
+.popup-overlay.life{border:1.5px solid rgba(232,69,122,0.35);box-shadow:0 8px 40px rgba(232,69,122,0.2)}
+.popup-overlay.show{transform:translate(-50%,-50%) scale(1)}
+.popup-overlay.hide{transform:translate(-50%,-50%) scale(0);opacity:0}
+.po-text{font-size:1.9rem;font-weight:900;white-space:nowrap}
+.po-sub{font-size:.85rem;font-weight:800;color:rgba(255,255,255,.65);margin-top:3px}
+
+/* MAP */
+.map-wrap{border-radius:var(--r);overflow:hidden;border:1.5px solid rgba(255,255,255,.1);
+  box-shadow:var(--shadow);flex-shrink:0;position:relative}
+#map{height:240px;width:100%;background:#0a1628}
+.map-instruction{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:1000;
+  background:rgba(6,12,24,.88);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);
+  border-radius:99px;padding:5px 14px;font-size:.68rem;font-weight:800;color:rgba(255,255,255,.8);
+  white-space:nowrap;pointer-events:none;display:none}
+.map-instruction.show{display:block}
+.attempt-badge{position:absolute;bottom:8px;right:8px;z-index:1000;
+  background:rgba(6,12,24,.88);backdrop-filter:blur(8px);border-radius:99px;
+  padding:4px 10px;font-size:.65rem;font-weight:900;display:none}
+.attempt-badge.show{display:block}
+
+/* QUESTION CARD */
+.q-card{background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
+  border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
+.q-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.mode-tag{font-size:.63rem;font-weight:900;border-radius:99px;padding:3px 11px;border:1px solid}
+.mode-tag.clickcountry{background:rgba(74,144,217,.12);color:#90CAF9;border-color:rgba(74,144,217,.25)}
+.mode-tag.clickcontinent{background:rgba(43,191,184,.12);color:var(--teal);border-color:rgba(43,191,184,.25)}
+.mode-tag.clickocean{background:rgba(43,191,184,.12);color:var(--teal);border-color:rgba(43,191,184,.25)}
+.mode-tag.capital{background:rgba(246,192,74,.12);color:var(--amber);border-color:rgba(246,192,74,.25)}
+.mode-tag.flag{background:rgba(240,120,48,.12);color:#FFB060;border-color:rgba(240,120,48,.25)}
+.mode-tag.landmark{background:rgba(124,92,191,.12);color:#C8A8FF;border-color:rgba(124,92,191,.25)}
+.mode-tag.continent_of{background:rgba(39,174,96,.12);color:#90FFB0;border-color:rgba(39,174,96,.25)}
+.mode-tag.neighbour{background:rgba(232,69,69,.12);color:#FF9090;border-color:rgba(232,69,69,.25)}
+.mode-tag.rivermountain{background:rgba(74,144,217,.12);color:#90CAF9;border-color:rgba(74,144,217,.25)}
+.mode-tag.canada{background:rgba(232,69,69,.15);color:#FF9090;border-color:rgba(232,69,69,.3)}
+.q-num{font-size:.6rem;font-weight:800;color:rgba(255,255,255,.35)}
+.question{font-size:1.3rem;font-weight:900;color:#fff;text-align:center;margin-bottom:12px;
+  line-height:1.35;min-height:40px;display:flex;align-items:center;justify-content:center}
+.question.small{font-size:1rem}
+.flag-display{font-size:3.5rem;text-align:center;margin-bottom:10px;
+  animation:bounce .8s ease-in-out infinite alternate}
+@keyframes bounce{from{transform:scale(1)}to{transform:scale(1.08)}}
+
+/* MCQ */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px}
+.opt{padding:11px 9px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:12px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;
+  color:#fff;cursor:pointer;transition:all .15s;text-align:center}
+.opt:hover:not(:disabled){background:rgba(74,144,217,.15);border-color:var(--blue);transform:translateY(-2px)}
+.opt.correct{background:rgba(39,174,96,.2)!important;border-color:var(--green)!important;color:#90FFB0!important}
+.opt.wrong{background:rgba(232,69,69,.15)!important;border-color:var(--red)!important;color:#FF9090!important;animation:shake .3s ease}
+
+/* ATTEMPTS */
+.attempts-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;justify-content:center}
+.attempt-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.15);
+  border:1.5px solid rgba(255,255,255,.2);transition:all .3s}
+.attempt-dot.used{background:var(--red);border-color:var(--red)}
+.attempt-dot.current{background:var(--amber);border-color:var(--amber);animation:pulse .8s ease infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+.attempt-lbl{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.4)}
+
+/* FEEDBACK */
+.feedback-row{min-height:28px;font-size:.8rem;font-weight:800;text-align:center;
+  display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:6px}
+.feedback-row.ok{color:#90FFB0}.feedback-row.no{color:#FF9090}.feedback-row.try{color:var(--amber)}
+
+/* BOTTOM BUTTONS */
+.btn-row{display:flex;gap:7px;margin-top:6px}
+.show-pic-btn{flex:1;padding:8px;background:rgba(74,144,217,.1);border:1.5px solid rgba(74,144,217,.2);
+  border-radius:10px;font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:800;
+  color:#90CAF9;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.show-pic-btn:hover{background:rgba(74,144,217,.2);border-color:var(--blue)}
+.hint-btn{flex:1;padding:8px;background:rgba(246,192,74,.08);border:1.5px solid rgba(246,192,74,.2);
+  border-radius:10px;font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:800;
+  color:rgba(246,192,74,.7);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.hint-btn:hover{background:rgba(246,192,74,.15)}
+.hint-btn.used{opacity:.4;cursor:default}
+.hint-box{background:rgba(246,192,74,.07);border:1px solid rgba(246,192,74,.18);
+  border-radius:10px;padding:8px 12px;margin-top:6px;display:none}
+.hint-box.show{display:block}
+.hint-txt{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.7)}
+
+/* EXPLANATION */
+.explanation-card{margin-top:10px;border-radius:13px;padding:13px 15px;display:none;animation:slideDown .3s ease}
+.explanation-card.show{display:block}
+.explanation-card.ok{background:rgba(39,174,96,.1);border:1.5px solid rgba(39,174,96,.22)}
+.explanation-card.no{background:rgba(232,69,69,.08);border:1.5px solid rgba(232,69,69,.2)}
+.ex-result{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ex-icon{font-size:1.2rem;flex-shrink:0}
+.ex-answer{font-size:.88rem;font-weight:900;color:#fff}
+.ex-answer span{color:var(--amber)}
+.ex-explain{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.7);line-height:1.55;margin-bottom:7px}
+.ex-fact{background:rgba(74,144,217,.08);border:1px solid rgba(74,144,217,.18);
+  border-radius:9px;padding:8px 11px;margin-bottom:9px}
+.ex-fact-lbl{font-size:.57rem;font-weight:900;color:#90CAF9;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.ex-fact-txt{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.75);line-height:1.5}
+.ex-next{width:100%;padding:10px;border:none;border-radius:11px;font-family:'Nunito',sans-serif;
+  font-size:.85rem;font-weight:900;cursor:pointer;color:#fff}
+.ex-next.ok{background:linear-gradient(135deg,var(--green),#52D08A)}
+.ex-next.no{background:linear-gradient(135deg,var(--teal2),var(--teal))}
+
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{0%{transform:scale(.94)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+
+/* SCREENS */
+.screen{display:none}.screen.active{display:flex;flex-direction:column;gap:8px}
+
+/* START */
+.start-card{background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
+  border-radius:var(--r);padding:24px 20px;text-align:center;box-shadow:var(--shadow)}
+.start-icon{font-size:3.2rem;margin-bottom:8px;display:block;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.start-title{font-size:1.4rem;font-weight:900;color:#fff;margin-bottom:4px}
+.start-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:14px;line-height:1.6}
+.modes-chips{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:14px}
+.mode-chip{font-size:.6rem;font-weight:800;border-radius:99px;padding:3px 9px;border:1px solid}
+.rules{display:flex;flex-direction:column;gap:5px;text-align:left;margin-bottom:14px}
+.rule{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border-radius:9px;padding:6px 10px}
+.rule-ico{font-size:.9rem;flex-shrink:0}
+.rule-txt{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.7)}
+.start-btn{width:100%;padding:13px;border:none;border-radius:13px;
+  background:linear-gradient(135deg,#1565C0,var(--blue));
+  color:#fff;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;
+  cursor:pointer;box-shadow:0 4px 20px rgba(74,144,217,.35);transition:all .2s}
+.start-btn:hover{transform:translateY(-2px)}
+.pb-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:9px;
+  font-size:.7rem;font-weight:700;color:rgba(255,255,255,.4)}
+.pb-val{color:var(--amber);font-weight:900}
+
+/* ROUND END */
+.re-card{background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
+  border-radius:var(--r);padding:20px 16px;text-align:center;box-shadow:var(--shadow)}
+.re-icon{font-size:2.6rem;margin-bottom:6px;display:block}
+.re-title{font-size:1.1rem;font-weight:900;color:#fff;margin-bottom:3px}
+.re-stats{display:flex;gap:7px;margin:10px 0}
+.re-stat{flex:1;background:rgba(255,255,255,.06);border-radius:10px;padding:9px;text-align:center}
+.re-sv{font-size:1.1rem;font-weight:900;color:var(--blue)}
+.re-sl{font-size:.53rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px}
+.re-btn{width:100%;padding:10px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:900;cursor:pointer;transition:all .2s}
+.re-btn.next{background:linear-gradient(135deg,#1565C0,var(--blue));color:#fff;box-shadow:0 3px 12px rgba(74,144,217,.3)}
+.re-btn.home{background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);margin-top:6px}
+
+/* GAME OVER */
+.go-card{background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
+  border-radius:var(--r);padding:24px 18px;text-align:center;box-shadow:var(--shadow)}
+.go-trophy{font-size:3.8rem;margin-bottom:7px;display:block;animation:float 2s ease-in-out infinite}
+.go-title{font-size:1.3rem;font-weight:900;color:#fff;margin-bottom:3px}
+.go-score{font-size:2.4rem;font-weight:900;color:#90CAF9;line-height:1}
+.go-earned{font-size:.85rem;font-weight:800;color:#90FFB0;margin-top:3px}
+.go-msg{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.5);margin:7px 0 3px;line-height:1.5}
+.new-best{background:linear-gradient(135deg,rgba(74,144,217,.2),rgba(43,191,184,.15));
+  border:1px solid rgba(74,144,217,.3);border-radius:10px;padding:8px 13px;
+  font-size:.78rem;font-weight:900;color:#90CAF9;margin:7px 0;animation:popIn .4s ease}
+.go-stats{display:flex;gap:6px;margin-bottom:12px}
+.go-stat{flex:1;background:rgba(255,255,255,.06);border-radius:10px;padding:8px;text-align:center}
+.go-sv{font-size:1rem;font-weight:900;color:#fff}
+.go-sl{font-size:.5rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px}
+.go-btns{display:flex;flex-direction:column;gap:6px}
+.go-btn{width:100%;padding:10px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:900;cursor:pointer;transition:all .2s}
+.go-btn.play{background:linear-gradient(135deg,#1565C0,var(--blue));color:#fff;box-shadow:0 4px 20px rgba(74,144,217,.35)}
+.go-btn.home{background:rgba(255,255,255,.07);color:rgba(255,255,255,.5)}
+
+/* Leaflet overrides */
+.leaflet-container{background:#0a1628!important;font-family:'Nunito',sans-serif!important}
+.leaflet-popup-content-wrapper{background:rgba(6,12,24,.95)!important;color:#fff!important;
+  border:1px solid rgba(255,255,255,.15)!important;border-radius:12px!important;
+  backdrop-filter:blur(14px)!important;box-shadow:0 4px 20px rgba(0,0,0,.5)!important}
+.leaflet-popup-tip{background:rgba(6,12,24,.95)!important}
+.leaflet-popup-content{font-family:'Nunito',sans-serif!important;font-weight:700!important;font-size:.82rem!important}
+.leaflet-control-zoom a{background:rgba(6,12,24,.9)!important;color:#fff!important;
+  border-color:rgba(255,255,255,.15)!important}
+.leaflet-control-attribution{background:rgba(6,12,24,.7)!important;color:rgba(255,255,255,.3)!important;font-size:.45rem!important}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="popup-overlay combo" id="combo-popup">
+  <div class="po-text" id="combo-text">EXPLORER! 🗺️</div>
+  <div class="po-sub" id="combo-sub">3 in a row!</div>
+</div>
+<div class="popup-overlay life" id="life-popup">
+  <div class="po-text">❤️ Life Restored!</div>
+  <div class="po-sub">3 correct in a row!</div>
+</div>
+
+<div class="wrap">
+  <!-- START -->
+  <div id="startScreen" class="screen active">
+    <div class="start-card">
+      <span class="start-icon">🗺️</span>
+      <div class="start-title">Geography Quest</div>
+      <div class="start-sub" id="start-greeting">Explore the world, one question at a time!</div>
+      <div class="modes-chips" id="modes-chips"></div>
+      <div class="rules">
+        <div class="rule"><span class="rule-ico">🖱️</span><span class="rule-txt">Click countries, continents and oceans on the real map</span></div>
+        <div class="rule"><span class="rule-ico">3️⃣</span><span class="rule-txt">3 attempts per question — stars reduce each try</span></div>
+        <div class="rule"><span class="rule-ico">✈️</span><span class="rule-txt">Wrong answer flies you to the correct location</span></div>
+        <div class="rule"><span class="rule-ico">🔍</span><span class="rule-txt">Show Picture button on every question</span></div>
+        <div class="rule"><span class="rule-ico">❤️</span><span class="rule-txt">3 correct in a row restores a life</span></div>
+      </div>
+      <button class="start-btn" onclick="startGame()">🗺️ Start Exploring!</button>
+      <div class="pb-row" id="pb-row" style="display:none">🏆 Personal Best: <span class="pb-val" id="pb-val">0</span> stars</div>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div id="gameScreen" class="screen">
+    <div class="hdr">
+      <button class="back-btn" onclick="confirmQuit()">←</button>
+      <div style="flex:1">
+        <div class="hdr-title">🗺️ Geography Quest</div>
+        <div class="hdr-sub" id="g-player-label">Riaan · Grade 3</div>
+      </div>
+      <div class="lives" id="lives-display">❤️❤️❤️</div>
+      <div class="star-count">⭐ <span id="g-stars">0</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-box"><div class="ib-val blue" id="g-round">1</div><div class="ib-lbl">Round</div></div>
+      <div class="info-box"><div class="ib-val" id="g-qnum">1/10</div><div class="ib-lbl">Question</div></div>
+      <div class="info-box" style="flex:1.4">
+        <div class="ib-val" id="g-mode-display" style="font-size:.7rem;color:rgba(255,255,255,.7)">Click Country</div>
+        <div class="ib-lbl">Mode</div>
+      </div>
+      <div class="info-box" style="display:flex;align-items:center;justify-content:center">
+        <div id="streak-badge" class="streak-badge">0 🗺️</div>
+      </div>
+    </div>
+    <!-- MAP -->
+    <div class="map-wrap">
+      <div id="map"></div>
+      <div class="map-instruction" id="map-instruction">👆 Click on the map</div>
+      <div class="attempt-badge" id="attempt-badge"></div>
+    </div>
+    <!-- QUESTION CARD -->
+    <div class="q-card">
+      <div class="q-meta">
+        <span class="mode-tag" id="g-mode-tag">Click Country</span>
+        <span class="q-num" id="g-qnum2">Q 1/10</span>
+      </div>
+      <div id="flag-area"></div>
+      <div class="question" id="g-question">Loading...</div>
+      <div class="attempts-row" id="attempts-row">
+        <span class="attempt-lbl">Attempts:</span>
+        <div class="attempt-dot current" id="dot-0"></div>
+        <div class="attempt-dot" id="dot-1"></div>
+        <div class="attempt-dot" id="dot-2"></div>
+      </div>
+      <div class="feedback-row" id="g-feedback"></div>
+      <div id="opts-area"></div>
+      <div class="btn-row">
+        <button class="show-pic-btn" id="show-pic-btn" onclick="showPicture()">🔍 Show Picture</button>
+        <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 Hint</button>
+      </div>
+      <div class="hint-box" id="hint-box"><div class="hint-txt" id="hint-txt"></div></div>
+      <div class="explanation-card" id="explanation-card">
+        <div class="ex-result">
+          <span class="ex-icon" id="ex-icon">✅</span>
+          <span class="ex-answer" id="ex-answer">Correct!</span>
+        </div>
+        <div class="ex-explain" id="ex-explain"></div>
+        <div class="ex-fact">
+          <div class="ex-fact-lbl">🌍 Geography Fact</div>
+          <div class="ex-fact-txt" id="ex-fact-txt"></div>
+        </div>
+        <button class="ex-next" id="ex-next" onclick="advanceQuestion()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUND END -->
+  <div id="roundEndScreen" class="screen">
+    <div class="re-card">
+      <span class="re-icon" id="re-icon">⭐</span>
+      <div class="re-title" id="re-title">Round 1 Complete!</div>
+      <div class="re-stats">
+        <div class="re-stat"><div class="re-sv" id="re-correct">0</div><div class="re-sl">Correct</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-acc">0%</div><div class="re-sl">Accuracy</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-stars-r">0</div><div class="re-sl">Stars</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-streak-r">0</div><div class="re-sl">Best Streak</div></div>
+      </div>
+      <div style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.45);margin-bottom:11px;text-align:center" id="re-msg"></div>
+      <button class="re-btn next" id="re-next-btn" onclick="nextRound()">Round 2 →</button>
+      <button class="re-btn home" onclick="goHome()">🏠 Back to Hub</button>
+    </div>
+  </div>
+
+  <!-- GAME OVER -->
+  <div id="gameOverScreen" class="screen">
+    <div class="go-card">
+      <span class="go-trophy" id="go-trophy">🏆</span>
+      <div class="go-title">Quest Complete!</div>
+      <div class="go-score" id="go-score">0 ⭐</div>
+      <div class="go-earned" id="go-earned">+0 stars saved</div>
+      <div id="new-best-banner" class="new-best" style="display:none">🏆 NEW PERSONAL BEST!</div>
+      <div class="go-msg" id="go-msg">Great explorer!</div>
+      <div class="go-stats">
+        <div class="go-stat"><div class="go-sv" id="go-rounds">1</div><div class="go-sl">Rounds</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-correct">0</div><div class="go-sl">Correct</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-streak">0</div><div class="go-sl">Best Streak</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-pb">0</div><div class="go-sl">Personal Best</div></div>
+      </div>
+      <div class="go-btns">
+        <button class="go-btn play" onclick="restartGame()">🗺️ Play Again</button>
+        <button class="go-btn home" onclick="goHome()">🏠 Back to Hub</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="leaflet.min.js"></script>
+<script>
+function loadLeaflet(cb){cb();} // Leaflet already loaded locally
+</script>
+<script>
+const SB='https://tnhgihzfwqsflpueivwe.supabase.co',KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
+const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':o.prefer||'return=representation',...o.headers},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined}).then(r=>r.json()).catch(()=>[]);
+
+const params=new URLSearchParams(window.location.search);
+const playerName=params.get('player')||'riaan';
+let playerId=null,playerGrade=3,personalBest=0;
+
+// ── MAP ───────────────────────────────────────────────────────────
+let map,geojsonLayer,currentMarker,correctMarker;
+let mapClickEnabled=false,mapClickHandler=null;
+
+function initMap(){
+  map=L.map('map',{zoomControl:true,attributionControl:true,scrollWheelZoom:false});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',{
+    attribution:'© OpenStreetMap © CARTO',maxZoom:10,subdomains:'abcd'
+  }).addTo(map);
+  map.setView([20,0],2);
+}
+
+function loadGeoJSON(){
+  return fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson')
+    .then(r=>r.json())
+    .then(data=>{
+      geojsonLayer=L.geoJSON(data,{
+        style:()=>({color:'rgba(74,144,217,0.6)',weight:0.8,fillColor:'rgba(26,60,100,0.5)',fillOpacity:0.6}),
+        onEachFeature:(feature,layer)=>{
+          layer.on({
+            mouseover:e=>{if(mapClickEnabled){e.target.setStyle({fillColor:'rgba(74,144,217,0.4)',fillOpacity:0.8});}},
+            mouseout:e=>{if(mapClickEnabled){geojsonLayer.resetStyle(e.target);}},
+            click:e=>{if(mapClickEnabled&&mapClickHandler){mapClickHandler(feature.properties.name,layer,e);}}
+          });
+        }
+      }).addTo(map);
+    }).catch(err=>console.log('GeoJSON load failed',err));
+}
+
+function enableMapClick(handler){
+  mapClickEnabled=true;
+  mapClickHandler=handler;
+  document.getElementById('map-instruction').className='map-instruction show';
+}
+
+function disableMapClick(){
+  mapClickEnabled=false;
+  mapClickHandler=null;
+  document.getElementById('map-instruction').className='map-instruction';
+}
+
+function highlightCountry(name,color){
+  if(!geojsonLayer)return;
+  geojsonLayer.eachLayer(layer=>{
+    if(layer.feature&&layer.feature.properties.name===name){
+      layer.setStyle({fillColor:color,fillOpacity:0.85,color:color,weight:2});
+    }
+  });
+}
+
+function resetAllStyles(){
+  if(geojsonLayer)geojsonLayer.resetStyle();
+}
+
+function flyToLocation(lat,lng,zoom=4){
+  map.flyTo([lat,lng],zoom,{duration:1.5});
+}
+
+function addMarker(lat,lng,label,color='#F6C04A'){
+  if(currentMarker)map.removeLayer(currentMarker);
+  const icon=L.divIcon({html:`<div style="background:${color};border:2px solid #fff;border-radius:50%;width:14px;height:14px;box-shadow:0 0 8px ${color}"></div>`,iconSize:[14,14],iconAnchor:[7,7],className:''});
+  currentMarker=L.marker([lat,lng],{icon}).addTo(map).bindPopup(`<b>${label}</b>`).openPopup();
+}
+
+// ── QUESTION DATA ─────────────────────────────────────────────────
+const COUNTRIES=[
+  {name:'Canada',lat:60,lng:-95,continent:'North America',capital:'Ottawa',flag:'🇨🇦',
+    neighbours:['United States'],fact:'Canada is the second largest country in the world and has the longest coastline!',
+    landmark:'CN Tower',currency:'Canadian Dollar',language:'English and French'},
+  {name:'United States',lat:38,lng:-97,continent:'North America',capital:'Washington D.C.',flag:'🇺🇸',
+    neighbours:['Canada','Mexico'],fact:'The USA has the world\'s largest economy and spans 6 time zones!',
+    landmark:'Statue of Liberty',currency:'US Dollar',language:'English'},
+  {name:'Brazil',lat:-10,lng:-55,continent:'South America',capital:'Brasília',flag:'🇧🇷',
+    neighbours:['Argentina','Peru','Colombia','Venezuela','Bolivia','Paraguay','Uruguay'],
+    fact:'Brazil contains 60% of the Amazon rainforest and is the largest country in South America!',
+    landmark:'Christ the Redeemer',currency:'Real',language:'Portuguese'},
+  {name:'United Kingdom',lat:55,lng:-3,continent:'Europe',capital:'London',flag:'🇬🇧',
+    neighbours:['Ireland'],fact:'The UK includes England, Scotland, Wales and Northern Ireland on two islands!',
+    landmark:'Big Ben',currency:'Pound Sterling',language:'English'},
+  {name:'France',lat:46,lng:2,continent:'Europe',capital:'Paris',flag:'🇫🇷',
+    neighbours:['Spain','Germany','Italy','Belgium','Switzerland'],
+    fact:'France is the most visited country in the world with over 90 million tourists per year!',
+    landmark:'Eiffel Tower',currency:'Euro',language:'French'},
+  {name:'Germany',lat:51,lng:10,continent:'Europe',capital:'Berlin',flag:'🇩🇪',
+    neighbours:['France','Poland','Netherlands','Belgium','Denmark','Czech Republic','Austria','Switzerland','Luxembourg'],
+    fact:'Germany invented the car, the aspirin, and the MP3 format!',
+    landmark:'Brandenburg Gate',currency:'Euro',language:'German'},
+  {name:'Russia',lat:61,lng:105,continent:'Europe/Asia',capital:'Moscow',flag:'🇷🇺',
+    neighbours:['Ukraine','Finland','Norway','China','Mongolia','Kazakhstan'],
+    fact:'Russia is the largest country on Earth, spanning 11 time zones across two continents!',
+    landmark:'Saint Basil\'s Cathedral',currency:'Ruble',language:'Russian'},
+  {name:'China',lat:35,lng:105,continent:'Asia',capital:'Beijing',flag:'🇨🇳',
+    neighbours:['India','Russia','Mongolia','Vietnam','Myanmar'],
+    fact:'China is home to over 1.4 billion people — the most populous country on Earth!',
+    landmark:'Great Wall of China',currency:'Yuan',language:'Mandarin Chinese'},
+  {name:'India',lat:20,lng:78,continent:'Asia',capital:'New Delhi',flag:'🇮🇳',
+    neighbours:['Pakistan','China','Nepal','Bangladesh','Myanmar','Bhutan'],
+    fact:'India has the world\'s largest democracy and is the birthplace of chess and the number zero!',
+    landmark:'Taj Mahal',currency:'Rupee',language:'Hindi and English'},
+  {name:'Japan',lat:36,lng:138,continent:'Asia',capital:'Tokyo',flag:'🇯🇵',
+    neighbours:[],fact:'Japan is an archipelago of 6,852 islands and has the world\'s oldest continuous monarchy!',
+    landmark:'Mount Fuji',currency:'Yen',language:'Japanese'},
+  {name:'Australia',lat:-25,lng:133,continent:'Australia/Oceania',capital:'Canberra',flag:'🇦🇺',
+    neighbours:[],fact:'Australia is the only country that is also a continent! It\'s home to 80% of species found nowhere else.',
+    landmark:'Sydney Opera House',currency:'Australian Dollar',language:'English'},
+  {name:'South Africa',lat:-29,lng:25,continent:'Africa',capital:'Pretoria',flag:'🇿🇦',
+    neighbours:['Namibia','Botswana','Zimbabwe','Mozambique','Lesotho','Eswatini'],
+    fact:'South Africa has three capital cities — Pretoria (executive), Cape Town (legislative) and Bloemfontein (judicial)!',
+    landmark:'Table Mountain',currency:'Rand',language:'11 official languages'},
+  {name:'Egypt',lat:27,lng:30,continent:'Africa',capital:'Cairo',flag:'🇪🇬',
+    neighbours:['Libya','Sudan','Israel','Jordan'],
+    fact:'Ancient Egypt is one of the world\'s oldest civilisations — the pyramids were built over 4,500 years ago!',
+    landmark:'Pyramids of Giza',currency:'Egyptian Pound',language:'Arabic'},
+  {name:'Nigeria',lat:10,lng:8,continent:'Africa',capital:'Abuja',flag:'🇳🇬',
+    neighbours:['Benin','Niger','Chad','Cameroon'],
+    fact:'Nigeria is the most populous country in Africa with over 220 million people!',
+    landmark:'Zuma Rock',currency:'Naira',language:'English'},
+  {name:'Mexico',lat:23,lng:-102,continent:'North America',capital:'Mexico City',flag:'🇲🇽',
+    neighbours:['United States','Guatemala','Belize'],
+    fact:'Mexico City is one of the largest cities in the world and was built on an ancient Aztec city called Tenochtitlan!',
+    landmark:'Chichen Itza',currency:'Peso',language:'Spanish'},
+  {name:'Argentina',lat:-34,lng:-64,continent:'South America',capital:'Buenos Aires',flag:'🇦🇷',
+    neighbours:['Brazil','Chile','Bolivia','Paraguay','Uruguay'],
+    fact:'Argentina is the 8th largest country in the world and shares Iguazu Falls with Brazil!',
+    landmark:'Iguazu Falls',currency:'Peso',language:'Spanish'},
+  {name:'Saudi Arabia',lat:24,lng:45,continent:'Asia',capital:'Riyadh',flag:'🇸🇦',
+    neighbours:['Iraq','Jordan','Kuwait','UAE','Oman','Yemen','Qatar','Bahrain'],
+    fact:'Saudi Arabia has the world\'s second largest oil reserves and contains the holy cities of Mecca and Medina!',
+    landmark:'Masmak Fortress',currency:'Saudi Riyal',language:'Arabic'},
+  {name:'Italy',lat:42,lng:12,continent:'Europe',capital:'Rome',flag:'🇮🇹',
+    neighbours:['France','Switzerland','Austria','Slovenia'],
+    fact:'Italy has more UNESCO World Heritage Sites than any other country in the world!',
+    landmark:'Colosseum',currency:'Euro',language:'Italian'},
+  {name:'Spain',lat:40,lng:-3,continent:'Europe',capital:'Madrid',flag:'🇪🇸',
+    neighbours:['France','Portugal','Andorra','Morocco'],
+    fact:'Spanish is the world\'s second most spoken native language with over 480 million speakers!',
+    landmark:'Sagrada Familia',currency:'Euro',language:'Spanish'},
+  {name:'Indonesia',lat:-5,lng:120,continent:'Asia',capital:'Jakarta',flag:'🇮🇩',
+    neighbours:['Malaysia','Papua New Guinea','East Timor'],
+    fact:'Indonesia is the world\'s largest archipelago with over 17,000 islands!',
+    landmark:'Borobudur Temple',currency:'Rupiah',language:'Indonesian'},
+];
+
+const CONTINENTS=[
+  {name:'Africa',lat:2,lng:20,zoom:3,fact:'Africa is the world\'s second largest continent and has 54 countries — more than any other continent!',
+    countries:['Nigeria','Egypt','South Africa','Ethiopia','Kenya','Ghana','Tanzania']},
+  {name:'Asia',lat:34,lng:100,zoom:3,fact:'Asia is the largest and most populous continent — over 4.7 billion people live there!',
+    countries:['China','India','Japan','Indonesia','Saudi Arabia','Russia']},
+  {name:'Europe',lat:54,lng:15,zoom:3,fact:'Europe has 44 countries and gave the world democracy, the Renaissance, and the Industrial Revolution!',
+    countries:['France','Germany','United Kingdom','Italy','Spain','Russia']},
+  {name:'North America',lat:46,lng:-100,zoom:3,fact:'North America includes 23 countries and spans from the Arctic to the tropics!',
+    countries:['United States','Canada','Mexico']},
+  {name:'South America',lat:-15,lng:-60,zoom:3,fact:'South America is home to the Amazon, the world\'s largest rainforest and river!',
+    countries:['Brazil','Argentina','Colombia','Peru','Chile']},
+  {name:'Australia',lat:-25,lng:133,zoom:4,fact:'Australia/Oceania is the smallest continent and home to the most unique wildlife on Earth!',
+    countries:['Australia']},
+  {name:'Antarctica',lat:-80,lng:0,zoom:3,fact:'Antarctica is the coldest, driest, and windiest continent — and has no permanent human population!',
+    countries:[]},
+];
+
+const OCEANS=[
+  {name:'Pacific Ocean',lat:0,lng:-150,zoom:2,fact:'The Pacific Ocean is the largest and deepest ocean — bigger than all the land on Earth combined!'},
+  {name:'Atlantic Ocean',lat:10,lng:-30,zoom:2,fact:'The Atlantic Ocean was the first ocean crossed by an aircraft — Charles Lindbergh flew it solo in 1927!'},
+  {name:'Indian Ocean',lat:-20,lng:80,zoom:2,fact:'The Indian Ocean is the warmest ocean in the world and borders the most countries!'},
+  {name:'Arctic Ocean',lat:85,lng:0,zoom:2,fact:'The Arctic Ocean is the smallest and shallowest ocean and is mostly covered by sea ice!'},
+  {name:'Southern Ocean',lat:-70,lng:0,zoom:2,fact:'The Southern Ocean was officially recognized as the 5th ocean only in 2021!'},
+];
+
+const LANDMARKS=[
+  {name:'Taj Mahal',country:'India',lat:27.17,lng:78.04,fact:'The Taj Mahal was built by Emperor Shah Jahan for his beloved wife Mumtaz Mahal who died in 1631.'},
+  {name:'Eiffel Tower',country:'France',lat:48.86,lng:2.29,fact:'The Eiffel Tower was originally meant to be a temporary structure for the 1889 World Fair!'},
+  {name:'Great Wall of China',country:'China',lat:40.43,lng:116.57,fact:'The Great Wall of China is over 21,000 km long — the longest man-made structure on Earth!'},
+  {name:'Pyramids of Giza',country:'Egypt',lat:29.97,lng:31.13,fact:'The Great Pyramid was the tallest man-made structure for 3,800 years!'},
+  {name:'Colosseum',country:'Italy',lat:41.89,lng:12.49,fact:'The Colosseum could hold up to 80,000 spectators and had a retractable roof called the velarium!'},
+  {name:'Sydney Opera House',country:'Australia',lat:-33.86,lng:151.21,fact:'The Sydney Opera House took 14 years to build and cost 102 million dollars — 14 times over budget!'},
+  {name:'Christ the Redeemer',country:'Brazil',lat:-22.95,lng:-43.21,fact:'Christ the Redeemer is struck by lightning about 6 times a year!'},
+  {name:'Statue of Liberty',country:'United States',lat:40.69,lng:-74.04,fact:'The Statue of Liberty was a gift from France to the USA in 1886 to celebrate freedom!'},
+  {name:'Big Ben',country:'United Kingdom',lat:51.50,lng:-0.12,fact:'Big Ben is actually the name of the bell inside the clock tower — the tower is called Elizabeth Tower!'},
+  {name:'Mount Fuji',country:'Japan',lat:35.36,lng:138.73,fact:'Mount Fuji is an active volcano and is the tallest mountain in Japan at 3,776 metres!'},
+];
+
+const CANADA_PROVINCES=[
+  {name:'British Columbia',lat:54,lng:-125,capital:'Victoria',fact:'BC is Canada\'s westernmost province and home to the Rocky Mountains, ancient rainforests, and the Pacific coast!'},
+  {name:'Ontario',lat:50,lng:-85,capital:'Toronto',fact:'Ontario is home to Niagara Falls and is Canada\'s most populous province!'},
+  {name:'Quebec',lat:53,lng:-72,capital:'Quebec City',fact:'Quebec is the largest province and most French-speaking region in Canada!'},
+  {name:'Alberta',lat:54,lng:-115,capital:'Edmonton',fact:'Alberta is home to the Canadian Rockies and Banff National Park — one of the most beautiful places on Earth!'},
+  {name:'Manitoba',lat:55,lng:-97,capital:'Winnipeg',fact:'Manitoba means "the place where the spirit speaks" in Cree — named after the sound of waves at Lake Manitoba!'},
+];
+
+const RIVERS_MOUNTAINS=[
+  {q:'Which is the longest river in the world?',opts:['Amazon','Nile','Mississippi','Yangtze'],a:'Nile',
+    fact:'The Nile is 6,650 km long. It flows through 11 countries in northeastern Africa!',
+    explain:'The Nile River in Africa is the longest river at 6,650 km. The Amazon is the largest by water volume.',
+    pic:'longest river Nile Africa'},
+  {q:'Which is the tallest mountain on Earth?',opts:['K2','Kangchenjunga','Mount Everest','Mont Blanc'],a:'Mount Everest',
+    fact:'Mount Everest is 8,848.86 metres tall and grows about 4mm taller every year!',
+    explain:'Mount Everest in the Himalayas on the Nepal-China border is the tallest at 8,848 metres.',
+    pic:'Mount Everest Himalayas'},
+  {q:'The Amazon River flows through which continent?',opts:['Africa','Asia','South America','North America'],a:'South America',
+    fact:'The Amazon River carries 20% of all the fresh water that flows into the world\'s oceans!',
+    explain:'The Amazon River is in South America, mostly in Brazil. It\'s the world\'s largest river by water volume.',
+    pic:'Amazon River South America'},
+  {q:'Which is the largest ocean on Earth?',opts:['Atlantic','Indian','Arctic','Pacific'],a:'Pacific',
+    fact:'The Pacific Ocean covers more area than ALL of Earth\'s land combined — about 165 million km²!',
+    explain:'The Pacific Ocean is the largest, deepest, and oldest ocean on Earth.',
+    pic:'Pacific Ocean satellite view'},
+  {q:'Which desert is the largest in the world?',opts:['Sahara','Arabian','Gobi','Antarctic'],a:'Antarctic',
+    fact:'The Antarctic Desert is the largest desert at 14.2 million km² — it\'s a cold desert covered in ice!',
+    explain:'Antarctica is technically a desert because it receives very little precipitation. The Sahara is the largest HOT desert.',
+    pic:'Antarctic desert ice continent'},
+  {q:'The Sahara Desert is on which continent?',opts:['Asia','Africa','South America','Australia'],a:'Africa',
+    fact:'The Sahara covers about 31% of Africa and is larger than the entire continental United States!',
+    explain:'The Sahara Desert is in northern Africa, covering parts of 11 countries.',
+    pic:'Sahara desert Africa'},
+  {q:'Which country has the most natural lakes?',opts:['Russia','United States','Brazil','Canada'],a:'Canada',
+    fact:'Canada has over 2 million lakes — more than all other countries combined! About 9% of Canada is fresh water.',
+    explain:'Canada has the most lakes in the world with over 2 million lakes covering 9% of its territory.',
+    pic:'Canadian lakes nature'},
+];
+
+// ── Game State ────────────────────────────────────────────────────
+let G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
+  streak:0,bestStreak:0,sessionBestStreak:0,answered:false,roundStars:0,
+  question:null,qBank:[],bankIdx:0,
+  attempts:0,maxAttempts:3,
+  lifeRestoreStreak:0,hintUsed:false,hintTimer:null};
+
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+// ── Question Builder ──────────────────────────────────────────────
+function buildQuestionBank(grade){
+  const bank=[];
+  const countries=shuffle([...COUNTRIES]);
+  const continents=shuffle([...CONTINENTS]);
+  const oceans=shuffle([...OCEANS]);
+  const landmarks=shuffle([...LANDMARKS]);
+  const canada=shuffle([...CANADA_PROVINCES]);
+  const rivers=shuffle([...RIVERS_MOUNTAINS]);
+
+  // Click country questions
+  countries.slice(0,8).forEach(c=>{
+    bank.push({mode:'clickcountry',display:'Click the Country',
+      q:`Find and click ${c.name} on the map 🖱️`,
+      answer:c.name,lat:c.lat,lng:c.lng,zoom:4,
+      explain:`${c.name} is in ${c.continent}. Its capital is ${c.capital}.`,
+      fact:c.fact,pic:`${c.name} country map`,hint:`${c.name} is in ${c.continent}`,flag:c.flag});
+  });
+
+  // Click continent
+  continents.slice(0,4).forEach(c=>{
+    bank.push({mode:'clickcontinent',display:'Click the Continent',
+      q:`Click on ${c.name} on the map 🌍`,
+      answer:c.name,lat:c.lat,lng:c.lng,zoom:c.zoom,
+      explain:`${c.name} includes countries like ${c.countries.slice(0,3).join(', ')}.`,
+      fact:c.fact,pic:`${c.name} continent satellite`,hint:`${c.name} is one of the 7 continents`});
+  });
+
+  // Capital MCQ
+  countries.slice(0,10).forEach(c=>{
+    const wrong=shuffle(COUNTRIES.filter(x=>x.name!==c.name)).slice(0,3).map(x=>x.capital);
+    bank.push({mode:'capital',display:'Capital City',
+      q:`What is the capital of ${c.name}?`,
+      opts:shuffle([c.capital,...wrong]),answer:c.capital,lat:c.lat,lng:c.lng,zoom:4,
+      explain:`${c.capital} is the capital city of ${c.name}, located in ${c.continent}.`,
+      fact:c.fact,pic:`${c.capital} capital city ${c.name}`,hint:`The capital starts with "${c.capital[0]}"`});
+  });
+
+  // Flag to country
+  countries.slice(0,8).forEach(c=>{
+    const wrong=shuffle(COUNTRIES.filter(x=>x.name!==c.name)).slice(0,3).map(x=>x.name);
+    bank.push({mode:'flag',display:'Flag Quiz',
+      q:`Which country does this flag belong to?`,flag:c.flag,
+      opts:shuffle([c.name,...wrong]),answer:c.name,lat:c.lat,lng:c.lng,zoom:4,
+      explain:`${c.flag} is the flag of ${c.name}. Its capital is ${c.capital}.`,
+      fact:c.fact,pic:`flag of ${c.name}`,hint:`This country is in ${c.continent}`});
+  });
+
+  // Landmark MCQ
+  landmarks.forEach(l=>{
+    const wrong=shuffle(COUNTRIES.filter(x=>x.name!==l.country)).slice(0,3).map(x=>x.name);
+    bank.push({mode:'landmark',display:'Famous Landmark',
+      q:`The ${l.name} is in which country?`,
+      opts:shuffle([l.country,...wrong]),answer:l.country,lat:l.lat,lng:l.lng,zoom:5,
+      explain:`The ${l.name} is one of the most famous landmarks in ${l.country}.`,
+      fact:l.fact,pic:`${l.name} ${l.country}`,hint:`This landmark is in ${COUNTRIES.find(c=>c.name===l.country)?.continent||'the world'}`});
+  });
+
+  // Continent of country
+  countries.slice(0,8).forEach(c=>{
+    const wrong=shuffle(CONTINENTS.filter(x=>x.name!==c.continent&&!c.continent.includes(x.name))).slice(0,3).map(x=>x.name);
+    bank.push({mode:'continent_of',display:'Which Continent?',
+      q:`Which continent is ${c.name} on?`,
+      opts:shuffle([c.continent.split('/')[0],...wrong]),answer:c.continent.split('/')[0],lat:c.lat,lng:c.lng,zoom:3,
+      explain:`${c.name} is located on the continent of ${c.continent}.`,
+      fact:c.fact,pic:`${c.name} ${c.continent} map`,hint:`Think about which part of the world ${c.name} is in`});
+  });
+
+  // Neighbour (Grade 3 only)
+  if(grade>=3){
+    countries.filter(c=>c.neighbours.length>0).slice(0,6).forEach(c=>{
+      const neighbour=c.neighbours[0];
+      const wrong=shuffle(COUNTRIES.filter(x=>x.name!==neighbour&&x.name!==c.name&&!c.neighbours.includes(x.name))).slice(0,3).map(x=>x.name);
+      bank.push({mode:'neighbour',display:'Neighbouring Country',
+        q:`Which country shares a border with ${c.name}?`,
+        opts:shuffle([neighbour,...wrong]),answer:neighbour,lat:c.lat,lng:c.lng,zoom:4,
+        explain:`${neighbour} shares a border with ${c.name}. They are neighbouring countries.`,
+        fact:c.fact,pic:`${c.name} ${neighbour} border map`,hint:`Think about what countries are close to ${c.name} on the map`});
+    });
+  }
+
+  // Rivers/Mountains/Oceans
+  rivers.forEach(r=>{
+    bank.push({mode:'rivermountain',display:'World Features',
+      q:r.q,opts:r.opts,answer:r.a,lat:20,lng:0,zoom:2,
+      explain:r.explain,fact:r.fact,pic:r.pic,hint:`Think about which is the BIGGEST/LONGEST`});
+  });
+
+  // Canada provinces
+  canada.slice(0,4).forEach(p=>{
+    bank.push({mode:'canada',display:'Canadian Province',
+      q:`What is the capital of ${p.name}?`,
+      opts:shuffle([p.capital,...shuffle(CANADA_PROVINCES.filter(x=>x.name!==p.name)).slice(0,3).map(x=>x.capital)]),
+      answer:p.capital,lat:p.lat,lng:p.lng,zoom:5,
+      explain:`${p.capital} is the capital of ${p.name}, Canada.`,
+      fact:p.fact,pic:`${p.name} Canada province`,hint:`The capital starts with "${p.capital[0]}"`});
+  });
+
+  // Ocean click (Grade 1+)
+  oceans.slice(0,3).forEach(o=>{
+    const wrong=shuffle(OCEANS.filter(x=>x.name!==o.name)).slice(0,3).map(x=>x.name);
+    bank.push({mode:'clickocean',display:'Name the Ocean',
+      q:`Which ocean is this? 🌊`,opts:shuffle([o.name,...wrong]),answer:o.name,
+      lat:o.lat,lng:o.lng,zoom:o.zoom,
+      explain:`This is the ${o.name}. There are 5 oceans on Earth.`,
+      fact:o.fact,pic:`${o.name} satellite view`,hint:`This ocean is ${o.name.includes('Pacific')?'the largest ocean':'located near '+o.name.split(' ')[0]}`});
+  });
+
+  return shuffle(bank);
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+async function init(){
+  try{
+    const players=await db('players?select=*');
+    const p=players.find(x=>x.name.toLowerCase()===playerName.toLowerCase());
+    if(p){playerId=p.id;playerGrade=p.grade||3;}
+  }catch(e){}
+  if(playerId){
+    try{
+      const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.geography-quest`);
+      if(rows&&rows.length){personalBest=rows[0].best_score||0;
+        document.getElementById('pb-row').style.display='flex';
+        document.getElementById('pb-val').textContent=personalBest.toLocaleString();}
+    }catch(e){}
+  }
+  document.getElementById('start-greeting').textContent=`Explore the world, ${cap(playerName)}! 🌍`;
+  document.getElementById('g-player-label').textContent=`${cap(playerName)} · Grade ${playerGrade}`;
+  const modes=['🖱️ Click Country','🌍 Click Continent','🌊 Click Ocean','🏛️ Capitals','🚩 Flags','🗿 Landmarks','🌐 Continents','🤝 Neighbours','🏔️ Rivers & Mountains','🍁 Canada'];
+  document.getElementById('modes-chips').innerHTML=modes.map((m,i)=>{
+    const cs=[['rgba(74,144,217,.12)','rgba(74,144,217,.28)','#90CAF9'],['rgba(43,191,184,.12)','rgba(43,191,184,.28)','var(--teal)'],
+      ['rgba(43,191,184,.12)','rgba(43,191,184,.28)','var(--teal)'],['rgba(246,192,74,.12)','rgba(246,192,74,.28)','var(--amber)'],
+      ['rgba(240,120,48,.12)','rgba(240,120,48,.28)','#FFB060'],['rgba(124,92,191,.12)','rgba(124,92,191,.28)','#C8A8FF'],
+      ['rgba(39,174,96,.12)','rgba(39,174,96,.28)','#90FFB0'],['rgba(232,69,69,.12)','rgba(232,69,69,.28)','#FF9090'],
+      ['rgba(74,144,217,.12)','rgba(74,144,217,.28)','#90CAF9'],['rgba(232,69,69,.15)','rgba(232,69,69,.3)','#FF9090']];
+    const c=cs[i%cs.length];
+    return `<span class="mode-chip" style="background:${c[0]};border-color:${c[1]};color:${c[2]}">${m}</span>`;
+  }).join('');
+}
+
+// ── Game flow ─────────────────────────────────────────────────────
+function startGame(){
+  G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
+    streak:0,bestStreak:0,sessionBestStreak:0,answered:false,roundStars:0,
+    question:null,qBank:buildQuestionBank(playerGrade),bankIdx:0,
+    attempts:0,maxAttempts:3,lifeRestoreStreak:0,hintUsed:false,hintTimer:null};
+  showScreen('gameScreen');
+  // Load Leaflet then init map
+  setTimeout(()=>{
+    loadLeaflet(()=>{
+      if(!map){
+        try{initMap();loadGeoJSON().then(()=>loadQuestion()).catch(()=>loadQuestion());}
+        catch(e){console.error('Map init failed:',e);loadQuestion();}
+      } else {
+        loadQuestion();
+      }
+    });
+  },150);
+}
+
+function loadQuestion(){
+  if(G.qIdx>=10){endRound();return;}
+  G.answered=false;G.attempts=0;G.hintUsed=false;
+  clearTimeout(G.hintTimer);
+  disableMapClick();
+  resetAllStyles();
+  if(currentMarker)map.removeLayer(currentMarker);
+  if(correctMarker)map.removeLayer(correctMarker);
+
+  if(G.bankIdx>=G.qBank.length){G.qBank=buildQuestionBank(playerGrade);G.bankIdx=0;}
+  G.question=G.qBank[G.bankIdx++];
+  const q=G.question;
+
+  document.getElementById('g-qnum').textContent=`${G.qIdx+1}/10`;
+  document.getElementById('g-qnum2').textContent=`Q ${G.qIdx+1}/10`;
+  document.getElementById('g-round').textContent=G.round;
+  document.getElementById('g-mode-tag').textContent=q.display;
+  document.getElementById('g-mode-tag').className=`mode-tag ${q.mode}`;
+  document.getElementById('g-mode-display').textContent=q.display;
+  document.getElementById('g-question').textContent=q.q;
+  document.getElementById('g-question').className=q.q.length>50?'question small':'question';
+  document.getElementById('g-feedback').textContent='';
+  document.getElementById('g-feedback').className='feedback-row';
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('explanation-card').className='explanation-card';
+  document.getElementById('hint-box').className='hint-box';
+  document.getElementById('hint-btn').className='hint-btn';
+
+  // Flag display
+  const flagArea=document.getElementById('flag-area');
+  flagArea.innerHTML=q.flag?`<div class="flag-display">${q.flag}</div>`:'';
+
+  // Attempts dots
+  updateAttemptDots();
+
+  // Render answer area
+  renderAnswerArea();
+
+  // Fly map to region
+  if(map)map.flyTo([q.lat,q.lng],q.zoom||3,{duration:1.2});
+
+  // Hint after 7 seconds
+  G.hintTimer=setTimeout(()=>{
+    if(!G.answered)document.getElementById('hint-btn').style.display='flex';
+  },7000);
+  document.getElementById('hint-btn').style.display='none';
+}
+
+function renderAnswerArea(){
+  const q=G.question;
+  const el=document.getElementById('opts-area');
+  const isMapClick=['clickcountry','clickcontinent'].includes(q.mode);
+
+  if(isMapClick){
+    el.innerHTML=`<div style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.45);
+      text-align:center;padding:8px;background:rgba(255,255,255,.04);border-radius:10px;margin-bottom:6px">
+      👆 Click directly on the map above</div>`;
+    enableMapClick((clickedName,layer,e)=>handleMapClick(clickedName,layer,e));
+    document.getElementById('map-instruction').className='map-instruction show';
+    document.getElementById('map-instruction').textContent=`👆 Click ${q.answer} on the map`;
+  } else if(q.mode==='clickocean'){
+    // Show MCQ for ocean (map zones hard to click precisely)
+    el.innerHTML=`<div style="font-size:.72rem;font-weight:700;color:rgba(255,255,255,.45);
+      text-align:center;margin-bottom:8px">The map has flown to this ocean — select its name:</div>
+      <div class="opts">${q.opts.map(o=>`<button class="opt" onclick="checkMCQ(this,'${o}','${q.answer}')">${o}</button>`).join('')}</div>`;
+    // Place ocean marker on map
+    addMarker(q.lat,q.lng,'?','rgba(74,144,217,0.8)');
+  } else {
+    // MCQ
+    el.innerHTML=`<div class="opts">${q.opts.map(o=>`<button class="opt" onclick="checkMCQ(this,'${o.replace(/'/g,"\\'")}','${q.answer.replace(/'/g,"\\'")}')">
+      ${o}</button>`).join('')}</div>`;
+  }
+}
+
+function handleMapClick(clickedName,layer,e){
+  if(G.answered)return;
+  const q=G.question;
+  // For continents, check if clicked country is on that continent
+  let isCorrect=false;
+  if(q.mode==='clickcontinent'){
+    const cont=CONTINENTS.find(c=>c.name===q.answer);
+    isCorrect=cont&&cont.countries.includes(clickedName);
+    if(!isCorrect&&clickedName===q.answer)isCorrect=true;
+    // Also check by continent name match
+    const country=COUNTRIES.find(c=>c.name===clickedName);
+    if(country&&country.continent.includes(q.answer))isCorrect=true;
+  } else {
+    isCorrect=clickedName===q.answer;
+  }
+  if(isCorrect){
+    layer.setStyle({fillColor:'rgba(39,174,96,0.7)',fillOpacity:0.85,color:'var(--green)',weight:2});
+    processResult(true);
+  } else {
+    layer.setStyle({fillColor:'rgba(232,69,69,0.5)',fillOpacity:0.7,color:'var(--red)',weight:2});
+    setTimeout(()=>geojsonLayer&&geojsonLayer.resetStyle(layer),800);
+    handleWrongAttempt();
+  }
+}
+
+function checkMCQ(btn,chosen,correct){
+  if(G.answered)return;
+  if(chosen===correct){btn.classList.add('correct');processResult(true);}
+  else{btn.classList.add('wrong');handleWrongAttempt(btn);}
+}
+
+function handleWrongAttempt(btn){
+  G.attempts++;
+  updateAttemptDots();
+  if(G.attempts>=G.maxAttempts){
+    // Out of attempts — show answer
+    if(btn)btn.disabled=true;
+    document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+    disableMapClick();
+    processResult(false);
+  } else {
+    const remaining=G.maxAttempts-G.attempts;
+    const fb=document.getElementById('g-feedback');
+    fb.className='feedback-row try';
+    fb.textContent=remaining===2?'Not quite! Try again 🔍':`One more try! Think carefully...`;
+    // Re-enable map click
+    if(['clickcountry','clickcontinent'].includes(G.question.mode)){
+      setTimeout(()=>resetAllStyles(),800);
+    }
+  }
+}
+
+function updateAttemptDots(){
+  for(let i=0;i<3;i++){
+    const dot=document.getElementById(`dot-${i}`);
+    if(!dot)return;
+    dot.className='attempt-dot';
+    if(i<G.attempts)dot.classList.add('used');
+    else if(i===G.attempts)dot.classList.add('current');
+  }
+}
+
+function processResult(isCorrect){
+  G.answered=true;
+  disableMapClick();
+  clearTimeout(G.hintTimer);
+  const hintPenalty=G.hintUsed?0.5:1;
+  const attemptPenalty=G.attempts===0?1:G.attempts===1?0.7:0.4;
+  let earned=0;
+  if(isCorrect){
+    const base=10+Math.min(G.round-1,5)*5;
+    const streakBonus=G.streak>=7?20:G.streak>=5?12:G.streak>=3?6:0;
+    earned=Math.floor(base*attemptPenalty*hintPenalty+streakBonus);
+    G.stars+=earned;G.roundStars+=earned;
+    G.correct++;G.totalCorrect++;G.totalAsked++;
+    G.streak++;
+    if(G.streak>G.bestStreak)G.bestStreak=G.streak;
+    if(G.streak>G.sessionBestStreak)G.sessionBestStreak=G.streak;
+    checkLifeRestore();
+    updateStreakBadge();
+    const combos=[{s:3,t:'EXPLORER! 🗺️',sub:'3 correct!'},{s:5,t:'NAVIGATOR! ⭐',sub:'5 in a row!'},{s:7,t:'GEOGRAPHER! 🌟',sub:'7 in a row!'},{s:10,t:'WORLD MASTER! 💥',sub:'10 in a row!'}];
+    const c=combos.slice().reverse().find(c=>G.streak===c.s);
+    if(c)showPopup('combo',c.t,c.sub);
+    // Highlight correct on map
+    highlightCountry(G.question.answer,'rgba(39,174,96,0.7)');
+  } else {
+    G.lives--;G.streak=0;G.totalAsked++;
+    G.lifeRestoreStreak=0;
+    updateStreakBadge();updateLives();
+    // Fly to correct location and show marker
+    const q=G.question;
+    flyToLocation(q.lat,q.lng,q.zoom||4);
+    setTimeout(()=>{
+      addMarker(q.lat,q.lng,`✅ ${q.answer}`,'#F6C04A');
+      highlightCountry(q.answer,'rgba(246,192,74,0.6)');
+    },1200);
+    if(G.lives<=0){showExplanation(false,()=>endGame());return;}
+  }
+  document.getElementById('g-stars').textContent=G.stars.toLocaleString();
+  updateLives();
+  showExplanation(isCorrect,()=>{G.qIdx++;loadQuestion();});
+}
+
+function showExplanation(isCorrect,onNext){
+  const q=G.question;
+  const ec=document.getElementById('explanation-card');
+  document.getElementById('ex-icon').textContent=isCorrect?'✅':'❌';
+  document.getElementById('ex-answer').innerHTML=`Answer: <span>${q.answer}</span>`;
+  document.getElementById('ex-explain').textContent=q.explain||'';
+  document.getElementById('ex-fact-txt').textContent=q.fact||'';
+  const nextBtn=document.getElementById('ex-next');
+  nextBtn.className=`ex-next ${isCorrect?'ok':'no'}`;
+  nextBtn.textContent=G.qIdx>=9||G.lives<=0?'See Results →':'Next Question →';
+  ec.className=`explanation-card show ${isCorrect?'ok':'no'}`;
+  ec.style.display='block';
+  window._exNextFn=onNext;
+  setTimeout(()=>ec.scrollIntoView({behavior:'smooth',block:'nearest'}),150);
+}
+
+function advanceQuestion(){
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('hint-box').className='hint-box';
+  resetAllStyles();
+  if(currentMarker)map.removeLayer(currentMarker);
+  if(window._exNextFn){window._exNextFn();window._exNextFn=null;}
+}
+
+// ── Hint ──────────────────────────────────────────────────────────
+function useHint(){
+  if(G.hintUsed||G.answered)return;
+  G.hintUsed=true;
+  document.getElementById('hint-btn').className='hint-btn used';
+  document.getElementById('hint-txt').textContent=G.question.hint||'Think carefully about the location on the map!';
+  document.getElementById('hint-box').className='hint-box show';
+  // For map questions, zoom closer
+  if(['clickcountry','clickcontinent'].includes(G.question.mode)){
+    const q=G.question;
+    map.flyTo([q.lat,q.lng],5,{duration:1});
+  }
+}
+
+// ── Show Picture ──────────────────────────────────────────────────
+function showPicture(){
+  const q=G.question;
+  const query=encodeURIComponent(q.pic||q.answer+' geography');
+  window.open('https://www.google.com/search?tbm=isch&q='+query,'_blank');
+}
+
+// ── Life restore ──────────────────────────────────────────────────
+function checkLifeRestore(){
+  if(G.lives>=3)return;
+  G.lifeRestoreStreak++;
+  if(G.lifeRestoreStreak>=3){G.lifeRestoreStreak=0;G.lives=Math.min(3,G.lives+1);updateLives();showPopup('life','❤️ Life Restored!','3 correct in a row!');}
+}
+
+// ── UI ────────────────────────────────────────────────────────────
+function updateLives(){let h='';for(let i=0;i<3;i++)h+=i<G.lives?'❤️':'🖤';document.getElementById('lives-display').textContent=h;}
+function updateStreakBadge(){
+  const el=document.getElementById('streak-badge');
+  el.textContent=`${G.streak} 🗺️`;
+  el.className=`streak-badge${G.streak>=7?' s7':G.streak>=5?' s5':G.streak>=3?' s3':''}`;
+}
+function showPopup(type,text,sub){
+  const el=document.getElementById(type+'-popup');if(!el)return;
+  if(type==='combo'){document.getElementById('combo-text').textContent=text;document.getElementById('combo-sub').textContent=sub;}
+  el.className=`popup-overlay ${type} show`;
+  setTimeout(()=>{el.className=`popup-overlay ${type} hide`;},1500);
+  setTimeout(()=>{el.className=`popup-overlay ${type}`;},1800);
+}
+
+// ── Round end ─────────────────────────────────────────────────────
+function endRound(){
+  const acc=G.totalAsked>0?Math.round(G.totalCorrect/G.totalAsked*100):0;
+  document.getElementById('re-icon').textContent=G.correct>=8?'🏆':G.correct>=5?'⭐':G.correct>=3?'🗺️':'🌱';
+  document.getElementById('re-title').textContent=`Round ${G.round} Complete!`;
+  document.getElementById('re-correct').textContent=G.correct;
+  document.getElementById('re-acc').textContent=acc+'%';
+  document.getElementById('re-stars-r').textContent=G.roundStars.toLocaleString();
+  document.getElementById('re-streak-r').textContent=G.bestStreak;
+  document.getElementById('re-msg').textContent=G.correct>=8?'Brilliant explorer! 🌟':G.correct>=5?'Great geography! 💪':G.correct>=3?'Good effort! 📈':'Keep exploring! 🌱';
+  document.getElementById('re-next-btn').textContent=`Round ${G.round+1} →`;
+  showScreen('roundEndScreen');
+}
+
+function nextRound(){
+  G.round++;G.qIdx=0;G.roundStars=0;G.correct=0;G.streak=0;G.bestStreak=0;G.lifeRestoreStreak=0;
+  showScreen('gameScreen');
+  setTimeout(()=>{
+    if(!map){loadLeaflet(()=>{try{initMap();loadGeoJSON().then(()=>loadQuestion());}catch(e){loadQuestion();}});}
+    else loadQuestion();
+  },100);
+}
+
+// ── Game over ─────────────────────────────────────────────────────
+async function endGame(){
+  showScreen('gameOverScreen');
+  const total=G.stars;
+  document.getElementById('go-score').textContent=total.toLocaleString()+' ⭐';
+  document.getElementById('go-earned').textContent=`+${total.toLocaleString()} stars saved`;
+  document.getElementById('go-rounds').textContent=G.round;
+  document.getElementById('go-correct').textContent=G.totalCorrect;
+  document.getElementById('go-streak').textContent=G.sessionBestStreak;
+  const isNewBest=total>personalBest;if(isNewBest)personalBest=total;
+  document.getElementById('go-pb').textContent=personalBest.toLocaleString();
+  document.getElementById('new-best-banner').style.display=isNewBest?'block':'none';
+  document.getElementById('go-msg').textContent=total>=500?'You are a World Explorer! 🏆':total>=300?'Outstanding geography! 🌟':total>=150?'Great quest! 💪':'Keep exploring! 🌱';
+  document.getElementById('go-trophy').textContent=total>=500?'🏆':total>=300?'⭐':total>=150?'🗺️':'🌱';
+  if(playerId&&total>0){
+    try{
+      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,amount:total,reason:`Geography Quest — Round ${G.round}, ${G.totalCorrect} correct`,category:'game'}});
+      const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.geography-quest`);
+      if(rows&&rows.length){
+        await db(`game_scores?player_id=eq.${playerId}&game_key=eq.geography-quest`,{method:'PATCH',prefer:'return=minimal',body:{best_score:isNewBest?total:rows[0].best_score,best_round:G.round,total_plays:(rows[0].total_plays||0)+1,last_played:new Date().toISOString()}});
+      } else {
+        await db('game_scores',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,game_key:'geography-quest',best_score:total,best_round:G.round,total_plays:1}});
+      }
+    }catch(e){}
+  }
+}
+
+function restartGame(){startGame();}
+function goHome(){window.location.href='index.html?player='+playerName;}
+function confirmQuit(){if(confirm('Quit Geography Quest? Progress will be lost.'))goHome();}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+init();
+</script>
+</body>
+</html>
