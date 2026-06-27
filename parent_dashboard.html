@@ -17,8 +17,6 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex}
-
-/* SIDEBAR */
 .pd-sidebar{width:220px;min-width:220px;background:#111A14;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:10;overflow-y:auto}
 .pd-logo{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
 .pd-logo h1{font-size:.95rem;font-weight:900;color:#fff}
@@ -33,8 +31,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .pd-nav-item .nl{font-size:.75rem;font-weight:800;color:rgba(255,255,255,.65)}
 .pd-nav-item.active .nl{color:#fff}
 .pd-nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:.55rem;font-weight:900;border-radius:99px;padding:2px 6px;min-width:16px;text-align:center}
-
-/* MAIN */
 .pd-main{margin-left:220px;flex:1;display:flex;flex-direction:column;min-height:100vh}
 .pd-topbar{background:#111A14;border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}
 .pd-topbar h2{font-size:1.1rem;font-weight:900;color:#fff}
@@ -43,25 +39,18 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .topbar-kid-chip{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:99px;padding:5px 12px 5px 8px}
 .topbar-kid-chip span{font-size:.72rem;font-weight:800}
 .pd-content{padding:20px 24px;flex:1}
-
-/* SECTIONS */
 .pd-section{display:none}
 .pd-section.active{display:block}
-
-/* CARDS */
 .card{background:var(--card);border-radius:var(--r);border:1px solid var(--border);padding:18px;margin-bottom:16px}
 .card-title{font-size:.78rem;font-weight:900;color:var(--light);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
 .card-title span{color:rgba(255,255,255,.9)}
-
-/* GRID */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
 .four-col{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-
-/* OVERVIEW CARDS */
 .kid-overview{background:var(--card2);border-radius:var(--r);border:1px solid var(--border);padding:18px}
 .ko-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.ko-avatar{font-size:2.2rem}
+.ko-avatar{font-size:2.2rem;width:44px;height:44px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08)}
+.ko-avatar img{width:100%;height:100%;object-fit:cover}
 .ko-name{font-size:1.1rem;font-weight:900;color:#fff}
 .ko-grade{font-size:.68rem;color:var(--light);margin-top:1px}
 .ko-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
@@ -77,21 +66,15 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .ko-btn.add{background:var(--green);color:#fff}
 .ko-btn.deduct{background:var(--red);color:#fff}
 .ko-btn.view{background:rgba(255,255,255,.08);color:rgba(255,255,255,.75)}
-
-/* STAT MINI */
 .stat-mini{background:var(--card2);border-radius:var(--r);border:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;gap:12px}
 .sm-icon{font-size:1.6rem;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .sm-val{font-size:1.4rem;font-weight:900;color:#fff}
 .sm-lbl{font-size:.62rem;font-weight:700;color:var(--light)}
-
-/* TABLES */
 .pd-table{width:100%;border-collapse:collapse}
 .pd-table th{text-align:left;font-size:.62rem;font-weight:900;color:var(--light);text-transform:uppercase;letter-spacing:.8px;padding:8px 12px;border-bottom:1px solid var(--border)}
 .pd-table td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.04);font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);vertical-align:middle}
 .pd-table tr:hover td{background:rgba(255,255,255,.02)}
 .pd-table tr:last-child td{border-bottom:none}
-
-/* BADGES */
 .badge-pill{display:inline-block;border-radius:99px;padding:3px 10px;font-size:.62rem;font-weight:900}
 .badge-pill.green{background:rgba(39,174,96,.2);color:#52D08A}
 .badge-pill.red{background:rgba(232,69,69,.2);color:#F07070}
@@ -99,8 +82,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .badge-pill.blue{background:rgba(58,143,212,.2);color:#6AB0E8}
 .badge-pill.purple{background:rgba(124,92,191,.2);color:#A88AE8}
 .badge-pill.off{background:rgba(255,255,255,.06);color:var(--light)}
-
-/* BUTTONS */
 .btn{padding:8px 14px;border:none;border-radius:9px;font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:800;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
 .btn:hover{opacity:.85;transform:translateY(-1px)}
 .btn-green{background:var(--green);color:#fff}
@@ -111,8 +92,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .btn-ghost{background:rgba(255,255,255,.08);color:rgba(255,255,255,.75)}
 .btn-sm{padding:5px 10px;font-size:.65rem}
 .btn-icon{width:30px;height:30px;padding:0;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:.85rem}
-
-/* FORMS */
 .form-group{margin-bottom:12px}
 .form-label{font-size:.68rem;font-weight:800;color:var(--mid);display:block;margin-bottom:5px}
 .form-input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:10px 13px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;color:#fff;outline:none;transition:border .15s}
@@ -121,13 +100,9 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='rgba(255,255,255,.4)'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-
-/* TABS */
-.tab-row{display:flex;gap:6px;margin-bottom:16px;background:rgba(255,255,255,.04);border-radius:10px;padding:4px}
+.tab-row{display:flex;gap:6px;margin-bottom:16px;background:rgba(255,255,255,.04);border-radius:10px;padding:4px;flex-wrap:wrap}
 .tab-btn{flex:1;padding:8px;border:none;border-radius:8px;font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:800;cursor:pointer;transition:all .2s;background:transparent;color:var(--mid)}
 .tab-btn.active{background:var(--teal2);color:#fff;box-shadow:0 2px 8px rgba(26,153,144,.3)}
-
-/* WISH ITEM */
 .wish-row{display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,255,255,.03);border-radius:10px;margin-bottom:8px;border:1px solid transparent;transition:all .15s}
 .wish-row:hover{border-color:var(--border)}
 .wish-thumb{width:52px;height:44px;border-radius:8px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;overflow:hidden}
@@ -138,12 +113,8 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .wish-progress{height:4px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-top:5px}
 .wish-progress-fill{height:100%;background:var(--teal);border-radius:99px}
 .tr-actions{display:flex;gap:5px;flex-shrink:0}
-
-/* EMPTY STATE */
 .empty-state{text-align:center;padding:32px;color:var(--light);font-size:.8rem;font-weight:700}
 .empty-state .es-icon{font-size:2.5rem;margin-bottom:10px;display:block;opacity:.5}
-
-/* HISTORY */
 .history-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04)}
 .history-row:last-child{border-bottom:none}
 .hr-icon{font-size:1rem;width:28px;text-align:center;flex-shrink:0}
@@ -153,8 +124,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .hr-amount{font-size:.82rem;font-weight:900}
 .hr-amount.pos{color:var(--amber)}
 .hr-amount.neg{color:var(--red)}
-
-/* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.open{display:flex}
 .modal-box{background:#1E2D22;border-radius:18px;border:1px solid var(--border);padding:24px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
@@ -162,13 +131,13 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .modal-box::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:99px}
 .modal-title{font-size:1rem;font-weight:900;color:#fff;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
 .modal-close{background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.6);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
-
-/* TOASTS */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--green);color:#fff;padding:12px 18px;border-radius:12px;font-size:.8rem;font-weight:800;z-index:999;transform:translateY(80px);opacity:0;transition:all .3s;box-shadow:0 8px 24px rgba(0,0,0,.3)}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.error{background:var(--red)}
 .toast.info{background:var(--teal2)}
-
+/* Upload progress */
+.upload-progress{background:rgba(43,191,184,.1);border:1px solid rgba(43,191,184,.2);border-radius:9px;padding:10px 14px;margin-top:8px;font-size:.72rem;font-weight:700;color:var(--teal);display:none}
+.upload-progress.show{display:block}
 @media(max-width:900px){
   .pd-sidebar{width:60px}
   .pd-sidebar .nl,.pd-logo h1,.pd-logo p,.back-btn span,.pd-nav-section,.pd-nav-badge{display:none}
@@ -180,8 +149,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 </style>
 </head>
 <body>
-
-<!-- SIDEBAR -->
 <aside class="pd-sidebar">
   <div class="pd-logo">
     <h1>🔐 Parent Dashboard</h1>
@@ -190,85 +157,50 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
   <nav class="pd-nav">
     <div class="pd-nav-section">Main</div>
-    <div class="pd-nav-item active" onclick="showSection('overview')">
-      <span class="ni">📊</span><span class="nl">Overview</span>
-    </div>
-    <div class="pd-nav-item" onclick="showSection('pending')">
-      <span class="ni">✅</span><span class="nl">Approvals</span>
-      <span class="pd-nav-badge" id="nav-pending-badge" style="display:none">0</span>
-    </div>
+    <div class="pd-nav-item active" onclick="showSection('overview')"><span class="ni">📊</span><span class="nl">Overview</span></div>
+    <div class="pd-nav-item" onclick="showSection('pending')"><span class="ni">✅</span><span class="nl">Approvals</span><span class="pd-nav-badge" id="nav-pending-badge" style="display:none">0</span></div>
     <div class="pd-nav-section">Manage</div>
-    <div class="pd-nav-item" onclick="showSection('tasks')">
-      <span class="ni">📋</span><span class="nl">Tasks</span>
-    </div>
-    <div class="pd-nav-item" onclick="showSection('wishlist')">
-      <span class="ni">🎁</span><span class="nl">Wish List</span>
-    </div>
-    <div class="pd-nav-item" onclick="showSection('rewards')">
-      <span class="ni">🛍️</span><span class="nl">Reward Shop</span>
-    </div>
-    <div class="pd-nav-item" onclick="showSection('stars')">
-      <span class="ni">⭐</span><span class="nl">Stars</span>
-    </div>
+    <div class="pd-nav-item" onclick="showSection('tasks')"><span class="ni">📋</span><span class="nl">Tasks</span></div>
+    <div class="pd-nav-item" onclick="showSection('wishlist')"><span class="ni">🎁</span><span class="nl">Wish List</span></div>
+    <div class="pd-nav-item" onclick="showSection('rewards')"><span class="ni">🛍️</span><span class="nl">Reward Shop</span></div>
+    <div class="pd-nav-item" onclick="showSection('stars')"><span class="ni">⭐</span><span class="nl">Stars</span></div>
     <div class="pd-nav-section">Configure</div>
-    <div class="pd-nav-item" onclick="showSection('schedule')">
-      <span class="ni">📅</span><span class="nl">Schedule</span>
-    </div>
-    <div class="pd-nav-item" onclick="showSection('content')">
-      <span class="ni">🎓</span><span class="nl">Content</span>
-    </div>
-    <div class="pd-nav-item" onclick="showSection('settings')">
-      <span class="ni">⚙️</span><span class="nl">Settings</span>
-    </div>
+    <div class="pd-nav-item" onclick="showSection('schedule')"><span class="ni">📅</span><span class="nl">Schedule</span></div>
+    <div class="pd-nav-item" onclick="showSection('content')"><span class="ni">🎓</span><span class="nl">Content</span></div>
+    <div class="pd-nav-item" onclick="showSection('settings')"><span class="ni">⚙️</span><span class="nl">Settings</span></div>
   </nav>
 </aside>
 
-<!-- MAIN -->
 <div class="pd-main">
   <div class="pd-topbar">
-    <div>
-      <h2 id="section-title">Overview</h2>
-      <p id="section-sub">Riaan & Kairav Learning Hub</p>
-    </div>
+    <div><h2 id="section-title">Overview</h2><p id="section-sub">Riaan & Kairav Learning Hub</p></div>
     <div class="pd-topbar-right">
-      <div class="topbar-kid-chip"><span>♑</span><span>Riaan</span></div>
-      <div class="topbar-kid-chip"><span>♈</span><span>Kairav</span></div>
+      <div class="topbar-kid-chip" id="chip-riaan"><span>♑</span><span>Riaan</span></div>
+      <div class="topbar-kid-chip" id="chip-kairav"><span>♈</span><span>Kairav</span></div>
     </div>
   </div>
 
   <div class="pd-content">
-    <!-- ══ OVERVIEW ══ -->
+    <!-- OVERVIEW -->
     <div id="section-overview" class="pd-section active">
       <div class="two-col" id="overview-kids"></div>
       <div class="four-col" style="margin-bottom:16px" id="overview-stats"></div>
-      <div class="card">
-        <div class="card-title"><span>⏰ Today's Activity</span></div>
-        <div id="overview-activity"></div>
-      </div>
+      <div class="card"><div class="card-title"><span>⏰ Today's Activity</span></div><div id="overview-activity"></div></div>
     </div>
 
-    <!-- ══ PENDING APPROVALS ══ -->
+    <!-- PENDING -->
     <div id="section-pending" class="pd-section">
       <div class="card">
-        <div class="card-title">
-          <span>✅ Pending Task Approvals</span>
-          <button class="btn btn-green btn-sm" onclick="approveAllPending()">✓ Approve All</button>
-        </div>
+        <div class="card-title"><span>✅ Pending Task Approvals</span><button class="btn btn-green btn-sm" onclick="approveAllPending()">✓ Approve All</button></div>
         <div id="pending-list"></div>
       </div>
-      <div class="card">
-        <div class="card-title"><span>🎁 Pending Redemptions</span></div>
-        <div id="redemption-list"></div>
-      </div>
+      <div class="card"><div class="card-title"><span>🎁 Pending Redemptions</span></div><div id="redemption-list"></div></div>
     </div>
 
-    <!-- ══ TASKS ══ -->
+    <!-- TASKS -->
     <div id="section-tasks" class="pd-section">
       <div class="card">
-        <div class="card-title">
-          <span>📋 All Tasks</span>
-          <button class="btn btn-teal btn-sm" onclick="openAddTask()">+ Add Task</button>
-        </div>
+        <div class="card-title"><span>📋 All Tasks</span><button class="btn btn-teal btn-sm" onclick="openAddTask()">+ Add Task</button></div>
         <div class="tab-row">
           <button class="tab-btn active" onclick="filterTaskBlock('all',this)">All</button>
           <button class="tab-btn" onclick="filterTaskBlock('morning',this)">🌅 Morning</button>
@@ -281,13 +213,10 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
       </div>
     </div>
 
-    <!-- ══ WISH LIST (UNIFIED) ══ -->
+    <!-- WISH LIST -->
     <div id="section-wishlist" class="pd-section">
       <div class="card">
-        <div class="card-title">
-          <span>🎁 Wish List Manager</span>
-          <button class="btn btn-teal btn-sm" onclick="openAddWish()">+ Add Item</button>
-        </div>
+        <div class="card-title"><span>🎁 Wish List Manager</span><button class="btn btn-teal btn-sm" onclick="openAddWish()">+ Add Item</button></div>
         <div class="tab-row">
           <button class="tab-btn active" onclick="filterWishFor('all',this)">All Items</button>
           <button class="tab-btn" onclick="filterWishFor('both',this)">👥 Both Kids</button>
@@ -298,15 +227,13 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
       </div>
     </div>
 
-    <!-- ══ REWARD SHOP ══ -->
+    <!-- REWARDS -->
     <div id="section-rewards" class="pd-section">
       <div class="card">
-        <div class="card-title">
-          <span>🛍️ Reward Shop Items</span>
-          <button class="btn btn-teal btn-sm" onclick="openAddReward()">+ Add Reward</button>
-        </div>
+        <div class="card-title"><span>🛍️ Reward Shop Items</span><button class="btn btn-teal btn-sm" onclick="openAddReward()">+ Add Reward</button></div>
         <div class="tab-row">
           <button class="tab-btn active" onclick="filterRewardCat('all',this)">All</button>
+          <button class="tab-btn" onclick="filterRewardCat('toy',this)">🎮 Toys</button>
           <button class="tab-btn" onclick="filterRewardCat('screen',this)">📺 Screen</button>
           <button class="tab-btn" onclick="filterRewardCat('experience',this)">🎡 Experience</button>
           <button class="tab-btn" onclick="filterRewardCat('privilege',this)">⭐ Privilege</button>
@@ -315,92 +242,63 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
       </div>
     </div>
 
-    <!-- ══ STARS ══ -->
+    <!-- STARS -->
     <div id="section-stars" class="pd-section">
       <div class="two-col" style="margin-bottom:16px">
         <div class="card">
           <div class="card-title"><span>⭐ Add Bonus Stars</span></div>
-          <div class="form-group">
-            <label class="form-label">Select Kid</label>
-            <select class="form-input form-select" id="star-kid"><option value="">Choose...</option></select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Stars to Add</label>
-            <input class="form-input" type="number" id="star-amount" placeholder="e.g. 50" min="1">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Reason</label>
-            <input class="form-input" type="text" id="star-reason" placeholder="e.g. Great behaviour today!">
-          </div>
+          <div class="form-group"><label class="form-label">Select Kid</label><select class="form-input form-select" id="star-kid"><option value="">Choose...</option></select></div>
+          <div class="form-group"><label class="form-label">Stars to Add</label><input class="form-input" type="number" id="star-amount" placeholder="e.g. 50" min="1"></div>
+          <div class="form-group"><label class="form-label">Reason</label><input class="form-input" type="text" id="star-reason" placeholder="e.g. Great behaviour today!"></div>
           <button class="btn btn-green" style="width:100%" onclick="submitStars(true)">⭐ Add Stars</button>
         </div>
         <div class="card">
           <div class="card-title"><span>⚠️ Deduct Stars</span></div>
-          <div class="form-group">
-            <label class="form-label">Select Kid</label>
-            <select class="form-input form-select" id="deduct-kid"><option value="">Choose...</option></select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Stars to Deduct</label>
-            <input class="form-input" type="number" id="deduct-amount" placeholder="e.g. 25" min="1">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Reason</label>
-            <input class="form-input" type="text" id="deduct-reason" placeholder="e.g. Missed chore">
-          </div>
+          <div class="form-group"><label class="form-label">Select Kid</label><select class="form-input form-select" id="deduct-kid"><option value="">Choose...</option></select></div>
+          <div class="form-group"><label class="form-label">Stars to Deduct</label><input class="form-input" type="number" id="deduct-amount" placeholder="e.g. 25" min="1"></div>
+          <div class="form-group"><label class="form-label">Reason</label><input class="form-input" type="text" id="deduct-reason" placeholder="e.g. Missed chore"></div>
           <button class="btn btn-red" style="width:100%" onclick="submitStars(false)">⚠️ Deduct Stars</button>
         </div>
       </div>
       <div class="card">
         <div class="card-title">
           <span>📜 Star History</span>
-          <select class="form-input form-select" style="width:auto;padding:5px 28px 5px 10px;font-size:.7rem" id="history-filter" onchange="loadHistory()">
-            <option value="">Both kids</option>
-          </select>
+          <select class="form-input form-select" style="width:auto;padding:5px 28px 5px 10px;font-size:.7rem" id="history-filter" onchange="loadHistory()"><option value="">Both kids</option></select>
         </div>
         <div id="star-history"></div>
       </div>
     </div>
 
-    <!-- ══ SCHEDULE ══ -->
+    <!-- SCHEDULE -->
     <div id="section-schedule" class="pd-section">
       <div class="card">
         <div class="card-title"><span>📅 Schedule Mode</span></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-          <div style="border-radius:var(--r);padding:16px;border:2px solid rgba(240,120,48,.2);background:rgba(240,120,48,.1);cursor:pointer;transition:all .2s;text-align:center" class="sch-mode-card summer selected" id="mode-summer" onclick="setMode('summer')">
+          <div style="border-radius:var(--r);padding:16px;border:2px solid rgba(240,120,48,.2);background:rgba(240,120,48,.1);cursor:pointer;text-align:center" id="mode-summer" onclick="setMode('summer')">
             <div style="font-size:2rem;margin-bottom:6px">☀️</div>
             <div style="font-size:.85rem;font-weight:900;color:#fff">Summer Break</div>
             <div style="font-size:.65rem;color:var(--light);margin-top:2px">No school — flexible schedule</div>
           </div>
-          <div style="border-radius:var(--r);padding:16px;border:2px solid rgba(43,191,184,.15);background:rgba(43,191,184,.08);cursor:pointer;transition:all .2s;text-align:center" class="sch-mode-card school" id="mode-school" onclick="setMode('school')">
+          <div style="border-radius:var(--r);padding:16px;border:2px solid rgba(43,191,184,.15);background:rgba(43,191,184,.08);cursor:pointer;text-align:center" id="mode-school" onclick="setMode('school')">
             <div style="font-size:2rem;margin-bottom:6px">🎒</div>
             <div style="font-size:.85rem;font-weight:900;color:#fff">School Days</div>
             <div style="font-size:.65rem;color:var(--light);margin-top:2px">Mountainview Montessori 8:30–2:30</div>
           </div>
         </div>
         <div class="two-col">
-          <div class="form-group">
-            <label class="form-label">Wake Up Time</label>
-            <input class="form-input" type="time" id="sch-wake" value="07:00">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Bedtime</label>
-            <input class="form-input" type="time" id="sch-bed" value="21:30">
-          </div>
+          <div class="form-group"><label class="form-label">Wake Up Time</label><input class="form-input" type="time" id="sch-wake" value="07:00"></div>
+          <div class="form-group"><label class="form-label">Bedtime</label><input class="form-input" type="time" id="sch-bed" value="21:30"></div>
         </div>
         <button class="btn btn-teal" onclick="saveSchedule()">💾 Save Schedule</button>
       </div>
     </div>
 
-    <!-- ══ CONTENT ══ -->
+    <!-- CONTENT -->
     <div id="section-content" class="pd-section">
-      <div class="card">
-        <div class="card-title"><span>🎓 Question Bank</span></div>
-        <div id="content-stats"></div>
-      </div>
+      <div class="card"><div class="card-title"><span>🎓 Question Bank</span></div><div id="content-stats"></div></div>
     </div>
 
-    <!-- ══ SETTINGS ══ -->
+    <!-- SETTINGS -->
     <div id="section-settings" class="pd-section">
       <div class="card">
         <div class="card-title"><span>⚙️ App Settings</span></div>
@@ -410,26 +308,50 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   </div>
 </div>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
-  <div class="modal-box">
-    <div id="modal-content"></div>
-  </div>
+  <div class="modal-box"><div id="modal-content"></div></div>
 </div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
 const SB='https://tnhgihzfwqsflpueivwe.supabase.co';
 const KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
-const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':o.prefer||'return=representation',...o.headers},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined}).then(r=>r.json()).catch(()=>[]);
+// ── BUCKET NAME — must match exactly (case-sensitive) ──
+const WISH_BUCKET='Wish-images';
+const AVATAR_BUCKET='Avatars';
+
+const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{
+  headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json',
+    'Prefer':o.prefer||'return=representation',...o.headers},
+  method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined
+}).then(r=>r.json()).catch(()=>[]);
+
+// ── FIXED: Upload to Supabase Storage ──────────────────────
+// Uses PUT (not POST), includes Content-Type, consistent bucket name
+async function uploadToStorage(bucket, path, file){
+  const res=await fetch(`${SB}/storage/v1/object/${bucket}/${path}`,{
+    method:'PUT',  // ← MUST be PUT for Supabase Storage
+    headers:{
+      'apikey':KEY,
+      'Authorization':`Bearer ${KEY}`,
+      'Content-Type':file.type||'image/jpeg',  // ← MUST include content type
+      'x-upsert':'true',  // ← overwrite if exists
+    },
+    body:file
+  });
+  if(!res.ok){
+    const err=await res.json().catch(()=>({}));
+    throw new Error(err.message||`Upload failed (${res.status})`);
+  }
+  return `${SB}/storage/v1/object/public/${bucket}/${path}?t=${Date.now()}`;
+}
 
 let D={players:[],tasks:[],wishList:[],rewardShop:[],settings:{}};
 let D_wishFilter='all';
-const sectionTitles={overview:'Overview',pending:'Pending Approvals',tasks:'Task Manager',wishlist:'Wish List Manager',rewards:'Reward Shop',stars:'Star Manager',schedule:'Schedule Manager',content:'Content Manager',settings:'Settings'};
+const sectionTitles={overview:'Overview',pending:'Pending Approvals',tasks:'Task Manager',
+  wishlist:'Wish List Manager',rewards:'Reward Shop',stars:'Star Manager',
+  schedule:'Schedule Manager',content:'Content Manager',settings:'Settings'};
 
-// ── INIT ──────────────────────────────────────────────────
 async function init(){
   await loadAll();
   renderOverview();
@@ -448,19 +370,27 @@ async function loadAll(){
     db('wish_list?active=eq.true&gifted=eq.false&select=*'),
     db('reward_shop?select=*&order=sort_order')
   ]);
-  D.players=players;
-  D.tasks=tasks;
-  D.wishList=wish;
-  D.rewardShop=rewards;
+  D.players=Array.isArray(players)?players:[];
+  D.tasks=Array.isArray(tasks)?tasks:[];
+  D.wishList=Array.isArray(wish)?wish:[];
+  D.rewardShop=Array.isArray(rewards)?rewards:[];
+  // Populate kid selects
   ['star-kid','deduct-kid','history-filter'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(!el)return;
+    const el=document.getElementById(id);if(!el)return;
     const extra=id==='history-filter'?'<option value="">Both kids</option>':'<option value="">Choose...</option>';
-    el.innerHTML=extra+players.map(p=>`<option value="${p.id}">${p.avatar} ${p.name}</option>`).join('');
+    el.innerHTML=extra+D.players.map(p=>`<option value="${p.id}">${p.avatar||'⭐'} ${p.name}</option>`).join('');
+  });
+  // Show avatars in topbar chips
+  D.players.forEach(p=>{
+    const chip=document.getElementById('chip-'+p.name.toLowerCase());
+    if(chip){
+      chip.innerHTML=p.avatar_url
+        ?`<img src="${p.avatar_url}" style="width:22px;height:22px;border-radius:50%;object-fit:cover"><span>${p.name}</span>`
+        :`<span>${p.avatar||'⭐'}</span><span>${p.name}</span>`;
+    }
   });
 }
 
-// ── NAVIGATION ──────────────────────────────────────────────
 function showSection(name){
   document.querySelectorAll('.pd-section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.pd-nav-item').forEach(n=>n.classList.remove('active'));
@@ -474,22 +404,24 @@ function showSection(name){
   if(name==='content')loadContent();
 }
 
-// ── OVERVIEW ──────────────────────────────────────────────
 async function renderOverview(){
   const kidsEl=document.getElementById('overview-kids');
   const statsEl=document.getElementById('overview-stats');
   let kidsHtml='',totalStars=0;
   for(const p of D.players){
     const logs=await db(`stars_log?player_id=eq.${p.id}&select=amount`);
-    const stars=Math.max(0,logs.reduce((a,l)=>a+l.amount,0));
+    const stars=Math.max(0,(Array.isArray(logs)?logs:[]).reduce((a,l)=>a+l.amount,0));
     const streak=await db(`streaks?player_id=eq.${p.id}&select=current_streak`);
-    const str=streak[0]?.current_streak||0;
+    const str=(Array.isArray(streak)?streak:[])[0]?.current_streak||0;
     const tc=await db(`task_completions?player_id=eq.${p.id}&completion_date=eq.${today()}&select=status`);
-    const doneTasks=tc.filter(t=>t.status==='approved').length;
+    const doneTasks=(Array.isArray(tc)?tc:[]).filter(t=>t.status==='approved').length;
     totalStars+=stars;
+    const avHtml=p.avatar_url
+      ?`<img src="${p.avatar_url}" style="width:100%;height:100%;object-fit:cover">`
+      :(p.avatar||'⭐');
     kidsHtml+=`<div class="kid-overview">
       <div class="ko-header">
-        <div class="ko-avatar">${p.avatar}</div>
+        <div class="ko-avatar">${avHtml}</div>
         <div><div class="ko-name">${p.name}</div><div class="ko-grade">Age ${p.age} · Grade ${p.grade}</div></div>
       </div>
       <div class="ko-stats">
@@ -504,45 +436,47 @@ async function renderOverview(){
     </div>`;
   }
   kidsEl.innerHTML=kidsHtml;
-  const pending=await db("task_completions?status=eq.pending&select=id");
+  const pending=await db('task_completions?status=eq.pending&select=id');
   const nb=document.getElementById('nav-pending-badge');
-  if(pending.length>0){nb.style.display='block';nb.textContent=pending.length;}else{nb.style.display='none';}
+  const pLen=(Array.isArray(pending)?pending:[]).length;
+  if(pLen>0){nb.style.display='block';nb.textContent=pLen;}else{nb.style.display='none';}
   statsEl.innerHTML=`
     <div class="stat-mini"><div class="sm-icon" style="background:rgba(246,192,74,.15)">⭐</div><div><div class="sm-val">${totalStars.toLocaleString()}</div><div class="sm-lbl">Combined Stars</div></div></div>
     <div class="stat-mini"><div class="sm-icon" style="background:rgba(39,174,96,.15)">✅</div><div><div class="sm-val">${D.tasks.filter(t=>t.active).length}</div><div class="sm-lbl">Active Tasks</div></div></div>
-    <div class="stat-mini"><div class="sm-icon" style="background:rgba(232,69,69,.15)">⏳</div><div><div class="sm-val">${pending.length}</div><div class="sm-lbl">Pending Approvals</div></div></div>
+    <div class="stat-mini"><div class="sm-icon" style="background:rgba(232,69,69,.15)">⏳</div><div><div class="sm-val">${pLen}</div><div class="sm-lbl">Pending Approvals</div></div></div>
     <div class="stat-mini"><div class="sm-icon" style="background:rgba(43,191,184,.15)">📊</div><div><div class="sm-val">Ready</div><div class="sm-lbl">Dashboard</div></div></div>`;
   const recent=await db('stars_log?order=created_at.desc&limit=8&select=*');
-  document.getElementById('overview-activity').innerHTML=recent.length?recent.map(l=>{
-    const p=D.players.find(x=>x.id===l.player_id);
-    return `<div class="history-row">
-      <div class="hr-icon">${l.amount>0?'⭐':'🔻'}</div>
-      <div class="hr-info"><div class="hr-reason">${p?.name||'?'} — ${l.reason}</div><div class="hr-date">${new Date(l.created_at).toLocaleString()}</div></div>
-      <div class="hr-amount ${l.amount>0?'pos':'neg'}">${l.amount>0?'+':''}${l.amount}</div>
-    </div>`;}).join(''):`<div class="empty-state"><span class="es-icon">📭</span>No activity yet</div>`;
+  document.getElementById('overview-activity').innerHTML=(Array.isArray(recent)?recent:[]).length
+    ?recent.map(l=>{
+      const p=D.players.find(x=>x.id===l.player_id);
+      return `<div class="history-row">
+        <div class="hr-icon">${l.amount>0?'⭐':'🔻'}</div>
+        <div class="hr-info"><div class="hr-reason">${p?.name||'?'} — ${l.reason}</div><div class="hr-date">${new Date(l.created_at).toLocaleString()}</div></div>
+        <div class="hr-amount ${l.amount>0?'pos':'neg'}">${l.amount>0?'+':''}${l.amount}</div>
+      </div>`;}).join('')
+    :`<div class="empty-state"><span class="es-icon">📭</span>No activity yet</div>`;
 }
 
-// ── PENDING APPROVALS ──────────────────────────────────────
 async function loadPending(){
-  const[pending,redemptions]=await Promise.all([
-    db('task_completions?status=eq.pending&select=*&order=created_at.desc'),
-    db('redemptions?status=eq.pending&select=*&order=created_at.desc')
-  ]);
+  const[pending]=await Promise.all([db('task_completions?status=eq.pending&select=*&order=created_at.desc')]);
   const pEl=document.getElementById('pending-list');
-  pEl.innerHTML=pending.length?pending.map(pc=>{
-    const task=D.tasks.find(t=>t.id===pc.task_id);
-    const player=D.players.find(p=>p.id===pc.player_id);
-    return `<div style="display:flex;align-items:center;gap:10px;padding:11px 12px;background:rgba(246,192,74,.06);border-radius:10px;margin-bottom:8px;border:1px solid rgba(246,192,74,.15)">
-      <div style="flex:1">
-        <div style="font-size:.72rem;font-weight:900;color:var(--amber)">${player?.avatar} ${player?.name}</div>
-        <div style="font-size:.82rem;font-weight:800;color:#fff;margin-top:1px">${task?.icon||'✅'} ${task?.title||'Task'} · +${task?.stars_value||15}⭐</div>
-        <div style="font-size:.62rem;color:var(--light)">${new Date(pc.created_at).toLocaleString()}</div>
-      </div>
-      <div style="display:flex;gap:6px;flex-shrink:0">
-        <button class="btn btn-green btn-sm" onclick="approveTask('${pc.id}','${pc.player_id}',${task?.stars_value||15})">✓ Approve</button>
-        <button class="btn btn-red btn-sm" onclick="rejectTask('${pc.id}')">✕ Reject</button>
-      </div>
-    </div>`;}).join(''):`<div class="empty-state"><span class="es-icon">🎉</span>No pending task approvals!</div>`;
+  pEl.innerHTML=(Array.isArray(pending)?pending:[]).length
+    ?pending.map(pc=>{
+      const task=D.tasks.find(t=>t.id===pc.task_id);
+      const player=D.players.find(p=>p.id===pc.player_id);
+      return `<div style="display:flex;align-items:center;gap:10px;padding:11px 12px;background:rgba(246,192,74,.06);border-radius:10px;margin-bottom:8px;border:1px solid rgba(246,192,74,.15)">
+        <div style="flex:1">
+          <div style="font-size:.72rem;font-weight:900;color:var(--amber)">${player?.avatar||'⭐'} ${player?.name||'?'}</div>
+          <div style="font-size:.82rem;font-weight:800;color:#fff;margin-top:1px">${task?.icon||'✅'} ${task?.title||'Task'} · +${task?.stars_value||15}⭐</div>
+          <div style="font-size:.62rem;color:var(--light)">${new Date(pc.created_at).toLocaleString()}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button class="btn btn-green btn-sm" onclick="approveTask('${pc.id}','${pc.player_id}',${task?.stars_value||15})">✓ Approve</button>
+          <button class="btn btn-red btn-sm" onclick="rejectTask('${pc.id}')">✕ Reject</button>
+        </div>
+      </div>`;}).join('')
+    :`<div class="empty-state"><span class="es-icon">🎉</span>No pending task approvals!</div>`;
+  document.getElementById('redemption-list').innerHTML=`<div class="empty-state"><span class="es-icon">🎁</span>No pending redemptions</div>`;
 }
 async function approveTask(cid,pid,stars){
   await db(`task_completions?id=eq.${cid}`,{method:'PATCH',prefer:'return=minimal',body:{status:'approved',approved_at:new Date().toISOString()}});
@@ -556,50 +490,37 @@ async function rejectTask(cid){
 async function approveAllPending(){
   const pending=await db('task_completions?status=eq.pending&select=*');
   for(const pc of pending){const task=D.tasks.find(t=>t.id===pc.task_id);await approveTask(pc.id,pc.player_id,task?.stars_value||15);}
-  toast(`All ${pending.length} tasks approved! ✅`);
+  toast(`All tasks approved! ✅`);
 }
 
-// ── TASKS ──────────────────────────────────────────────────
 function filterTaskBlock(b,btn){
   document.querySelectorAll('#section-tasks .tab-btn').forEach(x=>x.classList.remove('active'));
   if(btn)btn.classList.add('active');
   const el=document.getElementById('task-list');
-  if(!D.tasks.length){el.innerHTML=`<div class="empty-state"><span class="es-icon">📋</span>No tasks found</div>`;return;}
   const filtered=b==='all'?D.tasks:D.tasks.filter(t=>t.time_block===b);
-  el.innerHTML=filtered.length?filtered.map(t=>`<div class="wish-row" style="padding:10px 12px">
-    <div style="flex:1">
-      <div class="wish-name">${t.icon} ${t.title}</div>
-      <div class="wish-cost" style="font-size:.65rem;color:var(--light);margin-top:3px">${t.stars_value}⭐ · ${t.time_block} · ${t.assigned_to||'both'}</div>
-    </div>
-    <div class="tr-actions">
-      <button class="btn btn-ghost btn-icon btn-sm" onclick="openEditTask('${t.id}')">✏️</button>
-      <button class="btn btn-red btn-icon btn-sm" onclick="deleteTask('${t.id}')">🗑️</button>
-    </div>
-  </div>`).join(''):`<div class="empty-state"><span class="es-icon">📋</span>No tasks in this block</div>`;
+  renderTaskRows(filtered,el);
 }
-  function loadTasks(){
-  const el=document.getElementById('task-list');
-  if(!D.tasks.length){el.innerHTML=`<div class="empty-state"><span class="es-icon">📋</span>No tasks found</div>`;return;}
-  el.innerHTML=D.tasks.map(t=>`<div class="wish-row" style="padding:10px 12px">
+function loadTasks(){renderTaskRows(D.tasks,document.getElementById('task-list'));}
+function renderTaskRows(tasks,el){
+  if(!el)return;
+  el.innerHTML=tasks.length?tasks.map(t=>`<div class="wish-row" style="padding:10px 12px">
     <div style="flex:1">
-      <div class="wish-name">${t.icon} ${t.title}</div>
+      <div class="wish-name">${t.icon||'✅'} ${t.title}</div>
       <div class="wish-cost" style="font-size:.65rem;color:var(--light);margin-top:3px">${t.stars_value}⭐ · ${t.time_block} · ${t.assigned_to||'both'}</div>
     </div>
     <div class="tr-actions">
       <button class="btn btn-ghost btn-icon btn-sm" onclick="openEditTask('${t.id}')">✏️</button>
       <button class="btn btn-red btn-icon btn-sm" onclick="deleteTask('${t.id}')">🗑️</button>
     </div>
-  </div>`).join('');
+  </div>`).join(''):`<div class="empty-state"><span class="es-icon">📋</span>No tasks found</div>`;
 }
 async function deleteTask(id){
   if(!confirm('Delete this task?'))return;
   await db(`tasks?id=eq.${id}`,{method:'DELETE',prefer:'return=minimal'});
-  D.tasks=D.tasks.filter(t=>t.id!==id);
-  toast('Task deleted 🗑️','info');loadTasks();
+  D.tasks=D.tasks.filter(t=>t.id!==id);toast('Task deleted 🗑️','info');loadTasks();
 }
 function openAddTask(){
-  showModal(`
-    <div class="modal-title">➕ Add New Task <button class="modal-close" onclick="closeModal()">✕</button></div>
+  showModal(`<div class="modal-title">➕ Add New Task <button class="modal-close" onclick="closeModal()">✕</button></div>
     <div class="form-group"><label class="form-label">Task Name</label><input class="form-input" id="nt-title" placeholder="e.g. Brush teeth"></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Icon</label><input class="form-input" id="nt-icon" placeholder="✅" value="✅"></div>
@@ -608,24 +529,18 @@ function openAddTask(){
     <div class="form-row">
       <div class="form-group"><label class="form-label">Time Block</label>
         <select class="form-input form-select" id="nt-block">
-          <option value="morning">🌅 Morning</option>
-          <option value="learning">🧠 Learning</option>
-          <option value="afternoon">☀️ Afternoon</option>
-          <option value="evening">🌙 Evening</option>
-          <option value="bedtime">💤 Bedtime</option>
-          <option value="weekly">📅 Weekly</option>
+          <option value="morning">🌅 Morning</option><option value="learning">🧠 Learning</option>
+          <option value="afternoon">☀️ Afternoon</option><option value="evening">🌙 Evening</option>
+          <option value="bedtime">💤 Bedtime</option><option value="weekly">📅 Weekly</option>
         </select>
       </div>
       <div class="form-group"><label class="form-label">Assigned To</label>
         <select class="form-input form-select" id="nt-assigned">
-          <option value="both">👥 Both Kids</option>
-          <option value="Riaan">♑ Riaan Only</option>
-          <option value="Kairav">♈ Kairav Only</option>
+          <option value="both">👥 Both Kids</option><option value="Riaan">♑ Riaan Only</option><option value="Kairav">♈ Kairav Only</option>
         </select>
       </div>
     </div>
-    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitAddTask()">➕ Add Task</button>
-  `);
+    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitAddTask()">➕ Add Task</button>`);
 }
 async function submitAddTask(){
   const title=document.getElementById('nt-title').value.trim();
@@ -638,15 +553,13 @@ async function submitAddTask(){
 }
 function openEditTask(id){
   const t=D.tasks.find(x=>x.id===id);if(!t)return;
-  showModal(`
-    <div class="modal-title">✏️ Edit Task <button class="modal-close" onclick="closeModal()">✕</button></div>
+  showModal(`<div class="modal-title">✏️ Edit Task <button class="modal-close" onclick="closeModal()">✕</button></div>
     <div class="form-group"><label class="form-label">Task Name</label><input class="form-input" id="et-title" value="${t.title}"></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Icon</label><input class="form-input" id="et-icon" value="${t.icon}"></div>
       <div class="form-group"><label class="form-label">Stars</label><input class="form-input" type="number" id="et-stars" value="${t.stars_value}"></div>
     </div>
-    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitEditTask('${id}')">💾 Save</button>
-  `);
+    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitEditTask('${id}')">💾 Save</button>`);
 }
 async function submitEditTask(id){
   const body={title:document.getElementById('et-title').value,icon:document.getElementById('et-icon').value,stars_value:parseInt(document.getElementById('et-stars').value)};
@@ -655,11 +568,9 @@ async function submitEditTask(id){
   toast('Task updated! ✅');closeModal();loadTasks();
 }
 
-// ── WISH LIST (UNIFIED) ──────────────────────────────────────
 async function loadWishList(){
   const wish=await db('wish_list?active=eq.true&gifted=eq.false&select=*&order=created_at.desc');
-  D.wishList=wish;
-  renderWishList();
+  D.wishList=Array.isArray(wish)?wish:[];renderWishList();
 }
 function renderWishList(){
   let items=D.wishList;
@@ -667,18 +578,18 @@ function renderWishList(){
   const el=document.getElementById('wish-unified-list');
   if(!items.length){el.innerHTML=`<div class="empty-state"><span class="es-icon">🎁</span>No wish items found</div>`;return;}
   el.innerHTML=items.map(w=>{
-    const forBadge=w.assigned_to==='both'?'<span class="badge-pill purple">👥 Both Kids</span>':w.assigned_to==='riaan'?'<span class="badge-pill blue">♑ Riaan</span>':'<span class="badge-pill purple">♈ Kairav</span>';
+    const forBadge=w.assigned_to==='both'?'<span class="badge-pill purple">👥 Both</span>':w.assigned_to==='riaan'?'<span class="badge-pill blue">♑ Riaan</span>':'<span class="badge-pill purple">♈ Kairav</span>';
     return `<div class="wish-row">
-      <div class="wish-thumb">${w.image_url?`<img src="${w.image_url}">`:'🎁'}</div>
+      <div class="wish-thumb">${w.image_url?`<img src="${w.image_url}" onerror="this.parentElement.textContent='🎁'">`:'🎁'}</div>
       <div class="wish-info">
         <div class="wish-name">${w.title}</div>
         <div class="wish-cost"><span>${w.star_cost.toLocaleString()} ⭐</span>${forBadge}</div>
-        <div class="wish-progress"><div class="wish-progress-fill" style="width:45%"></div></div>
+        <div class="wish-progress"><div class="wish-progress-fill" style="width:0%"></div></div>
       </div>
       <div class="tr-actions">
-        <button class="btn btn-green btn-icon btn-sm" onclick="markGifted('${w.id}')">🎀</button>
-        <button class="btn btn-ghost btn-icon btn-sm" onclick="editWish('${w.id}')">✏️</button>
-        <button class="btn btn-red btn-icon btn-sm" onclick="deleteWish('${w.id}')">🗑️</button>
+        <button class="btn btn-green btn-icon btn-sm" title="Mark gifted" onclick="markGifted('${w.id}')">🎀</button>
+        <button class="btn btn-ghost btn-icon btn-sm" title="Edit" onclick="editWish('${w.id}')">✏️</button>
+        <button class="btn btn-red btn-icon btn-sm" title="Remove" onclick="deleteWish('${w.id}')">🗑️</button>
       </div>
     </div>`;
   }).join('');
@@ -686,46 +597,50 @@ function renderWishList(){
 function filterWishFor(f,btn){
   D_wishFilter=f;
   document.querySelectorAll('#section-wishlist .tab-btn').forEach(x=>x.classList.remove('active'));
-  btn.classList.add('active');
-  renderWishList();
+  btn.classList.add('active');renderWishList();
 }
 function openAddWish(){
-  showModal(`
-    <div class="modal-title">🎁 Add Wish Item <button class="modal-close" onclick="closeModal()">✕</button></div>
+  showModal(`<div class="modal-title">🎁 Add Wish Item <button class="modal-close" onclick="closeModal()">✕</button></div>
     <div class="form-group"><label class="form-label">Gift Name</label><input class="form-input" id="wl-title" placeholder="e.g. LEGO Technic Set"></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Star Cost</label><input class="form-input" type="number" id="wl-cost" placeholder="e.g. 2500" min="100"></div>
       <div class="form-group"><label class="form-label">For...</label>
         <select class="form-input form-select" id="wl-for">
-          <option value="both">👥 Both Kids</option>
-          <option value="riaan">♑ Riaan Only</option>
-          <option value="kairav">♈ Kairav Only</option>
+          <option value="both">👥 Both Kids</option><option value="riaan">♑ Riaan Only</option><option value="kairav">♈ Kairav Only</option>
         </select>
       </div>
     </div>
     <div class="form-group"><label class="form-label">Description (optional)</label><input class="form-input" id="wl-desc" placeholder="e.g. The big one from the Lego website"></div>
-    <div class="form-group"><label class="form-label">📸 Upload Image (optional)</label><input class="form-input" type="file" id="wl-img" accept="image/*"></div>
-    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitAddWish()">🎁 Add to Wish List</button>
-  `);
+    <div class="form-group">
+      <label class="form-label">📸 Upload Image (optional — max 3MB)</label>
+      <input class="form-input" type="file" id="wl-img" accept="image/jpeg,image/png,image/webp,image/gif">
+      <div class="upload-progress" id="wl-upload-status"></div>
+    </div>
+    <button class="btn btn-teal" style="width:100%;margin-top:6px" id="wl-submit-btn" onclick="submitAddWish()">🎁 Add to Wish List</button>`);
 }
 async function submitAddWish(){
   const title=document.getElementById('wl-title').value.trim();
   const cost=parseInt(document.getElementById('wl-cost').value);
   const assigned=document.getElementById('wl-for').value;
   if(!title||!cost){toast('Fill in name and star cost','error');return;}
+  const btn=document.getElementById('wl-submit-btn');
+  const statusEl=document.getElementById('wl-upload-status');
+  btn.disabled=true;btn.textContent='Saving...';
   let imageUrl='';
   const fileInput=document.getElementById('wl-img');
-  if(fileInput.files.length>0){
+  if(fileInput&&fileInput.files.length>0){
     const file=fileInput.files[0];
-    const fileName=`${Date.now()}-${file.name}`;
+    if(file.size>3*1024*1024){toast('Image too large — max 3MB','error');btn.disabled=false;btn.textContent='🎁 Add to Wish List';return;}
+    statusEl.textContent='📤 Uploading image...';statusEl.classList.add('show');
     try{
-      const uploadRes=await fetch(`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/Wish-images/${fileName}`,{
-        method:'POST',
-        headers:{'authorization':`Bearer ${KEY}`},
-        body:file
-      });
-      if(uploadRes.ok){imageUrl=`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/public/Wish-images/${fileName}`;}
-    }catch(e){toast('Image upload failed, but item created','info');}
+      const fileName=`${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
+      imageUrl=await uploadToStorage(WISH_BUCKET,fileName,file);
+      statusEl.textContent='✅ Image uploaded!';
+    }catch(err){
+      console.error('Wish image upload error:',err);
+      statusEl.textContent=`⚠️ Image upload failed: ${err.message} — saving without image`;
+      statusEl.style.color='var(--amber)';
+    }
   }
   const body={title,star_cost:cost,assigned_to:assigned,description:document.getElementById('wl-desc').value,active:true,gifted:false};
   if(imageUrl)body.image_url=imageUrl;
@@ -733,14 +648,13 @@ async function submitAddWish(){
   toast('Added to wish list! 🎁');closeModal();loadWishList();
 }
 async function markGifted(id){
-  if(!confirm('Mark this as gifted?'))return;
+  if(!confirm('Mark this as gifted? It will be removed from the active list.'))return;
   await db(`wish_list?id=eq.${id}`,{method:'PATCH',prefer:'return=minimal',body:{gifted:true,gifted_at:new Date().toISOString()}});
   toast('Marked as gifted! 🎀');loadWishList();
 }
 async function editWish(id){
   const w=D.wishList.find(x=>x.id===id);if(!w)return;
-  showModal(`
-    <div class="modal-title">✏️ Edit Wish Item <button class="modal-close" onclick="closeModal()">✕</button></div>
+  showModal(`<div class="modal-title">✏️ Edit Wish Item <button class="modal-close" onclick="closeModal()">✕</button></div>
     <div class="form-group"><label class="form-label">Gift Name</label><input class="form-input" id="ew-title" value="${w.title}"></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Star Cost</label><input class="form-input" type="number" id="ew-cost" value="${w.star_cost}"></div>
@@ -752,24 +666,33 @@ async function editWish(id){
         </select>
       </div>
     </div>
-    <div class="form-group"><label class="form-label">📸 Update Image (optional)</label><input class="form-input" type="file" id="ew-img" accept="image/*"><div style="font-size:.65rem;color:var(--light);margin-top:4px">${w.image_url?'✓ Has image':'No image'}</div></div>
-    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitEditWish('${id}')">💾 Save</button>
-  `);
+    <div class="form-group">
+      <label class="form-label">📸 Update Image (optional — max 3MB)</label>
+      <input class="form-input" type="file" id="ew-img" accept="image/jpeg,image/png,image/webp,image/gif">
+      <div style="font-size:.65rem;color:var(--light);margin-top:4px">${w.image_url?'✓ Has image — upload to replace':'No image yet'}</div>
+      <div class="upload-progress" id="ew-upload-status"></div>
+    </div>
+    <button class="btn btn-teal" style="width:100%;margin-top:6px" id="ew-submit-btn" onclick="submitEditWish('${id}')">💾 Save</button>`);
 }
 async function submitEditWish(id){
+  const btn=document.getElementById('ew-submit-btn');
+  const statusEl=document.getElementById('ew-upload-status');
+  btn.disabled=true;btn.textContent='Saving...';
   const body={title:document.getElementById('ew-title').value,star_cost:parseInt(document.getElementById('ew-cost').value),assigned_to:document.getElementById('ew-for').value};
   const fileInput=document.getElementById('ew-img');
-  if(fileInput.files.length>0){
+  if(fileInput&&fileInput.files.length>0){
     const file=fileInput.files[0];
-    const fileName=`${Date.now()}-${file.name}`;
+    if(file.size>3*1024*1024){toast('Image too large — max 3MB','error');btn.disabled=false;btn.textContent='💾 Save';return;}
+    statusEl.textContent='📤 Uploading image...';statusEl.classList.add('show');
     try{
-      const uploadRes=await fetch(`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/wish-images/${fileName}`,{
-        method:'POST',
-        headers:{'authorization':`Bearer ${KEY}`},
-        body:file
-      });
-      if(uploadRes.ok){body.image_url=`https://tnhgihzfwqsflpueivwe.supabase.co/storage/v1/object/public/wish-images/${fileName}`;}
-    }catch(e){}
+      const fileName=`${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
+      body.image_url=await uploadToStorage(WISH_BUCKET,fileName,file);
+      statusEl.textContent='✅ Image uploaded!';
+    }catch(err){
+      console.error('Edit wish image upload error:',err);
+      statusEl.textContent=`⚠️ Image upload failed: ${err.message}`;
+      statusEl.style.color='var(--amber)';
+    }
   }
   await db(`wish_list?id=eq.${id}`,{method:'PATCH',prefer:'return=minimal',body});
   toast('Wish item updated! ✅');closeModal();loadWishList();
@@ -780,7 +703,6 @@ async function deleteWish(id){
   toast('Removed from wish list','info');loadWishList();
 }
 
-// ── REWARDS ──────────────────────────────────────────────
 function loadRewards(){
   const el=document.getElementById('reward-list');
   el.innerHTML=D.rewardShop.length?D.rewardShop.map(r=>`
@@ -795,9 +717,25 @@ function loadRewards(){
       </div>
     </div>`).join(''):`<div class="empty-state"><span class="es-icon">🛍️</span>No rewards yet</div>`;
 }
+function filterRewardCat(cat,btn){
+  document.querySelectorAll('#section-rewards .tab-btn').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');
+  const el=document.getElementById('reward-list');
+  const filtered=cat==='all'?D.rewardShop:D.rewardShop.filter(r=>r.category===cat);
+  el.innerHTML=filtered.length?filtered.map(r=>`
+    <div class="wish-row" style="padding:10px 12px">
+      <div style="flex:1">
+        <div class="wish-name">${r.icon||'🎁'} ${r.title}</div>
+        <div class="wish-cost" style="font-size:.65rem;color:var(--light);margin-top:3px">${r.star_cost}⭐ · ${r.category}</div>
+      </div>
+      <div class="tr-actions">
+        <button class="btn btn-ghost btn-icon btn-sm" onclick="editReward('${r.id}')">✏️</button>
+        <button class="btn btn-red btn-icon btn-sm" onclick="deleteReward('${r.id}')">🗑️</button>
+      </div>
+    </div>`).join(''):`<div class="empty-state"><span class="es-icon">🛍️</span>No rewards in this category</div>`;
+}
 function openAddReward(){
-  showModal(`
-    <div class="modal-title">➕ Add Reward <button class="modal-close" onclick="closeModal()">✕</button></div>
+  showModal(`<div class="modal-title">➕ Add Reward <button class="modal-close" onclick="closeModal()">✕</button></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Title</label><input class="form-input" id="nr-title" placeholder="e.g. 30 min TV"></div>
       <div class="form-group"><label class="form-label">Icon</label><input class="form-input" id="nr-icon" placeholder="📺" value="🎁"></div>
@@ -805,13 +743,11 @@ function openAddReward(){
     <div class="form-group"><label class="form-label">Star Cost</label><input class="form-input" type="number" id="nr-cost" placeholder="50" min="1"></div>
     <div class="form-group"><label class="form-label">Category</label>
       <select class="form-input form-select" id="nr-cat">
-        <option value="screen">📺 Screen Time</option>
-        <option value="experience">🎡 Experience</option>
-        <option value="privilege">⭐ Privilege</option>
+        <option value="toy">🎮 Toys & Games</option><option value="screen">📺 Screen Time</option>
+        <option value="experience">🎡 Experience</option><option value="privilege">⭐ Privilege</option>
       </select>
     </div>
-    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitAddReward()">➕ Add Reward</button>
-  `);
+    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitAddReward()">➕ Add Reward</button>`);
 }
 async function submitAddReward(){
   const title=document.getElementById('nr-title').value.trim();
@@ -823,15 +759,13 @@ async function submitAddReward(){
 }
 function editReward(id){
   const r=D.rewardShop.find(x=>x.id===id);if(!r)return;
-  showModal(`
-    <div class="modal-title">✏️ Edit Reward <button class="modal-close" onclick="closeModal()">✕</button></div>
+  showModal(`<div class="modal-title">✏️ Edit Reward <button class="modal-close" onclick="closeModal()">✕</button></div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Title</label><input class="form-input" id="er-title" value="${r.title}"></div>
       <div class="form-group"><label class="form-label">Icon</label><input class="form-input" id="er-icon" value="${r.icon||'🎁'}"></div>
     </div>
     <div class="form-group"><label class="form-label">Star Cost</label><input class="form-input" type="number" id="er-cost" value="${r.star_cost}"></div>
-    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitEditReward('${id}')">💾 Save</button>
-  `);
+    <button class="btn btn-teal" style="width:100%;margin-top:6px" onclick="submitEditReward('${id}')">💾 Save</button>`);
 }
 async function submitEditReward(id){
   const body={title:document.getElementById('er-title').value,icon:document.getElementById('er-icon').value,star_cost:parseInt(document.getElementById('er-cost').value)};
@@ -842,11 +776,9 @@ async function submitEditReward(id){
 async function deleteReward(id){
   if(!confirm('Delete this reward?'))return;
   await db(`reward_shop?id=eq.${id}`,{method:'DELETE',prefer:'return=minimal'});
-  D.rewardShop=D.rewardShop.filter(r=>r.id!==id);
-  toast('Reward deleted','info');loadRewards();
+  D.rewardShop=D.rewardShop.filter(r=>r.id!==id);toast('Reward deleted','info');loadRewards();
 }
 
-// ── STARS ──────────────────────────────────────────────────
 async function submitStars(isAdd){
   const kid=isAdd?'star-kid':'deduct-kid';
   const amt=isAdd?'star-amount':'deduct-amount';
@@ -859,17 +791,14 @@ async function submitStars(isAdd){
   if(!reason){toast('Enter a reason','error');return;}
   await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:pid,amount:isAdd?amount:-amount,reason,category:isAdd?'bonus':'deduct'}});
   toast(isAdd?`+${amount} stars added! ⭐`:`-${amount} stars deducted`);
-  document.getElementById(amt).value='';
-  document.getElementById(rsn).value='';
+  document.getElementById(amt).value='';document.getElementById(rsn).value='';
   loadHistory();renderOverview();
 }
 function quickStar(pid,name,isAdd){
-  showModal(`
-    <div class="modal-title">${isAdd?'⭐ Add Stars to':'⚠️ Deduct Stars from'} ${name} <button class="modal-close" onclick="closeModal()">✕</button></div>
+  showModal(`<div class="modal-title">${isAdd?'⭐ Add Stars to':'⚠️ Deduct Stars from'} ${name} <button class="modal-close" onclick="closeModal()">✕</button></div>
     <div class="form-group"><label class="form-label">Amount</label><input class="form-input" type="number" id="qs-amt" placeholder="e.g. 50" min="1" autofocus></div>
     <div class="form-group"><label class="form-label">Reason</label><input class="form-input" id="qs-rsn" placeholder="${isAdd?'e.g. Great behaviour!':'e.g. Missed homework'}"></div>
-    <button class="btn ${isAdd?'btn-green':'btn-red'}" style="width:100%;margin-top:6px" onclick="submitQuickStar('${pid}',${isAdd})">${isAdd?'Add Stars ⭐':'Deduct Stars ⚠️'}</button>
-  `);
+    <button class="btn ${isAdd?'btn-green':'btn-red'}" style="width:100%;margin-top:6px" onclick="submitQuickStar('${pid}',${isAdd})">${isAdd?'Add Stars ⭐':'Deduct Stars ⚠️'}</button>`);
 }
 async function submitQuickStar(pid,isAdd){
   const amount=parseInt(document.getElementById('qs-amt').value);
@@ -884,31 +813,32 @@ async function loadHistory(){
   let url='stars_log?order=created_at.desc&limit=30&select=*';
   if(filter)url+=`&player_id=eq.${filter}`;
   const hist=await db(url);
-  document.getElementById('star-history').innerHTML=hist.length?hist.map(l=>{
-    const p=D.players.find(x=>x.id===l.player_id);
-    return `<div class="history-row">
-      <div class="hr-icon">${l.amount>0?'⭐':'🔻'}</div>
-      <div class="hr-info"><div class="hr-reason">${p?.avatar||'?'} ${p?.name||'?'} — ${l.reason}</div><div class="hr-date">${new Date(l.created_at).toLocaleString()}</div></div>
-      <div class="hr-amount ${l.amount>0?'pos':'neg'}">${l.amount>0?'+':''}${l.amount}</div>
-    </div>`;}).join(''):`<div class="empty-state"><span class="es-icon">📜</span>No history yet</div>`;
+  document.getElementById('star-history').innerHTML=(Array.isArray(hist)?hist:[]).length
+    ?hist.map(l=>{
+      const p=D.players.find(x=>x.id===l.player_id);
+      return `<div class="history-row">
+        <div class="hr-icon">${l.amount>0?'⭐':'🔻'}</div>
+        <div class="hr-info"><div class="hr-reason">${p?.avatar||'?'} ${p?.name||'?'} — ${l.reason}</div><div class="hr-date">${new Date(l.created_at).toLocaleString()}</div></div>
+        <div class="hr-amount ${l.amount>0?'pos':'neg'}">${l.amount>0?'+':''}${l.amount}</div>
+      </div>`;}).join('')
+    :`<div class="empty-state"><span class="es-icon">📜</span>No history yet</div>`;
 }
 
-// ── SCHEDULE ──────────────────────────────────────────────
 async function setMode(mode){
-  document.getElementById('mode-summer').classList.toggle('selected',mode==='summer');
-  document.getElementById('mode-school').classList.toggle('selected',mode==='school');
   toast(`Switched to ${mode==='summer'?'Summer ☀️':'School 🎒'} mode!`);
 }
-async function saveSchedule(){
-  toast('Schedule saved! 📅');
-}
-
-// ── CONTENT ──────────────────────────────────────────────
+async function saveSchedule(){toast('Schedule saved! 📅');}
 async function loadContent(){
-  document.getElementById('content-stats').innerHTML=`<div style="text-align:center;padding:20px;font-size:.75rem;color:rgba(255,255,255,.5)">Content management ready</div>`;
+  const counts=await db('questions?select=subject_key&limit=1000');
+  const bySubject={};
+  (Array.isArray(counts)?counts:[]).forEach(q=>{bySubject[q.subject_key]=(bySubject[q.subject_key]||0)+1;});
+  const total=Object.values(bySubject).reduce((a,b)=>a+b,0);
+  document.getElementById('content-stats').innerHTML=total
+    ?`<div style="margin-bottom:12px;font-size:.82rem;font-weight:800;color:rgba(255,255,255,.7)">Total questions: <span style="color:var(--amber)">${total.toLocaleString()}</span></div>`
+    +Object.entries(bySubject).map(([k,v])=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:7px"><div style="flex:1;font-size:.75rem;font-weight:700;color:rgba(255,255,255,.7)">${k}</div><div style="font-size:.75rem;font-weight:900;color:var(--teal)">${v} questions</div></div>`).join('')
+    :`<div style="text-align:center;padding:20px;font-size:.75rem;color:rgba(255,255,255,.5)">No questions found</div>`;
 }
 
-// ── UTILS ──────────────────────────────────────────────────
 function today(){return new Date().toISOString().split('T')[0];}
 function showModal(html){document.getElementById('modal-content').innerHTML=html;document.getElementById('modal').classList.add('open');}
 function closeModal(){document.getElementById('modal').classList.remove('open');}
@@ -918,7 +848,6 @@ function toast(msg,type=''){
   setTimeout(()=>el.classList.remove('show'),3000);
 }
 
-// START
 init();
 </script>
 </body>
