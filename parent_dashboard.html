@@ -146,6 +146,37 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
   .two-col,.three-col,.four-col{grid-template-columns:1fr}
   .form-row,.form-row-3{grid-template-columns:1fr}
 }
+@media(max-width:600px){
+  /* Full mobile — hide sidebar completely, use bottom nav feel */
+  .pd-sidebar{display:none}
+  .pd-main{margin-left:0}
+  .pd-topbar{padding:10px 14px}
+  .pd-topbar h2{font-size:.9rem}
+  .pd-topbar-right{gap:6px}
+  .topbar-kid-chip{padding:4px 8px 4px 6px}
+  .topbar-kid-chip span{font-size:.62rem}
+  .pd-content{padding:12px 14px 30px}
+  .card{padding:14px;margin-bottom:12px}
+  .two-col,.three-col,.four-col,.form-row,.form-row-3{grid-template-columns:1fr}
+  .btn{font-size:.68rem;padding:7px 11px}
+  .btn-sm{font-size:.6rem;padding:4px 8px}
+  .tab-row{flex-wrap:wrap;gap:4px}
+  .tab-btn{font-size:.62rem;padding:6px 8px;flex:none;min-width:calc(33% - 4px)}
+  .wish-row{flex-wrap:wrap;gap:8px}
+  .wish-thumb{width:44px;height:38px}
+  .tr-actions{width:100%;justify-content:flex-end}
+  .modal-overlay{padding:10px 0}
+  .modal-box{border-radius:18px 18px 0 0;max-height:92vh;margin-top:auto}
+  .ko-actions{flex-wrap:wrap}
+  .ko-btn{min-width:calc(50% - 4px)}
+  /* Touch targets */
+  .btn,.ko-btn,.tab-btn,.pd-nav-item,.wish-row{
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+  }
+  /* Fix modal inputs on iOS */
+  .form-input{font-size:16px !important} /* prevents iOS zoom on focus */
+}
 </style>
 </head>
 <body>
@@ -315,7 +346,29 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 </div>
 <div class="toast" id="toast"></div>
 
+<style>
+.pd-mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:50;background:#111A14;border-top:1px solid var(--border);padding:4px 0 8px}
+.pd-mob-nav-inner{display:flex;justify-content:space-around}
+.pd-mn-it{flex:1;text-align:center;cursor:pointer;padding:4px 2px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.pd-mn-ico{font-size:1.2rem;display:block}
+.pd-mn-lb{font-size:.5rem;font-weight:800;color:rgba(255,255,255,.4);display:block;margin-top:1px}
+.pd-mn-it.active .pd-mn-lb{color:var(--teal)}
+@media(max-width:600px){.pd-mob-nav{display:block}.pd-main{padding-bottom:60px}}
+</style>
+
+<div class="pd-mob-nav">
+  <div class="pd-mob-nav-inner">
+    <div class="pd-mn-it active" onclick="showSection('overview');setMobActive(this)"><span class="pd-mn-ico">📊</span><span class="pd-mn-lb">Overview</span></div>
+    <div class="pd-mn-it" onclick="showSection('pending');setMobActive(this)"><span class="pd-mn-ico">✅</span><span class="pd-mn-lb">Approvals</span></div>
+    <div class="pd-mn-it" onclick="showSection('tasks');setMobActive(this)"><span class="pd-mn-ico">📋</span><span class="pd-mn-lb">Tasks</span></div>
+    <div class="pd-mn-it" onclick="showSection('wishlist');setMobActive(this)"><span class="pd-mn-ico">🎁</span><span class="pd-mn-lb">Wishes</span></div>
+    <div class="pd-mn-it" onclick="showSection('stars');setMobActive(this)"><span class="pd-mn-ico">⭐</span><span class="pd-mn-lb">Stars</span></div>
+    <div class="pd-mn-it" onclick="showSection('rewards');setMobActive(this)"><span class="pd-mn-ico">🛍️</span><span class="pd-mn-lb">Rewards</span></div>
+  </div>
+</div>
+
 <script>
+function setMobActive(el){document.querySelectorAll('.pd-mn-it').forEach(x=>x.classList.remove('active'));el.classList.add('active');}
 const SB='https://tnhgihzfwqsflpueivwe.supabase.co';
 const KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
 // ── BUCKET NAME — must match exactly (case-sensitive) ──
