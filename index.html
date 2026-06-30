@@ -4,7 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Riaan & Kairav Learning Hub</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<!-- Fonts: Nunito (body) + Fredoka (display/titles) -->
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- GSAP for spring animations + stagger -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<!-- canvas-confetti for celebration moments -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<!-- CountUp for animated star/number counters -->
+<script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.js"></script>
 <style>
 :root {
   --sb:#0D2B1F;--teal:#2BBFB8;--teal2:#1A9990;
@@ -263,6 +270,49 @@ body{background:#0a1a10}
 .streak-ms-badges{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .streak-ms-badge{display:flex;align-items:center;gap:5px;font-size:.62rem;font-weight:800;padding:4px 9px;border-radius:99px;background:rgba(255,255,255,.06)}
 .streak-ms-badge.earned-badge{background:rgba(246,192,74,.15);color:var(--amber)}.streak-ms-badge.locked-badge{color:rgba(255,255,255,.3)}
+
+/* ── FREDOKA DISPLAY FONT ────────────────────────────────── */
+/* Applied to titles, big numbers, card headings, star counts */
+.h-name, .ps-nm, .ph-nm, .ko-name, .qt-phase-name,
+.week-stat-val, .ko-stat-val, .goal-hero-stars,
+.tb-left h1, .card-ttl, .lvl-title, .j-ttl,
+.qt-num-badge, .sc-val, .trophy-name,
+.quiz-q-txt, .qr-score-num, .lh-num,
+h1, h2, h3 {
+  font-family: 'Fredoka', 'Nunito', sans-serif !important;
+  letter-spacing: 0.2px;
+}
+/* Star/number counters get Fredoka too */
+#h-stars, #r-bal, .goal-hero-stars, .ko-stat-val,
+.week-stat-val, .qt-dp-val, #pp-str, #pp-bad, #pp-lv {
+  font-family: 'Fredoka', 'Nunito', sans-serif !important;
+}
+
+/* ── GSAP ANIMATION CLASSES ─────────────────────────────── */
+/* Cards start invisible — GSAP fades/slides them in */
+.gsap-card-init { opacity: 0; transform: translateY(24px); }
+.gsap-pop-init  { opacity: 0; transform: scale(0.8); }
+
+/* 3D tilt on subject cards — set by JS via inline style */
+.scard, .lscard { transform-style: preserve-3d; will-change: transform; }
+
+/* Pulse ring that GSAP scales on star earn */
+.star-pulse-ring {
+  position: fixed; pointer-events: none; z-index: 9999;
+  width: 60px; height: 60px; border-radius: 50%;
+  border: 3px solid var(--amber);
+  transform: scale(0); opacity: 0;
+}
+
+/* Floating +N star label that flies up on earn */
+.star-earn-label {
+  position: fixed; pointer-events: none; z-index: 9999;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.4rem; font-weight: 700;
+  color: var(--amber);
+  text-shadow: 0 2px 8px rgba(0,0,0,.5);
+  opacity: 0;
+}
 
 /* ── KID PIN SCREEN ──────────────────────────────── */
 #kidPin{position:fixed;inset:0;z-index:1100;background:rgba(4,14,8,.88);backdrop-filter:blur(22px);display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px}
@@ -3769,6 +3819,145 @@ function saveAbout(){
   closeMod();
 }
 
+// ─── QUIZ ENGINE ────────────────────────────────────────────
+async function startSubject(key){
+  const s=S.subjects.find(x=>x.key===key);if(!s)return;
+  S.quizSubj=s;
+  const qEl=document.getElementById('quiz');
+  qEl.style.display='flex';
+  if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='none';
+  document.getElementById('q-subj').textContent=s.name;
+  const targetGrade=gradeAhead(S.player.grade);
+  // Animate quiz opening
+  if(window.gsap) gsap.fromTo(qEl,{opacity:0},{opacity:1,duration:0.3});
+  try{
+    let qs=await db(`questions?subject_key=eq.${key}&active=eq.true&grade=lte.${targetGrade}&limit=50`);
+    if(Array.isArray(qs)&&qs.length)qs=shuf(qs).slice(0,15);
+    if(!Array.isArray(qs)||!qs.length)qs=[
+      {id:'q1',subject_key:'math',grade:3,level:1,topic:'addition',question:'What is 5 + 7?',answer:'12',wrong1:'10',wrong2:'11',wrong3:'13',explanation:'5 + 7 = 12',active:true},
+      {id:'q2',subject_key:'math',grade:1,level:1,topic:'counting',question:'What is 2 + 3?',answer:'5',wrong1:'4',wrong2:'6',wrong3:'7',explanation:'2 + 3 = 5',active:true},
+      {id:'q3',subject_key:'science',grade:3,level:1,topic:'plants',question:'What do plants need to grow?',answer:'sunlight, water and soil',wrong1:'darkness and ice',wrong2:'only water',wrong3:'only sunlight',explanation:'Plants need sunlight, water, and soil',active:true},
+      {id:'q4',subject_key:'english',grade:3,level:1,topic:'vocabulary',question:'What word means the opposite of hot?',answer:'cold',wrong1:'warm',wrong2:'cool',wrong3:'boiling',explanation:'Hot and cold are opposites',active:true},
+      {id:'q5',subject_key:'social',grade:3,level:1,topic:'canada',question:'What is the capital city of Canada?',answer:'Ottawa',wrong1:'Toronto',wrong2:'Vancouver',wrong3:'Montreal',explanation:'Ottawa is the capital city',active:true},
+      {id:'q6',subject_key:'coding',grade:3,level:1,topic:'basics',question:'What do we call instructions for a computer?',answer:'program',wrong1:'story',wrong2:'picture',wrong3:'song',explanation:'A program tells computers what to do',active:true},
+      {id:'q7',subject_key:'english',grade:3,level:1,topic:'punctuation',question:'Which mark ends a question?',answer:'?',wrong1:'.',wrong2:'!',wrong3:',',explanation:'A question mark ends a question',active:true}
+    ].filter(q=>q.subject_key===key||q.subject_key==='math');
+    if(!qs.length){
+      qEl.style.display='none';
+      showMod(`<div style="text-align:center;padding:12px"><div style="font-size:3rem;margin-bottom:9px">🚧</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Questions Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">Adding questions for <strong>${s.name}</strong> soon!</div><button class="mb" onclick="closeMod()">OK!</button></div>`);
+      return;
+    }
+    S.quizBatch=shuf(qs);S.quizIdx=0;S.quizScore=0;S.quizSE=0;loadQ();
+  }catch(e){qEl.style.display='none';}
+}
+
+function loadQ(){
+  S.quizAns=false;
+  const q=S.quizBatch[S.quizIdx],total=S.quizBatch.length;
+  document.getElementById('q-cnt').textContent=`Q ${S.quizIdx+1} of ${total}`;
+  document.getElementById('q-prog').style.width=(S.quizIdx/total*100)+'%';
+  document.getElementById('q-tag').textContent=`Grade ${q.grade} · Level ${q.level}`;
+  document.getElementById('q-txt').textContent=q.question;
+  document.getElementById('q-fb').className='q-fb';
+  document.getElementById('q-nxt').style.display='none';
+  document.getElementById('q-stl').textContent=S.quizSE;
+  const opts=shuf([q.answer,q.wrong1,q.wrong2,q.wrong3]);
+  document.getElementById('q-opts').innerHTML=opts.map((o,i)=>`<button class="q-opt" onclick="pickQ(this,'${esc(o)}','${esc(q.answer)}',${q.level})"><span class="q-let">${['A','B','C','D'][i]}</span>${o}</button>`).join('');
+  // GSAP: stagger answer options in
+  if(window.gsap){
+    gsap.fromTo('.q-opt',{opacity:0,x:-16},{opacity:1,x:0,duration:0.3,stagger:0.06,ease:'power2.out'});
+    gsap.fromTo('#q-txt',{opacity:0,y:10},{opacity:1,y:0,duration:0.35,ease:'power2.out'});
+  }
+}
+
+function pickQ(btn,chosen,correct,lv){
+  if(S.quizAns)return;S.quizAns=true;
+  document.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
+  const stars=lv<=2?10:lv<=4?15:lv<=6?20:25;
+  const fb=document.getElementById('q-fb');
+  if(chosen===correct){
+    btn.classList.add('correct');fb.className='q-fb ok';fb.textContent=getQuote('success');
+    S.quizScore++;S.quizSE+=stars;document.getElementById('q-stl').textContent=S.quizSE;
+    // ✨ Correct answer — green flash + star burst + floating label
+    animateCorrect(btn);
+    const rect=btn.getBoundingClientRect();
+    if(typeof confetti==='function') starBurst(rect.left+rect.width/2, rect.top);
+    floatStarLabel(stars, btn);
+  }else{
+    btn.classList.add('wrong');fb.className='q-fb no';
+    const exp=S.quizBatch[S.quizIdx]?.explanation;
+    fb.textContent=getQuote('wrong_answer')+(exp?' — '+exp:'');
+    document.querySelectorAll('.q-opt').forEach(b=>{
+      if(b.textContent.trim().slice(1).trim()===correct)b.classList.add('correct');
+    });
+    // ✨ Wrong answer — shake
+    animateWrong(btn);
+  }
+  document.getElementById('q-nxt').style.display='block';
+  if(window.gsap) gsap.fromTo('#q-nxt',{opacity:0,y:8},{opacity:1,y:0,duration:0.25,ease:'back.out(1.5)'});
+}
+
+function qNext(){S.quizIdx++;if(S.quizIdx>=S.quizBatch.length){showQRes();return;}loadQ();}
+
+async function showQRes(){
+  const total=S.quizBatch.length,pct=Math.round(S.quizScore/total*100);
+  const passed=pct>=80,perf=pct===100;
+  const ts=S.quizSE+(perf?300:passed?100:0);
+  // 🎉 Celebration on pass
+  if(passed) megaConfetti();
+  if(perf) setTimeout(megaConfetti,600);
+  try{
+    await db('sessions',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,subject_key:S.quizSubj.key,level:S.levelProgress[S.quizSubj.key]?.current_level||1,score:S.quizScore,total,stars_earned:ts,passed,perfect:perf}});
+    await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:ts,reason:`${S.quizSubj.name} quiz — ${S.quizScore}/${total}`,category:'learning'}});
+    S.stars+=ts;
+    if(passed){
+      const nl=(S.levelProgress[S.quizSubj.key]?.current_level||1)+1;
+      if(S.levelProgress[S.quizSubj.key])await db(`level_progress?player_id=eq.${S.player.id}&subject_key=eq.${S.quizSubj.key}`,{method:'PATCH',prefer:'return=minimal',body:{current_level:Math.min(nl,10)}});
+      else await db('level_progress',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,subject_key:S.quizSubj.key,current_level:2}});
+      S.levelProgress[S.quizSubj.key]={...(S.levelProgress[S.quizSubj.key]||{}),current_level:Math.min(nl,10)};
+      // Level up animation if jumped a level
+      if(nl<=10) animateLevelUp(Math.min(nl,10));
+    }
+  }catch(e){}
+  document.getElementById('quiz').style.display='none';
+  const rs=document.getElementById('res');rs.style.display='flex';
+  document.getElementById('r-tr').textContent=perf?'🏆':passed?'⭐':'💪';
+  document.getElementById('r-sc').textContent=`${S.quizScore}/${total}`;
+  document.getElementById('r-ea').textContent=`+${ts.toLocaleString()} ⭐ earned`;
+  document.getElementById('r-mg').textContent=perf?getQuote('perfect_score'):passed?getQuote('level_up'):getQuote('wrong_answer');
+  // GSAP animate results screen
+  if(window.gsap){
+    gsap.fromTo('#res > *',{opacity:0,scale:0.8,y:20},{opacity:1,scale:1,y:0,duration:0.5,stagger:0.1,ease:'back.out(1.8)'});
+  }
+  // Update star display with CountUp
+  updateStarDisplay(S.stars, ts);
+}
+
+function retryQuiz(){document.getElementById('res').style.display='none';startSubject(S.quizSubj.key);}
+function closeQuiz(){document.getElementById('quiz').style.display='none';if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='flex';}
+function closeRes(){document.getElementById('res').style.display='none';renderHome();}
+
+async function startDailyMix(){
+  const subjects=['math','english','science','social','art','coding'];
+  const counts={math:10,english:10,science:8,social:7,art:5,coding:5};
+  const targetGrade=gradeAhead(S.player.grade);
+  let allQ=[];
+  for(const key of subjects){
+    const qs=await db(`questions?subject_key=eq.${key}&active=eq.true&grade=lte.${targetGrade}&limit=80`);
+    if(Array.isArray(qs)&&qs.length){const picked=shuf(qs).slice(0,counts[key]||5);allQ=[...allQ,...picked];}
+  }
+  if(!allQ.length){showMod(`<div style="text-align:center;padding:12px"><div style="font-size:3rem;margin-bottom:9px">🚧</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:14px">No questions found!</div><button class="mb" onclick="closeMod()">OK</button></div>`);return;}
+  allQ=shuf(allQ);
+  S.quizSubj={key:'daily',name:'Daily Mix 🌟',icon:'🌟',color:'#F6C04A'};
+  S.quizBatch=allQ;S.quizIdx=0;S.quizScore=0;S.quizSE=0;
+  document.getElementById('quiz').style.display='flex';
+  if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='none';
+  document.getElementById('q-subj').textContent='Daily Mix 🌟';
+  loadQ();
+}
+
+function startCurrentLesson(){const s=S.subjects[0];if(s)startSubject(s.key);}
+
 // ─── READING ────────────────────────────────────────────────────────
 let RD={passages:[],currentPassage:null,recognition:null,listening:false,transcript:'',starsEarned:0,taskId:null};
 async function openReading(taskId){
@@ -3976,7 +4165,302 @@ async function renderGardenModal(){
   }
 }
 
+
+// ═══════════════════════════════════════════════════════
+// ✨ ANIMATION SYSTEM — GSAP + canvas-confetti + CountUp
+// ═══════════════════════════════════════════════════════
+
+// ── CONFETTI HELPERS ─────────────────────────────────────
+
+function burstConfetti(x, y, colors){
+  if(typeof confetti !== 'function') return;
+  colors = colors || ['#F6C04A','#2BBFB8','#E8457A','#7C5CBF','#27AE60','#fff'];
+  confetti({
+    particleCount: 80,
+    spread: 70,
+    origin: { x: x/window.innerWidth, y: y/window.innerHeight },
+    colors,
+    scalar: 1.1,
+    gravity: 1.1,
+    drift: 0.1,
+  });
+}
+
+function megaConfetti(){
+  if(typeof confetti !== 'function') return;
+  const end = Date.now() + 2000;
+  const colors = ['#F6C04A','#2BBFB8','#E8457A','#7C5CBF','#27AE60','#fff','#FF9800'];
+  (function frame(){
+    confetti({particleCount:6, angle:60, spread:55, origin:{x:0}, colors});
+    confetti({particleCount:6, angle:120, spread:55, origin:{x:1}, colors});
+    if(Date.now()<end) requestAnimationFrame(frame);
+  })();
+}
+
+function starBurst(x, y){
+  if(typeof confetti !== 'function') return;
+  confetti({
+    particleCount: 30,
+    spread: 50,
+    origin: { x: x/window.innerWidth, y: y/window.innerHeight },
+    colors: ['#F6C04A','#FFD700','#FFA000','#fff'],
+    shapes: ['star'],
+    scalar: 1.3,
+    gravity: 0.9,
+  });
+}
+
+// ── FLOATING STAR EARN LABEL ──────────────────────────────
+function floatStarLabel(amount, anchorEl){
+  if(!window.gsap || !anchorEl) return;
+  const rect = anchorEl.getBoundingClientRect();
+  const lbl = document.createElement('div');
+  lbl.className = 'star-earn-label';
+  lbl.textContent = `+${amount} ⭐`;
+  document.body.appendChild(lbl);
+  gsap.set(lbl, {
+    left: rect.left + rect.width/2 - 30,
+    top: rect.top - 10,
+    opacity: 1,
+  });
+  gsap.to(lbl, {
+    y: -70, opacity: 0, duration: 1.4,
+    ease: 'power2.out',
+    onComplete: ()=> lbl.remove()
+  });
+}
+
+// ── COUNTUP STAR NUMBERS ──────────────────────────────────
+const _countUpInstances = {};
+function animateCount(elId, toVal, prefix, suffix){
+  if(typeof CountUp === 'undefined') {
+    const el = document.getElementById(elId);
+    if(el) el.textContent = (prefix||'') + toVal.toLocaleString() + (suffix||'');
+    return;
+  }
+  prefix = prefix || '';
+  suffix = suffix || '';
+  const el = document.getElementById(elId);
+  if(!el) return;
+  const from = parseInt(el.textContent.replace(/[^0-9]/g,''))||0;
+  if(_countUpInstances[elId]) _countUpInstances[elId].reset();
+  const cu = new CountUp.CountUp(elId, toVal, {
+    startVal: from,
+    duration: 1.2,
+    separator: ',',
+    prefix,
+    suffix,
+    useEasing: true,
+    easingFn: (t,b,c,d) => c*((t=t/d-1)*t*t+1)+b, // easeOutCubic
+  });
+  if(!cu.error) { cu.start(); _countUpInstances[elId] = cu; }
+  else { el.textContent = prefix + toVal.toLocaleString() + suffix; }
+}
+
+// ── GSAP SCREEN ENTRANCE ANIMATIONS ──────────────────────
+function animateScreenIn(screenId){
+  if(!window.gsap) return;
+  const screen = document.getElementById(screenId);
+  if(!screen) return;
+  // Cards stagger in from bottom
+  const cards = screen.querySelectorAll('.card, .scard, .lscard, .rc, .ach-chip, .trophy-card, .qt-row');
+  if(cards.length){
+    gsap.fromTo(cards,
+      { opacity:0, y:28, scale:0.97 },
+      { opacity:1, y:0, scale:1, duration:0.45, stagger:0.05, ease:'back.out(1.4)', clearProps:'transform' }
+    );
+  }
+  // Stat counters pop in
+  const stats = screen.querySelectorAll('.sc-val, .ko-stat-val, .week-stat-val');
+  if(stats.length){
+    gsap.fromTo(stats,
+      { opacity:0, scale:0.5 },
+      { opacity:1, scale:1, duration:0.5, stagger:0.04, ease:'back.out(2)', delay:0.1 }
+    );
+  }
+}
+
+// ── GSAP PLAYER SELECT CARD SPRING ───────────────────────
+function animatePlayerCardTap(cardEl){
+  if(!window.gsap || !cardEl) return;
+  gsap.timeline()
+    .to(cardEl, { scale:0.92, duration:0.1, ease:'power2.in' })
+    .to(cardEl, { scale:1.06, duration:0.18, ease:'back.out(2)' })
+    .to(cardEl, { scale:1, duration:0.12, ease:'power1.inOut' });
+}
+
+// ── SUBJECT CARD 3D TILT ON MOUSEMOVE ────────────────────
+function initCardTilt(){
+  document.addEventListener('mousemove', e => {
+    document.querySelectorAll('.scard, .lscard').forEach(card => {
+      const r = card.getBoundingClientRect();
+      if(e.clientX < r.left-60 || e.clientX > r.right+60 ||
+         e.clientY < r.top-60  || e.clientY > r.bottom+60) {
+        if(window.gsap) gsap.to(card, {rotateX:0, rotateY:0, duration:0.4, ease:'power2.out', overwrite:'auto'});
+        return;
+      }
+      const cx = (e.clientX - r.left) / r.width  - 0.5;
+      const cy = (e.clientY - r.top)  / r.height - 0.5;
+      if(window.gsap){
+        gsap.to(card, {
+          rotateY: cx * 16, rotateX: -cy * 16,
+          duration: 0.3, ease: 'power2.out', overwrite: 'auto'
+        });
+      }
+    });
+  });
+  document.addEventListener('mouseleave', () => {
+    if(!window.gsap) return;
+    document.querySelectorAll('.scard, .lscard').forEach(card => {
+      gsap.to(card, { rotateX:0, rotateY:0, duration:0.5, ease:'power2.out' });
+    });
+  });
+}
+
+// ── PHASE COMPLETE ANIMATION ──────────────────────────────
+function animatePhaseComplete(phaseName, starsEarned){
+  if(!window.gsap) return;
+  megaConfetti();
+  const el = document.createElement('div');
+  el.innerHTML = `
+    <div style="font-family:'Fredoka',sans-serif;text-align:center;pointer-events:none">
+      <div style="font-size:3.5rem;margin-bottom:6px">🎉</div>
+      <div style="font-size:1.6rem;font-weight:700;color:#fff">${phaseName}</div>
+      <div style="font-size:1rem;color:var(--amber);margin-top:4px">+${starsEarned} ⭐ earned!</div>
+    </div>`;
+  el.style.cssText = 'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:9998;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);pointer-events:none;opacity:0';
+  document.body.appendChild(el);
+  gsap.timeline({onComplete: ()=> el.remove()})
+    .to(el, { opacity:1, duration:0.25 })
+    .fromTo(el.firstElementChild, { scale:0.5, rotation:-5 }, { scale:1, rotation:0, duration:0.5, ease:'back.out(2.5)' }, '<')
+    .to(el, { opacity:0, duration:0.4, delay:1.8 });
+}
+
+// ── QUIZ ANSWER FLASH ─────────────────────────────────────
+function animateCorrect(el){
+  if(!window.gsap || !el) return;
+  gsap.timeline()
+    .to(el, { scale:1.08, backgroundColor:'rgba(39,174,96,.35)', duration:0.15, ease:'power2.out' })
+    .to(el, { scale:1, backgroundColor:'', duration:0.3, ease:'elastic.out(1.2,0.5)', clearProps:'backgroundColor' });
+}
+function animateWrong(el){
+  if(!window.gsap || !el) return;
+  gsap.timeline()
+    .to(el, { x:-8, duration:0.07 })
+    .to(el, { x:8,  duration:0.07 })
+    .to(el, { x:-6, duration:0.07 })
+    .to(el, { x:6,  duration:0.07 })
+    .to(el, { x:0,  duration:0.07 })
+    .to(el, { backgroundColor:'rgba(232,69,69,.3)', duration:0.1, ease:'power2.out' }, 0)
+    .to(el, { backgroundColor:'', duration:0.4, clearProps:'backgroundColor' });
+}
+
+// ── LEVEL UP EXPLOSION ────────────────────────────────────
+function animateLevelUp(newLevel){
+  megaConfetti();
+  setTimeout(megaConfetti, 500);
+  if(!window.gsap) return;
+  const el = document.createElement('div');
+  el.innerHTML = `
+    <div style="font-family:'Fredoka',sans-serif;text-align:center;pointer-events:none">
+      <div style="font-size:4rem;margin-bottom:4px">🏆</div>
+      <div style="font-size:2rem;font-weight:700;color:var(--amber)">LEVEL UP!</div>
+      <div style="font-size:1.2rem;color:#fff;margin-top:6px">You reached Level ${newLevel}!</div>
+      <div style="font-size:1rem;color:rgba(255,255,255,.6);margin-top:4px">Keep going! 🚀</div>
+    </div>`;
+  el.style.cssText = 'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:9998;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);opacity:0;pointer-events:none';
+  document.body.appendChild(el);
+  gsap.timeline({onComplete:()=>el.remove()})
+    .to(el, { opacity:1, duration:0.3 })
+    .fromTo(el.firstElementChild,
+      { scale:0.3, rotation:'-15deg' },
+      { scale:1, rotation:0, duration:0.6, ease:'back.out(3)' }, '<0.1')
+    .to(el, { opacity:0, duration:0.5, delay:2.5 });
+}
+
+// ── STAR TOPBAR ANIMATE ON CHANGE ────────────────────────
+let _lastStarCount = 0;
+function updateStarDisplay(newStars, earnedNow){
+  const el = document.getElementById('h-stars');
+  if(!el) return;
+  if(earnedNow && earnedNow > 0){
+    // Float label from topbar star area
+    floatStarLabel(earnedNow, el);
+    // Pulse the star icon
+    const ico = document.querySelector('.sc.stars .sc-ico');
+    if(ico && window.gsap){
+      gsap.timeline()
+        .to(ico, { scale:1.5, rotation:20, duration:0.2, ease:'power2.out' })
+        .to(ico, { scale:1, rotation:0, duration:0.4, ease:'elastic.out(1.3,0.5)' });
+    }
+    // Confetti if big earn
+    if(earnedNow >= 10) starBurst(el.getBoundingClientRect().left, el.getBoundingClientRect().top);
+  }
+  // CountUp for smooth number tick
+  animateCount('h-stars', newStars);
+  _lastStarCount = newStars;
+}
+
+// ── GSAP MODAL ENTRANCE ───────────────────────────────────
+const _origShowMod = typeof showMod !== 'undefined' ? showMod : null;
+function animateModal(open){
+  const box = document.querySelector('.mbox');
+  if(!box || !window.gsap) return;
+  if(open){
+    gsap.fromTo(box,
+      { scale:0.85, opacity:0, y:20 },
+      { scale:1, opacity:1, y:0, duration:0.3, ease:'back.out(2)' }
+    );
+  } else {
+    gsap.to(box, { scale:0.9, opacity:0, y:10, duration:0.18, ease:'power2.in' });
+  }
+}
+
+// ── INIT ALL ANIMATIONS ───────────────────────────────────
+function initAnimations(){
+  // 3D card tilt (desktop only — skip on touch devices)
+  if(!('ontouchstart' in window)) initCardTilt();
+
+  // Animate home screen on first load
+  setTimeout(()=> animateScreenIn('homeScreen'), 200);
+
+  // Intercept navTo to animate each screen entrance
+  const _origNavTo = navTo;
+  window.navTo = function(tab){
+    _origNavTo(tab);
+    setTimeout(()=> animateScreenIn(tab+'Screen'), 50);
+  };
+
+  // Intercept showMod to animate modal entrance
+  const _origShowMod = window.showMod;
+  window.showMod = function(html){
+    _origShowMod(html);
+    setTimeout(()=> animateModal(true), 10);
+  };
+
+  // Player select — animate cards in on load
+  gsap.fromTo('.ps-card',
+    { opacity:0, y:30, scale:0.9 },
+    { opacity:1, y:0, scale:1, duration:0.5, stagger:0.12, ease:'back.out(1.8)', delay:0.3 }
+  );
+
+  // Hero stats pop in
+  gsap.fromTo('.sc',
+    { opacity:0, scale:0.7 },
+    { opacity:1, scale:1, duration:0.4, stagger:0.08, ease:'back.out(2)', delay:0.1 }
+  );
+}
+
+// Wire animations into existing quiz answer functions
+const _origCheckAns = typeof checkAns !== 'undefined' ? checkAns : null;
+
 init();
+
+// Start animations after init (libraries may load async)
+window.addEventListener('load', ()=>{
+  // Small delay to ensure GSAP + confetti are ready
+  setTimeout(initAnimations, 300);
+});
 </script>
 
 <!-- KID PIN SCREEN -->
