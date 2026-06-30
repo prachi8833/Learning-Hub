@@ -465,105 +465,108 @@ body{background:#0a1a10}
 
 /* Home grid wrapper */
 .subj-card{grid-column:1/3}
-.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:10px;margin-top:11px}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:12px;margin-top:11px}
 
-/* Each subject card — rectangular with soft gradient border */
+/* Each subject card — full-bleed image, ombre gradient border, no text label
+   (the subject name is already printed on the artwork) */
 .scard{
-  position:relative;border-radius:14px;overflow:hidden;
-  cursor:pointer;transition:transform .25s,box-shadow .25s;
+  position:relative;border-radius:16px;overflow:hidden;aspect-ratio:1/1.05;
+  cursor:pointer;transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
   background:rgba(8,20,12,.7);
-  /* Soft gradient border via box-shadow — no harsh line */
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,.08),
-    0 4px 18px rgba(0,0,0,.3);
+  padding:2px;
 }
 .scard::before{
-  /* Animated gradient border shimmer */
-  content:'';position:absolute;inset:0;border-radius:14px;z-index:0;
-  background:linear-gradient(135deg,var(--sc-color,rgba(43,191,184,.25)) 0%,transparent 60%);
-  opacity:0;transition:opacity .3s;pointer-events:none;
+  content:'';position:absolute;inset:0;border-radius:16px;z-index:0;
+  background:conic-gradient(from var(--ombre-angle,0deg),
+    var(--sc-color,#2BBFB8) 0%,
+    transparent 28%,
+    transparent 72%,
+    var(--sc-color,#2BBFB8) 100%);
+  animation:ombreSpin 6s linear infinite;
+  opacity:.55;
 }
-.scard:hover{transform:translateY(-5px)}
-.scard:hover::before{opacity:1}
-.scard:hover{
-  box-shadow:
-    0 0 0 1.5px var(--sc-color,rgba(43,191,184,.5)),
-    0 8px 28px rgba(0,0,0,.4),
-    0 0 20px var(--sc-color,rgba(43,191,184,.15));
+.scard::after{
+  content:'';position:absolute;inset:2px;border-radius:14px;z-index:1;
+  background:#0a1610;
 }
+@keyframes ombreSpin{
+  from{--ombre-angle:0deg}
+  to{--ombre-angle:360deg}
+}
+@property --ombre-angle{syntax:'<angle>';inherits:false;initial-value:0deg}
+.scard:hover{transform:translateY(-6px) scale(1.03)}
+.scard:hover::before{opacity:1;animation-duration:2.5s}
 
-/* Image area */
+/* Image area — fills the whole card, name is baked into the art */
 .scard-img{
-  position:relative;width:100%;height:96px;overflow:hidden;
+  position:absolute;inset:2px;border-radius:14px;overflow:hidden;z-index:2;
 }
 .scard-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease,filter .35s ease}
-.scard:hover .scard-img img{transform:scale(1.08);filter:brightness(1.1)}
-/* Gradient fallback when no PNG */
+.scard:hover .scard-img img{transform:scale(1.1);filter:brightness(1.12)}
 .scard-img-fallback{
   width:100%;height:100%;display:flex;align-items:center;justify-content:center;
-  font-size:2.4rem;
+  font-size:2.6rem;
   background:var(--sc-grad,linear-gradient(135deg,#1A9990,#2BBFB8));
 }
-/* Bottom fade from image into card body */
-.scard-img::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:40px;
-  background:linear-gradient(0deg,rgba(8,20,12,.9) 0%,transparent 100%);
-  pointer-events:none;
+
+/* Level pill — floats over bottom-right corner of the image, image has no text there */
+.scard-pill{
+  position:absolute;bottom:7px;right:7px;z-index:3;
+  font-size:.56rem;font-weight:900;border-radius:99px;padding:3px 9px;
+  background:rgba(4,12,8,.72);backdrop-filter:blur(6px);
+  color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.35);
+  border:1px solid var(--sc-color,rgba(255,255,255,.2));
 }
 
-/* Text area */
-.scard-body{position:relative;z-index:2;padding:8px 9px 10px;text-align:center}
-.scard-nm{font-size:.72rem;font-weight:900;color:#fff;line-height:1.2;margin-bottom:4px;text-shadow:0 1px 6px rgba(0,0,0,.8)}
-.scard-pill{display:inline-block;font-size:.54rem;font-weight:800;border-radius:99px;padding:2px 8px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.75);margin-bottom:5px}
-.scard-pb{height:3px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin:0 4px}
+/* Thin progress sliver along the very bottom edge of the card */
+.scard-pb{position:absolute;left:8px;right:8px;bottom:4px;height:3px;z-index:3;background:rgba(255,255,255,.18);border-radius:99px;overflow:hidden}
 .scard-pf{height:100%;border-radius:99px;background:var(--sc-color,var(--teal));transition:width .6s}
 
 /* "More" card */
-.scard-more{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:130px;background:rgba(255,255,255,.04);border-radius:14px;box-shadow:0 0 0 1px rgba(255,255,255,.07);cursor:pointer;transition:all .2s}
+.scard-more{display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:1/1.05;background:rgba(255,255,255,.04);border-radius:16px;box-shadow:0 0 0 1px rgba(255,255,255,.07);cursor:pointer;transition:all .2s}
 .scard-more:hover{background:rgba(255,255,255,.08);transform:translateY(-3px)}
 .scard-more span{font-size:1.4rem;opacity:.5;margin-bottom:4px}
 .scard-more p{font-size:.62rem;font-weight:800;color:rgba(255,255,255,.4)}
 
 /* ═══════════════════════
    LEARN SCREEN subject cards (horizontal scroll)
-   slightly wider, same style
+   same ombre-border, image-only style
    ═══════════════════════ */
-.isl-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:12px;margin-top:11px;max-width:100%;scrollbar-width:thin;scrollbar-color:rgba(43,191,184,.45) rgba(255,255,255,.06)}
+.isl-row{display:flex;gap:14px;overflow-x:auto;padding-bottom:12px;margin-top:11px;max-width:100%;scrollbar-width:thin;scrollbar-color:rgba(43,191,184,.45) rgba(255,255,255,.06)}
 .isl-row::-webkit-scrollbar{height:6px;border-radius:99px}
 .isl-row::-webkit-scrollbar-track{background:rgba(255,255,255,.06);border-radius:99px}
 .isl-row::-webkit-scrollbar-thumb{background:rgba(43,191,184,.45);border-radius:99px}
 .isl-row::-webkit-scrollbar-thumb:hover{background:rgba(43,191,184,.75)}
 
 .lscard{
-  flex-shrink:0;width:148px;position:relative;border-radius:14px;overflow:hidden;
-  cursor:pointer;transition:transform .25s,box-shadow .25s;
-  background:rgba(8,20,12,.7);
-  box-shadow:0 0 0 1px rgba(255,255,255,.08),0 4px 18px rgba(0,0,0,.3);
+  flex-shrink:0;width:140px;height:148px;position:relative;border-radius:16px;
+  cursor:pointer;transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+  padding:2px;
+  z-index:0;
 }
 .lscard::before{
-  content:'';position:absolute;inset:0;border-radius:14px;z-index:0;
-  background:linear-gradient(135deg,var(--sc-color,rgba(43,191,184,.25)) 0%,transparent 55%);
-  opacity:0;transition:opacity .3s;pointer-events:none;
+  content:'';position:absolute;inset:0;border-radius:16px;z-index:0;
+  background:conic-gradient(from var(--ombre-angle,0deg),
+    var(--sc-color,#2BBFB8) 0%,transparent 28%,transparent 72%,var(--sc-color,#2BBFB8) 100%);
+  animation:ombreSpin 6s linear infinite;
+  opacity:.55;
 }
-.lscard:hover{transform:translateY(-5px)}
-.lscard:hover::before{opacity:1}
-.lscard:hover{
-  box-shadow:
-    0 0 0 1.5px var(--sc-color,rgba(43,191,184,.5)),
-    0 8px 28px rgba(0,0,0,.4),
-    0 0 18px var(--sc-color,rgba(43,191,184,.12));
-}
-.lscard-img{position:relative;width:100%;height:80px;overflow:hidden}
+.lscard::after{content:'';position:absolute;inset:2px;border-radius:14px;z-index:1;background:#0a1610}
+.lscard:hover{transform:translateY(-6px) scale(1.04)}
+.lscard:hover::before{opacity:1;animation-duration:2.5s}
+.lscard-img{position:absolute;inset:2px;border-radius:14px;overflow:hidden;z-index:2}
 .lscard-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s,filter .35s}
-.lscard:hover .lscard-img img{transform:scale(1.08);filter:brightness(1.1)}
-.lscard-img-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;background:var(--sc-grad,linear-gradient(135deg,#1A9990,#2BBFB8))}
-.lscard-img::after{content:'';position:absolute;bottom:0;left:0;right:0;height:32px;background:linear-gradient(0deg,rgba(8,20,12,.9) 0%,transparent 100%);pointer-events:none}
-.lscard-body{position:relative;z-index:2;padding:8px 9px 10px;text-align:center}
-.lscard-nm{font-size:.78rem;font-weight:900;color:#fff;margin-bottom:4px}
-.lscard-pill{display:inline-block;font-size:.55rem;font-weight:900;border-radius:99px;padding:2px 9px;margin-top:2px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.75);margin-bottom:5px}
-.lscard-pb{height:3px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin:0 4px}
+.lscard:hover .lscard-img img{transform:scale(1.1);filter:brightness(1.12)}
+.lscard-img-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.2rem;background:var(--sc-grad,linear-gradient(135deg,#1A9990,#2BBFB8))}
+.lscard-pill{
+  position:absolute;bottom:7px;right:7px;z-index:3;
+  font-size:.56rem;font-weight:900;border-radius:99px;padding:3px 9px;
+  background:rgba(4,12,8,.72);backdrop-filter:blur(6px);
+  color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.35);
+  border:1px solid var(--sc-color,rgba(255,255,255,.2));
+}
+.lscard-pb{position:absolute;left:8px;right:8px;bottom:4px;height:3px;z-index:3;background:rgba(255,255,255,.18);border-radius:99px;overflow:hidden}
 .lscard-pf{height:100%;border-radius:99px;background:var(--sc-color,var(--teal))}
-.lscard-pct{font-size:.5rem;font-weight:700;color:rgba(255,255,255,.3);margin-top:3px}
 
 /* WISH LIST */
 .wish-scroll{display:flex;gap:9px;overflow-x:auto;padding-bottom:3px;margin-top:11px}
@@ -576,6 +579,81 @@ body{background:#0a1a10}
 .wi-nm{font-size:.6rem;font-weight:900;color:#fff;line-height:1.2}
 .wi-co{font-size:.58rem;font-weight:800;color:var(--amber);margin-top:2px}
 .wi.goal-active .wi-img{border-color:var(--teal);box-shadow:0 0 0 2px rgba(43,191,184,.35)}
+
+/* ═══════════════════════
+   TODAY'S QUEST TRAIL — replaces island path map
+   ═══════════════════════ */
+.quest-trail-card{grid-column:1/3;grid-row:span 2;background:rgba(8,20,12,.55);position:relative;overflow:hidden}
+.qt-list{display:flex;flex-direction:column;margin-top:6px;position:relative}
+.qt-connector{position:absolute;left:38px;top:64px;width:3px;border-radius:99px;background:rgba(255,255,255,.08);z-index:0}
+.qt-connector.done{background:linear-gradient(180deg,#27AE60,#52D08A);box-shadow:0 0 8px rgba(39,174,96,.5)}
+.qt-connector.active-flow{background:repeating-linear-gradient(180deg,#F6C04A 0 8px,transparent 8px 16px);animation:qtFlow 1s linear infinite}
+@keyframes qtFlow{from{background-position-y:0}to{background-position-y:16px}}
+.qt-stone{display:flex;align-items:center;gap:13px;padding:11px 12px;border-radius:16px;position:relative;z-index:1;margin-bottom:8px;transition:all .2s;cursor:pointer}
+.qt-stone:last-child{margin-bottom:0}
+.qt-stone.qt-done{background:rgba(39,174,96,.1);border:1.5px solid rgba(39,174,96,.3)}
+.qt-stone.qt-active{background:rgba(246,192,74,.14);border:1.5px solid rgba(246,192,74,.5);box-shadow:0 0 20px rgba(246,192,74,.15)}
+.qt-stone.qt-locked{background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.08);opacity:.6;cursor:default}
+.qt-stone.qt-open{background:rgba(124,92,191,.08);border:1.5px solid rgba(124,92,191,.28)}
+.qt-stone:not(.qt-locked):hover{transform:translateX(4px)}
+.qt-badge-num{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#fff;
+  position:relative;z-index:2;
+}
+.qt-stone.qt-done .qt-badge-num{background:#27AE60}
+.qt-stone.qt-active .qt-badge-num{background:#F6C04A;color:#1A2B1E;animation:qtPulseNum 1.8s ease-in-out infinite}
+.qt-stone.qt-locked .qt-badge-num{background:rgba(255,255,255,.15)}
+.qt-stone.qt-open .qt-badge-num{background:#7C5CBF}
+@keyframes qtPulseNum{0%,100%{box-shadow:0 0 0 0 rgba(246,192,74,.5)}50%{box-shadow:0 0 0 6px rgba(246,192,74,0)}}
+.qt-icon-circle{
+  width:46px;height:46px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:1.5rem;
+  transition:transform .3s;
+}
+.qt-stone.qt-active .qt-icon-circle{animation:qtFloat 2.4s ease-in-out infinite}
+@keyframes qtFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.qt-stone.qt-done .qt-icon-circle{background:rgba(39,174,96,.18);border:2px solid #27AE60}
+.qt-stone.qt-active .qt-icon-circle{background:rgba(246,192,74,.2);border:2px solid #F6C04A}
+.qt-stone.qt-locked .qt-icon-circle{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12)}
+.qt-stone.qt-open .qt-icon-circle{background:rgba(124,92,191,.18);border:2px solid #7C5CBF}
+.qt-body{flex:1;min-width:0}
+.qt-tag{font-size:.56rem;font-weight:900;letter-spacing:.6px;text-transform:uppercase;margin-bottom:2px}
+.qt-stone.qt-done .qt-tag{color:#52D08A}
+.qt-stone.qt-active .qt-tag{color:#F6C04A}
+.qt-stone.qt-locked .qt-tag{color:rgba(255,255,255,.3)}
+.qt-stone.qt-open .qt-tag{color:#A88AE8}
+.qt-name{font-size:.85rem;font-weight:900;color:#fff;line-height:1.2}
+.qt-stone.qt-locked .qt-name{color:rgba(255,255,255,.55)}
+.qt-sub{font-size:.66rem;font-weight:700;color:rgba(255,255,255,.45);margin-top:1px}
+.qt-stars{font-size:.62rem;font-weight:800;margin-top:2px}
+.qt-stone.qt-done .qt-stars{color:#52D08A}
+.qt-stone.qt-active .qt-stars{color:#F6C04A}
+.qt-stone.qt-open .qt-stars{color:#A88AE8}
+.qt-action{flex-shrink:0;font-size:.7rem;font-weight:900;padding:7px 13px;border-radius:99px;white-space:nowrap}
+.qt-stone.qt-active .qt-action{background:#F6C04A;color:#1A2B1E}
+.qt-stone.qt-open .qt-action{background:rgba(124,92,191,.25);color:#C8B0FF}
+.qt-stone.qt-done .qt-action{background:rgba(39,174,96,.2);color:#52D08A}
+.qt-mini-pills{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
+.qt-mini-pill{font-size:.52rem;font-weight:800;padding:2px 7px;border-radius:99px;display:flex;align-items:center;gap:3px}
+.qt-mini-pill.done{background:rgba(39,174,96,.18);color:#52D08A}
+.qt-mini-pill.todo{background:rgba(255,255,255,.07);color:rgba(255,255,255,.4)}
+.qt-day-progress{margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(246,192,74,.08);border:1px solid rgba(246,192,74,.2)}
+.qt-dp-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.qt-dp-lbl{font-size:.7rem;font-weight:900;color:var(--amber)}
+.qt-dp-val{font-size:.68rem;font-weight:800;color:rgba(255,255,255,.6)}
+.qt-dp-bar-bg{height:8px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}
+.qt-dp-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#E8A020,#F6C04A);transition:width .8s;position:relative}
+.qt-dp-bar::after{content:'';position:absolute;right:0;top:0;bottom:0;width:14px;background:rgba(255,255,255,.4);border-radius:99px;animation:shimmer 1.5s ease-in-out infinite}
+.qt-dp-hint{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:6px}
+
+/* ═══════════════════════
+   TODAY'S PLAN — now in sidebar, compact
+   ═══════════════════════ */
+.plan-side-card{background:var(--gc)}
+.plan-side-card .t-block{margin-bottom:9px}
+.plan-side-card .t-blk-hdr{margin-bottom:4px}
+.plan-side-card .t-row{padding:5px 6px}
 
 /* ═══════════════════════
    LEARN TAB ENHANCEMENTS
@@ -1382,31 +1460,47 @@ body{background:#0a1a10}
             </div>
             <div class="goal-msg" id="g-msg">Tap to set a goal! 🌟</div>
           </div>
-          <div class="card">
+
+          <!-- TODAY'S QUEST TRAIL — now the main hero on Home -->
+          <div class="card quest-trail-card">
             <div class="card-hdr">
-              <div class="card-ttl">📅 Today's Plan</div>
-              <span class="card-lnk" id="plan-pill" onclick="navTo('tasks')">0 / 0 done</span>
+              <div class="card-ttl">🗺️ Today's Quest Trail</div>
+              <span class="card-lnk" id="qt-summary">0 / 5 phases</span>
             </div>
-            <div class="t-block">
-              <div class="t-blk-hdr"><div class="t-blk-ico mo">🌅</div><div class="t-blk-lbl mo">Morning</div><div class="t-blk-time">7:00–9:00 AM</div></div>
-              <div id="h-mo-tasks"></div>
+            <p style="font-size:.68rem;color:rgba(255,255,255,.4);font-weight:700;margin-top:-6px;margin-bottom:4px">Complete steps in order — Dharma &amp; Exercise are open anytime!</p>
+            <div class="qt-list" id="qt-list"></div>
+            <div class="qt-day-progress">
+              <div class="qt-dp-row">
+                <span class="qt-dp-lbl">⭐ Today's Progress</span>
+                <span class="qt-dp-val" id="qt-dp-val">0 / 350 stars</span>
+              </div>
+              <div class="qt-dp-bar-bg"><div class="qt-dp-bar" id="qt-dp-bar" style="width:0%"></div></div>
+              <div class="qt-dp-hint">Complete all 5 phases for +10 bonus stars!</div>
             </div>
-            <div class="t-block">
-              <div class="t-blk-hdr"><div class="t-blk-ico af">☀️</div><div class="t-blk-lbl af">Afternoon</div><div class="t-blk-time">2:30–6:00 PM</div></div>
-              <div id="h-af-tasks"></div>
-            </div>
-            <div class="t-block">
-              <div class="t-blk-hdr"><div class="t-blk-ico ev">🌙</div><div class="t-blk-lbl ev">Evening</div><div class="t-blk-time">7:00–9:30 PM</div></div>
-              <div id="h-ev-tasks"></div>
-            </div>
-            <div class="plan-foot" onclick="navTo('tasks')"><span>📅 View full schedule</span><span style="color:var(--teal);font-weight:800">→</span></div>
           </div>
-          <div class="card path-card">
-            <div class="card-hdr" style="margin-bottom:0"><div class="card-ttl">🗺️ Your Learning Path</div></div>
-            <div class="path-map" id="path-map"></div>
-            <button class="path-btn" onclick="navTo('learn')">Continue Learning →</button>
-          </div>
+
+          <!-- RIGHT SIDEBAR -->
           <div class="rcol">
+            <!-- Today's Plan — moved here from main column -->
+            <div class="card plan-side-card">
+              <div class="card-hdr">
+                <div class="card-ttl">📅 Today's Plan</div>
+                <span class="card-lnk" id="plan-pill" onclick="navTo('tasks')">0 / 0 done</span>
+              </div>
+              <div class="t-block">
+                <div class="t-blk-hdr"><div class="t-blk-ico mo">🌅</div><div class="t-blk-lbl mo">Morning</div></div>
+                <div id="h-mo-tasks"></div>
+              </div>
+              <div class="t-block">
+                <div class="t-blk-hdr"><div class="t-blk-ico af">☀️</div><div class="t-blk-lbl af">Afternoon</div></div>
+                <div id="h-af-tasks"></div>
+              </div>
+              <div class="t-block">
+                <div class="t-blk-hdr"><div class="t-blk-ico ev">🌙</div><div class="t-blk-lbl ev">Evening</div></div>
+                <div id="h-ev-tasks"></div>
+              </div>
+              <div class="plan-foot" onclick="navTo('tasks')"><span>📅 View full schedule</span><span style="color:var(--teal);font-weight:800">→</span></div>
+            </div>
             <div class="card week-card">
               <div class="card-hdr"><div class="card-ttl">🏆 This Week</div></div>
               <div id="h-week-lb"></div>
@@ -1419,6 +1513,7 @@ body{background:#0a1a10}
               </div>
             </div>
           </div>
+
           <div class="card subj-card">
             <div class="card-hdr"><div class="card-ttl">📚 Subjects</div><span class="card-lnk" onclick="navTo('learn')">View all →</span></div>
             <div class="sg" id="h-sg"></div>
@@ -1970,12 +2065,9 @@ function buildSCard(s, type='home'){
   const cl=type==='home'?'scard':'lscard';
   const imgCl=type==='home'?'scard-img':'lscard-img';
   const fbCl=type==='home'?'scard-img-fallback':'lscard-img-fallback';
-  const bodyCl=type==='home'?'scard-body':'lscard-body';
-  const nmCl=type==='home'?'scard-nm':'lscard-nm';
   const pillCl=type==='home'?'scard-pill':'lscard-pill';
   const pbCl=type==='home'?'scard-pb':'lscard-pb';
   const pfCl=type==='home'?'scard-pf':'lscard-pf';
-  const pctCl=type==='home'?'':'lscard-pct';
   return `<div class="${cl}" style="--sc-color:${col};--sc-grad:${grad}" onclick="startSubject('${s.key}')">
     <div class="${imgCl}">
       ${img
@@ -1985,12 +2077,8 @@ function buildSCard(s, type='home'){
         <span>${s.icon||'📖'}</span>
       </div>
     </div>
-    <div class="${bodyCl}">
-      <div class="${nmCl}">${s.name}</div>
-      <span class="${pillCl}">Lv${lv}</span>
-      <div class="${pbCl}"><div class="${pfCl}" style="width:${pct}%"></div></div>
-      ${pctCl?`<div class="${pctCl}">${pct}%</div>`:''}
-    </div>
+    <span class="${pillCl}">Lv${lv}</span>
+    <div class="${pbCl}"><div class="${pfCl}" style="width:${pct}%"></div></div>
   </div>`;
 }
 
@@ -2423,7 +2511,9 @@ function renderHome(){
   document.getElementById('h-tara-msg').textContent=msg;
   document.getElementById('sb-tara-msg').textContent=msg;
   document.getElementById('g-streak').textContent=S.streak;
-  renderGoal();renderHTasks();renderPathMap();renderHSubjects();renderWeekLB();renderHWish();
+  renderGoal();renderHTasks();renderHSubjects();renderWeekLB();renderHWish();
+  loadQuestData().then(renderQuestTrail);
+  renderQuestTrail(); // render immediately with stale data, then refresh above
 }
 
 function renderGoal(){
@@ -2463,164 +2553,181 @@ function renderHTasks(){
   });
 }
 
-function renderPathMap(){
-  const el=document.getElementById('path-map');if(!el)return;
-  const subs=S.subjects.slice(0,5);
-  if(!subs.length){el.innerHTML='';return;}
+// ─── TODAY'S QUEST TRAIL ────────────────────────────────────
+// Phase definitions. Choice Games and Dharma Time content are still being
+// built — they render with a "Coming Soon" state until wired to real data.
+const QUEST_PHASES = [
+  {
+    id: 'subjects', num: 1, icon: '\ud83d\udcda', name: 'Subject Learning',
+    tag: 'Phase 1', locked: true,
+    subtitle: () => {
+      const today = new Date().getDay();
+      const rotation = {
+        1: ['math', 'english', 'science'],
+        2: ['world', 'hindi', 'social'],
+        3: ['math', 'reading', 'art'],
+        4: ['science', 'english', 'social'],
+        5: ['math', 'world', 'creative'],
+        6: ['math', 'science', 'social'],
+        0: [],
+      };
+      const keys = rotation[today] || [];
+      const names = keys.map(k => S.subjects.find(s => s.key === k)?.name || k);
+      return names.length ? names.join(' \u00b7 ') : 'Pick any 3 subjects today';
+    },
+    starsMax: 60,
+  },
+  {
+    id: 'reading', num: 2, icon: '\ud83d\udcd6', name: 'Reading Time',
+    tag: 'Phase 2', locked: true,
+    subtitle: () => 'One passage \u00b7 10-15 min',
+    starsMax: 20,
+  },
+  {
+    id: 'games', num: 3, icon: '\ud83c\udfae', name: 'Choice Games',
+    tag: 'Phase 3', locked: true,
+    subtitle: () => '2 games \u00b7 20-30 min \u00b7 Coming soon',
+    starsMax: 40,
+    comingSoon: true,
+  },
+  {
+    id: 'dharma', num: 4, icon: '\ud83d\udd49\ufe0f', name: 'Dharma Time',
+    tag: 'Open anytime', locked: false,
+    subtitle: () => '10-15 min \u00b7 Coming soon',
+    starsMax: 15,
+    comingSoon: true,
+  },
+  {
+    id: 'exercise', num: 5, icon: '\ud83c\udfc3', name: 'Exercise',
+    tag: 'Open anytime', locked: false,
+    subtitle: () => '5 min \u00b7 stretch, jump, move!',
+    starsMax: 5,
+  },
+];
 
-  // Fixed slot positions [cx%, cy%] inside the 100×210 SVG viewBox (scaled)
-  // Layout: top-left, top-right, center, bottom-left, bottom-right
-  const W=290,H=210;
-  const slots=[
-    {cx:0.18,cy:0.28},  // 0 top-left
-    {cx:0.78,cy:0.22},  // 1 top-right
-    {cx:0.48,cy:0.52},  // 2 center (active)
-    {cx:0.14,cy:0.76},  // 3 bottom-left
-    {cx:0.78,cy:0.72},  // 4 bottom-right
-  ];
+function getQuestState() {
+  // Phase 1: done when at least 3 quiz sessions today across any subjects
+  const todaySessions = (S.todaySessions || []);
+  const subjectsDone = todaySessions.length >= 3;
+  const subjectsCount = Math.min(todaySessions.length, 3);
 
-  // Path order: 0→2→1→4→3 (zigzag across water)
-  const pathOrder=[0,2,1,4,3];
+  // Phase 2: done when a reading session was submitted today
+  const readingDone = (S.todayReadingCount || 0) > 0;
 
-  // Determine status per subject
-  const statuses=subs.map((s,i)=>{
-    const lv=S.levelProgress[s.key]?.current_level||1;
-    if(lv>2)return'done';
-    if(i===0)return'active';
-    if(i<=2)return'ready';
-    return'locked';
-  });
+  // Phase 3 + 4: stubbed until built
+  const gamesDone = false;
+  const dharmaDone = false;
 
-  // Build SVG path string through waypoints in pathOrder
-  const pts=pathOrder.filter(i=>i<subs.length).map(i=>({
-    x:slots[i].cx*W, y:slots[i].cy*H
-  }));
+  // Phase 5: done when an "exercise" task is approved today
+  const exerciseTaskIds = S.tasks.filter(t => /exercise|play|outdoor/i.test(t.title)).map(t => t.id);
+  const exerciseDone = exerciseTaskIds.some(id => S.tc[id] === 'approved');
 
-  // Smooth cubic bezier path through all points
-  function makePath(pts){
-    if(pts.length<2)return'';
-    let d=`M${pts[0].x},${pts[0].y}`;
-    for(let i=0;i<pts.length-1;i++){
-      const p0=pts[i],p1=pts[i+1];
-      const mx=(p0.x+p1.x)/2;
-      d+=` C${mx},${p0.y} ${mx},${p1.y} ${p1.x},${p1.y}`;
+  return {
+    subjects: { done: subjectsDone, progress: subjectsCount, total: 3 },
+    reading: { done: readingDone, progress: readingDone ? 1 : 0, total: 1 },
+    games: { done: gamesDone, progress: 0, total: 2 },
+    dharma: { done: dharmaDone, progress: 0, total: 1 },
+    exercise: { done: exerciseDone, progress: exerciseDone ? 1 : 0, total: 1 },
+  };
+}
+
+function renderQuestTrail() {
+  const listEl = document.getElementById('qt-list');
+  if (!listEl) return;
+  const state = getQuestState();
+
+  let unlockedSoFar = true;
+  let phasesComplete = 0;
+  const cards = QUEST_PHASES.map((p, i) => {
+    const st = state[p.id];
+    let status;
+    if (!p.locked) {
+      status = st.done ? 'done' : 'open';
+    } else if (st.done) {
+      status = 'done';
+    } else if (unlockedSoFar) {
+      status = 'active';
+    } else {
+      status = 'locked';
     }
-    return d;
-  }
-  const pathD=makePath(pts);
-  const pathLen=pts.length*120; // approx length for dash animation
+    if (p.locked) unlockedSoFar = unlockedSoFar && st.done;
+    if (st.done) phasesComplete++;
 
-  // Helper: draw one SVG island group
-  function islandSVG(s, slotIdx, status){
-    const pos=slots[slotIdx];
-    const cx=pos.cx*W, cy=pos.cy*H;
-    const isActive=status==='active';
-    const isLocked=status==='locked';
-    const isDone=status==='done';
-    const col=subjectColor(s);
-    const lv=S.levelProgress[s.key]?.current_level||1;
+    const subtitle = p.subtitle();
+    const actionLabel = status === 'done' ? '\u2713 Done'
+      : status === 'active' ? 'Start \u2192'
+      : status === 'open' ? (st.done ? '\u2713 Done' : 'Begin \u2192')
+      : '\ud83d\udd12 Locked';
 
-    // Island sizes — active is bigger
-    const iW=isActive?52:42;
-    const iH=isActive?20:16;
-    const rockH=isActive?14:11;
-    const emojiSz=isActive?'1.4rem':'1.1rem';
+    const clickable = status !== 'locked' && !p.comingSoon;
+    const onclick = clickable ? `onclick="startQuestPhase('${p.id}')"` : '';
 
-    // Grass colour variants
-    const grassTop=isLocked?'#4A5E50':'#3a8a3a';
-    const grassMid=isLocked?'#3A4E40':'#2d6e2d';
-    const rockTop=isLocked?'#5a6e60':'#7a5c3a';
-    const rockBot=isLocked?'#3a4e40':'#5a3e22';
-
-    // Glow ring for active
-    const glowRing=isActive?`<ellipse cx="${cx}" cy="${cy+iH*0.4}" rx="${iW*0.65}" ry="${iH*0.55}" fill="none" stroke="${col}" stroke-width="2.5" opacity="0.55" style="animation:iPulse 2s ease-in-out infinite"/>`:'' ;
-
-    // Done checkmark badge
-    const doneBadge=isDone?`<circle cx="${cx+iW*0.38}" cy="${cy-iH*0.6}" r="7" fill="#27AE60"/><text x="${cx+iW*0.38}" y="${cy-iH*0.6+4}" text-anchor="middle" font-size="8" fill="#fff">✓</text>`:'';
-
-    // Island body
-    const islandBody=`
-      <!-- shadow under island -->
-      <ellipse cx="${cx}" cy="${cy+iH*0.85+rockH}" rx="${iW*0.55}" ry="4" fill="rgba(0,0,0,0.22)"/>
-      <!-- rocky underside -->
-      <path d="M${cx-iW*0.48},${cy+iH*0.3}
-               Q${cx-iW*0.3},${cy+iH*0.3+rockH*1.1} ${cx},${cy+iH*0.35+rockH*1.2}
-               Q${cx+iW*0.3},${cy+iH*0.3+rockH*1.1} ${cx+iW*0.48},${cy+iH*0.3}
-               Z"
-            fill="url(#rock_${slotIdx})"/>
-      <!-- grass top ellipse -->
-      <ellipse cx="${cx}" cy="${cy}" rx="${iW*0.5}" ry="${iH*0.38}" fill="${grassTop}"/>
-      <!-- grass dome -->
-      <path d="M${cx-iW*0.5},${cy}
-               Q${cx-iW*0.5},${cy-iH*0.7} ${cx},${cy-iH*0.78}
-               Q${cx+iW*0.5},${cy-iH*0.7} ${cx+iW*0.5},${cy}
-               Z"
-            fill="${grassMid}"/>
-      <!-- grass highlight -->
-      <ellipse cx="${cx-iW*0.1}" cy="${cy-iH*0.35}" rx="${iW*0.22}" ry="${iH*0.18}" fill="rgba(255,255,255,0.08)"/>
-    `;
-
-    // Level badge pill
-    const badgeY=cy+iH*0.85+rockH+10;
-    const badgeBg=isActive?col:isLocked?'rgba(80,100,90,0.7)':isDone?'rgba(124,92,191,0.7)':'rgba(60,100,80,0.7)';
-    const badgeTxt=isLocked?'🔒':`Lv${lv}`;
-
-    // Name label
-    const nameY=cy-iH*0.82-6;
+    let miniPills = '';
+    if (p.id === 'subjects') {
+      const today = new Date().getDay();
+      const rotation = {1:['math','english','science'],2:['world','hindi','social'],3:['math','reading','art'],4:['science','english','social'],5:['math','world','creative'],6:['math','science','social'],0:[]};
+      const keys = rotation[today] || [];
+      miniPills = `<div class="qt-mini-pills">${keys.map((k, idx) => {
+        const subj = S.subjects.find(s => s.key === k);
+        const isDone = idx < st.progress;
+        return `<span class="qt-mini-pill ${isDone ? 'done' : 'todo'}">${isDone ? '\u2713' : '\u25cb'} ${subj?.name || k}</span>`;
+      }).join('')}</div>`;
+    }
 
     return `
-      <defs>
-        <linearGradient id="rock_${slotIdx}" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="${rockTop}"/>
-          <stop offset="100%" stop-color="${rockBot}"/>
-        </linearGradient>
-      </defs>
-      <g class="isl-svg-wrap${isActive?' active-isl':''}" onclick="${isLocked?'':(`startSubject('${s.key}')`).replace(/'/g,'&apos;')}" style="cursor:${isLocked?'default':'pointer'}">
-        ${glowRing}
-        ${islandBody}
-        <!-- subject emoji -->
-        <text x="${cx}" y="${cy-iH*0.1}" text-anchor="middle" dominant-baseline="middle"
-              font-size="${isActive?22:17}" style="filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))">${isLocked?'🔒':s.icon}</text>
-        ${doneBadge}
-        <!-- name label with dark bg -->
-        <rect x="${cx-22}" y="${nameY-9}" width="44" height="11" rx="5" fill="rgba(0,0,0,0.55)"/>
-        <text x="${cx}" y="${nameY-3}" text-anchor="middle" font-size="7" font-weight="700"
-              font-family="Nunito,sans-serif" fill="#fff">${s.name.length>8?s.name.slice(0,7)+'…':s.name}</text>
-        <!-- level badge -->
-        <rect x="${cx-14}" y="${badgeY-7}" width="28" height="13" rx="6" fill="${badgeBg}"/>
-        <text x="${cx}" y="${badgeY+0.5}" text-anchor="middle" dominant-baseline="middle"
-              font-size="7" font-weight="800" font-family="Nunito,sans-serif" fill="#fff">${badgeTxt}</text>
-      </g>
-    `;
-  }
+      <div class="qt-stone qt-${status}" ${onclick}>
+        <div class="qt-badge-num">${status === 'done' ? '\u2713' : p.num}</div>
+        <div class="qt-icon-circle">${p.comingSoon ? '\ud83d\udd28' : p.icon}</div>
+        <div class="qt-body">
+          <div class="qt-tag">${p.tag}${status === 'done' ? ' \u00b7 Complete!' : ''}</div>
+          <div class="qt-name">${p.name}</div>
+          <div class="qt-sub">${subtitle}</div>
+          ${miniPills}
+          ${status !== 'locked' ? `<div class="qt-stars">Up to ${p.starsMax} \u2b50 to earn</div>` : ''}
+        </div>
+        <div class="qt-action">${actionLabel}</div>
+      </div>`;
+  }).join('');
 
-  // Build full SVG
-  const svgIslands=subs.map((s,i)=>islandSVG(s,i,statuses[i])).join('');
+  listEl.innerHTML = cards;
 
-  el.innerHTML=`
-  <svg viewBox="0 0 ${W} ${H}" width="100%" height="100%"
-       xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
+  const summaryEl = document.getElementById('qt-summary');
+  if (summaryEl) summaryEl.textContent = `${phasesComplete} / 5 phases`;
 
-    <!-- Animated glowing dotted path -->
-    <!-- Base faint path -->
-    <path d="${pathD}" fill="none" stroke="rgba(43,191,184,0.18)" stroke-width="2" stroke-linecap="round"/>
-    <!-- Gold flowing dots -->
-    <path d="${pathD}" fill="none"
-          stroke="rgba(246,192,74,0.7)" stroke-width="2.5"
-          stroke-linecap="round" stroke-dasharray="4 14"
-          stroke-dashoffset="0"
-          style="animation:dotFlow 3s linear infinite"/>
-    <!-- White sparkle overlay -->
-    <path d="${pathD}" fill="none"
-          stroke="rgba(255,255,255,0.35)" stroke-width="1.5"
-          stroke-linecap="round" stroke-dasharray="2 16"
-          stroke-dashoffset="8"
-          style="animation:dotFlow 3s linear infinite reverse"/>
-
-    <!-- Islands -->
-    ${svgIslands}
-  </svg>`;
+  // Daily star progress toward the 350 cap
+  const dpVal = document.getElementById('qt-dp-val');
+  const dpBar = document.getElementById('qt-dp-bar');
+  const todayStars = S.todayStarsEarned || 0;
+  if (dpVal) dpVal.textContent = `${todayStars} / 350 stars`;
+  if (dpBar) dpBar.style.width = Math.min(100, Math.round(todayStars / 350 * 100)) + '%';
 }
+
+function startQuestPhase(id) {
+  if (id === 'subjects') { navTo('learn'); return; }
+  if (id === 'reading') { openReading(); return; }
+  if (id === 'exercise') {
+    const t = S.tasks.find(t => /exercise|play|outdoor/i.test(t.title));
+    if (t) tapTask(t.id, t.stars_value);
+    else navTo('tasks');
+    return;
+  }
+  // games / dharma not built yet
+  showMod(`<div style="text-align:center;padding:12px"><div style="font-size:2.5rem;margin-bottom:9px">\ud83d\udee0\ufe0f</div><div style="font-size:.95rem;font-weight:900;color:#fff;margin-bottom:5px">Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">This phase is still being built. Check back soon!</div><button class="mb" onclick="closeMod()">OK</button></div>`);
+}
+
+async function loadQuestData() {
+  if (!S.player) return;
+  try {
+    const todayStr = today();
+    const sessions = await db(`sessions?player_id=eq.${S.player.id}&created_at=gte.${todayStr}T00:00:00&select=id,subject_key`);
+    S.todaySessions = Array.isArray(sessions) ? sessions : [];
+    const reads = await db(`stars_log?player_id=eq.${S.player.id}&category=eq.reading&created_at=gte.${todayStr}T00:00:00&select=id`);
+    S.todayReadingCount = Array.isArray(reads) ? reads.length : 0;
+    const logs = await db(`stars_log?player_id=eq.${S.player.id}&created_at=gte.${todayStr}T00:00:00&select=amount`);
+    S.todayStarsEarned = Math.max(0, (Array.isArray(logs) ? logs : []).reduce((a, l) => a + Math.max(0, l.amount), 0));
+  } catch (e) {}
+}
+
 
 // HOME subjects — ALL of them, auto-wrap grid
 function renderHSubjects(){
@@ -2931,12 +3038,8 @@ function renderIslands(cat='all'){
         ${img?`<img src="${img}" alt="${s.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:``}
         <div class="lscard-img-fallback" style="${img?'display:none':''};background:${grad}"><span>${s.icon||'📖'}</span></div>
       </div>
-      <div class="lscard-body">
-        <div class="lscard-nm">${s.name}</div>
-        <span class="lscard-pill">Lv${lv}</span>
-        <div class="lscard-pb"><div class="lscard-pf" style="width:${pct}%"></div></div>
-        <div class="lscard-pct">${pct}%</div>
-      </div>
+      <span class="lscard-pill">Lv${lv}</span>
+      <div class="lscard-pb"><div class="lscard-pf" style="width:${pct}%"></div></div>
     </div>`;
   }).join('');
 }
