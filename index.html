@@ -581,79 +581,94 @@ body{background:#0a1a10}
 .wi.goal-active .wi-img{border-color:var(--teal);box-shadow:0 0 0 2px rgba(43,191,184,.35)}
 
 /* ═══════════════════════
-   TODAY'S QUEST TRAIL — replaces island path map
+   TODAY'S QUEST TRAIL — visual path layout
    ═══════════════════════ */
 .quest-trail-card{grid-column:1/3;grid-row:span 2;background:rgba(8,20,12,.55);position:relative;overflow:hidden}
-.qt-list{display:flex;flex-direction:column;margin-top:6px;position:relative}
-.qt-connector{position:absolute;left:38px;top:64px;width:3px;border-radius:99px;background:rgba(255,255,255,.08);z-index:0}
-.qt-connector.done{background:linear-gradient(180deg,#27AE60,#52D08A);box-shadow:0 0 8px rgba(39,174,96,.5)}
-.qt-connector.active-flow{background:repeating-linear-gradient(180deg,#F6C04A 0 8px,transparent 8px 16px);animation:qtFlow 1s linear infinite}
-@keyframes qtFlow{from{background-position-y:0}to{background-position-y:16px}}
-.qt-stone{display:flex;align-items:center;gap:13px;padding:11px 12px;border-radius:16px;position:relative;z-index:1;margin-bottom:8px;transition:all .2s;cursor:pointer}
-.qt-stone:last-child{margin-bottom:0}
-.qt-stone.qt-done{background:rgba(39,174,96,.1);border:1.5px solid rgba(39,174,96,.3)}
-.qt-stone.qt-active{background:rgba(246,192,74,.14);border:1.5px solid rgba(246,192,74,.5);box-shadow:0 0 20px rgba(246,192,74,.15)}
-.qt-stone.qt-locked{background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.08);opacity:.6;cursor:default}
-.qt-stone.qt-open{background:rgba(124,92,191,.08);border:1.5px solid rgba(124,92,191,.28)}
-.qt-stone:not(.qt-locked):hover{transform:translateX(4px)}
-.qt-badge-num{
-  width:26px;height:26px;border-radius:50%;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:900;color:#fff;
-  position:relative;z-index:2;
+
+.qt-trail-wrap{display:flex;flex-direction:column;gap:0;margin-top:8px}
+
+/* Each row = left column (badge + line) + right column (card) */
+.qt-row{display:flex;gap:12px;align-items:stretch;min-height:72px}
+
+/* Left column: number badge on top, vertical line below */
+.qt-left-col{
+  display:flex;flex-direction:column;align-items:center;
+  flex-shrink:0;width:44px;padding-top:2px;
 }
-.qt-stone.qt-done .qt-badge-num{background:#27AE60}
-.qt-stone.qt-active .qt-badge-num{background:#F6C04A;color:#1A2B1E;animation:qtPulseNum 1.8s ease-in-out infinite}
-.qt-stone.qt-locked .qt-badge-num{background:rgba(255,255,255,.15)}
-.qt-stone.qt-open .qt-badge-num{background:#7C5CBF}
-@keyframes qtPulseNum{0%,100%{box-shadow:0 0 0 0 rgba(246,192,74,.5)}50%{box-shadow:0 0 0 6px rgba(246,192,74,0)}}
-.qt-icon-circle{
-  width:46px;height:46px;border-radius:50%;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;font-size:1.5rem;
-  transition:transform .3s;
+
+/* Circular number badge */
+.qt-num-badge{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.82rem;font-weight:900;
+  flex-shrink:0;z-index:2;position:relative;
+  transition:all .3s;
 }
-.qt-stone.qt-active .qt-icon-circle{animation:qtFloat 2.4s ease-in-out infinite}
-@keyframes qtFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-.qt-stone.qt-done .qt-icon-circle{background:rgba(39,174,96,.18);border:2px solid #27AE60}
-.qt-stone.qt-active .qt-icon-circle{background:rgba(246,192,74,.2);border:2px solid #F6C04A}
-.qt-stone.qt-locked .qt-icon-circle{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12)}
-.qt-stone.qt-open .qt-icon-circle{background:rgba(124,92,191,.18);border:2px solid #7C5CBF}
-.qt-body{flex:1;min-width:0}
-.qt-tag{font-size:.56rem;font-weight:900;letter-spacing:.6px;text-transform:uppercase;margin-bottom:2px}
-.qt-stone.qt-done .qt-tag{color:#52D08A}
-.qt-stone.qt-active .qt-tag{color:#F6C04A}
-.qt-stone.qt-locked .qt-tag{color:rgba(255,255,255,.3)}
-.qt-stone.qt-open .qt-tag{color:#A88AE8}
-.qt-name{font-size:.85rem;font-weight:900;color:#fff;line-height:1.2}
-.qt-stone.qt-locked .qt-name{color:rgba(255,255,255,.55)}
-.qt-sub{font-size:.66rem;font-weight:700;color:rgba(255,255,255,.45);margin-top:1px}
-.qt-stars{font-size:.62rem;font-weight:800;margin-top:2px}
-.qt-stone.qt-done .qt-stars{color:#52D08A}
-.qt-stone.qt-active .qt-stars{color:#F6C04A}
-.qt-stone.qt-open .qt-stars{color:#A88AE8}
-.qt-action{flex-shrink:0;font-size:.7rem;font-weight:900;padding:7px 13px;border-radius:99px;white-space:nowrap}
-.qt-stone.qt-active .qt-action{background:#F6C04A;color:#1A2B1E}
-.qt-stone.qt-open .qt-action{background:rgba(124,92,191,.25);color:#C8B0FF}
-.qt-stone.qt-done .qt-action{background:rgba(39,174,96,.2);color:#52D08A}
-.qt-mini-pills{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
-.qt-mini-pill{font-size:.52rem;font-weight:800;padding:2px 7px;border-radius:99px;display:flex;align-items:center;gap:3px}
-.qt-mini-pill.done{background:rgba(39,174,96,.18);color:#52D08A}
-.qt-mini-pill.todo{background:rgba(255,255,255,.07);color:rgba(255,255,255,.4)}
-.qt-day-progress{margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(246,192,74,.08);border:1px solid rgba(246,192,74,.2)}
+
+/* Vertical connector line between stones */
+.qt-vert-line{
+  width:3px;flex:1;margin-top:4px;margin-bottom:4px;
+  border-radius:99px;min-height:18px;
+}
+@keyframes qtConnFlow{
+  from{background-position:0 0}
+  to{background-position:0 16px}
+}
+
+/* Phase card — right side */
+.qt-phase-card{
+  flex:1;border-radius:16px;padding:12px 14px;
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:10px;cursor:pointer;
+  transition:transform .2s,box-shadow .2s;
+}
+.qt-phase-card:not([style*="opacity"]){cursor:pointer}
+.qt-phase-card:hover:not([onclick=""]){transform:translateX(4px)}
+
+/* Icon circle inside the card */
+.qt-phase-icon{
+  width:50px;height:50px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;flex-shrink:0;
+}
+@keyframes qtFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes qtPulseNum{0%,100%{box-shadow:0 0 0 0 rgba(246,192,74,.6)}60%{box-shadow:0 0 0 8px rgba(246,192,74,0)}}
+
+/* Text body */
+.qt-phase-body{flex:1;min-width:0}
+.qt-phase-tag{font-size:.58rem;font-weight:900;text-transform:uppercase;letter-spacing:.7px;margin-bottom:2px}
+.qt-phase-name{font-size:.9rem;font-weight:900;color:#fff;line-height:1.2}
+.qt-phase-sub{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.45);margin-top:2px}
+.qt-phase-stars{font-size:.62rem;font-weight:800;color:var(--amber);margin-top:4px}
+
+/* Action button */
+.qt-phase-btn{
+  flex-shrink:0;padding:8px 16px;border:none;border-radius:99px;
+  font-family:'Nunito',sans-serif;font-size:.72rem;font-weight:900;
+  cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+.qt-phase-btn:hover{opacity:.85;transform:scale(1.05)}
+
+/* Mini subject pills inside Phase 1 card */
+.qt-mini-pills{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.qt-mini-pill{font-size:.55rem;font-weight:800;padding:2px 8px;border-radius:99px;display:flex;align-items:center;gap:3px}
+.qt-mini-pill.done{background:rgba(39,174,96,.2);color:#52D08A;border:1px solid rgba(39,174,96,.3)}
+.qt-mini-pill.todo{background:rgba(255,255,255,.07);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.1)}
+
+/* Day progress bar */
+.qt-day-progress{margin-top:6px;padding:12px 14px;border-radius:14px;background:rgba(246,192,74,.07);border:1px solid rgba(246,192,74,.18)}
 .qt-dp-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
 .qt-dp-lbl{font-size:.7rem;font-weight:900;color:var(--amber)}
-.qt-dp-val{font-size:.68rem;font-weight:800;color:rgba(255,255,255,.6)}
+.qt-dp-val{font-size:.68rem;font-weight:800;color:rgba(255,255,255,.5)}
 .qt-dp-bar-bg{height:8px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}
 .qt-dp-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#E8A020,#F6C04A);transition:width .8s;position:relative}
 .qt-dp-bar::after{content:'';position:absolute;right:0;top:0;bottom:0;width:14px;background:rgba(255,255,255,.4);border-radius:99px;animation:shimmer 1.5s ease-in-out infinite}
-.qt-dp-hint{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:6px}
+.qt-dp-hint{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.35);margin-top:6px}
 
-/* ═══════════════════════
-   TODAY'S PLAN — now in sidebar, compact
-   ═══════════════════════ */
-.plan-side-card{background:var(--gc)}
-.plan-side-card .t-block{margin-bottom:9px}
-.plan-side-card .t-blk-hdr{margin-bottom:4px}
+/* TODAY'S PLAN — now in sidebar, compact */
+.plan-side-card .t-blk-time{display:none}
 .plan-side-card .t-row{padding:5px 6px}
+.plan-side-card .t-block{margin-bottom:8px}
 
 /* ═══════════════════════
    LEARN TAB ENHANCEMENTS
@@ -2653,70 +2668,144 @@ function renderQuestTrail() {
   if (!listEl) return;
   const state = getQuestState();
 
-  let unlockedSoFar = true;
+  const today = new Date().getDay();
+  const rotation = {1:['math','english','science'],2:['world','hindi','social'],3:['math','reading','art'],4:['science','english','social'],5:['math','world','creative'],6:['math','science','social'],0:['math','english','science']};
+  const todayKeys = rotation[today] || ['math','english','science'];
+  const todaySubjNames = todayKeys.map(k => S.subjects.find(s=>s.key===k)?.name || k);
+
   let phasesComplete = 0;
-  const cards = QUEST_PHASES.map((p, i) => {
-    const st = state[p.id];
-    let status;
-    if (!p.locked) {
-      status = st.done ? 'done' : 'open';
-    } else if (st.done) {
-      status = 'done';
-    } else if (unlockedSoFar) {
-      status = 'active';
-    } else {
-      status = 'locked';
-    }
-    if (p.locked) unlockedSoFar = unlockedSoFar && st.done;
-    if (st.done) phasesComplete++;
+  Object.values(state).forEach(s => { if(s.done) phasesComplete++; });
 
-    const subtitle = p.subtitle();
-    const actionLabel = status === 'done' ? '\u2713 Done'
-      : status === 'active' ? 'Start \u2192'
-      : status === 'open' ? (st.done ? '\u2713 Done' : 'Begin \u2192')
-      : '\ud83d\udd12 Locked';
+  const summaryEl = document.getElementById('qt-summary');
+  if(summaryEl) summaryEl.textContent = `${phasesComplete} / 5 phases`;
 
-    const clickable = status !== 'locked' && !p.comingSoon;
-    const onclick = clickable ? `onclick="startQuestPhase('${p.id}')"` : '';
+  const todayStars = S.todayStarsEarned || 0;
+  const dpVal = document.getElementById('qt-dp-val');
+  const dpBar = document.getElementById('qt-dp-bar');
+  if(dpVal) dpVal.textContent = `${todayStars} / 350 stars`;
+  if(dpBar) dpBar.style.width = Math.min(100, Math.round(todayStars/350*100)) + '%';
 
+  // Determine status of each phase
+  const phases = [
+    { id:'subjects', num:1, emoji:'📚', name:'Subject Learning', sub: todaySubjNames.join(' · '), starsMax:60, locked:false, comingSoon:false },
+    { id:'reading',  num:2, emoji:'📖', name:'Reading Time',     sub:'One passage · 10–15 min', starsMax:20, locked:!state.subjects.done, comingSoon:false },
+    { id:'games',    num:3, emoji:'🎮', name:'Choice Games',     sub:'2 games · 20–30 min', starsMax:40, locked:!state.reading.done, comingSoon:true },
+    { id:'dharma',   num:4, emoji:'🕉️', name:'Dharma Time',     sub:'10–15 min', starsMax:15, locked:false, comingSoon:true, open:true },
+    { id:'exercise', num:5, emoji:'🏃', name:'Exercise',         sub:'5 min · stretch, jump, move!', starsMax:5, locked:false, comingSoon:false, open:true },
+  ];
+
+  function getStatus(ph){
+    if(state[ph.id].done) return 'done';
+    if(ph.locked) return 'locked';
+    if(ph.open) return 'open';
+    return 'active';
+  }
+
+  // Build the HTML — each phase is a row with a big circle stone on the left
+  // and a vertical connector line between them
+  let html = '<div class="qt-trail-wrap">';
+
+  phases.forEach((ph, i) => {
+    const st = getStatus(ph);
+    const isLast = i === phases.length - 1;
+    const nextSt = !isLast ? getStatus(phases[i+1]) : null;
+
+    // Connector color — between this stone and the next
+    let connColor = 'rgba(255,255,255,.12)';
+    let connDash = '8 6';
+    let connAnim = '';
+    if(st==='done') { connColor='#27AE60'; connDash='none'; }
+    else if(st==='active') { connColor='#F6C04A'; connAnim='animation:qtConnFlow 1s linear infinite'; }
+
+    // Stone ring color
+    const ringColors = {
+      done:  {bg:'#1A3D22', border:'#27AE60', shadow:'rgba(39,174,96,.5)',  num:'#27AE60',  ico:'rgba(39,174,96,.25)'},
+      active:{bg:'#3D3010', border:'#F6C04A', shadow:'rgba(246,192,74,.6)', num:'#F6C04A',  ico:'rgba(246,192,74,.2)'},
+      locked:{bg:'rgba(255,255,255,.04)', border:'rgba(255,255,255,.12)', shadow:'none',    num:'rgba(255,255,255,.25)', ico:'rgba(255,255,255,.07)'},
+      open:  {bg:'#1E1535', border:'#7C5CBF', shadow:'rgba(124,92,191,.4)', num:'#A88AE8',  ico:'rgba(124,92,191,.2)'},
+    };
+    const c = ringColors[st] || ringColors.locked;
+
+    // Card background
+    const cardBg = {
+      done:  'background:rgba(39,174,96,.1);border:1.5px solid rgba(39,174,96,.3)',
+      active:'background:rgba(246,192,74,.12);border:1.5px solid rgba(246,192,74,.55);box-shadow:0 0 28px rgba(246,192,74,.12)',
+      locked:'background:rgba(255,255,255,.03);border:1.5px solid rgba(255,255,255,.07)',
+      open:  'background:rgba(124,92,191,.08);border:1.5px solid rgba(124,92,191,.3)',
+    }[st];
+
+    // Tag label
+    const tagText = st==='done'?'✅ Complete!': st==='active'?'▶ Up Next': st==='open'?'✨ Open Anytime':'🔒 Locked';
+    const tagColor = st==='done'?'#52D08A': st==='active'?'#F6C04A': st==='open'?'#C8A8FF':'rgba(255,255,255,.3)';
+
+    // Action button
+    const canClick = (st==='active'||st==='open') && !ph.comingSoon;
+    const btnLabel = st==='done'?'✓ Done': st==='active'?'Start →': st==='open'?'Begin →':'🔒';
+    const btnStyle = st==='done'?'background:rgba(39,174,96,.2);color:#52D08A':
+                     st==='active'?'background:#F6C04A;color:#1A2B1E':
+                     st==='open'?'background:rgba(124,92,191,.3);color:#C8A8FF':
+                     'background:rgba(255,255,255,.07);color:rgba(255,255,255,.25)';
+
+    // Subject mini-pills for phase 1
     let miniPills = '';
-    if (p.id === 'subjects') {
-      const today = new Date().getDay();
-      const rotation = {1:['math','english','science'],2:['world','hindi','social'],3:['math','reading','art'],4:['science','english','social'],5:['math','world','creative'],6:['math','science','social'],0:[]};
-      const keys = rotation[today] || [];
-      miniPills = `<div class="qt-mini-pills">${keys.map((k, idx) => {
-        const subj = S.subjects.find(s => s.key === k);
-        const isDone = idx < st.progress;
-        return `<span class="qt-mini-pill ${isDone ? 'done' : 'todo'}">${isDone ? '\u2713' : '\u25cb'} ${subj?.name || k}</span>`;
+    if(ph.id==='subjects'){
+      miniPills = `<div class="qt-mini-pills" style="margin-top:6px">${todayKeys.map((k,idx)=>{
+        const done = idx < state.subjects.progress;
+        const nm = S.subjects.find(s=>s.key===k)?.name || k;
+        return `<span class="qt-mini-pill ${done?'done':'todo'}">${done?'✓':'○'} ${nm}</span>`;
       }).join('')}</div>`;
     }
 
-    return `
-      <div class="qt-stone qt-${status}" ${onclick}>
-        <div class="qt-badge-num">${status === 'done' ? '\u2713' : p.num}</div>
-        <div class="qt-icon-circle">${p.comingSoon ? '\ud83d\udd28' : p.icon}</div>
-        <div class="qt-body">
-          <div class="qt-tag">${p.tag}${status === 'done' ? ' \u00b7 Complete!' : ''}</div>
-          <div class="qt-name">${p.name}</div>
-          <div class="qt-sub">${subtitle}</div>
+    // Coming soon note
+    const csnote = ph.comingSoon ? '<span style="font-size:.58rem;font-weight:700;color:rgba(255,255,255,.3);margin-left:4px">· Coming soon</span>' : '';
+
+    html += `
+    <div class="qt-row">
+      <!-- LEFT: number badge + vertical connector -->
+      <div class="qt-left-col">
+        <div class="qt-num-badge" style="
+          background:${c.bg};
+          border:2px solid ${c.border};
+          box-shadow:0 0 14px ${c.shadow};
+          color:${c.num};
+          ${st==='active'?'animation:qtPulseNum 1.8s ease-in-out infinite':''}
+        ">${st==='done'?'✓':ph.num}</div>
+        ${!isLast ? `<div class="qt-vert-line" style="
+          background:${connColor==='none'?'#27AE60':connColor};
+          ${connColor==='rgba(255,255,255,.12)'?'border-right:3px dashed rgba(255,255,255,.12);background:transparent':''}
+          ${st==='active'?connAnim:''}
+        "></div>` : ''}
+      </div>
+
+      <!-- RIGHT: phase card -->
+      <div class="qt-phase-card" style="${cardBg};${st==='locked'?'opacity:.55':''}" ${canClick?`onclick="startQuestPhase('${ph.id}')"`:''}${ph.comingSoon&&!ph.locked?`onclick="startQuestPhase('${ph.id}')"`:''}>
+
+        <!-- Icon circle -->
+        <div class="qt-phase-icon" style="
+          background:${c.ico};
+          border:2px solid ${c.border};
+          ${st==='active'?'animation:qtFloat 2.4s ease-in-out infinite':''}
+        ">${ph.comingSoon?'🔨':ph.emoji}</div>
+
+        <!-- Text body -->
+        <div class="qt-phase-body">
+          <div class="qt-phase-tag" style="color:${tagColor}">${tagText}</div>
+          <div class="qt-phase-name" style="${st==='locked'?'color:rgba(255,255,255,.5)':''}">${ph.name}${csnote}</div>
+          <div class="qt-phase-sub">${ph.sub}</div>
           ${miniPills}
-          ${status !== 'locked' ? `<div class="qt-stars">Up to ${p.starsMax} \u2b50 to earn</div>` : ''}
+          ${st!=='locked'?`<div class="qt-phase-stars">Up to ${ph.starsMax} ⭐ to earn</div>`:''}
         </div>
-        <div class="qt-action">${actionLabel}</div>
-      </div>`;
-  }).join('');
 
-  listEl.innerHTML = cards;
+        <!-- Action button -->
+        <button class="qt-phase-btn" style="${btnStyle}" ${canClick||ph.comingSoon?`onclick="event.stopPropagation();startQuestPhase('${ph.id}')"`:''}>
+          ${btnLabel}
+        </button>
+      </div>
+    </div>`;
+  });
 
-  const summaryEl = document.getElementById('qt-summary');
-  if (summaryEl) summaryEl.textContent = `${phasesComplete} / 5 phases`;
-
-  // Daily star progress toward the 350 cap
-  const dpVal = document.getElementById('qt-dp-val');
-  const dpBar = document.getElementById('qt-dp-bar');
-  const todayStars = S.todayStarsEarned || 0;
-  if (dpVal) dpVal.textContent = `${todayStars} / 350 stars`;
-  if (dpBar) dpBar.style.width = Math.min(100, Math.round(todayStars / 350 * 100)) + '%';
+  html += '</div>';
+  listEl.innerHTML = html;
 }
 
 function startQuestPhase(id) {
