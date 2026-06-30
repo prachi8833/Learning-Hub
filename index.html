@@ -1558,10 +1558,10 @@ body{background:#0a1a10}
               <!-- Subject filter tabs -->
               <div class="subj-filters" id="l-filters">
                 <button class="sf-tab active" onclick="filterSubjects('all',this)">⭐ All</button>
-                <button class="sf-tab" onclick="filterSubjects('core',this)">📚 Core</button>
-                <button class="sf-tab" onclick="filterSubjects('cultural',this)">🕉️ Cultural</button>
+                <button class="sf-tab" onclick="filterSubjects('core',this)">📐 Maths & English</button>
                 <button class="sf-tab" onclick="filterSubjects('science',this)">🔬 Science</button>
-                <button class="sf-tab" onclick="filterSubjects('creative',this)">🎨 Creative</button>
+                <button class="sf-tab" onclick="filterSubjects('social',this)">🌍 Social Studies</button>
+                <button class="sf-tab" onclick="filterSubjects('creative',this)">🎨 Art & Coding</button>
               </div>
               <!-- Tara suggestion banner -->
               <div class="tara-suggest" id="tara-suggest" onclick="startSuggestedSubject()">
@@ -2025,36 +2025,30 @@ const IMG_BASE='https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/'
 
 // Subject key → PNG filename mapping (all uploaded PNGs)
 const subjectImages={
-  math:'Maths.png',english:'English.png',science:'Science.png',
-  social:'Social_Studies.png',hinduism:'Hinduism.png',hindi:'Hindi.png',
-  gujarat:'Festivals.png',festivals:'Festivals.png',
-  music:'Music.png',coding:'Coding.png',health:'Life_Skills.png',
-  clock:'Maths.png',indigenous:'Canada.png',canada:'Canada.png',
-  space:'Space.png',weather:'Weather.png',animals:'Animals.png',
-  plants:'Plants.png',body:'Human_Body.png',earth:'Earth_Science.png',
-  art:'Art.png',stories:'Stories.png',values:'Values.png',
-  world:'World_Geography.png',biology:'Biology.png',
-  creative:'Creative_Thinking.png',water:'Water_Cycle.png',
-  // subjects without PNGs — will use gradient fallback
-  reading:null,writing:null,
+  math:    'Maths.png',
+  english: 'English.png',
+  science: 'Science.png',
+  social:  'Social_Studies.png',
+  art:     'Art.png',
+  coding:  'Coding.png',
 };
 
-// Gradient fallbacks for subjects without a PNG
 const subjectGrads={
-  reading:'linear-gradient(135deg,#5B4FD4,#8B7FE8)',
-  writing:'linear-gradient(135deg,#E08833,#F6A040)',
+  math:    'linear-gradient(135deg,#1A9990,#2BBFB8)',
+  english: 'linear-gradient(135deg,#5B4FD4,#8B7FE8)',
+  science: 'linear-gradient(135deg,#2E7D32,#66BB6A)',
+  social:  'linear-gradient(135deg,#C2185B,#E91E63)',
+  art:     'linear-gradient(135deg,#E65100,#FF9800)',
+  coding:  'linear-gradient(135deg,#1565C0,#42A5F5)',
 };
 
-// Subject accent colours (used for glow border + progress bar)
 const subjectColors={
-  math:'#29B0B8',english:'#8266DE',science:'#3E8F3E',social:'#C2185B',
-  hinduism:'#E8457A',hindi:'#FF7043',gujarat:'#FF5722',festivals:'#FF5722',
-  music:'#9C27B0',coding:'#1565C0',health:'#27AE60',clock:'#29B0B8',
-  indigenous:'#E53935',canada:'#E53935',space:'#283593',weather:'#0288D1',
-  animals:'#558B2F',plants:'#2E7D32',body:'#AD1457',earth:'#4E342E',
-  art:'#F57F17',stories:'#6A1B9A',values:'#00695C',world:'#1565C0',
-  biology:'#1B5E20',creative:'#F9A825',water:'#0277BD',
-  reading:'#8266DE',writing:'#E08833',
+  math:    '#2BBFB8',
+  english: '#8266DE',
+  science: '#4CAF50',
+  social:  '#E91E63',
+  art:     '#FF9800',
+  coding:  '#42A5F5',
 };
 
 function subjectImg(key){
@@ -2107,18 +2101,18 @@ const gradeAhead=(g)=>Math.min(g+2,6);
 const shuf=a=>{const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;};
 
 const FALLBACK_SUBJECTS=[
-  {id:'s1',key:'math',name:'Maths',icon:'🔢',color:'#29B0B8',active:true,sort_order:1},
-  {id:'s2',key:'reading',name:'Reading',icon:'📚',color:'#8266DE',active:true,sort_order:2},
-  {id:'s3',key:'science',name:'Science',icon:'🔬',color:'#3E8F3E',active:true,sort_order:3},
-  {id:'s4',key:'writing',name:'Writing',icon:'✏️',color:'#E08833',active:true,sort_order:4},
-  {id:'s5',key:'social',name:'Social Studies',icon:'🌍',color:'#C2185B',active:true,sort_order:5},
-  {id:'s6',key:'coding',name:'Coding',icon:'💻',color:'#1565C0',active:true,sort_order:6},
-  {id:'s7',key:'hindi',name:'Hindi',icon:'🕉️',color:'#FF7043',active:true,sort_order:7},
-  {id:'s8',key:'hinduism',name:'Hinduism',icon:'🪔',color:'#E8457A',active:true,sort_order:8},
-  {id:'s9',key:'festivals',name:'Festivals',icon:'🎉',color:'#FF5722',active:true,sort_order:9},
-  {id:'s10',key:'music',name:'Music',icon:'🎵',color:'#9C27B0',active:true,sort_order:10},
-  {id:'s11',key:'art',name:'Art',icon:'🎨',color:'#F57F17',active:true,sort_order:11},
-  {id:'s12',key:'health',name:'Life Skills',icon:'💪',color:'#27AE60',active:true,sort_order:12},
+  {id:'s1',key:'math',   name:'Maths',        icon:'🔢',color:'#2BBFB8',active:true,sort_order:1,
+   subtopics:['Numbers & Counting','Addition & Subtraction','Multiplication & Division','Fractions','Geometry','Measurement','Time & Money','Patterns']},
+  {id:'s2',key:'english',name:'English',       icon:'📖',color:'#8266DE',active:true,sort_order:2,
+   subtopics:['Reading','Writing','Spelling','Grammar','Vocabulary','Stories','Life Skills','Phonics']},
+  {id:'s3',key:'science',name:'Science',       icon:'🔬',color:'#4CAF50',active:true,sort_order:3,
+   subtopics:['Animals','Plants','Biology','Human Body','Earth Science','Space','Weather','Water Cycle','Environmental Science']},
+  {id:'s4',key:'social', name:'Social Studies',icon:'🌍',color:'#E91E63',active:true,sort_order:4,
+   subtopics:['World Geography','Canada','Social Studies','Communities','History','Values','Indigenous Culture']},
+  {id:'s5',key:'art',    name:'Art & Culture', icon:'🎨',color:'#FF9800',active:true,sort_order:5,
+   subtopics:['Art','Music','Creative Thinking','Festivals','Hindi','Hinduism']},
+  {id:'s6',key:'coding', name:'Coding',        icon:'💻',color:'#42A5F5',active:true,sort_order:6,
+   subtopics:['Basic Coding','Logic & Sequences','Patterns','Problem Solving']},
 ];
 const FALLBACK_TASKS=[{id:'t1',title:'Morning Reading',active:true,sort_order:1,icon:'📖',time_block:'morning',stars_value:5},{id:'t2',title:'Math Practice',active:true,sort_order:2,icon:'🔢',time_block:'morning',stars_value:5},{id:'t3',title:'Writing Practice',active:true,sort_order:3,icon:'✏️',time_block:'afternoon',stars_value:5},{id:'t4',title:'Science Activity',active:true,sort_order:4,icon:'🔬',time_block:'afternoon',stars_value:5},{id:'t5',title:'Free Reading',active:true,sort_order:5,icon:'📚',time_block:'evening',stars_value:3},{id:'t6',title:'Coding Practice',active:true,sort_order:6,icon:'💻',time_block:'afternoon',stars_value:5}];
 const FALLBACK_SHOP=[];
@@ -2642,7 +2636,6 @@ function getQuestState() {
   const todaySessions = (S.todaySessions || []);
   const subjectsDone = todaySessions.length >= 3;
   const subjectsCount = Math.min(todaySessions.length, 3);
-
   // Phase 2: done when a reading session was submitted today
   const readingDone = (S.todayReadingCount || 0) > 0;
 
@@ -2669,7 +2662,15 @@ function renderQuestTrail() {
   const state = getQuestState();
 
   const today = new Date().getDay();
-  const rotation = {1:['math','english','science'],2:['world','hindi','social'],3:['math','reading','art'],4:['science','english','social'],5:['math','world','creative'],6:['math','science','social'],0:['math','english','science']};
+  const rotation = {
+    1: ['math','english','science'],   // Mon
+    2: ['social','art','coding'],      // Tue
+    3: ['math','science','art'],       // Wed
+    4: ['english','social','science'], // Thu
+    5: ['math','coding','art'],        // Fri
+    6: ['math','english','social'],    // Sat
+    0: ['math','english','science'],   // Sun — free pick, pick 3
+  };
   const todayKeys = rotation[today] || ['math','english','science'];
   const todaySubjNames = todayKeys.map(k => S.subjects.find(s=>s.key===k)?.name || k);
 
@@ -3108,10 +3109,10 @@ function renderLearn(){
 
 // Subject filter categories
 const SUBJ_CATS={
-  core:['math','english','reading','writing','social'],
-  cultural:['hindi','hinduism','festivals','values','stories'],
-  science:['science','biology','earth','space','weather','animals','plants','body','water'],
-  creative:['art','music','coding','creative','health'],
+  core:    ['math','english'],
+  science: ['science'],
+  social:  ['social'],
+  creative:['art','coding'],
 };
 
 function filterSubjects(cat,btn){
