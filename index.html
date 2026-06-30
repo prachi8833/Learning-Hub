@@ -2116,21 +2116,28 @@ let KP={pendingPlayer:null,entry:'',cpmStep:1,cpmParent:'',cpmNew:''};
 async function init(){
   Object.values(SCREEN_BG).forEach(u=>{new Image().src=u;});
   buildCalendar();buildGarden();buildWS();buildSMD();buildCountdown();
-  // Close chip dropdown when clicking outside
   document.addEventListener('click',e=>{
     const chip=document.getElementById('player-chip');
     if(chip&&!chip.contains(e.target))chip.classList.remove('open');
   });
   try{
-    S.players=await db('players?select=*&order=name');
-    for(const p of S.players){
-      const logs=await db(`stars_log?player_id=eq.${p.id}&select=amount`);
-      const total=Math.max(0,logs.reduce((a,l)=>a+l.amount,0));
-      const el=document.getElementById(p.name.toLowerCase()[0]+'-ps-stars');
-      if(el)el.textContent=`⭐ ${total.toLocaleString()} stars`;
+    const result=await db('players?select=*&order=name');
+    S.players=Array.isArray(result)?result:[];
+    if(!Array.isArray(result)){
+      console.error('players query did not return an array:',result);
     }
-  }catch(e){}
-  // Auto-login from localStorage
+    for(const p of S.players){
+      try{
+        const logs=await db(`stars_log?player_id=eq.${p.id}&select=amount`);
+        const total=Math.max(0,(Array.isArray(logs)?logs:[]).reduce((a,l)=>a+l.amount,0));
+        const el=document.getElementById(p.name.toLowerCase()[0]+'-ps-stars');
+        if(el)el.textContent=`⭐ ${total.toLocaleString()} stars`;
+      }catch(e){console.error('star load error for',p.name,e);}
+    }
+  }catch(e){
+    console.error('players init error:',e);
+    S.players=[];
+  }
   const saved=localStorage.getItem('lh_player');
   if(saved){
     const p=S.players.find(x=>x.name.toLowerCase()===saved.toLowerCase());
@@ -2139,15 +2146,21 @@ async function init(){
 }
 
 // Show kid PIN screen for selected player
-function selectPlayer(name){
-  // If players not loaded yet (slow connection), wait and retry
-  if(!S.players||S.players.length===0){
-    const btn=document.querySelector(`.ps-card.${name[0]}`);
-    if(btn)btn.innerHTML+='<div style="font-size:.65rem;color:var(--amber);margin-top:6px">Loading...</div>';
-    setTimeout(()=>selectPlayer(name),800);
+function selectPlayer(name, retries){
+  retries = retries || 0;
+  if(!Array.isArray(S.players)||S.players.length===0){
+    if(retries>=8){
+      showMod(`<div style="text-align:center;padding:16px"><div style="font-size:2.2rem;margin-bottom:9px">⚠️</div><div style="font-size:.92rem;font-weight:900;color:#fff;margin-bottom:6px">Couldn't load players</div><div style="font-size:.76rem;color:rgba(255,255,255,.5);margin-bottom:14px">Check your internet connection and try refreshing the page.</div><button class="mb" onclick="closeMod();location.reload()">Refresh</button></div>`);
+      return;
+    }
+    setTimeout(()=>selectPlayer(name, retries+1), 600);
     return;
   }
-  const p=S.players.find(x=>x.name.toLowerCase()===name);if(!p)return;
+  const p=S.players.find(x=>x.name.toLowerCase()===name);
+  if(!p){
+    showMod(`<div style="text-align:center;padding:16px"><div style="font-size:2.2rem;margin-bottom:9px">⚠️</div><div style="font-size:.85rem;color:rgba(255,255,255,.6)">Player "${name}" not found.</div><button class="mb" style="margin-top:14px" onclick="closeMod()">OK</button></div>`);
+    return;
+  }
   KP.pendingPlayer=p;KP.entry='';
   document.getElementById('kp-player-name').textContent=p.name;
   const avEl=document.getElementById('kp-av-img');
@@ -2191,10 +2204,15 @@ async function doLogin(p){
   document.getElementById('app').style.display='flex';
   if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='flex';
   setBG('home');
-  await loadPlayer();
-  await loadNotifications();
-  renderAll();
-  updateChipDD();
+  try{
+    await loadPlayer();
+    await loadNotifications();
+    renderAll();
+    updateChipDD();
+  }catch(e){
+    console.error('doLogin render error:',e);
+    showMod(`<div style="text-align:center;padding:16px"><div style="font-size:2rem;margin-bottom:9px">⚠️</div><div style="font-size:.85rem;color:rgba(255,255,255,.6)">Something went wrong loading your home screen. Try refreshing.</div><button class="mb" style="margin-top:14px" onclick="closeMod();location.reload()">Refresh</button></div>`);
+  }
 }
 function backToPlayerSelect(){
   document.getElementById('kidPin').style.display='none';
@@ -2619,7 +2637,7 @@ function getQuestState() {
   const dharmaDone = false;
 
   // Phase 5: done when an "exercise" task is approved today
-  const exerciseTaskIds = S.tasks.filter(t => /exercise|play|outdoor/i.test(t.title)).map(t => t.id);
+  const exerciseTaskIds = (Array.isArray(S.tasks) ? S.tasks : []).filter(t => /exercise|play|outdoor/i.test(t.title||'')).map(t => t.id);
   const exerciseDone = exerciseTaskIds.some(id => S.tc[id] === 'approved');
 
   return {
