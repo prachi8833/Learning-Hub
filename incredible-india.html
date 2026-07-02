@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Incredible India 🇮🇳 — Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --saffron:#FF9933;--saffron2:#FF6600;--gold:#F6C04A;--gold2:#E8A020;
+  --pink:#FF006E;--pink2:#FF4DA6;--purple:#6B21A8;--purple2:#9333EA;
+  --teal:#2BBFB8;--green:#16A34A;--white:#F8F4FF;
+  --gc:rgba(20,8,35,0.90);--gb:rgba(255,255,255,0.08);
+  --r:16px;--shadow:0 4px 24px rgba(0,0,0,0.5);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden}
+body{background:#0D0520;display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+.bg{position:fixed;inset:0;z-index:0;
+  background:radial-gradient(ellipse at 20% 30%,rgba(147,51,234,.15) 0%,transparent 55%),
+             radial-gradient(ellipse at 80% 70%,rgba(255,0,110,.12) 0%,transparent 55%),
+             radial-gradient(ellipse at 50% 50%,rgba(255,153,51,.08) 0%,transparent 60%),#0D0520}
+/* Rangoli dots decoration */
+.rangoli-dot{position:fixed;border-radius:50%;pointer-events:none;animation:twinkle ease-in-out infinite alternate}
+@keyframes twinkle{from{opacity:.15;transform:scale(1)}to{opacity:.5;transform:scale(1.3)}}
+
+.wrap{position:relative;z-index:1;width:100%;max-width:620px;padding:12px;
+  display:flex;flex-direction:column;gap:9px;max-height:100vh;overflow-y:auto}
+.wrap::-webkit-scrollbar{display:none}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:10px;background:var(--gc);backdrop-filter:blur(14px);
+  border:1px solid rgba(255,153,51,.2);border-radius:var(--r);padding:11px 15px;
+  box-shadow:var(--shadow);flex-shrink:0}
+.back-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,153,51,.15);border:none;
+  color:#fff;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hdr-title{flex:1;font-size:1rem;font-weight:900;
+  background:linear-gradient(135deg,var(--saffron),var(--gold),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hdr-sub{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.45)}
+.lives{display:flex;gap:2px;font-size:1rem}
+.star-count{font-size:.9rem;font-weight:900;color:var(--gold);white-space:nowrap}
+
+/* INFO ROW */
+.info-row{display:flex;gap:7px;flex-shrink:0}
+.info-box{flex:1;background:var(--gc);backdrop-filter:blur(14px);
+  border:1px solid rgba(255,153,51,.12);border-radius:11px;padding:7px 9px;
+  text-align:center;box-shadow:var(--shadow)}
+.ib-val{font-size:.95rem;font-weight:900;color:#fff;line-height:1}
+.ib-lbl{font-size:.5rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px;text-transform:uppercase}
+.streak-badge{display:inline-flex;align-items:center;gap:3px;border-radius:99px;padding:3px 9px;
+  font-size:.7rem;font-weight:900;background:rgba(255,153,51,.12);
+  border:1px solid rgba(255,153,51,.25);color:var(--saffron);transition:all .3s}
+.streak-badge.s3{background:rgba(255,0,110,.12);border-color:rgba(255,0,110,.3);color:var(--pink2)}
+.streak-badge.s5{background:rgba(147,51,234,.15);border-color:rgba(147,51,234,.3);color:#C084FC}
+.streak-badge.s7{background:rgba(246,192,74,.15);border-color:rgba(246,192,74,.3);color:var(--gold);animation:mp .6s ease infinite alternate}
+@keyframes mp{from{transform:scale(1)}to{transform:scale(1.08)}}
+
+/* POPUPS */
+.popup-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
+  z-index:9999;text-align:center;pointer-events:none;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  background:rgba(13,5,32,0.96);backdrop-filter:blur(18px);
+  border-radius:24px;padding:20px 32px;box-shadow:0 8px 40px rgba(0,0,0,0.7)}
+.popup-overlay.combo{border:1.5px solid rgba(255,153,51,0.35)}
+.popup-overlay.life{border:1.5px solid rgba(255,0,110,0.35)}
+.popup-overlay.show{transform:translate(-50%,-50%) scale(1)}
+.popup-overlay.hide{transform:translate(-50%,-50%) scale(0);opacity:0}
+.po-text{font-size:1.9rem;font-weight:900;white-space:nowrap}
+.po-sub{font-size:.85rem;font-weight:800;color:rgba(255,255,255,.6);margin-top:3px}
+
+/* TOPIC TAG */
+.topic-tag{font-size:.63rem;font-weight:900;border-radius:99px;padding:3px 11px;border:1px solid}
+.topic-tag.stories{background:rgba(255,153,51,.12);color:var(--saffron);border-color:rgba(255,153,51,.28)}
+.topic-tag.festivals{background:rgba(255,0,110,.12);color:var(--pink2);border-color:rgba(255,0,110,.28)}
+.topic-tag.geography{background:rgba(22,163,74,.12);color:#86EFAC;border-color:rgba(22,163,74,.28)}
+.topic-tag.dharma{background:rgba(147,51,234,.12);color:#C084FC;border-color:rgba(147,51,234,.28)}
+.topic-tag.panchatantra{background:rgba(246,192,74,.12);color:var(--gold);border-color:rgba(246,192,74,.28)}
+.topic-tag.funfacts{background:rgba(43,191,184,.12);color:var(--teal);border-color:rgba(43,191,184,.28)}
+
+/* GAME CARD */
+.game-card{background:var(--gc);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(255,153,51,.15);border-radius:var(--r);
+  padding:16px;box-shadow:var(--shadow),0 0 20px rgba(255,153,51,.05)}
+.q-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.q-num{font-size:.6rem;font-weight:800;color:rgba(255,255,255,.35)}
+.question{font-size:1.15rem;font-weight:900;color:#fff;text-align:center;
+  margin-bottom:12px;line-height:1.4;min-height:40px;
+  display:flex;align-items:center;justify-content:center}
+.question.small{font-size:.95rem}
+
+/* MCQ */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px}
+.opts.single{grid-template-columns:1fr}
+.opt{padding:11px 10px;background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(255,153,51,.12);border-radius:12px;
+  font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;
+  color:rgba(255,255,255,.88);cursor:pointer;transition:all .15s;text-align:center}
+.opt:hover:not(:disabled){background:rgba(255,153,51,.12);border-color:rgba(255,153,51,.35);transform:translateY(-2px)}
+.opt.correct{background:rgba(22,163,74,.2)!important;border-color:var(--green)!important;color:#86EFAC!important}
+.opt.wrong{background:rgba(255,0,110,.12)!important;border-color:var(--pink)!important;color:#FF8FAA!important;animation:shake .3s ease}
+
+/* TRUE FALSE */
+.tf-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.tf-btn{padding:15px;border:2px solid;border-radius:13px;font-family:'Nunito',sans-serif;
+  font-size:1rem;font-weight:900;cursor:pointer;transition:all .2s;text-align:center}
+.tf-btn.true-btn{background:rgba(22,163,74,.1);border-color:rgba(22,163,74,.25);color:#86EFAC}
+.tf-btn.false-btn{background:rgba(255,0,110,.1);border-color:rgba(255,0,110,.25);color:#FF8FAA}
+.tf-btn:hover:not(:disabled){transform:translateY(-3px);filter:brightness(1.2)}
+.tf-btn.correct{filter:brightness(1.3);box-shadow:0 4px 16px rgba(22,163,74,.3)}
+.tf-btn.wrong{opacity:.5;animation:shake .3s ease}
+
+/* FILL BLANK */
+.fill-sent{font-size:.95rem;line-height:1.8;color:rgba(255,255,255,.85);text-align:center;
+  margin-bottom:12px;padding:12px;background:rgba(255,153,51,.05);
+  border-radius:11px;border:1px solid rgba(255,153,51,.12)}
+.fill-blank{display:inline-block;min-width:70px;border-bottom:2px solid var(--gold);
+  color:var(--gold);font-weight:700;text-align:center;padding:0 4px}
+
+/* SEQUENCE */
+.seq-bank{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.seq-sent{padding:9px 12px;background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(255,153,51,.15);border-radius:10px;
+  font-size:.82rem;font-weight:700;color:rgba(255,255,255,.85);
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px}
+.seq-sent:hover:not(.placed){background:rgba(255,153,51,.1);border-color:rgba(255,153,51,.3)}
+.seq-sent.placed{opacity:.3;cursor:default}
+.seq-slots{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.seq-slot{display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.03);border:1.5px dashed rgba(255,255,255,.12);
+  border-radius:10px;padding:9px 12px;min-height:44px;cursor:pointer;transition:all .2s}
+.seq-slot.filled{background:rgba(255,153,51,.07);border-style:solid;border-color:rgba(255,153,51,.2);color:rgba(255,255,255,.85)}
+.seq-slot-num{width:20px;height:20px;border-radius:50%;background:rgba(255,153,51,.15);
+  display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:900;
+  color:var(--saffron);flex-shrink:0}
+.seq-slot-txt{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.3)}
+.seq-slot.filled .seq-slot-txt{color:rgba(255,255,255,.85)}
+
+/* MATCH PAIRS */
+.match-area{display:flex;gap:10px;margin-bottom:8px}
+.match-col{flex:1;display:flex;flex-direction:column;gap:6px}
+.match-col-lbl{font-size:.58rem;font-weight:900;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;text-align:center}
+.match-item{padding:9px 10px;border-radius:10px;font-size:.78rem;font-weight:800;
+  cursor:pointer;transition:all .2s;text-align:center;border:1.5px solid}
+.match-item.left{background:rgba(147,51,234,.1);border-color:rgba(147,51,234,.25);color:#C084FC}
+.match-item.right{background:rgba(255,153,51,.08);border-color:rgba(255,153,51,.2);color:var(--saffron)}
+.match-item.selected{border-color:#fff;background:rgba(255,255,255,.15)}
+.match-item.matched-ok{background:rgba(22,163,74,.15);border-color:var(--green);color:#86EFAC;cursor:default}
+.match-item.matched-no{background:rgba(255,0,110,.12);border-color:var(--pink);color:#FF8FAA;animation:shake .3s ease;cursor:default}
+
+/* INDIA MAP */
+.india-map-wrap{background:rgba(22,163,74,.05);border:1.5px solid rgba(22,163,74,.2);
+  border-radius:13px;overflow:hidden;margin-bottom:10px;position:relative}
+.india-map-wrap svg{width:100%;height:auto;display:block}
+.india-map-wrap svg path{fill:#1A3A2A;stroke:#86EFAC;stroke-width:.5;cursor:pointer;transition:all .2s}
+.india-map-wrap svg path:hover{fill:#2D6A4F;stroke:#86EFAC;stroke-width:1.5}
+.india-map-wrap svg path.correct{fill:#16A34A;stroke:#86EFAC;stroke-width:2}
+.india-map-wrap svg path.wrong{fill:#FF006E;stroke:#FF8FAA;stroke-width:2;animation:shake .3s ease}
+.india-map-wrap svg path.reveal{fill:#F6C04A;stroke:#E8A020;stroke-width:2}
+.map-hint{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.45);
+  text-align:center;padding:6px;background:rgba(22,163,74,.08);border-radius:8px;margin-bottom:8px}
+
+/* EMOJI DISPLAY */
+.emoji-big{font-size:3rem;text-align:center;margin-bottom:10px;animation:bounce .8s ease-in-out infinite alternate}
+@keyframes bounce{from{transform:scale(1)}to{transform:scale(1.1)}}
+
+/* ATTEMPTS */
+.attempts-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;justify-content:center}
+.attempt-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.2);transition:all .3s}
+.attempt-dot.used{background:var(--pink);border-color:var(--pink)}
+.attempt-dot.current{background:var(--gold);border-color:var(--gold);animation:pulse .8s ease infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+.feedback-row{min-height:24px;font-size:.78rem;font-weight:800;text-align:center;
+  margin-bottom:6px;color:var(--gold)}
+
+/* HINT + SHOW PIC */
+.btn-row{display:flex;gap:7px;margin-top:8px}
+.show-pic-btn{flex:1;padding:8px;background:rgba(255,153,51,.08);
+  border:1.5px solid rgba(255,153,51,.2);border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:800;
+  color:rgba(255,153,51,.8);cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:5px}
+.show-pic-btn:hover{background:rgba(255,153,51,.15);color:var(--saffron)}
+.hint-btn{flex:1;padding:8px;background:rgba(255,255,255,.04);
+  border:1.5px solid rgba(255,255,255,.1);border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:800;
+  color:rgba(255,255,255,.4);cursor:pointer;transition:all .2s;
+  display:none;align-items:center;justify-content:center;gap:5px}
+.hint-btn:hover{background:rgba(255,153,51,.1);border-color:rgba(255,153,51,.2);color:var(--saffron)}
+.hint-btn.used{opacity:.35;cursor:default}
+.hint-box{background:rgba(255,153,51,.06);border:1px solid rgba(255,153,51,.15);
+  border-radius:10px;padding:8px 12px;margin-top:6px;display:none}
+.hint-box.show{display:block}
+.hint-txt{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.65)}
+
+/* EXPLANATION */
+.explanation-card{margin-top:10px;border-radius:13px;padding:13px 15px;display:none;animation:slideDown .3s ease}
+.explanation-card.show{display:block}
+.explanation-card.ok{background:rgba(22,163,74,.1);border:1.5px solid rgba(22,163,74,.22)}
+.explanation-card.no{background:rgba(255,0,110,.08);border:1.5px solid rgba(255,0,110,.2)}
+.ex-result{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ex-icon{font-size:1.2rem;flex-shrink:0}
+.ex-answer{font-size:.88rem;font-weight:900;color:#fff}
+.ex-answer span{color:var(--gold)}
+.ex-explain{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.7);line-height:1.55;margin-bottom:7px}
+.ex-fact{background:rgba(255,153,51,.07);border:1px solid rgba(255,153,51,.18);
+  border-radius:9px;padding:8px 11px;margin-bottom:7px}
+.ex-fact-lbl{font-size:.57rem;font-weight:900;color:var(--saffron);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.ex-fact-txt{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.75);line-height:1.5}
+.ex-word{background:rgba(147,51,234,.08);border:1px solid rgba(147,51,234,.2);
+  border-radius:9px;padding:8px 11px;margin-bottom:9px}
+.ex-word-lbl{font-size:.57rem;font-weight:900;color:#C084FC;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.ex-word-txt{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);line-height:1.5}
+.ex-word-deva{font-family:'Tiro Devanagari Hindi',serif;font-size:1.1rem;color:#C084FC;display:block;margin-bottom:2px}
+.ex-next{width:100%;padding:10px;border:none;border-radius:11px;font-family:'Nunito',sans-serif;
+  font-size:.85rem;font-weight:900;cursor:pointer;color:#fff}
+.ex-next.ok{background:linear-gradient(135deg,var(--green),#4ADE80)}
+.ex-next.no{background:linear-gradient(135deg,var(--saffron2),var(--saffron))}
+
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{0%{transform:scale(.94)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+
+/* SCREENS */
+.screen{display:none}.screen.active{display:flex;flex-direction:column;gap:9px}
+
+/* START */
+.start-card{background:var(--gc);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(255,153,51,.2);border-radius:var(--r);
+  padding:22px 18px;text-align:center;box-shadow:var(--shadow)}
+.start-icon{font-size:3rem;margin-bottom:6px;display:block;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.start-title{font-size:1.4rem;font-weight:900;margin-bottom:4px;
+  background:linear-gradient(135deg,var(--saffron),var(--gold),var(--pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.start-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:12px;line-height:1.6}
+.topic-chips{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:12px}
+.topic-chip{font-size:.6rem;font-weight:800;border-radius:99px;padding:3px 9px;border:1px solid}
+.rules{display:flex;flex-direction:column;gap:5px;text-align:left;margin-bottom:12px}
+.rule{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border-radius:9px;padding:6px 10px}
+.rule-ico{font-size:.9rem;flex-shrink:0}
+.rule-txt{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.7)}
+.start-btn{width:100%;padding:13px;border:none;border-radius:13px;
+  background:linear-gradient(135deg,var(--purple),var(--pink),var(--saffron));
+  color:#fff;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;
+  cursor:pointer;box-shadow:0 4px 20px rgba(255,0,110,.3);transition:all .2s}
+.start-btn:hover{transform:translateY(-2px)}
+.pb-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;
+  font-size:.7rem;font-weight:700;color:rgba(255,255,255,.4)}
+.pb-val{color:var(--gold);font-weight:900}
+
+/* ROUND END / GAME OVER */
+.re-card,.go-card{background:var(--gc);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(255,153,51,.2);border-radius:var(--r);
+  padding:20px 16px;text-align:center;box-shadow:var(--shadow)}
+.re-icon,.go-trophy{font-size:2.6rem;margin-bottom:6px;display:block}
+.go-trophy{animation:float 2s ease-in-out infinite}
+.re-title,.go-title{font-size:1.1rem;font-weight:900;margin-bottom:3px;
+  background:linear-gradient(135deg,var(--saffron),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.re-stats,.go-stats{display:flex;gap:7px;margin:10px 0}
+.re-stat,.go-stat{flex:1;background:rgba(255,255,255,.05);border-radius:10px;padding:9px;text-align:center}
+.re-sv,.go-sv{font-size:1.1rem;font-weight:900;color:var(--gold)}
+.re-sl,.go-sl{font-size:.53rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px}
+.re-msg,.go-msg{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.45);margin-bottom:11px}
+.new-best{background:rgba(255,153,51,.1);border:1px solid rgba(255,153,51,.25);
+  border-radius:10px;padding:8px 13px;font-size:.78rem;font-weight:900;
+  color:var(--saffron);margin:7px 0;animation:popIn .4s ease}
+.re-btn,.go-btn{width:100%;padding:10px;border:none;border-radius:12px;
+  font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:900;cursor:pointer;transition:all .2s}
+.re-btn.next,.go-btn.play{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;box-shadow:0 3px 12px rgba(255,0,110,.25)}
+.re-btn.home,.go-btn.home{background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);margin-top:6px}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="popup-overlay combo" id="combo-popup">
+  <div class="po-text" id="combo-text">JAI HIND! 🇮🇳</div>
+  <div class="po-sub" id="combo-sub">3 in a row!</div>
+</div>
+<div class="popup-overlay life" id="life-popup">
+  <div class="po-text">❤️ Life Restored!</div>
+  <div class="po-sub">3 correct in a row!</div>
+</div>
+
+<div class="wrap">
+  <!-- START -->
+  <div id="startScreen" class="screen active">
+    <div class="start-card">
+      <span class="start-icon">🇮🇳</span>
+      <div class="start-title">Incredible India</div>
+      <div class="start-sub" id="start-greeting">Explore the stories, culture and wonders of India!</div>
+      <div class="topic-chips">
+        <span class="topic-chip" style="background:rgba(255,153,51,.1);border-color:rgba(255,153,51,.25);color:var(--saffron)">🕉️ Hindu Stories</span>
+        <span class="topic-chip" style="background:rgba(255,0,110,.1);border-color:rgba(255,0,110,.25);color:var(--pink2)">🎊 Festivals</span>
+        <span class="topic-chip" style="background:rgba(22,163,74,.1);border-color:rgba(22,163,74,.25);color:#86EFAC">🗺️ India Geography</span>
+        <span class="topic-chip" style="background:rgba(147,51,234,.1);border-color:rgba(147,51,234,.25);color:#C084FC">🔱 Sanatan Dharma</span>
+        <span class="topic-chip" style="background:rgba(246,192,74,.1);border-color:rgba(246,192,74,.25);color:var(--gold)">📖 Panchatantra</span>
+        <span class="topic-chip" style="background:rgba(43,191,184,.1);border-color:rgba(43,191,184,.25);color:var(--teal)">⚡ Fun Facts</span>
+      </div>
+      <div class="rules">
+        <div class="rule"><span class="rule-ico">🎯</span><span class="rule-txt">12 questions per round — all 6 topics mixed</span></div>
+        <div class="rule"><span class="rule-ico">🗺️</span><span class="rule-txt">Click on the India map for geography questions</span></div>
+        <div class="rule"><span class="rule-ico">🔤</span><span class="rule-txt">Learn a new Sanskrit or Hindi word after every answer</span></div>
+        <div class="rule"><span class="rule-ico">3️⃣</span><span class="rule-txt">3 attempts per question — stars reduce each try</span></div>
+        <div class="rule"><span class="rule-ico">❤️</span><span class="rule-txt">3 correct in a row restores a life</span></div>
+      </div>
+      <button class="start-btn" onclick="startGame()">🇮🇳 Jai Hind! Let's Go!</button>
+      <div class="pb-row" id="pb-row" style="display:none">🏆 Personal Best: <span class="pb-val" id="pb-val">0</span> stars</div>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div id="gameScreen" class="screen">
+    <div class="hdr">
+      <button class="back-btn" onclick="confirmQuit()">←</button>
+      <div style="flex:1">
+        <div class="hdr-title">🇮🇳 Incredible India</div>
+        <div class="hdr-sub" id="g-player-label">Riaan · Grade 3</div>
+      </div>
+      <div class="lives" id="lives-display">❤️❤️❤️</div>
+      <div class="star-count">⭐ <span id="g-stars">0</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-box"><div class="ib-val" style="color:var(--saffron)" id="g-round">1</div><div class="ib-lbl">Round</div></div>
+      <div class="info-box"><div class="ib-val" id="g-qnum">1/12</div><div class="ib-lbl">Question</div></div>
+      <div class="info-box" style="flex:1.4"><div class="ib-val" id="g-topic-disp" style="font-size:.7rem;color:rgba(255,255,255,.7)">Hindu Stories</div><div class="ib-lbl">Topic</div></div>
+      <div class="info-box" style="display:flex;align-items:center;justify-content:center">
+        <div id="streak-badge" class="streak-badge">0 🇮🇳</div>
+      </div>
+    </div>
+    <div class="game-card">
+      <div class="q-meta">
+        <span class="topic-tag" id="g-topic-tag">Hindu Stories</span>
+        <span class="q-num" id="g-qnum2">Q 1/12</span>
+      </div>
+      <div id="emoji-area"></div>
+      <div class="question" id="g-question">Loading...</div>
+      <div class="attempts-row" id="attempts-row">
+        <span style="font-size:.6rem;font-weight:700;color:rgba(255,255,255,.35)">Attempts:</span>
+        <div class="attempt-dot current" id="dot-0"></div>
+        <div class="attempt-dot" id="dot-1"></div>
+        <div class="attempt-dot" id="dot-2"></div>
+      </div>
+      <div class="feedback-row" id="g-feedback"></div>
+      <div id="q-content"></div>
+      <div class="btn-row">
+        <button class="show-pic-btn" onclick="showPicture()">🔍 Show Picture</button>
+        <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 Hint</button>
+      </div>
+      <div class="hint-box" id="hint-box"><div class="hint-txt" id="hint-txt"></div></div>
+      <div class="explanation-card" id="explanation-card">
+        <div class="ex-result">
+          <span class="ex-icon" id="ex-icon">✅</span>
+          <span class="ex-answer" id="ex-answer">Correct!</span>
+        </div>
+        <div class="ex-explain" id="ex-explain"></div>
+        <div class="ex-fact" id="ex-fact-box">
+          <div class="ex-fact-lbl">🇮🇳 Did You Know?</div>
+          <div class="ex-fact-txt" id="ex-fact-txt"></div>
+        </div>
+        <div class="ex-word" id="ex-word-box">
+          <div class="ex-word-lbl">🔤 Sanskrit / Hindi Word</div>
+          <span class="ex-word-deva" id="ex-word-deva"></span>
+          <div class="ex-word-txt" id="ex-word-txt"></div>
+        </div>
+        <button class="ex-next" id="ex-next" onclick="advanceQuestion()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUND END -->
+  <div id="roundEndScreen" class="screen">
+    <div class="re-card">
+      <span class="re-icon" id="re-icon">⭐</span>
+      <div class="re-title" id="re-title">Round 1 Complete!</div>
+      <div class="re-stats">
+        <div class="re-stat"><div class="re-sv" id="re-correct">0</div><div class="re-sl">Correct</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-acc">0%</div><div class="re-sl">Accuracy</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-stars-r">0</div><div class="re-sl">Stars</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-streak-r">0</div><div class="re-sl">Best Streak</div></div>
+      </div>
+      <div class="re-msg" id="re-msg"></div>
+      <button class="re-btn next" id="re-next-btn" onclick="nextRound()">Next Round →</button>
+      <button class="re-btn home" onclick="goHome()">🏠 Back to Hub</button>
+    </div>
+  </div>
+
+  <!-- GAME OVER -->
+  <div id="gameOverScreen" class="screen">
+    <div class="go-card">
+      <span class="go-trophy" id="go-trophy">🏆</span>
+      <div class="go-title">Incredible Explorer!</div>
+      <div class="go-sv" id="go-score" style="font-size:2.2rem;font-weight:900;color:var(--gold);line-height:1">0 ⭐</div>
+      <div style="font-size:.85rem;font-weight:800;color:#86EFAC;margin-top:3px" id="go-earned">+0 stars saved</div>
+      <div id="new-best-banner" class="new-best" style="display:none">🏆 NEW PERSONAL BEST!</div>
+      <div class="go-msg" id="go-msg">Jai Hind!</div>
+      <div class="go-stats">
+        <div class="go-stat"><div class="go-sv" id="go-rounds">1</div><div class="go-sl">Rounds</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-correct">0</div><div class="go-sl">Correct</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-streak">0</div><div class="go-sl">Best Streak</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-pb">0</div><div class="go-sl">Personal Best</div></div>
+      </div>
+      <div class="go-btns" style="display:flex;flex-direction:column;gap:6px">
+        <button class="go-btn play" onclick="restartGame()">🇮🇳 Play Again</button>
+        <button class="go-btn home" onclick="goHome()">🏠 Back to Hub</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SB='https://tnhgihzfwqsflpueivwe.supabase.co',KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
+const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':o.prefer||'return=representation',...o.headers},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined}).then(r=>r.json()).catch(()=>[]);
+const params=new URLSearchParams(window.location.search);
+const playerName=params.get('player')||'riaan';
+let playerId=null,playerGrade=3,personalBest=0;
+
+// ── Rangoli decoration ────────────────────────────────────────────
+function buildBG(){
+  const colors=['#FF9933','#FF006E','#9333EA','#F6C04A','#2BBFB8'];
+  for(let i=0;i<16;i++){
+    const el=document.createElement('div');
+    el.className='rangoli-dot';
+    const size=rand(3,9);
+    el.style.cssText=`width:${size}px;height:${size}px;left:${rand(0,100)}%;top:${rand(0,100)}%;
+      background:${colors[i%colors.length]};animation-duration:${rand(20,50)/10}s;animation-delay:${rand(0,30)/10}s`;
+    document.querySelector('.bg').appendChild(el);
+  }
+}
+
+// ── QUESTION BANK ─────────────────────────────────────────────────
+const SANSKRIT_WORDS=[
+  {deva:'नमस्ते',word:'Namaste',meaning:'A respectful greeting — "I bow to the divine in you"'},
+  {deva:'धर्म',word:'Dharma',meaning:'Right action, duty, righteousness — living in harmony with the universe'},
+  {deva:'अहिंसा',word:'Ahimsa',meaning:'Non-violence — the principle of not harming any living being'},
+  {deva:'सत्य',word:'Satya',meaning:'Truth — one of the most important values in Sanatan Dharma'},
+  {deva:'करुणा',word:'Karuna',meaning:'Compassion — feeling the pain of others and wanting to help'},
+  {deva:'ज्ञान',word:'Gyan',meaning:'Knowledge or wisdom — understanding the true nature of things'},
+  {deva:'भक्ति',word:'Bhakti',meaning:'Devotion — loving dedication to God'},
+  {deva:'शान्ति',word:'Shanti',meaning:'Peace — inner and outer harmony'},
+  {deva:'माया',word:'Maya',meaning:'Illusion — the idea that the material world is not the ultimate reality'},
+  {deva:'प्रेम',word:'Prem',meaning:'Love — pure, unconditional love for all beings'},
+  {deva:'गुरु',word:'Guru',meaning:'Teacher or spiritual guide — one who brings light to darkness'},
+  {deva:'आत्मा',word:'Atma',meaning:'Soul — the eternal self within every living being'},
+  {deva:'ॐ',word:'Om (Aum)',meaning:'The sacred sound of the universe — the first sound of creation'},
+  {deva:'योग',word:'Yoga',meaning:'Union — the practice of connecting body, mind and spirit'},
+  {deva:'कर्म',word:'Karma',meaning:'Action and its consequences — what you do comes back to you'},
+  {deva:'वेद',word:'Veda',meaning:'Knowledge — the oldest sacred scriptures of Sanatan Dharma'},
+  {deva:'पूजा',word:'Puja',meaning:'Worship or prayer — offering devotion to the divine'},
+  {deva:'मंदिर',word:'Mandir',meaning:'Temple — a sacred place of worship'},
+  {deva:'त्योहार',word:'Tyohar',meaning:'Festival — a celebration of joy, culture and devotion'},
+  {deva:'आशीर्वाद',word:'Ashirwad',meaning:'Blessing — divine grace or a wish of well-being from elders'},
+];
+
+const QUESTIONS=[
+  // ── HINDU STORIES ──────────────────────────────────────────────
+  {topic:'stories',emoji:'🕉️',
+   q:'Who was the author of the Ramayana?',
+   opts:['Vyasa','Valmiki','Tulsidas','Kalidasa'],a:'Valmiki',
+   explain:'The Ramayana was written by the sage Valmiki and tells the story of Lord Rama\'s journey.',
+   fact:'The Ramayana has over 24,000 verses! It is one of the two great epics of India alongside the Mahabharata.',
+   pic:'Ramayana Valmiki epic',hint:'His name starts with V',grade:1},
+  {topic:'stories',emoji:'🦅',
+   q:'Who was Hanuman devoted to?',
+   opts:['Krishna','Shiva','Rama','Brahma'],a:'Rama',
+   explain:'Hanuman was the greatest devotee of Lord Rama, helping him rescue Sita from Lanka.',
+   fact:'Hanuman is known for his extraordinary strength, intelligence and devotion. He could fly, grow in size and even lifted an entire mountain!',
+   pic:'Hanuman Lord Rama devotion',hint:'Hanuman helped rescue whose wife?',grade:1},
+  {topic:'stories',emoji:'🎵',
+   q:'Which instrument is Lord Krishna famous for playing?',
+   opts:['Tabla','Sitar','Flute','Veena'],a:'Flute',
+   explain:'Lord Krishna is always depicted playing the flute (bansuri). His music was said to enchant all living beings.',
+   fact:'Krishna\'s flute music is called "Murali Gaan" and is said to represent the call of the divine to all souls.',
+   pic:'Krishna flute bansuri',hint:'It is a wind instrument',grade:1},
+  {topic:'stories',emoji:'🐘',
+   q:'Ganesha has the head of which animal?',
+   opts:['Horse','Elephant','Lion','Tiger'],a:'Elephant',
+   explain:'Lord Ganesha has an elephant head which represents wisdom, memory and the ability to overcome obstacles.',
+   fact:'Ganesha is worshipped first before beginning any new task. He is the remover of obstacles and the god of wisdom!',
+   pic:'Ganesha elephant head god',hint:'The largest land animal',grade:1},
+  {topic:'stories',emoji:'⚔️',
+   q:'The Mahabharata war was fought at which battlefield?',
+   opts:['Ayodhya','Kurukshetra','Mathura','Dwarka'],a:'Kurukshetra',
+   explain:'The great war of the Mahabharata was fought at Kurukshetra, located in present-day Haryana, India.',
+   fact:'The Bhagavad Gita — one of Hinduism\'s most sacred texts — was spoken by Lord Krishna to Arjuna on the battlefield of Kurukshetra!',
+   pic:'Kurukshetra Mahabharata battlefield',hint:'Kuru + kshetra = field of the Kurus',grade:3},
+  {topic:'stories',emoji:'🌺',
+   q:'Goddess Lakshmi is associated with which of these?',
+   opts:['War and strength','Wealth and prosperity','Knowledge and arts','Destruction and renewal'],a:'Wealth and prosperity',
+   explain:'Goddess Lakshmi is the goddess of wealth, prosperity, fortune and beauty. She is the consort of Lord Vishnu.',
+   fact:'During Diwali, people clean their homes and welcome Goddess Lakshmi by lighting diyas — a clean home invites her blessings!',
+   pic:'Goddess Lakshmi wealth prosperity lotus',hint:'Celebrated during Diwali',grade:1},
+  {topic:'stories',emoji:'🎓',
+   q:'Goddess Saraswati is the goddess of:',
+   opts:['Wealth','Love','Knowledge and arts','Rain'],a:'Knowledge and arts',
+   explain:'Goddess Saraswati represents knowledge, wisdom, music, art and learning. She rides a white swan.',
+   fact:'Vasant Panchami is celebrated as Saraswati Puja — students offer their books and musical instruments to seek her blessings!',
+   pic:'Goddess Saraswati knowledge music',hint:'She holds a veena (musical instrument)',grade:1},
+  {topic:'stories',emoji:'🌊',
+   q:'In the Ramayana, Rama built a bridge to reach which island?',
+   opts:['Bali','Lanka','Java','Cyprus'],a:'Lanka',
+   explain:'Lord Rama built a floating bridge (Ram Setu) with the help of the Vanara army to cross the ocean to Lanka to rescue Sita.',
+   fact:'A chain of limestone shoals between India and Sri Lanka is called Adam\'s Bridge or Ram Setu — some believe this is the ancient bridge from the Ramayana!',
+   pic:'Ram Setu bridge Lanka Ramayana',hint:'It is where Ravana lived',grade:3},
+
+  // ── FESTIVALS ──────────────────────────────────────────────────
+  {topic:'festivals',emoji:'🪔',
+   q:'Diwali is known as the festival of:',
+   opts:['Colors','Lights','Harvest','Spring'],a:'Lights',
+   explain:'Diwali, or Deepavali, means "row of lights" — celebrated by lighting diyas to symbolise the victory of light over darkness.',
+   fact:'Diwali is celebrated by over 1 billion people across the world, not just in India but in UK, Canada, USA, and many more countries!',
+   pic:'Diwali festival lights diyas India',hint:'Diya = small oil lamp',grade:1},
+  {topic:'festivals',emoji:'🎨',
+   q:'Which festival is called the festival of colours?',
+   opts:['Diwali','Navratri','Holi','Onam'],a:'Holi',
+   explain:'Holi is the Hindu festival of colours celebrated in spring, marking the triumph of good over evil.',
+   fact:'The coloured powders used in Holi (called gulal) were originally made from flowers and plants — they were all natural and medicinal!',
+   pic:'Holi festival colours India celebration',hint:'People throw coloured powder',grade:1},
+  {topic:'festivals',emoji:'🏏',
+   q:'Janmashtami celebrates the birthday of which deity?',
+   opts:['Rama','Shiva','Ganesha','Krishna'],a:'Krishna',
+   explain:'Janmashtami celebrates the birth of Lord Krishna, the eighth avatar of Vishnu, at midnight.',
+   fact:'The Dahi Handi tradition on Janmashtami involves forming a human pyramid to break a pot of butter — just like young Krishna stealing butter!',
+   pic:'Janmashtami Krishna birthday celebration',hint:'He loved butter and played the flute',grade:1},
+  {topic:'festivals',emoji:'💃',
+   q:'Navratri is a 9-night festival that celebrates:',
+   opts:['Lord Rama\'s victory','The 9 forms of Goddess Durga','The harvest season','Lord Krishna\'s birth'],a:'The 9 forms of Goddess Durga',
+   explain:'Navratri means "nine nights" and celebrates the nine forms of Goddess Durga. People fast, dance Garba and worship daily.',
+   fact:'The Garba dance performed during Navratri is one of India\'s most famous folk dances. It originates from Gujarat!',
+   pic:'Navratri Garba dance Gujarat Durga',hint:'Nava = nine, ratri = nights',grade:3},
+  {topic:'festivals',emoji:'🌸',
+   q:'Which harvest festival is mainly celebrated in Kerala?',
+   opts:['Baisakhi','Pongal','Onam','Lohri'],a:'Onam',
+   explain:'Onam is the harvest festival of Kerala celebrated with elaborate flower carpets (pookalam), boat races and a grand feast.',
+   fact:'The Onam feast called Sadya has 26 different dishes served on a banana leaf — including rice, curries, pickles and payasam dessert!',
+   pic:'Onam Kerala harvest festival pookalam',hint:'Celebrated in the state that borders the Arabian Sea in the south',grade:3},
+  {topic:'festivals',emoji:'🎉',
+   q:'Raksha Bandhan celebrates the bond between:',
+   opts:['Teacher and student','Brother and sister','Mother and child','Friends'],a:'Brother and sister',
+   explain:'On Raksha Bandhan, sisters tie a rakhi (sacred thread) on their brother\'s wrist. Brothers promise to protect their sisters.',
+   fact:'The word Raksha means protection and Bandhan means bond — so Raksha Bandhan literally means "the bond of protection"!',
+   pic:'Raksha Bandhan rakhi brother sister',hint:'Rakhi thread is tied on the wrist',grade:1},
+
+  // ── INDIA GEOGRAPHY ────────────────────────────────────────────
+  {topic:'geography',emoji:'🏔️',
+   q:'Which is the highest mountain peak in India?',
+   opts:['Nanda Devi','K2','Kangchenjunga','Mount Everest'],a:'Kangchenjunga',
+   explain:'Kangchenjunga at 8,586m is the highest peak within India, located on the border of Sikkim and Nepal.',
+   fact:'Kangchenjunga means "Five Treasures of Snow" in Tibetan — its five peaks represent gold, silver, gems, grain and holy books!',
+   pic:'Kangchenjunga mountain Sikkim India',hint:'It is on the border of Sikkim',grade:3},
+  {topic:'geography',emoji:'🌊',
+   q:'Which is the longest river in India?',
+   opts:['Yamuna','Brahmaputra','Godavari','Ganga'],a:'Ganga',
+   explain:'The Ganga (Ganges) is the longest river in India at 2,525 km, flowing from the Himalayas to the Bay of Bengal.',
+   fact:'The Ganga is considered the most sacred river in Hinduism. Over 400 million people live in its basin — one of the most densely populated river basins on Earth!',
+   pic:'Ganga river Varanasi India holy',hint:'Also called Ganges',grade:1},
+  {topic:'geography',emoji:'🏛️',
+   q:'The Taj Mahal is located in which city?',
+   opts:['Delhi','Jaipur','Agra','Varanasi'],a:'Agra',
+   explain:'The Taj Mahal is in Agra, Uttar Pradesh. It was built by Mughal Emperor Shah Jahan for his wife Mumtaz Mahal.',
+   fact:'The Taj Mahal took 22 years to build (1632–1653) and required over 20,000 workers and 1,000 elephants to transport marble!',
+   pic:'Taj Mahal Agra India marble',hint:'City on the banks of the Yamuna river',grade:1},
+  {topic:'geography',emoji:'🦁',
+   q:'In which Indian state would you find Gir Forest — home of the Asiatic Lion?',
+   opts:['Rajasthan','Gujarat','Maharashtra','Kerala'],a:'Gujarat',
+   explain:'Gir National Park in Gujarat is the only natural habitat of the Asiatic lion in the world.',
+   fact:'In 1900 there were only 20 Asiatic lions left! Thanks to conservation in Gujarat, there are now over 600 — a great success story!',
+   pic:'Gir Forest Asiatic lion Gujarat India',hint:'Home state of Riaan and Kairav\'s heritage!',grade:1},
+  {topic:'geography',emoji:'💃',
+   q:'Bharatanatyam is the classical dance from which state?',
+   opts:['Kerala','Odisha','Tamil Nadu','Manipur'],a:'Tamil Nadu',
+   explain:'Bharatanatyam is one of India\'s oldest classical dances, originating from Tamil Nadu\'s temple traditions.',
+   fact:'Bharatanatyam has 64 basic gestures called mudras — each hand position tells part of a story!',
+   pic:'Bharatanatyam classical dance Tamil Nadu',hint:'Southern state, capital is Chennai',grade:3},
+  {topic:'geography',emoji:'🍛',
+   q:'Which state is famous for its butter chicken and naan bread?',
+   opts:['Gujarat','Bengal','Punjab','Kerala'],a:'Punjab',
+   explain:'Punjab is famous for its rich food culture including butter chicken, dal makhani, naan and lassi.',
+   fact:'Punjab means "five rivers" (Punj = five, Aab = rivers). It is known as the breadbasket of India, producing a large portion of India\'s wheat!',
+   pic:'Punjab food butter chicken naan India',hint:'The golden temple is in this state',grade:1},
+  {topic:'geography',emoji:'🏯',
+   q:'Which city is known as the Pink City of India?',
+   opts:['Jodhpur','Jaipur','Jaisalmer','Udaipur'],a:'Jaipur',
+   explain:'Jaipur is called the Pink City because in 1876, Maharaja Ram Singh painted the whole city pink to welcome Prince Albert of Wales.',
+   fact:'Jaipur is also famous for its stunning palaces including the Hawa Mahal (Palace of Winds) which has 953 small windows!',
+   pic:'Jaipur Pink City Hawa Mahal Rajasthan',hint:'Capital of Rajasthan',grade:3},
+
+  // ── SANATAN DHARMA ─────────────────────────────────────────────
+  {topic:'dharma',emoji:'🔱',
+   q:'What does "Om" (ॐ) represent?',
+   opts:['A type of dance','The sacred sound of the universe','A festival greeting','A prayer book'],a:'The sacred sound of the universe',
+   explain:'Om (Aum) is the most sacred sound in Hinduism, representing the vibration of the universe. It is chanted at the beginning of prayers.',
+   fact:'Scientists have found that the vibration of Om matches the natural frequency of Earth\'s electromagnetic field — about 7.83 Hz!',
+   pic:'Om Aum sacred symbol Hindu',hint:'ॐ — found at the start of many mantras',grade:1},
+  {topic:'dharma',emoji:'⚖️',
+   q:'What does KARMA mean in Sanatan Dharma?',
+   opts:['A type of yoga pose','Your actions and their consequences','A Hindu festival','A sacred river'],a:'Your actions and their consequences',
+   explain:'Karma means that every action has a consequence. Good actions lead to good outcomes; harmful actions lead to suffering.',
+   fact:'The concept of karma appears in Buddhism, Jainism and Sikhism too — it is one of the most widely believed spiritual concepts in the world!',
+   pic:'Karma concept Hinduism action consequence',hint:'What goes around comes around',grade:1},
+  {topic:'dharma',emoji:'🧘',
+   q:'What is YOGA originally?',
+   opts:['A type of Indian food','A union of body, mind and spirit','A festival','A temple ritual'],a:'A union of body, mind and spirit',
+   explain:'Yoga comes from the Sanskrit word "Yuj" meaning to unite. It is the practice of connecting body, mind and soul.',
+   fact:'Yoga is over 5,000 years old! It was developed by ancient Indian sages and is now practised by over 300 million people worldwide!',
+   pic:'Yoga meditation ancient India spiritual',hint:'Yuj = to unite or join',grade:1},
+  {topic:'dharma',emoji:'📚',
+   q:'How many Vedas are there?',
+   opts:['2','3','4','6'],a:'4',
+   explain:'There are four Vedas: Rigveda, Samaveda, Yajurveda and Atharvaveda. They are the oldest sacred scriptures of Hinduism.',
+   fact:'The Vedas are over 3,500 years old — some hymns may be even older. They contain knowledge about philosophy, medicine, mathematics and spirituality!',
+   pic:'four Vedas ancient Hindu scriptures',hint:'Rig, Sama, Yajur and Atharva',grade:3},
+  {topic:'dharma',emoji:'🕊️',
+   q:'What does AHIMSA mean?',
+   opts:['Non-violence','Devotion','Knowledge','Duty'],a:'Non-violence',
+   explain:'Ahimsa means non-violence — not harming any living being in thought, word or action. It is central to Hindu, Buddhist and Jain philosophy.',
+   fact:'Mahatma Gandhi used the principle of Ahimsa to lead India\'s independence movement — proving that non-violent resistance can change the world!',
+   pic:'Ahimsa non-violence Gandhi India',hint:'A = not, himsa = harm',grade:1},
+  {topic:'dharma',emoji:'🌸',
+   q:'The four aims of life in Sanatan Dharma are Dharma, Artha, Kama and:',
+   opts:['Yoga','Moksha','Karma','Bhakti'],a:'Moksha',
+   explain:'The four Purusharthas (aims of life) are: Dharma (righteousness), Artha (prosperity), Kama (pleasure) and Moksha (liberation/freedom from the cycle of rebirth).',
+   fact:'Moksha is considered the highest goal — it is liberation from the cycle of birth and death (samsara) and union with the divine!',
+   pic:'Moksha liberation Hinduism spiritual',hint:'Liberation or spiritual freedom',grade:3},
+
+  // ── PANCHATANTRA ───────────────────────────────────────────────
+  {topic:'panchatantra',emoji:'🦁',
+   q:'In the Panchatantra fable "The Lion and the Mouse", what is the moral?',
+   opts:['Size matters most','A small friend can be a great help','Lions are the best','Never trust mice'],a:'A small friend can be a great help',
+   explain:'When the lion gets caught in a net, the little mouse gnaws through the ropes to free him. Even the smallest friend can be the most important one.',
+   fact:'The Panchatantra was written over 2,000 years ago by Vishnu Sharma and has been translated into 50+ languages — one of the most translated books in history!',
+   pic:'Panchatantra lion mouse fable India',hint:'The mouse helps by chewing through the net',grade:1},
+  {topic:'panchatantra',emoji:'🐦',
+   q:'In "The Crow and the Pitcher", how does the crow get the water?',
+   opts:['Breaks the pitcher','Tips it over','Drops stones in to raise the water level','Waits for rain'],a:'Drops stones in to raise the water level',
+   explain:'The thirsty crow drops pebbles into a pitcher until the water level rises enough to drink. This story teaches patience and clever thinking.',
+   fact:'Scientists actually tested this — crows really can solve this puzzle! They are one of the most intelligent birds, comparable in problem-solving to a 7-year-old child!',
+   pic:'crow pitcher stones water Aesop fable',hint:'The water level rises as stones displace it',grade:1},
+  {topic:'panchatantra',emoji:'🐢',
+   q:'In "The Hare and the Tortoise", why does the hare LOSE the race?',
+   opts:['He gets injured','He takes a nap because he is overconfident','He goes the wrong way','He gives up'],a:'He takes a nap because he is overconfident',
+   explain:'The hare was so confident he would win that he stopped to sleep. The slow but steady tortoise kept going and won.',
+   fact:'The moral "slow and steady wins the race" is one of the most famous lessons in children\'s literature worldwide — this story appears in BOTH the Greek Aesop fables AND the Indian Panchatantra!',
+   pic:'hare tortoise race fable slow steady',hint:'Too much confidence made him careless',grade:1},
+  {topic:'panchatantra',emoji:'🐟',
+   q:'The Panchatantra was written to teach wisdom to:',
+   opts:['Farmers','Three princes who were not learning','Temple priests','Army generals'],a:'Three princes who were not learning',
+   explain:'Vishnu Sharma wrote the Panchatantra to teach three dull princes wisdom through entertaining animal fables.',
+   fact:'The word Panchatantra means "five principles" — the stories are divided into five books each teaching a different lesson about life and wisdom!',
+   pic:'Panchatantra Vishnu Sharma ancient India wisdom',hint:'Pancha = five, tantra = principles',grade:3},
+
+  // ── FUN FACTS ──────────────────────────────────────────────────
+  {topic:'funfacts',emoji:'🔢',
+   q:'India gave the world which mathematical concept?',
+   opts:['The decimal point','The number zero','The plus sign','Multiplication'],a:'The number zero',
+   explain:'The concept of zero as a number was invented in India by mathematician Brahmagupta around 628 CE.',
+   fact:'Without zero, modern mathematics, computers and smartphones would be impossible! India\'s gift of zero changed the entire world.',
+   pic:'zero number India Brahmagupta mathematics',hint:'Without it, you can\'t count beyond 9!',grade:1},
+  {topic:'funfacts',emoji:'🎮',
+   q:'Which popular board game was invented in India?',
+   opts:['Monopoly','Ludo (Pachisi)','Chess','Scrabble'],a:'Chess',
+   explain:'Chess (called Chaturanga) was invented in India around 600 CE. It spread to Persia and then to the world.',
+   fact:'The word "checkmate" comes from the Persian "Shah Mat" meaning "the king is dead" — showing how chess spread from India to Persia to the world!',
+   pic:'chess India Chaturanga ancient invention',hint:'Chaturanga = four divisions (of the army)',grade:3},
+  {topic:'funfacts',emoji:'💊',
+   q:'Ayurveda is India\'s ancient system of:',
+   opts:['Astronomy','Architecture','Medicine and healing','Mathematics'],a:'Medicine and healing',
+   explain:'Ayurveda is one of the world\'s oldest medical systems, developed in India over 3,000 years ago. Ayur = life, Veda = knowledge.',
+   fact:'Many modern medicines are based on Ayurvedic plants! Turmeric, used in Ayurveda for thousands of years, is now being studied by scientists worldwide for its healing properties.',
+   pic:'Ayurveda ancient Indian medicine herbs',hint:'Ayur = life, Veda = knowledge',grade:1},
+  {topic:'funfacts',emoji:'🌙',
+   q:'What was the name of India\'s first Moon mission?',
+   opts:['Mangalyaan','Chandrayaan-1','Aryabhata','Astrosat'],a:'Chandrayaan-1',
+   explain:'Chandrayaan-1 was India\'s first lunar probe launched in 2008. It discovered water molecules on the Moon!',
+   fact:'India made history in 2023 with Chandrayaan-3 — becoming the FIRST country to successfully land near the Moon\'s south pole!',
+   pic:'Chandrayaan India Moon mission ISRO',hint:'Chandra = Moon, yaan = vehicle',grade:3},
+  {topic:'funfacts',emoji:'🐅',
+   q:'What is the national animal of India?',
+   opts:['Lion','Elephant','Bengal Tiger','Peacock'],a:'Bengal Tiger',
+   explain:'The Bengal Tiger is India\'s national animal, representing strength and grace. Project Tiger was launched in 1973 to protect them.',
+   fact:'India has over 70% of the world\'s wild tigers! Tiger numbers have grown from 1,411 in 2006 to over 3,000 today thanks to conservation efforts.',
+   pic:'Bengal Tiger India national animal',hint:'Striped big cat — the largest wild cat in India',grade:1},
+  {topic:'funfacts',emoji:'🦚',
+   q:'What is the national bird of India?',
+   opts:['Eagle','Flamingo','Peacock','Parrot'],a:'Peacock',
+   explain:'The Indian Peacock is the national bird of India, known for its spectacular feathers and sacred connection to Lord Murugan and Lord Krishna.',
+   fact:'A peacock\'s tail feathers (called a "train") can be up to 1.8 metres long — longer than its body! The male fans it out to attract females.',
+   pic:'Indian Peacock national bird feathers',hint:'Lord Krishna wears its feather in his crown',grade:1},
+];
+
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+function getWordForTopic(topic){
+  const topicWords={
+    stories:['धर्म','भक्ति','आत्मा','ॐ'],
+    festivals:['त्योहार','पूजा','शान्ति','प्रेम'],
+    geography:['नमस्ते','ज्ञान','गुरु','आशीर्वाद'],
+    dharma:['धर्म','अहिंसा','सत्य','योग','कर्म','माया'],
+    panchatantra:['ज्ञान','सत्य','करुणा','प्रेम'],
+    funfacts:['ज्ञान','नमस्ते','सत्य','गुरु'],
+  };
+  const pool=topicWords[topic]||['ॐ'];
+  const deva=pool[Math.floor(Math.random()*pool.length)];
+  return SANSKRIT_WORDS.find(w=>w.deva===deva)||SANSKRIT_WORDS[0];
+}
+
+// ── Game State ────────────────────────────────────────────────────
+let G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
+  streak:0,bestStreak:0,sessionBestStreak:0,answered:false,roundStars:0,
+  attempts:0,question:null,qBank:[],bankIdx:0,
+  lifeRestoreStreak:0,hintUsed:false,hintTimer:null};
+
+// ── Init ──────────────────────────────────────────────────────────
+async function init(){
+  buildBG();
+  try{
+    const players=await db('players?select=*');
+    const p=players.find(x=>x.name.toLowerCase()===playerName.toLowerCase());
+    if(p){playerId=p.id;playerGrade=p.grade||3;}
+  }catch(e){}
+  if(playerId){
+    try{
+      const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.incredible-india`);
+      if(rows&&rows.length){personalBest=rows[0].best_score||0;
+        document.getElementById('pb-row').style.display='flex';
+        document.getElementById('pb-val').textContent=personalBest.toLocaleString();}
+    }catch(e){}
+  }
+  document.getElementById('start-greeting').textContent=`Explore the stories, culture and wonders of India, ${cap(playerName)}! 🇮🇳`;
+  document.getElementById('g-player-label').textContent=`${cap(playerName)} · Grade ${playerGrade}`;
+}
+
+function startGame(){
+  G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
+    streak:0,bestStreak:0,sessionBestStreak:0,answered:false,roundStars:0,
+    attempts:0,question:null,
+    qBank:shuffle(QUESTIONS.filter(q=>q.grade<=playerGrade)),bankIdx:0,
+    lifeRestoreStreak:0,hintUsed:false,hintTimer:null};
+  showScreen('gameScreen');
+  loadQuestion();
+}
+
+function loadQuestion(){
+  if(G.qIdx>=12){endRound();return;}
+  G.answered=false;G.attempts=0;G.hintUsed=false;
+  clearTimeout(G.hintTimer);
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('hint-box').className='hint-box';
+  document.getElementById('hint-btn').style.display='none';
+  document.getElementById('g-feedback').textContent='';
+  if(G.bankIdx>=G.qBank.length){G.qBank=shuffle(QUESTIONS.filter(q=>q.grade<=playerGrade));G.bankIdx=0;}
+  G.question=G.qBank[G.bankIdx++];
+  const q=G.question;
+  document.getElementById('g-qnum').textContent=`${G.qIdx+1}/12`;
+  document.getElementById('g-qnum2').textContent=`Q ${G.qIdx+1}/12`;
+  document.getElementById('g-round').textContent=G.round;
+  document.getElementById('g-topic-tag').textContent=topicLabel(q.topic);
+  document.getElementById('g-topic-tag').className=`topic-tag ${q.topic}`;
+  document.getElementById('g-topic-disp').textContent=topicLabel(q.topic);
+  document.getElementById('g-question').textContent=q.q;
+  document.getElementById('g-question').className=q.q.length>55?'question small':'question';
+  document.getElementById('emoji-area').innerHTML=q.emoji?`<div class="emoji-big">${q.emoji}</div>`:'';
+  updateAttemptDots();
+  renderQuestion();
+  G.hintTimer=setTimeout(()=>{if(!G.answered)document.getElementById('hint-btn').style.display='flex';},7000);
+}
+
+function topicLabel(t){
+  return{stories:'🕉️ Hindu Stories',festivals:'🎊 Festivals',geography:'🗺️ India Geography',
+    dharma:'🔱 Sanatan Dharma',panchatantra:'📖 Panchatantra',funfacts:'⚡ Fun Facts'}[t]||'🇮🇳 India';
+}
+
+function renderQuestion(){
+  const q=G.question;
+  const el=document.getElementById('q-content');
+  el.innerHTML=`<div class="opts">${q.opts.map(o=>
+    `<button class="opt" onclick="checkOpt(this,'${o.replace(/'/g,"\\'")}','${q.a.replace(/'/g,"\\'")}')">
+      ${o}</button>`).join('')}</div>`;
+}
+
+function checkOpt(btn,chosen,correct){
+  if(G.answered)return;
+  clearTimeout(G.hintTimer);
+  if(chosen===correct){
+    btn.classList.add('correct');
+    document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+    processResult(true);
+  } else {
+    btn.classList.add('wrong');
+    btn.disabled=true;
+    G.attempts++;
+    updateAttemptDots();
+    if(G.attempts>=3){
+      document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+      processResult(false);
+    } else {
+      const fb=document.getElementById('g-feedback');
+      fb.textContent=G.attempts===1?'Not quite! Try again 🤔':'One more try! Think carefully...';
+      setTimeout(()=>{btn.classList.remove('wrong');btn.style.opacity='.4';},600);
+    }
+  }
+}
+
+function updateAttemptDots(){
+  for(let i=0;i<3;i++){
+    const dot=document.getElementById(`dot-${i}`);
+    if(!dot)return;
+    dot.className='attempt-dot';
+    if(i<G.attempts)dot.classList.add('used');
+    else if(i===G.attempts)dot.classList.add('current');
+  }
+}
+
+function processResult(isCorrect){
+  G.answered=true;
+  clearTimeout(G.hintTimer);
+  // New star system: 2 stars first try, 1 star second try, 0 third+
+  const attemptStars=G.attempts===0?2:G.attempts===1?1:0;
+  const hintPenalty=G.hintUsed?0.5:1;
+  let earned=0;
+  if(isCorrect){
+    earned=Math.max(0,Math.floor(attemptStars*hintPenalty));
+    G.stars+=earned;G.roundStars+=earned;
+    G.correct++;G.totalCorrect++;G.totalAsked++;
+    G.streak++;
+    if(G.streak>G.bestStreak)G.bestStreak=G.streak;
+    if(G.streak>G.sessionBestStreak)G.sessionBestStreak=G.streak;
+    checkLifeRestore();
+    updateStreakBadge();
+    const combos=[
+      {s:3,t:'JAI HIND! 🇮🇳',sub:'3 correct!'},
+      {s:5,t:'BHARAT MATA KI JAI! 🙏',sub:'5 in a row!'},
+      {s:7,t:'INCREDIBLE INDIA! 🌟',sub:'7 in a row!'},
+      {s:10,t:'DESH KA GAURAV! 💥',sub:'10 in a row!'}
+    ];
+    const c=combos.slice().reverse().find(c=>G.streak===c.s);
+    if(c)showPopup('combo',c.t,c.sub);
+  } else {
+    G.lives--;G.streak=0;G.totalAsked++;
+    G.lifeRestoreStreak=0;
+    updateStreakBadge();updateLives();
+    if(G.lives<=0){showExplanation(false,()=>endGame());return;}
+  }
+  document.getElementById('g-stars').textContent=G.stars.toLocaleString();
+  updateLives();
+  showExplanation(isCorrect,()=>{G.qIdx++;loadQuestion();});
+}
+
+function showExplanation(isCorrect,onNext){
+  const q=G.question;
+  const ec=document.getElementById('explanation-card');
+  document.getElementById('ex-icon').textContent=isCorrect?'✅':'❌';
+  document.getElementById('ex-answer').innerHTML=`Answer: <span>${q.a}</span>`;
+  document.getElementById('ex-explain').textContent=q.explain||'';
+  document.getElementById('ex-fact-txt').textContent=q.fact||'';
+  const word=getWordForTopic(q.topic);
+  document.getElementById('ex-word-deva').textContent=word.deva;
+  document.getElementById('ex-word-txt').textContent=`${word.word} — ${word.meaning}`;
+  const nextBtn=document.getElementById('ex-next');
+  nextBtn.className=`ex-next ${isCorrect?'ok':'no'}`;
+  nextBtn.textContent=G.qIdx>=11||G.lives<=0?'See Results →':'Next Question →';
+  ec.className=`explanation-card show ${isCorrect?'ok':'no'}`;
+  ec.style.display='block';
+  window._exNextFn=onNext;
+  setTimeout(()=>ec.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function advanceQuestion(){
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('hint-box').className='hint-box';
+  document.getElementById('hint-btn').style.display='none';
+  clearTimeout(G.hintTimer);
+  if(window._exNextFn){window._exNextFn();window._exNextFn=null;}
+}
+
+function useHint(){
+  if(G.hintUsed||G.answered)return;
+  G.hintUsed=true;
+  const btn=document.getElementById('hint-btn');
+  btn.className='hint-btn used';btn.innerHTML='💡 Used';
+  document.getElementById('hint-txt').textContent=G.question.hint||'Think carefully about what you know!';
+  document.getElementById('hint-box').className='hint-box show';
+}
+
+function showPicture(){
+  const q=encodeURIComponent(G.question.pic||G.question.q.slice(0,40));
+  window.open('https://www.google.com/search?tbm=isch&q='+q,'_blank');
+}
+
+function checkLifeRestore(){
+  if(G.lives>=3)return;
+  G.lifeRestoreStreak++;
+  if(G.lifeRestoreStreak>=3){G.lifeRestoreStreak=0;G.lives=Math.min(3,G.lives+1);updateLives();showPopup('life','❤️ Life Restored!','3 correct in a row!');}
+}
+
+function updateLives(){let h='';for(let i=0;i<3;i++)h+=i<G.lives?'❤️':'🖤';document.getElementById('lives-display').textContent=h;}
+function updateStreakBadge(){
+  const el=document.getElementById('streak-badge');
+  el.textContent=`${G.streak} 🇮🇳`;
+  el.className=`streak-badge${G.streak>=7?' s7':G.streak>=5?' s5':G.streak>=3?' s3':''}`;
+}
+function showPopup(type,text,sub){
+  const el=document.getElementById(type+'-popup');if(!el)return;
+  if(type==='combo'){document.getElementById('combo-text').textContent=text;document.getElementById('combo-sub').textContent=sub;}
+  el.className=`popup-overlay ${type} show`;
+  setTimeout(()=>{el.className=`popup-overlay ${type} hide`;},1600);
+  setTimeout(()=>{el.className=`popup-overlay ${type}`;},1900);
+}
+
+function endRound(){
+  const acc=G.totalAsked>0?Math.round(G.totalCorrect/G.totalAsked*100):0;
+  document.getElementById('re-icon').textContent=G.correct>=10?'🏆':G.correct>=7?'⭐':G.correct>=4?'🇮🇳':'🌱';
+  document.getElementById('re-title').textContent=`Round ${G.round} Complete!`;
+  document.getElementById('re-correct').textContent=G.correct;
+  document.getElementById('re-acc').textContent=acc+'%';
+  document.getElementById('re-stars-r').textContent=G.roundStars.toLocaleString();
+  document.getElementById('re-streak-r').textContent=G.bestStreak;
+  document.getElementById('re-msg').textContent=G.correct>=10?'Incredible explorer! Jai Hind! 🌟':G.correct>=7?'Great knowledge of India! 💪':G.correct>=4?'Good effort! Keep learning! 📈':'Keep exploring India! 🌱';
+  document.getElementById('re-next-btn').textContent=`Round ${G.round+1} →`;
+  showScreen('roundEndScreen');
+}
+
+function nextRound(){
+  G.round++;G.qIdx=0;G.roundStars=0;G.correct=0;G.streak=0;G.bestStreak=0;G.lifeRestoreStreak=0;
+  showScreen('gameScreen');loadQuestion();
+}
+
+async function endGame(){
+  showScreen('gameOverScreen');
+  const total=G.stars;
+  document.getElementById('go-score').textContent=total.toLocaleString()+' ⭐';
+  document.getElementById('go-earned').textContent=`+${total.toLocaleString()} stars saved`;
+  document.getElementById('go-rounds').textContent=G.round;
+  document.getElementById('go-correct').textContent=G.totalCorrect;
+  document.getElementById('go-streak').textContent=G.sessionBestStreak;
+  const isNewBest=total>personalBest;if(isNewBest)personalBest=total;
+  document.getElementById('go-pb').textContent=personalBest.toLocaleString();
+  document.getElementById('new-best-banner').style.display=isNewBest?'block':'none';
+  document.getElementById('go-msg').textContent=total>=40?'Incredible India explorer! 🇮🇳':total>=25?'Outstanding knowledge! 🌟':total>=15?'Great effort! 💪':'Keep learning about India! 🌱';
+  document.getElementById('go-trophy').textContent=total>=40?'🏆':total>=25?'⭐':total>=15?'🇮🇳':'🌱';
+  if(playerId&&total>0){
+    try{
+      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,amount:total,reason:`Incredible India — Round ${G.round}, ${G.totalCorrect} correct`,category:'game'}});
+      const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.incredible-india`);
+      if(rows&&rows.length){
+        await db(`game_scores?player_id=eq.${playerId}&game_key=eq.incredible-india`,{method:'PATCH',prefer:'return=minimal',body:{best_score:isNewBest?total:rows[0].best_score,best_round:G.round,total_plays:(rows[0].total_plays||0)+1,last_played:new Date().toISOString()}});
+      } else {
+        await db('game_scores',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,game_key:'incredible-india',best_score:total,best_round:G.round,total_plays:1}});
+      }
+    }catch(e){}
+  }
+}
+
+function restartGame(){startGame();}
+function goHome(){window.location.href='index.html?player='+playerName;}
+function confirmQuit(){if(confirm('Quit Incredible India? Progress will be lost.'))goHome();}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+init();
+</script>
+</body>
+</html>
