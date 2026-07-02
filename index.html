@@ -2058,15 +2058,45 @@ h1, h2, h3 {
 <script>
 // ─── CONFIG ────────────────────────────────────────────────────────
 const BG_BASE='https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/';
+const BG_BASE = IMG_BASE;
+const SUPABASE_STORAGE = `${SB}/storage/v1/object/public/backgrounds/`;
+
+// Default GitHub backgrounds (fallback if Supabase not set)
 const SCREEN_BG={
   home:    BG_BASE+'bg-ocean-Home.png',
   learn:   BG_BASE+'bg-castle-forest-day-Learn.png',
   tasks:   BG_BASE+'bg-sunset-village-Tasks.png',
   rewards: BG_BASE+'bg-treehouse-night-Rewards.png',
   profile: BG_BASE+'bg-treehouse-airballons-Profile.png',
+  parent:  BG_BASE+'bg-beach-FirstPage.png',
 };
+
+// Load Supabase app_settings and override SCREEN_BG if set
+async function loadAppSettings(){
+  try{
+    const rows=await db('app_settings?select=key,value');
+    if(!Array.isArray(rows)) return;
+    rows.forEach(r=>{
+      const screenKey=r.key.replace('bg_','');
+      if(SCREEN_BG.hasOwnProperty(screenKey)) SCREEN_BG[screenKey]=r.value;
+    });
+  }catch(e){ console.warn('app_settings load failed, using defaults',e); }
+}
+
+let _currentBG='';
 function setBG(screen){
-  document.getElementById('bg-layer').style.backgroundImage=`url('${SCREEN_BG[screen]||SCREEN_BG.home}')`;
+  const url=SCREEN_BG[screen]||SCREEN_BG.home;
+  if(url===_currentBG) return;
+  _currentBG=url;
+  const layer=document.getElementById('bg-layer');
+  if(!layer) return;
+  // Crossfade: create a second layer, fade it in, then swap
+  layer.style.transition='opacity 0.6s ease';
+  layer.style.opacity='0';
+  setTimeout(()=>{
+    layer.style.backgroundImage=`url('${url}')`;
+    layer.style.opacity='1';
+  },300);
 }
 
 const SB='https://tnhgihzfwqsflpueivwe.supabase.co';
@@ -2172,6 +2202,8 @@ const DEFAULT_PINS={riaan:'2018',kairav:'2020'};
 let KP={pendingPlayer:null,entry:'',cpmStep:1,cpmParent:'',cpmNew:''};
 
 async function init(){
+  // Load Supabase backgrounds first so every setBG call uses correct URL
+  await loadAppSettings();
   Object.values(SCREEN_BG).forEach(u=>{new Image().src=u;});
   buildCalendar();buildGarden();buildWS();buildSMD();buildCountdown();
   document.addEventListener('click',e=>{
