@@ -1404,7 +1404,7 @@ h1, h2, h3 {
       <div class="ps-st" id="k-ps-stars">⭐ 0 stars</div>
     </div>
   </div>
-  <div class="ps-par" onclick="showPin()">🔐 Parent Dashboard</div>
+  <div class="ps-par" onclick="showParentPinFromSelect()">🔐 Parent Dashboard</div>
 </div>
 
 <!-- APP SHELL -->
@@ -1443,11 +1443,8 @@ h1, h2, h3 {
       <div class="tara-lbl">⭐ Tara Says</div>
       <div class="tara-msg" id="sb-tara-msg">Keep going! You're doing amazing!</div>
     </div>
-    <div class="sb-parent" onclick="showPin()">
+    <div class="sb-parent" onclick="showParentPin()">
       <span style="font-size:.95rem">🔐</span><span>Parent Dashboard</span>
-    </div>
-    <div class="sb-parent" onclick="window.location.href='parent_dashboard.html'" style="margin-top:4px;border-color:rgba(246,192,74,.18);background:rgba(246,192,74,.05)">
-      <span style="font-size:.95rem">⚙️</span><span style="color:rgba(246,192,74,.6)">Open Full Dashboard</span>
     </div>
   </aside>
 
@@ -1468,14 +1465,9 @@ h1, h2, h3 {
               <span id="dd-other-nm">Switch to Kairav</span>
             </div>
             <div class="chip-dd-sep"></div>
-            <div class="chip-dd-item" onclick="showChangePinModal(event)">
-              <div class="dd-ico">🔐</div>
-              <span>Change My PIN</span>
-            </div>
-            <div class="chip-dd-sep"></div>
             <div class="chip-dd-item" onclick="logoutPlayer(event)">
               <div class="dd-ico">🚪</div>
-              <span>Switch Player</span>
+              <span>Sign Out</span>
             </div>
           </div>
         </div>
@@ -2306,6 +2298,81 @@ function backToPlayerSelect(){
   document.getElementById('ps').style.display='flex';
   KP.pendingPlayer=null;KP.entry='';
 }
+function showParentPinFromSelect(){
+  // Works before player is selected — uses hardcoded parent PIN
+  const PARENT_PIN = '1820';
+  showMod(`
+    <div style="text-align:center;padding:8px">
+      <div style="font-size:2rem;margin-bottom:8px">🔐</div>
+      <div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:4px">Parent Dashboard</div>
+      <div style="font-size:.72rem;color:rgba(255,255,255,.45);margin-bottom:16px">Enter your PIN to continue</div>
+      <input id="pps-input" type="password" inputmode="numeric" maxlength="6"
+        style="width:100%;padding:12px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);
+        background:rgba(255,255,255,.08);color:#fff;font-size:1.2rem;text-align:center;
+        font-family:'Nunito',sans-serif;letter-spacing:6px;outline:none;box-sizing:border-box"
+        placeholder="••••"
+        onkeydown="if(event.key==='Enter')checkParentPinSelect('${PARENT_PIN}')"
+        oninput="document.getElementById('pps-err').textContent=''">
+      <div id="pps-err" style="color:#FF8A80;font-size:.72rem;font-weight:800;margin-top:8px;min-height:18px"></div>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button class="mb" style="flex:1;background:rgba(255,255,255,.08)" onclick="closeMod()">Cancel</button>
+        <button class="mb" style="flex:1" onclick="checkParentPinSelect('${PARENT_PIN}')">Enter →</button>
+      </div>
+    </div>
+  `);
+  setTimeout(()=>document.getElementById('pps-input')?.focus(), 100);
+}
+
+function checkParentPinSelect(pin){
+  const val = document.getElementById('pps-input')?.value;
+  if(val === pin){
+    closeMod();
+    window.location.href = 'parent_dashboard.html';
+  } else {
+    document.getElementById('pps-err').textContent = 'Incorrect PIN. Try again.';
+    document.getElementById('pps-input').value = '';
+    document.getElementById('pps-input').focus();
+    if(window.gsap) animateWrong(document.getElementById('pps-input'));
+  }
+}
+
+function showParentPin(){
+  // Show PIN modal — on success redirect to parent_dashboard.html
+  showMod(`
+    <div style="text-align:center;padding:8px">
+      <div style="font-size:2rem;margin-bottom:8px">🔐</div>
+      <div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:4px">Parent Dashboard</div>
+      <div style="font-size:.72rem;color:rgba(255,255,255,.45);margin-bottom:16px">Enter your PIN to continue</div>
+      <input id="pp-input" type="password" inputmode="numeric" maxlength="6"
+        style="width:100%;padding:12px;border-radius:10px;border:1.5px solid rgba(255,255,255,.2);
+        background:rgba(255,255,255,.08);color:#fff;font-size:1.2rem;text-align:center;
+        font-family:'Nunito',sans-serif;letter-spacing:6px;outline:none;box-sizing:border-box"
+        placeholder="••••"
+        onkeydown="if(event.key==='Enter')checkParentPin()"
+        oninput="document.getElementById('pp-err').textContent=''">
+      <div id="pp-err" style="color:#FF8A80;font-size:.72rem;font-weight:800;margin-top:8px;min-height:18px"></div>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button class="mb" style="flex:1;background:rgba(255,255,255,.08)" onclick="closeMod()">Cancel</button>
+        <button class="mb" style="flex:1" onclick="checkParentPin()">Enter →</button>
+      </div>
+    </div>
+  `);
+  setTimeout(()=>document.getElementById('pp-input')?.focus(), 100);
+}
+
+function checkParentPin(){
+  const val = document.getElementById('pp-input')?.value;
+  if(val === S.pin){
+    closeMod();
+    window.location.href = 'parent_dashboard.html';
+  } else {
+    document.getElementById('pp-err').textContent = 'Incorrect PIN. Try again.';
+    document.getElementById('pp-input').value = '';
+    document.getElementById('pp-input').focus();
+    if(window.gsap) animateWrong(document.getElementById('pp-input'));
+  }
+}
+
 function logoutPlayer(e){
   if(e)e.stopPropagation();
   localStorage.removeItem('lh_player');
