@@ -733,6 +733,25 @@ h1, h2, h3 {
 /* "New" badge on subject cards */
 .scard-new{position:absolute;top:6px;right:6px;z-index:10;background:linear-gradient(135deg,var(--amber2),var(--amber));color:#1A2B1E;font-size:.45rem;font-weight:900;border-radius:99px;padding:2px 6px;text-transform:uppercase;letter-spacing:.5px;box-shadow:0 2px 8px rgba(246,192,74,.4)}
 
+/* ── GAME CARDS ─────────────────────────────────────────── */
+.games-section{margin-top:18px}
+.games-section .card-ttl{margin-bottom:4px}
+.games-section .card-sub{font-size:.68rem;color:rgba(255,255,255,.38);font-weight:700;margin-bottom:12px}
+.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:12px}
+.gcard{position:relative;border-radius:18px;padding:16px 14px 14px;cursor:pointer;display:flex;flex-direction:column;gap:7px;transition:all .22s;text-decoration:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;overflow:hidden;border:1.5px solid rgba(255,255,255,.10)}
+.gcard::before{content:'';position:absolute;inset:0;border-radius:17px;opacity:.13;background:var(--gc-accent);transition:opacity .22s}
+.gcard:hover{transform:translateY(-3px) scale(1.03);border-color:var(--gc-accent)}
+.gcard:hover::before{opacity:.22}
+.gcard:active{transform:scale(.97)}
+.gc-emoji{font-size:2rem;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,.3))}
+.gc-name{font-size:.78rem;font-weight:900;color:#fff;line-height:1.25}
+.gc-desc{font-size:.62rem;color:rgba(255,255,255,.45);font-weight:700;line-height:1.3}
+.gc-badge{position:absolute;top:8px;right:8px;font-size:.42rem;font-weight:900;border-radius:99px;padding:2px 6px;text-transform:uppercase;letter-spacing:.4px}
+.gc-badge.new{background:linear-gradient(135deg,#F6C04A,#E8A020);color:#1A2B1E}
+.gc-badge.hot{background:linear-gradient(135deg,#FF6B6B,#E03030);color:#fff}
+.gc-badge.fav{background:linear-gradient(135deg,#2BBFB8,#1A8F8A);color:#fff}
+@media(max-width:768px){.game-grid{grid-template-columns:repeat(3,1fr);gap:9px}.gcard{padding:12px 10px 10px}.gc-emoji{font-size:1.6rem}.gc-name{font-size:.7rem}.gc-desc{display:none}}
+
 /* Tara suggestion banner */
 .tara-suggest{display:flex;align-items:center;gap:13px;background:linear-gradient(135deg,rgba(43,191,184,.12),rgba(124,92,191,.1));border:1px solid rgba(43,191,184,.2);border-radius:14px;padding:13px 16px;margin-bottom:10px;position:relative;overflow:hidden;cursor:pointer;transition:all .2s}
 .tara-suggest:hover{background:linear-gradient(135deg,rgba(43,191,184,.2),rgba(124,92,191,.18));transform:translateY(-2px)}
@@ -1391,13 +1410,13 @@ h1, h2, h3 {
     <div class="ps-sub">🍁 BC Curriculum · Who's learning today?</div>
   </div>
   <div class="ps-cards">
-    <div class="ps-card r" onclick="selectPlayer('riaan')">
+    <div class="ps-card r" onclick="selectPlayer('riaan')" ontouchend="event.preventDefault();selectPlayer('riaan')">
       <span class="ps-av">♑</span>
       <div class="ps-nm">Riaan</div>
       <div class="ps-gr">Age 8 · Grade 3</div>
       <div class="ps-st" id="r-ps-stars">⭐ 0 stars</div>
     </div>
-    <div class="ps-card k" onclick="selectPlayer('kairav')">
+    <div class="ps-card k" onclick="selectPlayer('kairav')" ontouchend="event.preventDefault();selectPlayer('kairav')">
       <span class="ps-av">♈</span>
       <div class="ps-nm">Kairav</div>
       <div class="ps-gr">Age 6 · Grade 1</div>
@@ -1634,6 +1653,16 @@ h1, h2, h3 {
             <div class="card">
               <div class="card-hdr"><div class="card-ttl">⚡ Skills Unlocked</div></div>
               <div class="skills-row" id="l-skills"></div>
+            </div>
+
+            <!-- ── GAMES SECTION ─────────────────────────── -->
+            <div class="card games-section">
+              <div class="card-hdr">
+                <div class="card-ttl">🎮 Games &amp; Adventures</div>
+                <span class="card-lnk" id="games-count-lbl">12 games</span>
+              </div>
+              <p class="card-sub">Tap a game to play — stars earned count toward your rewards!</p>
+              <div class="game-grid" id="game-grid"></div>
             </div>
           </div>
           <div class="lright">
@@ -3289,7 +3318,7 @@ async function buildGarden(){
 // LEARN screen
 function renderLearn(){
   renderIslands('all');
-  renderContCards();renderSkills();buildSMD();renderRAch();
+  renderContCards();renderSkills();renderGames();buildSMD();renderRAch();
   document.getElementById('l-streak').textContent=`${S.streak} Days`;
   const total=S.subjects.length*10;
   const done=Object.values(S.levelProgress).reduce((a,l)=>a+(l.current_level-1),0);
@@ -3376,6 +3405,35 @@ function renderSkills(){
   const el=document.getElementById('l-skills');if(!el)return;
   const sks=[{e:'⚙️',n:'Problem Solver',c:'#3E8FD0'},{e:'⚡',n:'Quick Learner',c:'#27AE60'},{e:'💡',n:'Curious Mind',c:'#F0A030'},{e:'🎯',n:'Focus Master',c:'#E05C8A'},{e:'⭐',n:'Consistent Star',c:'#7C5CBF'},{e:'🔒',n:'Coming Soon',c:'#555',locked:true}];
   el.innerHTML=sks.map(s=>`<div class="sk-hex"><div class="sk-ico ${s.locked?'lck':''}">${s.e}</div><div class="sk-nm" style="color:${s.c}">${s.n}</div></div>`).join('');
+}
+
+const GAMES=[
+  {id:'incredible-india',  emoji:'🇮🇳', name:'Incredible India',      desc:'Stories, facts & culture quiz', accent:'#FF9933', badge:'fav',  file:'incredible-india.html'},
+  {id:'math-duel',         emoji:'⚔️',  name:'Math Duel',              desc:'Race to solve maths fast!',     accent:'#2BBFB8', badge:'hot',  file:'math-duel.html'},
+  {id:'word-builder',      emoji:'🔤',  name:'Word Builder',           desc:'Build words, grow vocab',       accent:'#F6C04A', badge:'new',  file:'word-builder.html'},
+  {id:'times-tables-turbo',emoji:'⚡',  name:'Times Tables Turbo',     desc:'Master your times tables',      accent:'#FF6B6B', badge:'hot',  file:'times-tables-turbo.html'},
+  {id:'science-lab',       emoji:'🔬',  name:'Science Lab',            desc:'Experiments & discoveries',     accent:'#7C5CBF', badge:'new',  file:'science-lab.html'},
+  {id:'geography-quest',   emoji:'🗺️',  name:'Geography Quest',        desc:'Explore countries & capitals',  accent:'#27AE60', badge:'new',  file:'geography-quest.html'},
+  {id:'human-body-explorer',emoji:'🫀', name:'Body Explorer',          desc:'Discover how you work',         accent:'#E05C8A', badge:'new',  file:'human-body-explorer.html'},
+  {id:'story-sequencer',   emoji:'📖',  name:'Story Sequencer',        desc:'Put Panchatantra in order',     accent:'#F0A030', badge:'new',  file:'story-sequencer.html'},
+  {id:'hindi-gujarati-hub',emoji:'🙏',  name:'Hindi & Gujarati Hub',   desc:'Learn your heritage language',  accent:'#FF9933', badge:'new',  file:'hindi-gujarati-hub.html'},
+  {id:'world-flags',       emoji:'🚩',  name:'World Flags',            desc:'Guess flags from every nation', accent:'#3E8FD0', badge:'new',  file:'world-flags.html'},
+  {id:'music-dance-explorer',emoji:'🎵',name:'Music & Dance',          desc:'Indian classical arts explorer',accent:'#C850C0', badge:'new',  file:'music-dance-explorer.html'},
+  {id:'coding-quest',      emoji:'💻',  name:'Coding Quest',           desc:'Puzzles, logic & basic code',   accent:'#2BBFB8', badge:'new',  file:'coding-quest.html'},
+];
+
+function renderGames(){
+  const el=document.getElementById('game-grid');if(!el)return;
+  const pName=S.player?.name||'';
+  el.innerHTML=GAMES.map(g=>`
+    <a class="gcard" href="${g.file}?player=${encodeURIComponent(pName)}"
+       style="background:rgba(8,20,14,.75);--gc-accent:${g.accent}"
+       ontouchend="event.preventDefault();location.href='${g.file}?player=${encodeURIComponent(pName)}'">
+      ${g.badge?`<span class="gc-badge ${g.badge}">${g.badge==='fav'?'⭐ Fav':g.badge==='hot'?'🔥 Hot':'✨ New'}</span>`:''}
+      <div class="gc-emoji">${g.emoji}</div>
+      <div class="gc-name">${g.name}</div>
+      <div class="gc-desc">${g.desc}</div>
+    </a>`).join('');
 }
 
 function buildSMD(){
