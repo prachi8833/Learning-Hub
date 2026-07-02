@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Hindi Gujarati Hub 🗣️ — Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#7C3AED;--purple2:#5B21B6;--purple3:#C4B5FD;
+  --gold:#F59E0B;--gold2:#D97706;--gold3:#FDE68A;
+  --green:#10B981;--red:#EF4444;--blue:#3B82F6;
+  --gc:rgba(15,8,30,0.92);--gb:rgba(255,255,255,0.08);
+  --r:16px;--shadow:0 4px 24px rgba(0,0,0,0.5);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+html,body{height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden}
+body{background:#080414;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.bg{position:fixed;inset:0;z-index:0;
+  background:radial-gradient(ellipse at 30% 30%,rgba(124,58,237,.15) 0%,transparent 55%),
+             radial-gradient(ellipse at 70% 70%,rgba(245,158,11,.1) 0%,transparent 55%),#080414}
+.bg-deco{position:fixed;pointer-events:none;opacity:.04;font-size:5rem;animation:floatDeco ease-in-out infinite alternate}
+@keyframes floatDeco{from{transform:translateY(0) rotate(-5deg)}to{transform:translateY(-15px) rotate(5deg)}}
+
+.wrap{position:relative;z-index:1;width:100%;max-width:580px;padding:12px;
+  display:flex;flex-direction:column;gap:9px;max-height:100vh;overflow-y:auto}
+.wrap::-webkit-scrollbar{display:none}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:10px;background:var(--gc);backdrop-filter:blur(14px);
+  border:1px solid rgba(124,58,237,.2);border-radius:var(--r);padding:11px 15px;box-shadow:var(--shadow);flex-shrink:0}
+.back-btn{width:36px;height:36px;border-radius:50%;background:rgba(124,58,237,.15);border:none;
+  color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hdr-title{flex:1;font-size:1rem;font-weight:900;
+  background:linear-gradient(135deg,var(--purple3),var(--gold3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hdr-sub{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.45)}
+.lives{display:flex;gap:2px;font-size:1rem}
+.star-count{font-size:.9rem;font-weight:900;color:var(--gold);white-space:nowrap}
+
+/* INFO ROW */
+.info-row{display:flex;gap:7px;flex-shrink:0}
+.info-box{flex:1;background:var(--gc);backdrop-filter:blur(14px);
+  border:1px solid rgba(124,58,237,.12);border-radius:11px;padding:7px 9px;text-align:center;box-shadow:var(--shadow)}
+.ib-val{font-size:.95rem;font-weight:900;color:#fff;line-height:1}
+.ib-lbl{font-size:.5rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px;text-transform:uppercase}
+.streak-badge{display:inline-flex;align-items:center;gap:3px;border-radius:99px;padding:3px 9px;
+  font-size:.7rem;font-weight:900;background:rgba(124,58,237,.12);
+  border:1px solid rgba(124,58,237,.25);color:var(--purple3);transition:all .3s}
+.streak-badge.s3{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.3);color:var(--gold3)}
+.streak-badge.s5{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.25);color:#6EE7B7}
+.streak-badge.s7{background:rgba(124,58,237,.18);border-color:rgba(124,58,237,.4);color:var(--purple3);animation:mp .6s ease infinite alternate}
+@keyframes mp{from{transform:scale(1)}to{transform:scale(1.08)}}
+
+/* POPUPS */
+.popup-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
+  z-index:9999;text-align:center;pointer-events:none;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  background:rgba(8,4,20,0.96);backdrop-filter:blur(18px);
+  border-radius:24px;padding:20px 32px;box-shadow:0 8px 40px rgba(0,0,0,0.7)}
+.popup-overlay.combo{border:1.5px solid rgba(124,58,237,.35)}
+.popup-overlay.life{border:1.5px solid rgba(239,68,68,.35)}
+.popup-overlay.show{transform:translate(-50%,-50%) scale(1)}
+.popup-overlay.hide{transform:translate(-50%,-50%) scale(0);opacity:0}
+.po-text{font-size:1.9rem;font-weight:900;white-space:nowrap}
+.po-sub{font-size:.85rem;font-weight:800;color:rgba(255,255,255,.6);margin-top:3px}
+
+/* LANGUAGE BADGE */
+.lang-badge{display:inline-flex;align-items:center;gap:8px;border-radius:12px;
+  padding:8px 18px;margin-bottom:12px;font-size:.85rem;font-weight:900}
+.lang-badge.hindi{background:rgba(245,158,11,.12);border:1.5px solid rgba(245,158,11,.3);color:var(--gold3)}
+.lang-badge.gujarati{background:rgba(124,58,237,.15);border:1.5px solid rgba(124,58,237,.35);color:var(--purple3)}
+.lang-script{font-family:'Tiro Devanagari Hindi',serif;font-size:1.4rem;color:inherit}
+
+/* GAME CARD */
+.q-card{background:var(--gc);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(124,58,237,.18);border-radius:var(--r);
+  padding:16px;box-shadow:var(--shadow),0 0 20px rgba(124,58,237,.06)}
+.q-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.mode-tag{font-size:.63rem;font-weight:900;border-radius:99px;padding:3px 11px;border:1px solid}
+.mode-tag.translate{background:rgba(124,58,237,.12);color:var(--purple3);border-color:rgba(124,58,237,.28)}
+.mode-tag.meaning{background:rgba(245,158,11,.12);color:var(--gold3);border-color:rgba(245,158,11,.28)}
+.mode-tag.listen{background:rgba(16,185,129,.1);color:#6EE7B7;border-color:rgba(16,185,129,.25)}
+.mode-tag.phrase{background:rgba(59,130,246,.1);color:#93C5FD;border-color:rgba(59,130,246,.25)}
+.q-num{font-size:.6rem;font-weight:800;color:rgba(255,255,255,.35)}
+
+/* BIG WORD DISPLAY */
+.word-display{text-align:center;margin-bottom:14px}
+.word-english{font-size:2rem;font-weight:900;color:#fff;margin-bottom:4px}
+.word-script{font-family:'Tiro Devanagari Hindi',serif;font-size:2.2rem;color:var(--gold);
+  display:block;margin-bottom:4px;line-height:1.3}
+.word-roman{font-size:.88rem;font-weight:700;color:rgba(255,255,255,.5);font-style:italic}
+.word-category{font-size:.6rem;font-weight:800;color:rgba(255,255,255,.3);text-transform:uppercase;
+  letter-spacing:.5px;margin-top:4px}
+
+/* SPEAK BUTTON */
+.speak-btn{display:flex;align-items:center;gap:8px;margin:0 auto 14px;
+  padding:8px 20px;background:rgba(124,58,237,.12);border:1.5px solid rgba(124,58,237,.3);
+  border-radius:99px;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;
+  color:var(--purple3);cursor:pointer;transition:all .2s}
+.speak-btn:active{background:rgba(124,58,237,.25)}
+.speak-btn.speaking{animation:pulse .8s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* MCQ */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.opts.single{grid-template-columns:1fr}
+.opt{padding:12px 10px;background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(124,58,237,.15);border-radius:12px;
+  font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;
+  color:rgba(255,255,255,.88);cursor:pointer;transition:all .15s;text-align:center;
+  -webkit-tap-highlight-color:transparent}
+.opt .opt-roman-big{font-size:1.1rem;font-weight:900;color:#fff;display:block;margin-bottom:3px}
+.opt .opt-script-small{font-family:'Tiro Devanagari Hindi',serif;font-size:.85rem;
+  color:rgba(245,158,11,.6);display:block;font-style:normal}
+.opt:active:not(:disabled){transform:scale(.96)}
+.opt.correct{background:rgba(16,185,129,.2)!important;border-color:var(--green)!important;color:#6EE7B7!important}
+.opt.wrong{background:rgba(239,68,68,.12)!important;border-color:var(--red)!important;color:#FCA5A5!important;animation:shake .3s ease}
+
+/* LISTEN MODE */
+.listen-card{background:rgba(124,58,237,.06);border:1.5px solid rgba(124,58,237,.2);
+  border-radius:13px;padding:16px;text-align:center;margin-bottom:12px}
+.listen-emoji{font-size:2.5rem;margin-bottom:8px;display:block}
+.listen-hint{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:10px}
+
+/* PHRASE DISPLAY */
+.phrase-card{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);
+  border-radius:12px;padding:14px;margin-bottom:12px}
+.phrase-english{font-size:.88rem;font-weight:700;color:rgba(255,255,255,.7);margin-bottom:8px}
+.phrase-script{font-family:'Tiro Devanagari Hindi',serif;font-size:1.4rem;color:var(--gold);
+  display:block;margin-bottom:4px;line-height:1.5}
+.phrase-roman{font-size:.75rem;font-weight:600;color:rgba(255,255,255,.45);font-style:italic}
+
+/* ATTEMPTS */
+.attempts-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;justify-content:center}
+.attempt-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.15);
+  border:1.5px solid rgba(255,255,255,.2);transition:all .3s}
+.attempt-dot.used{background:var(--red);border-color:var(--red)}
+.attempt-dot.current{background:var(--gold);border-color:var(--gold);animation:pulse .8s ease infinite}
+.feedback-row{min-height:24px;font-size:.78rem;font-weight:800;text-align:center;
+  margin-bottom:6px;color:var(--gold)}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:7px;margin-top:8px}
+.show-pic-btn{flex:1;padding:9px;background:rgba(124,58,237,.08);
+  border:1.5px solid rgba(124,58,237,.2);border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;
+  color:rgba(196,181,253,.7);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+.show-pic-btn:active{background:rgba(124,58,237,.18)}
+.hint-btn{flex:1;padding:9px;background:rgba(255,255,255,.04);
+  border:1.5px solid rgba(255,255,255,.1);border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;
+  color:rgba(255,255,255,.4);cursor:pointer;display:none;align-items:center;justify-content:center;gap:5px}
+.hint-btn:active{background:rgba(245,158,11,.1)}
+.hint-btn.used{opacity:.35;cursor:default}
+.hint-box{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);
+  border-radius:10px;padding:8px 12px;margin-top:6px;display:none}
+.hint-box.show{display:block}
+.hint-txt{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.65)}
+
+/* EXPLANATION */
+.explanation-card{margin-top:10px;border-radius:13px;padding:13px 15px;display:none;animation:slideDown .3s ease}
+.explanation-card.show{display:block}
+.explanation-card.ok{background:rgba(16,185,129,.1);border:1.5px solid rgba(16,185,129,.22)}
+.explanation-card.no{background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.2)}
+.ex-result{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ex-icon{font-size:1.2rem;flex-shrink:0}
+.ex-answer{font-size:.88rem;font-weight:900;color:#fff}
+.ex-answer span{color:var(--gold)}
+.ex-explain{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.7);line-height:1.55;margin-bottom:7px}
+.ex-word-box{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);
+  border-radius:9px;padding:10px 12px;margin-bottom:9px;text-align:center}
+.ex-word-script{font-family:'Tiro Devanagari Hindi',serif;font-size:1.6rem;color:var(--gold);display:block;margin-bottom:3px}
+.ex-word-roman{font-size:.78rem;font-weight:700;color:rgba(255,255,255,.6);font-style:italic}
+.ex-word-eng{font-size:.75rem;font-weight:800;color:var(--purple3);margin-top:3px}
+.ex-next{width:100%;padding:11px;border:none;border-radius:11px;font-family:'Nunito',sans-serif;
+  font-size:.88rem;font-weight:900;cursor:pointer;color:#fff}
+.ex-next.ok{background:linear-gradient(135deg,var(--purple2),var(--purple))}
+.ex-next.no{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a0a00}
+
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{0%{transform:scale(.94)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+
+/* SCREENS */
+.screen{display:none}.screen.active{display:flex;flex-direction:column;gap:9px}
+
+/* START */
+.start-card{background:var(--gc);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(124,58,237,.2);border-radius:var(--r);
+  padding:22px 18px;text-align:center;box-shadow:var(--shadow)}
+.start-icon{font-size:3rem;margin-bottom:6px;display:block;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.start-title{font-size:1.4rem;font-weight:900;margin-bottom:4px;
+  background:linear-gradient(135deg,var(--purple3),var(--gold3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.start-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:14px;line-height:1.6}
+.lang-preview{display:flex;gap:10px;margin-bottom:14px}
+.lang-card{flex:1;background:rgba(255,255,255,.04);border-radius:12px;padding:12px 8px;text-align:center;border:1px solid}
+.lang-card.h{border-color:rgba(245,158,11,.2)}
+.lang-card.g{border-color:rgba(124,58,237,.2)}
+.lang-card-title{font-size:.72rem;font-weight:900;margin-bottom:6px}
+.lang-card.h .lang-card-title{color:var(--gold3)}
+.lang-card.g .lang-card-title{color:var(--purple3)}
+.lang-sample{font-family:'Tiro Devanagari Hindi',serif;font-size:1.3rem;display:block;margin-bottom:2px}
+.lang-card.h .lang-sample{color:var(--gold)}
+.lang-card.g .lang-sample{color:var(--purple3)}
+.lang-sample-eng{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.4)}
+.rules{display:flex;flex-direction:column;gap:5px;text-align:left;margin-bottom:14px}
+.rule{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border-radius:9px;padding:7px 10px}
+.rule-ico{font-size:.9rem;flex-shrink:0}
+.rule-txt{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.7)}
+.start-btn{width:100%;padding:14px;border:none;border-radius:13px;
+  background:linear-gradient(135deg,var(--purple2),var(--purple),var(--gold2));
+  color:#fff;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;
+  cursor:pointer;box-shadow:0 4px 20px rgba(124,58,237,.35);transition:all .2s}
+.start-btn:active{transform:scale(.97)}
+.pb-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;
+  font-size:.7rem;font-weight:700;color:rgba(255,255,255,.4)}
+.pb-val{color:var(--gold);font-weight:900}
+
+/* ROUND END / GAME OVER */
+.re-card,.go-card{background:var(--gc);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(124,58,237,.2);border-radius:var(--r);
+  padding:20px 16px;text-align:center;box-shadow:var(--shadow)}
+.re-icon{font-size:2.6rem;margin-bottom:6px;display:block}
+.go-trophy{font-size:3.5rem;margin-bottom:7px;display:block;animation:float 2s ease-in-out infinite}
+.re-title,.go-title{font-size:1.1rem;font-weight:900;margin-bottom:3px;
+  background:linear-gradient(135deg,var(--purple3),var(--gold3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.re-stats,.go-stats{display:flex;gap:7px;margin:10px 0}
+.re-stat,.go-stat{flex:1;background:rgba(255,255,255,.05);border-radius:10px;padding:9px;text-align:center}
+.re-sv,.go-sv{font-size:1.1rem;font-weight:900;color:var(--gold)}
+.re-sl,.go-sl{font-size:.53rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px}
+.re-msg,.go-msg{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.45);margin-bottom:11px}
+.new-best{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);
+  border-radius:10px;padding:8px 13px;font-size:.78rem;font-weight:900;color:var(--gold);margin:7px 0;animation:popIn .4s ease}
+.re-btn,.go-btn{width:100%;padding:11px;border:none;border-radius:12px;
+  font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:900;cursor:pointer;transition:all .15s}
+.re-btn.next,.go-btn.play{background:linear-gradient(135deg,var(--purple2),var(--purple));color:#fff}
+.re-btn.home,.go-btn.home{background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);margin-top:6px}
+.re-btn:active,.go-btn:active{transform:scale(.97)}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="bg-deco" style="top:5%;left:3%">🕉️</div>
+<div class="bg-deco" style="bottom:10%;right:4%;animation-delay:1.5s">✨</div>
+
+<div class="popup-overlay combo" id="combo-popup">
+  <div class="po-text" id="combo-text">शाबाश! 🌟</div>
+  <div class="po-sub" id="combo-sub">3 in a row!</div>
+</div>
+<div class="popup-overlay life" id="life-popup">
+  <div class="po-text">❤️ Life Restored!</div>
+  <div class="po-sub">3 correct in a row!</div>
+</div>
+
+<div class="wrap">
+  <!-- START -->
+  <div id="startScreen" class="screen active">
+    <div class="start-card">
+      <span class="start-icon">🗣️</span>
+      <div class="start-title">Hindi Gujarati Hub</div>
+      <div class="start-sub" id="start-greeting">Learn the languages of your heritage!</div>
+      <div class="lang-preview">
+        <div class="lang-card h">
+          <div class="lang-card-title">हिंदी Hindi</div>
+          <span class="lang-sample">नमस्ते</span>
+          <div class="lang-sample-eng">Namaste — Hello</div>
+        </div>
+        <div class="lang-card g">
+          <div class="lang-card-title">ગુજરાતી Gujarati</div>
+          <span class="lang-sample">નમસ્તે</span>
+          <div class="lang-sample-eng">Namaste — Hello</div>
+        </div>
+      </div>
+      <div class="rules">
+        <div class="rule"><span class="rule-ico">🔄</span><span class="rule-txt">Round 1 = Hindi, Round 2 = Gujarati, alternating each round</span></div>
+        <div class="rule"><span class="rule-ico">🔊</span><span class="rule-txt">Hear words spoken aloud — learn the right pronunciation</span></div>
+        <div class="rule"><span class="rule-ico">📝</span><span class="rule-txt">Words, numbers, colours, days, months and phrases</span></div>
+        <div class="rule"><span class="rule-ico">3️⃣</span><span class="rule-txt">3 attempts per question — stars reduce each try</span></div>
+        <div class="rule"><span class="rule-ico">❤️</span><span class="rule-txt">3 correct in a row restores a life</span></div>
+      </div>
+      <button class="start-btn" onclick="startGame()">🗣️ Start Learning!</button>
+      <div class="pb-row" id="pb-row" style="display:none">🏆 Personal Best: <span class="pb-val" id="pb-val">0</span> stars</div>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div id="gameScreen" class="screen">
+    <div class="hdr">
+      <button class="back-btn" onclick="confirmQuit()">←</button>
+      <div style="flex:1">
+        <div class="hdr-title">🗣️ Hindi Gujarati Hub</div>
+        <div class="hdr-sub" id="g-player-label">Riaan · Grade 3</div>
+      </div>
+      <div class="lives" id="lives-display">❤️❤️❤️</div>
+      <div class="star-count">⭐ <span id="g-stars">0</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-box"><div class="ib-val" style="color:var(--purple3)" id="g-round">1</div><div class="ib-lbl">Round</div></div>
+      <div class="info-box"><div class="ib-val" id="g-qnum">1/10</div><div class="ib-lbl">Question</div></div>
+      <div class="info-box" style="flex:1.4">
+        <div class="ib-val" id="g-lang-disp" style="font-size:.75rem;color:var(--gold)">Hindi</div>
+        <div class="ib-lbl">Language</div>
+      </div>
+      <div class="info-box" style="display:flex;align-items:center;justify-content:center">
+        <div id="streak-badge" class="streak-badge">0 🗣️</div>
+      </div>
+    </div>
+    <div class="q-card">
+      <div class="q-meta">
+        <span class="mode-tag" id="g-mode-tag">Translate</span>
+        <span class="q-num" id="g-qnum2">Q 1/10</span>
+      </div>
+      <div style="text-align:center">
+        <div class="lang-badge hindi" id="lang-badge">
+          <span class="lang-script">हिंदी</span> Hindi Round
+        </div>
+      </div>
+      <div id="q-content"></div>
+      <div class="attempts-row">
+        <span style="font-size:.6rem;font-weight:700;color:rgba(255,255,255,.35)">Attempts:</span>
+        <div class="attempt-dot current" id="dot-0"></div>
+        <div class="attempt-dot" id="dot-1"></div>
+        <div class="attempt-dot" id="dot-2"></div>
+      </div>
+      <div class="feedback-row" id="g-feedback"></div>
+      <div class="btn-row">
+        <button class="show-pic-btn" onclick="showPicture()">🔍 Show Picture</button>
+        <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 Hint</button>
+      </div>
+      <div class="hint-box" id="hint-box"><div class="hint-txt" id="hint-txt"></div></div>
+      <div class="explanation-card" id="explanation-card">
+        <div class="ex-result">
+          <span class="ex-icon" id="ex-icon">✅</span>
+          <span class="ex-answer" id="ex-answer">Correct!</span>
+        </div>
+        <div class="ex-explain" id="ex-explain"></div>
+        <div class="ex-word-box" id="ex-word-box">
+          <span class="ex-word-script" id="ex-word-script"></span>
+          <div class="ex-word-roman" id="ex-word-roman"></div>
+          <div class="ex-word-eng" id="ex-word-eng"></div>
+        </div>
+        <button class="ex-next" id="ex-next" onclick="advanceQuestion()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUND END -->
+  <div id="roundEndScreen" class="screen">
+    <div class="re-card">
+      <span class="re-icon" id="re-icon">⭐</span>
+      <div class="re-title" id="re-title">Round 1 Complete!</div>
+      <div class="re-stats">
+        <div class="re-stat"><div class="re-sv" id="re-correct">0</div><div class="re-sl">Correct</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-acc">0%</div><div class="re-sl">Accuracy</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-stars-r">0</div><div class="re-sl">Stars</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-streak-r">0</div><div class="re-sl">Best Streak</div></div>
+      </div>
+      <div class="re-msg" id="re-msg"></div>
+      <button class="re-btn next" id="re-next-btn" onclick="nextRound()">Next Round →</button>
+      <button class="re-btn home" onclick="goHome()">🏠 Back to Hub</button>
+    </div>
+  </div>
+
+  <!-- GAME OVER -->
+  <div id="gameOverScreen" class="screen">
+    <div class="go-card">
+      <span class="go-trophy" id="go-trophy">🏆</span>
+      <div class="go-title">Language Master!</div>
+      <div class="go-sv" id="go-score" style="font-size:2.2rem;font-weight:900;color:var(--gold);line-height:1;margin-bottom:3px">0 ⭐</div>
+      <div style="font-size:.85rem;font-weight:800;color:#6EE7B7" id="go-earned">+0 stars saved</div>
+      <div id="new-best-banner" class="new-best" style="display:none">🏆 NEW PERSONAL BEST!</div>
+      <div class="go-msg" id="go-msg">बहुत अच्छे! / ખૂબ સારું!</div>
+      <div class="go-stats">
+        <div class="go-stat"><div class="go-sv" id="go-rounds">1</div><div class="go-sl">Rounds</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-correct">0</div><div class="go-sl">Correct</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-streak">0</div><div class="go-sl">Best Streak</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-pb">0</div><div class="go-sl">Personal Best</div></div>
+      </div>
+      <button class="go-btn play" onclick="restartGame()">🗣️ Play Again</button>
+      <button class="go-btn home" onclick="goHome()">🏠 Back to Hub</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SB='https://tnhgihzfwqsflpueivwe.supabase.co',KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
+const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':o.prefer||'return=representation',...o.headers},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined}).then(r=>r.json()).catch(()=>[]);
+const params=new URLSearchParams(window.location.search);
+const playerName=params.get('player')||'riaan';
+let playerId=null,playerGrade=3,personalBest=0;
+
+// ── WORD BANK ─────────────────────────────────────────────────────
+const HINDI={
+  numbers:[
+    {eng:'One',script:'एक',roman:'Ek',cat:'Numbers'},
+    {eng:'Two',script:'दो',roman:'Do',cat:'Numbers'},
+    {eng:'Three',script:'तीन',roman:'Teen',cat:'Numbers'},
+    {eng:'Four',script:'चार',roman:'Chaar',cat:'Numbers'},
+    {eng:'Five',script:'पाँच',roman:'Paanch',cat:'Numbers'},
+    {eng:'Six',script:'छह',roman:'Chhah',cat:'Numbers'},
+    {eng:'Seven',script:'सात',roman:'Saat',cat:'Numbers'},
+    {eng:'Eight',script:'आठ',roman:'Aath',cat:'Numbers'},
+    {eng:'Nine',script:'नौ',roman:'Nau',cat:'Numbers'},
+    {eng:'Ten',script:'दस',roman:'Das',cat:'Numbers'},
+    {eng:'Twenty',script:'बीस',roman:'Bees',cat:'Numbers'},
+    {eng:'Hundred',script:'सौ',roman:'Sau',cat:'Numbers'},
+  ],
+  colours:[
+    {eng:'Red',script:'लाल',roman:'Laal',cat:'Colours'},
+    {eng:'Blue',script:'नीला',roman:'Neela',cat:'Colours'},
+    {eng:'Green',script:'हरा',roman:'Hara',cat:'Colours'},
+    {eng:'Yellow',script:'पीला',roman:'Peela',cat:'Colours'},
+    {eng:'White',script:'सफेद',roman:'Safed',cat:'Colours'},
+    {eng:'Black',script:'काला',roman:'Kaala',cat:'Colours'},
+    {eng:'Orange',script:'नारंगी',roman:'Narangi',cat:'Colours'},
+    {eng:'Pink',script:'गुलाबी',roman:'Gulaabi',cat:'Colours'},
+    {eng:'Purple',script:'बैंगनी',roman:'Baingani',cat:'Colours'},
+    {eng:'Brown',script:'भूरा',roman:'Bhoora',cat:'Colours'},
+  ],
+  days:[
+    {eng:'Monday',script:'सोमवार',roman:'Somvaar',cat:'Days'},
+    {eng:'Tuesday',script:'मंगलवार',roman:'Mangalvaar',cat:'Days'},
+    {eng:'Wednesday',script:'बुधवार',roman:'Budhvaar',cat:'Days'},
+    {eng:'Thursday',script:'गुरुवार',roman:'Guruvaar',cat:'Days'},
+    {eng:'Friday',script:'शुक्रवार',roman:'Shukravaar',cat:'Days'},
+    {eng:'Saturday',script:'शनिवार',roman:'Shanivaar',cat:'Days'},
+    {eng:'Sunday',script:'रविवार',roman:'Ravivaar',cat:'Days'},
+  ],
+  months:[
+    {eng:'January',script:'जनवरी',roman:'Janvari',cat:'Months'},
+    {eng:'February',script:'फरवरी',roman:'Farvari',cat:'Months'},
+    {eng:'March',script:'मार्च',roman:'March',cat:'Months'},
+    {eng:'April',script:'अप्रैल',roman:'April',cat:'Months'},
+    {eng:'May',script:'मई',roman:'Mai',cat:'Months'},
+    {eng:'June',script:'जून',roman:'June',cat:'Months'},
+    {eng:'July',script:'जुलाई',roman:'Julai',cat:'Months'},
+    {eng:'August',script:'अगस्त',roman:'Agast',cat:'Months'},
+    {eng:'September',script:'सितंबर',roman:'Sitambar',cat:'Months'},
+    {eng:'October',script:'अक्टूबर',roman:'October',cat:'Months'},
+    {eng:'November',script:'नवंबर',roman:'November',cat:'Months'},
+    {eng:'December',script:'दिसंबर',roman:'December',cat:'Months'},
+  ],
+  vocab:[
+    {eng:'Hello / Greetings',script:'नमस्ते',roman:'Namaste',cat:'Greetings'},
+    {eng:'Thank you',script:'धन्यवाद',roman:'Dhanyavaad',cat:'Greetings'},
+    {eng:'Please',script:'कृपया',roman:'Kripaya',cat:'Greetings'},
+    {eng:'Sorry',script:'माफ करें',roman:'Maaf karein',cat:'Greetings'},
+    {eng:'Good morning',script:'सुप्रभात',roman:'Suprabhat',cat:'Greetings'},
+    {eng:'Good night',script:'शुभ रात्रि',roman:'Shubh Ratri',cat:'Greetings'},
+    {eng:'How are you?',script:'आप कैसे हैं?',roman:'Aap kaise hain?',cat:'Phrases'},
+    {eng:'I am fine',script:'मैं ठीक हूँ',roman:'Main theek hoon',cat:'Phrases'},
+    {eng:'What is your name?',script:'आपका नाम क्या है?',roman:'Aapka naam kya hai?',cat:'Phrases'},
+    {eng:'My name is...',script:'मेरा नाम ... है',roman:'Mera naam ... hai',cat:'Phrases'},
+    {eng:'Water',script:'पानी',roman:'Paani',cat:'Food & Home'},
+    {eng:'Food / Meal',script:'खाना',roman:'Khaana',cat:'Food & Home'},
+    {eng:'Milk',script:'दूध',roman:'Doodh',cat:'Food & Home'},
+    {eng:'Bread',script:'रोटी',roman:'Roti',cat:'Food & Home'},
+    {eng:'Rice',script:'चावल',roman:'Chaaval',cat:'Food & Home'},
+    {eng:'Home',script:'घर',roman:'Ghar',cat:'Food & Home'},
+    {eng:'Mother',script:'माँ',roman:'Maa',cat:'Family'},
+    {eng:'Father',script:'पिताजी',roman:'Pitaji',cat:'Family'},
+    {eng:'Brother',script:'भाई',roman:'Bhai',cat:'Family'},
+    {eng:'Sister',script:'बहन',roman:'Behen',cat:'Family'},
+    {eng:'Grandmother',script:'दादी / नानी',roman:'Daadi / Naani',cat:'Family'},
+    {eng:'Grandfather',script:'दादा / नाना',roman:'Daada / Naana',cat:'Family'},
+    {eng:'Sun',script:'सूरज',roman:'Suraj',cat:'Nature'},
+    {eng:'Moon',script:'चाँद',roman:'Chaand',cat:'Nature'},
+    {eng:'Sky',script:'आकाश',roman:'Aakaash',cat:'Nature'},
+    {eng:'Rain',script:'बारिश',roman:'Baarish',cat:'Nature'},
+    {eng:'Tree',script:'पेड़',roman:'Ped',cat:'Nature'},
+    {eng:'Flower',script:'फूल',roman:'Phool',cat:'Nature'},
+    {eng:'School',script:'विद्यालय',roman:'Vidyaalay',cat:'Places'},
+    {eng:'Book',script:'किताब',roman:'Kitaab',cat:'School'},
+    {eng:'Teacher',script:'शिक्षक',roman:'Shikshak',cat:'School'},
+    {eng:'Friend',script:'दोस्त',roman:'Dost',cat:'School'},
+    {eng:'I love you',script:'मैं तुमसे प्यार करता हूँ',roman:'Main tumse pyaar karta hoon',cat:'Phrases'},
+    {eng:'India',script:'भारत',roman:'Bharat',cat:'Places'},
+    {eng:'Beautiful',script:'सुंदर',roman:'Sundar',cat:'Describing'},
+    {eng:'Big',script:'बड़ा',roman:'Bada',cat:'Describing'},
+    {eng:'Small',script:'छोटा',roman:'Chhota',cat:'Describing'},
+    {eng:'Good',script:'अच्छा',roman:'Achha',cat:'Describing'},
+    {eng:'Happy',script:'खुश',roman:'Khush',cat:'Feelings'},
+    {eng:'Sad',script:'उदास',roman:'Udaas',cat:'Feelings'},
+    {eng:'Love',script:'प्यार',roman:'Pyaar',cat:'Feelings'},
+  ],
+  phrases:[
+    {eng:'Come here',script:'यहाँ आओ',roman:'Yahaan aao',cat:'Commands'},
+    {eng:'Sit down',script:'बैठो',roman:'Baitho',cat:'Commands'},
+    {eng:'Be quiet',script:'चुप रहो',roman:'Chup raho',cat:'Commands'},
+    {eng:'Very good!',script:'बहुत अच्छे!',roman:'Bahut achhe!',cat:'Praise'},
+    {eng:'Well done!',script:'शाबाश!',roman:'Shaabash!',cat:'Praise'},
+    {eng:'Let\'s go',script:'चलो',roman:'Chalo',cat:'Commands'},
+    {eng:'I am hungry',script:'मुझे भूख लगी है',roman:'Mujhe bhookh lagi hai',cat:'Phrases'},
+    {eng:'I am thirsty',script:'मुझे प्यास लगी है',roman:'Mujhe pyaas lagi hai',cat:'Phrases'},
+    {eng:'Happy Diwali',script:'दीपावली की शुभकामनाएँ',roman:'Deepawali ki shubhkaamnaayein',cat:'Festivals'},
+    {eng:'Happy Holi',script:'होली की शुभकामनाएँ',roman:'Holi ki shubhkaamnaayein',cat:'Festivals'},
+  ]
+};
+
+const GUJARATI={
+  numbers:[
+    {eng:'One',script:'એક',roman:'Ek',cat:'Numbers'},
+    {eng:'Two',script:'બે',roman:'Be',cat:'Numbers'},
+    {eng:'Three',script:'ત્રણ',roman:'Tran',cat:'Numbers'},
+    {eng:'Four',script:'ચાર',roman:'Chaar',cat:'Numbers'},
+    {eng:'Five',script:'પાંચ',roman:'Paanch',cat:'Numbers'},
+    {eng:'Six',script:'છ',roman:'Chha',cat:'Numbers'},
+    {eng:'Seven',script:'સાત',roman:'Saat',cat:'Numbers'},
+    {eng:'Eight',script:'આઠ',roman:'Aath',cat:'Numbers'},
+    {eng:'Nine',script:'નવ',roman:'Nav',cat:'Numbers'},
+    {eng:'Ten',script:'દસ',roman:'Das',cat:'Numbers'},
+    {eng:'Twenty',script:'વીસ',roman:'Vees',cat:'Numbers'},
+    {eng:'Hundred',script:'સો',roman:'So',cat:'Numbers'},
+  ],
+  colours:[
+    {eng:'Red',script:'લાલ',roman:'Laal',cat:'Colours'},
+    {eng:'Blue',script:'વાદળી',roman:'Vaadli',cat:'Colours'},
+    {eng:'Green',script:'લીલો',roman:'Leelo',cat:'Colours'},
+    {eng:'Yellow',script:'પીળો',roman:'Peelo',cat:'Colours'},
+    {eng:'White',script:'સફેદ',roman:'Safed',cat:'Colours'},
+    {eng:'Black',script:'કાળો',roman:'Kaalo',cat:'Colours'},
+    {eng:'Orange',script:'નારંગી',roman:'Naarangi',cat:'Colours'},
+    {eng:'Pink',script:'ગુલાબી',roman:'Gulaabi',cat:'Colours'},
+  ],
+  days:[
+    {eng:'Monday',script:'સોમવાર',roman:'Somvaar',cat:'Days'},
+    {eng:'Tuesday',script:'મંગળવાર',roman:'Mangalvaar',cat:'Days'},
+    {eng:'Wednesday',script:'બુધવાર',roman:'Budhvaar',cat:'Days'},
+    {eng:'Thursday',script:'ગુરુવાર',roman:'Guruvaar',cat:'Days'},
+    {eng:'Friday',script:'શુક્રવાર',roman:'Shukravaar',cat:'Days'},
+    {eng:'Saturday',script:'શનિવાર',roman:'Shanivaar',cat:'Days'},
+    {eng:'Sunday',script:'રવિવાર',roman:'Ravivaar',cat:'Days'},
+  ],
+  vocab:[
+    {eng:'Hello / Greetings',script:'નમસ્તે',roman:'Namaste',cat:'Greetings'},
+    {eng:'Thank you',script:'આભાર',roman:'Aabhaar',cat:'Greetings'},
+    {eng:'Please',script:'કૃપા કરીને',roman:'Krupa karine',cat:'Greetings'},
+    {eng:'Sorry',script:'માફ કરો',roman:'Maaf karo',cat:'Greetings'},
+    {eng:'Good morning',script:'સુપ્રભાત',roman:'Suprabhat',cat:'Greetings'},
+    {eng:'Good night',script:'શુભ રાત્રી',roman:'Shubh Raatri',cat:'Greetings'},
+    {eng:'How are you?',script:'તમે કેમ છો?',roman:'Tame kem chho?',cat:'Phrases'},
+    {eng:'I am fine',script:'હું ઠીક છું',roman:'Hoon theek chhun',cat:'Phrases'},
+    {eng:'What is your name?',script:'તમારું નામ શું છે?',roman:'Tamarun naam shun chhe?',cat:'Phrases'},
+    {eng:'Water',script:'પાણી',roman:'Paani',cat:'Food & Home'},
+    {eng:'Food / Meal',script:'ખાવાનું',roman:'Khaavaanun',cat:'Food & Home'},
+    {eng:'Milk',script:'દૂધ',roman:'Doodh',cat:'Food & Home'},
+    {eng:'Bread',script:'રોટલી',roman:'Rotli',cat:'Food & Home'},
+    {eng:'Home',script:'ઘર',roman:'Ghar',cat:'Food & Home'},
+    {eng:'Mother',script:'મા',roman:'Maa',cat:'Family'},
+    {eng:'Father',script:'પિતા / બાપા',roman:'Pita / Baapa',cat:'Family'},
+    {eng:'Brother',script:'ભાઈ',roman:'Bhai',cat:'Family'},
+    {eng:'Sister',script:'બહેન',roman:'Bahen',cat:'Family'},
+    {eng:'Grandmother',script:'દાદી / નાની',roman:'Daadi / Naani',cat:'Family'},
+    {eng:'Grandfather',script:'દાદા / નાના',roman:'Daada / Naana',cat:'Family'},
+    {eng:'Sun',script:'સૂર્ય',roman:'Surya',cat:'Nature'},
+    {eng:'Moon',script:'ચંદ્ર',roman:'Chandra',cat:'Nature'},
+    {eng:'Rain',script:'વરસાદ',roman:'Varsaad',cat:'Nature'},
+    {eng:'Tree',script:'ઝાડ',roman:'Zaad',cat:'Nature'},
+    {eng:'Flower',script:'ફૂલ',roman:'Phool',cat:'Nature'},
+    {eng:'Book',script:'પુસ્તક',roman:'Pustak',cat:'School'},
+    {eng:'Teacher',script:'શિક્ષક',roman:'Shikshak',cat:'School'},
+    {eng:'Friend',script:'મિત્ર',roman:'Mitra',cat:'School'},
+    {eng:'India',script:'ભારત',roman:'Bharat',cat:'Places'},
+    {eng:'Gujarat',script:'ગુજરાત',roman:'Gujarat',cat:'Places'},
+    {eng:'Beautiful',script:'સુંદર',roman:'Sundar',cat:'Describing'},
+    {eng:'Good',script:'સારું',roman:'Saarun',cat:'Describing'},
+    {eng:'Happy',script:'ખુશ',roman:'Khush',cat:'Feelings'},
+    {eng:'Love',script:'પ્રેમ',roman:'Prem',cat:'Feelings'},
+    {eng:'Very good!',script:'ખૂબ સારું!',roman:'Khoob saarun!',cat:'Praise'},
+    {eng:'Well done!',script:'શાબાશ!',roman:'Shaabash!',cat:'Praise'},
+    {eng:'Happy Diwali',script:'દિવાળીની શુભકામનાઓ',roman:'Diwaaline shubhkaamnaao',cat:'Festivals'},
+    {eng:'Happy Uttarayan',script:'ઉત્તરાયણની શુભકામના',roman:'Uttaraayanni shubhkaamna',cat:'Festivals'},
+  ]
+};
+
+function getAllWords(lang){
+  const d=lang==='hindi'?HINDI:GUJARATI;
+  return shuffle([...d.numbers,...d.colours,...d.days,...(d.months||[]),...d.vocab,...(d.phrases||[])]);
+}
+
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+// ── Speech ────────────────────────────────────────────────────────
+function speak(text,lang){
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=lang==='hindi'?'hi-IN':'gu-IN';
+  u.rate=0.8;u.pitch=1;
+  window.speechSynthesis.speak(u);
+}
+
+// ── Game State ────────────────────────────────────────────────────
+let G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
+  streak:0,bestStreak:0,sessionBestStreak:0,answered:false,roundStars:0,
+  attempts:0,question:null,wordBank:[],bankIdx:0,
+  currentLang:'hindi',lifeRestoreStreak:0,hintUsed:false,hintTimer:null};
+
+// ── Init ──────────────────────────────────────────────────────────
+async function init(){
+  try{
+    const players=await db('players?select=*');
+    const p=players.find(x=>x.name.toLowerCase()===playerName.toLowerCase());
+    if(p){playerId=p.id;playerGrade=p.grade||3;}
+  }catch(e){}
+  if(playerId){
+    try{
+      const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.hindi-gujarati-hub`);
+      if(rows&&rows.length){personalBest=rows[0].best_score||0;
+        document.getElementById('pb-row').style.display='flex';
+        document.getElementById('pb-val').textContent=personalBest.toLocaleString();}
+    }catch(e){}
+  }
+  document.getElementById('start-greeting').textContent=`Learn the languages of your heritage, ${cap(playerName)}! 🙏`;
+  document.getElementById('g-player-label').textContent=`${cap(playerName)} · Grade ${playerGrade}`;
+}
+
+function startGame(){
+  G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
+    streak:0,bestStreak:0,sessionBestStreak:0,answered:false,roundStars:0,
+    attempts:0,question:null,wordBank:getAllWords('hindi'),bankIdx:0,
+    currentLang:'hindi',lifeRestoreStreak:0,hintUsed:false,hintTimer:null};
+  updateLangDisplay();
+  showScreen('gameScreen');
+  loadQuestion();
+}
+
+function updateLangDisplay(){
+  const isHindi=G.currentLang==='hindi';
+  const badge=document.getElementById('lang-badge');
+  badge.className=`lang-badge ${isHindi?'hindi':'gujarati'}`;
+  badge.innerHTML=isHindi?'<span class="lang-script">हिंदी</span> Hindi Round':'<span class="lang-script">ગુજ.</span> Gujarati Round';
+  document.getElementById('g-lang-disp').textContent=isHindi?'हिंदी Hindi':'ગુ. Gujarati';
+  document.getElementById('g-lang-disp').style.color=isHindi?'var(--gold)':'var(--purple3)';
+}
+
+function loadQuestion(){
+  if(G.qIdx>=10){endRound();return;}
+  G.answered=false;G.attempts=0;G.hintUsed=false;
+  clearTimeout(G.hintTimer);
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('hint-box').className='hint-box';
+  document.getElementById('hint-btn').style.display='none';
+  document.getElementById('g-feedback').textContent='';
+  if(G.bankIdx>=G.wordBank.length){G.wordBank=getAllWords(G.currentLang);G.bankIdx=0;}
+  const word=G.wordBank[G.bankIdx++];
+  // Pick mode: 0=translate(Eng→script), 1=meaning(script→Eng), 2=listen
+  const modeIdx=G.qIdx%3;
+  const modes=['translate','meaning','listen'];
+  const mode=modes[modeIdx];
+  G.question={word,mode,lang:G.currentLang};
+  document.getElementById('g-qnum').textContent=`${G.qIdx+1}/10`;
+  document.getElementById('g-qnum2').textContent=`Q ${G.qIdx+1}/10`;
+  document.getElementById('g-round').textContent=G.round;
+  document.getElementById('g-mode-tag').textContent=mode==='translate'?'🔤 Translate':mode==='meaning'?'📖 What does it mean?':'🔊 Listen & Identify';
+  document.getElementById('g-mode-tag').className=`mode-tag ${mode}`;
+  updateAttemptDots();
+  renderQuestion(word,mode);
+  G.hintTimer=setTimeout(()=>{if(!G.answered)document.getElementById('hint-btn').style.display='flex';},7000);
+}
+
+function renderQuestion(word,mode){
+  const el=document.getElementById('q-content');
+  const others=shuffle(G.wordBank.filter(w=>w.script!==word.script)).slice(0,3);
+  const lang=G.currentLang==='hindi'?'Hindi':'Gujarati';
+
+  // Options show ONLY romanised pronunciation — no English
+  // Script shown small below for recognition, but answer is the roman word
+  const makeOpt=(o)=>{
+    const key=o.roman.replace(/'/g,"\'");
+    const ans=word.roman.replace(/'/g,"\'");
+    return `<button class="opt" onclick="checkOpt(this,'${key}','${ans}')">
+      <span class="opt-roman-big">${o.roman}</span>
+      <span class="opt-script-small">${o.script}</span>
+    </button>`;
+  };
+
+  if(mode==='translate'){
+    // Show English — pick Roman pronunciation
+    el.innerHTML=`<div class="word-display">
+      <div class="word-english">${word.eng}</div>
+      <div class="word-category">What is this in ${lang}?</div>
+    </div>
+    <div class="opts">${shuffle([word,...others]).map(o=>makeOpt(o)).join('')}</div>`;
+  } else if(mode==='meaning'){
+    // Show Script + Roman — pick English meaning
+    const engOpts=shuffle([word,...others]);
+    el.innerHTML=`<div class="word-display">
+      <span class="word-script">${word.script}</span>
+      <div class="word-roman">${word.roman}</div>
+      <div class="word-category">${word.cat}</div>
+    </div>
+    <button class="speak-btn" onclick="speakWord()">🔊 Hear it spoken</button>
+    <div class="opts">${engOpts.map(o=>{
+      const key=o.eng.replace(/'/g,"\'");
+      const ans=word.eng.replace(/'/g,"\'");
+      return `<button class="opt" onclick="checkOpt(this,'${key}','${ans}')">${o.eng}</button>`;
+    }).join('')}</div>`;
+    setTimeout(()=>speakWord(),600);
+  } else {
+    // Listen — hear word, pick Roman pronunciation
+    el.innerHTML=`<div class="listen-card">
+      <span class="listen-emoji">👂</span>
+      <div class="listen-hint">Listen and pick what you heard:</div>
+      <button class="speak-btn" id="speak-btn" onclick="speakWord()">🔊 Play the word</button>
+    </div>
+    <div class="opts">${shuffle([word,...others]).map(o=>makeOpt(o)).join('')}</div>`;
+    setTimeout(()=>speakWord(),500);
+  }
+}
+function speakWord(){
+  const btn=document.getElementById('speak-btn');
+  if(btn){btn.className='speak-btn speaking';btn.textContent='🔊 Speaking...';}
+  speak(G.question.word.script,G.currentLang);
+  setTimeout(()=>{if(btn){btn.className='speak-btn';btn.textContent='🔊 Play the word';}},2000);
+}
+
+// ── Answer handlers ───────────────────────────────────────────────
+function checkOpt(btn,chosen,correct){
+  if(G.answered)return;
+  if(chosen===correct){
+    btn.classList.add('correct');
+    document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+    processResult(true);
+  } else {
+    btn.classList.add('wrong');btn.disabled=true;
+    G.attempts++;updateAttemptDots();
+    if(G.attempts>=3){
+      document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+      processResult(false);
+    } else {
+      document.getElementById('g-feedback').textContent=G.attempts===1?'Not quite! Try again 🤔':'One more try!';
+    }
+  }
+}
+
+function updateAttemptDots(){
+  for(let i=0;i<3;i++){
+    const dot=document.getElementById(`dot-${i}`);if(!dot)return;
+    dot.className='attempt-dot';
+    if(i<G.attempts)dot.classList.add('used');
+    else if(i===G.attempts)dot.classList.add('current');
+  }
+}
+
+function processResult(isCorrect){
+  G.answered=true;clearTimeout(G.hintTimer);
+  const attemptStars=G.attempts===0?2:G.attempts===1?1:0;
+  const hintPenalty=G.hintUsed?0.5:1;
+  let earned=0;
+  if(isCorrect){
+    earned=Math.max(0,Math.floor(attemptStars*hintPenalty));
+    G.stars+=earned;G.roundStars+=earned;
+    G.correct++;G.totalCorrect++;G.totalAsked++;
+    G.streak++;
+    if(G.streak>G.bestStreak)G.bestStreak=G.streak;
+    if(G.streak>G.sessionBestStreak)G.sessionBestStreak=G.streak;
+    checkLifeRestore();updateStreakBadge();
+    const isH=G.currentLang==='hindi';
+    const combos=[
+      {s:3,t:isH?'शाबाश! 🌟':'શાબાશ! 🌟',sub:'3 correct!'},
+      {s:5,t:isH?'बहुत अच्छे! ⭐':'ખૂબ સારું! ⭐',sub:'5 in a row!'},
+      {s:7,t:isH?'अद्भुत! 💫':'અદ્ભુત! 💫',sub:'7 in a row!'},
+    ];
+    const c=combos.slice().reverse().find(c=>G.streak===c.s);
+    if(c)showPopup('combo',c.t,c.sub);
+  } else {
+    G.lives--;G.streak=0;G.totalAsked++;G.lifeRestoreStreak=0;
+    updateStreakBadge();updateLives();
+    if(G.lives<=0){showExplanation(false,()=>endGame());return;}
+  }
+  document.getElementById('g-stars').textContent=G.stars.toLocaleString();
+  updateLives();
+  showExplanation(isCorrect,()=>{G.qIdx++;loadQuestion();});
+}
+
+function showExplanation(isCorrect,onNext){
+  const {word,mode}=G.question;
+  const ec=document.getElementById('explanation-card');
+  document.getElementById('ex-icon').textContent=isCorrect?'✅':'❌';
+  document.getElementById('ex-answer').innerHTML=`Answer: <span>${word.eng} = ${word.script}</span>`;
+  const explains={
+    translate:`In ${G.currentLang==='hindi'?'Hindi':'Gujarati'}, "${word.eng}" is written as "${word.script}" and pronounced "${word.roman}".`,
+    meaning:`"${word.script}" (${word.roman}) means "${word.eng}" in ${G.currentLang==='hindi'?'Hindi':'Gujarati'}.`,
+    listen:`The word you heard was "${word.script}" (${word.roman}) which means "${word.eng}".`,
+  };
+  document.getElementById('ex-explain').textContent=explains[mode]||'';
+  document.getElementById('ex-word-script').textContent=word.script;
+  document.getElementById('ex-word-roman').textContent=word.roman;
+  document.getElementById('ex-word-eng').textContent=word.eng+' — '+word.cat;
+  const nextBtn=document.getElementById('ex-next');
+  nextBtn.className=`ex-next ${isCorrect?'ok':'no'}`;
+  nextBtn.textContent=G.qIdx>=9||G.lives<=0?'See Results →':'Next →';
+  ec.className=`explanation-card show ${isCorrect?'ok':'no'}`;
+  ec.style.display='block';
+  window._exNextFn=onNext;
+  setTimeout(()=>ec.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function advanceQuestion(){
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('hint-box').className='hint-box';
+  document.getElementById('hint-btn').style.display='none';
+  clearTimeout(G.hintTimer);
+  if(window._exNextFn){window._exNextFn();window._exNextFn=null;}
+}
+
+function useHint(){
+  if(G.hintUsed||G.answered)return;
+  G.hintUsed=true;
+  document.getElementById('hint-btn').className='hint-btn used';
+  document.getElementById('hint-btn').innerHTML='💡 Used';
+  const w=G.question.word;
+  document.getElementById('hint-txt').textContent=`The word starts with "${w.script[0]}" and sounds like "${w.roman.split(' ')[0]}"`;
+  document.getElementById('hint-box').className='hint-box show';
+}
+
+function showPicture(){
+  const w=G.question.word;
+  window.open(`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(w.eng+' illustration')}`, '_blank');
+}
+
+function checkLifeRestore(){
+  if(G.lives>=3)return;
+  G.lifeRestoreStreak++;
+  if(G.lifeRestoreStreak>=3){G.lifeRestoreStreak=0;G.lives=Math.min(3,G.lives+1);updateLives();showPopup('life','❤️ Life Restored!','3 correct in a row!');}
+}
+
+function updateLives(){let h='';for(let i=0;i<3;i++)h+=i<G.lives?'❤️':'🖤';document.getElementById('lives-display').textContent=h;}
+function updateStreakBadge(){
+  const el=document.getElementById('streak-badge');
+  el.textContent=`${G.streak} 🗣️`;
+  el.className=`streak-badge${G.streak>=7?' s7':G.streak>=5?' s5':G.streak>=3?' s3':''}`;
+}
+function showPopup(type,text,sub){
+  const el=document.getElementById(type+'-popup');if(!el)return;
+  if(type==='combo'){document.getElementById('combo-text').textContent=text;document.getElementById('combo-sub').textContent=sub;}
+  el.className=`popup-overlay ${type} show`;
+  setTimeout(()=>{el.className=`popup-overlay ${type} hide`;},1600);
+  setTimeout(()=>{el.className=`popup-overlay ${type}`;},1900);
+}
+
+function endRound(){
+  const acc=G.totalAsked>0?Math.round(G.totalCorrect/G.totalAsked*100):0;
+  document.getElementById('re-icon').textContent=G.correct>=8?'🏆':G.correct>=5?'⭐':G.correct>=3?'🗣️':'🌱';
+  document.getElementById('re-title').textContent=`${G.currentLang==='hindi'?'Hindi':'Gujarati'} Round Complete!`;
+  document.getElementById('re-correct').textContent=G.correct;
+  document.getElementById('re-acc').textContent=acc+'%';
+  document.getElementById('re-stars-r').textContent=G.roundStars.toLocaleString();
+  document.getElementById('re-streak-r').textContent=G.bestStreak;
+  const isH=G.currentLang==='hindi';
+  document.getElementById('re-msg').textContent=G.correct>=8?(isH?'बहुत अच्छे! Excellent Hindi! 🌟':'ખૂબ સારું! Excellent Gujarati! 🌟'):G.correct>=5?'Great progress! 💪':'Keep practising! 🌱';
+  const nextLang=G.currentLang==='hindi'?'Gujarati':'Hindi';
+  document.getElementById('re-next-btn').textContent=`Next: ${nextLang} Round →`;
+  showScreen('roundEndScreen');
+}
+
+function nextRound(){
+  G.round++;G.qIdx=0;G.roundStars=0;G.correct=0;G.streak=0;G.bestStreak=0;G.lifeRestoreStreak=0;
+  G.currentLang=G.round%2===1?'hindi':'gujarati';
+  G.wordBank=getAllWords(G.currentLang);G.bankIdx=0;
+  updateLangDisplay();
+  showScreen('gameScreen');loadQuestion();
+}
+
+async function endGame(){
+  showScreen('gameOverScreen');
+  const total=G.stars;
+  document.getElementById('go-score').textContent=total.toLocaleString()+' ⭐';
+  document.getElementById('go-earned').textContent=`+${total.toLocaleString()} stars saved`;
+  document.getElementById('go-rounds').textContent=G.round;
+  document.getElementById('go-correct').textContent=G.totalCorrect;
+  document.getElementById('go-streak').textContent=G.sessionBestStreak;
+  const isNewBest=total>personalBest;if(isNewBest)personalBest=total;
+  document.getElementById('go-pb').textContent=personalBest.toLocaleString();
+  document.getElementById('new-best-banner').style.display=isNewBest?'block':'none';
+  document.getElementById('go-msg').textContent=total>=20?'भाषा विशेषज्ञ! / ભાષા નિષ્ણાત! 🏆':total>=12?'बहुत अच्छे! / ખૂબ સારું! 🌟':'Keep learning! 🌱';
+  document.getElementById('go-trophy').textContent=total>=20?'🏆':total>=12?'⭐':'🗣️';
+  if(playerId&&total>0){
+    try{
+      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,amount:total,reason:`Hindi Gujarati Hub — Round ${G.round}, ${G.totalCorrect} correct`,category:'game'}});
+      const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.hindi-gujarati-hub`);
+      if(rows&&rows.length){
+        await db(`game_scores?player_id=eq.${playerId}&game_key=eq.hindi-gujarati-hub`,{method:'PATCH',prefer:'return=minimal',body:{best_score:isNewBest?total:rows[0].best_score,best_round:G.round,total_plays:(rows[0].total_plays||0)+1,last_played:new Date().toISOString()}});
+      } else {
+        await db('game_scores',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,game_key:'hindi-gujarati-hub',best_score:total,best_round:G.round,total_plays:1}});
+      }
+    }catch(e){}
+  }
+}
+
+function restartGame(){startGame();}
+function goHome(){window.location.href='index.html?player='+playerName;}
+function confirmQuit(){if(confirm('Quit Hindi Gujarati Hub?'))goHome();}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+init();
+</script>
+</body>
+</html>

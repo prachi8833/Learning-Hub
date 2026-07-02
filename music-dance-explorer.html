@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Music & Dance Explorer 🎵 — Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#FF006E;--pink2:#FF4DA6;--purple:#7C3AED;--purple2:#A855F7;
+  --yellow:#FCD34D;--orange:#F97316;--teal:#06B6D4;--green:#10B981;
+  --red:#EF4444;--blue:#3B82F6;
+  --gc:rgba(10,4,20,0.92);--gb:rgba(255,255,255,0.08);
+  --r:16px;--shadow:0 4px 24px rgba(0,0,0,0.5);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+html,body{height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden}
+body{background:#0A0414;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.bg{position:fixed;inset:0;z-index:0;
+  background:radial-gradient(ellipse at 20% 30%,rgba(124,58,237,.15) 0%,transparent 50%),
+             radial-gradient(ellipse at 80% 70%,rgba(255,0,110,.12) 0%,transparent 50%),
+             radial-gradient(ellipse at 50% 50%,rgba(6,182,212,.08) 0%,transparent 55%),#0A0414}
+.note{position:fixed;pointer-events:none;font-size:1.4rem;opacity:0;
+  animation:noteFloat linear infinite}
+@keyframes noteFloat{0%{transform:translateY(100vh) rotate(0deg);opacity:0}
+  10%{opacity:.2}90%{opacity:.15}100%{transform:translateY(-10vh) rotate(360deg);opacity:0}}
+
+.wrap{position:relative;z-index:1;width:100%;max-width:580px;padding:12px;
+  display:flex;flex-direction:column;gap:9px;max-height:100vh;overflow-y:auto}
+.wrap::-webkit-scrollbar{display:none}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:10px;background:var(--gc);backdrop-filter:blur(14px);
+  border:1px solid rgba(168,85,247,.2);border-radius:var(--r);padding:11px 15px;
+  box-shadow:var(--shadow);flex-shrink:0}
+.back-btn{width:36px;height:36px;border-radius:50%;background:rgba(168,85,247,.15);border:none;
+  color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hdr-title{flex:1;font-size:1rem;font-weight:900;
+  background:linear-gradient(135deg,var(--pink2),var(--yellow),var(--teal));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hdr-sub{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.45)}
+.lives{display:flex;gap:2px;font-size:1rem}
+.star-count{font-size:.9rem;font-weight:900;color:var(--yellow);white-space:nowrap}
+
+/* INFO ROW */
+.info-row{display:flex;gap:7px;flex-shrink:0}
+.info-box{flex:1;background:var(--gc);backdrop-filter:blur(14px);
+  border:1px solid rgba(168,85,247,.1);border-radius:11px;padding:7px 9px;text-align:center;box-shadow:var(--shadow)}
+.ib-val{font-size:.95rem;font-weight:900;color:#fff;line-height:1}
+.ib-lbl{font-size:.5rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px;text-transform:uppercase}
+.streak-badge{display:inline-flex;align-items:center;gap:3px;border-radius:99px;padding:3px 9px;
+  font-size:.7rem;font-weight:900;background:rgba(255,0,110,.1);
+  border:1px solid rgba(255,0,110,.22);color:var(--pink2);transition:all .3s}
+.streak-badge.s3{background:rgba(252,211,77,.1);border-color:rgba(252,211,77,.25);color:var(--yellow)}
+.streak-badge.s5{background:rgba(6,182,212,.1);border-color:rgba(6,182,212,.25);color:#67E8F9}
+.streak-badge.s7{background:rgba(168,85,247,.15);border-color:rgba(168,85,247,.35);color:#D8B4FE;animation:mp .6s ease infinite alternate}
+@keyframes mp{from{transform:scale(1)}to{transform:scale(1.08)}}
+
+/* POPUPS */
+.popup-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
+  z-index:9999;text-align:center;pointer-events:none;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  background:rgba(10,4,20,0.96);backdrop-filter:blur(18px);
+  border-radius:24px;padding:20px 32px;box-shadow:0 8px 40px rgba(0,0,0,0.7)}
+.popup-overlay.combo{border:1.5px solid rgba(252,211,77,.35)}
+.popup-overlay.life{border:1.5px solid rgba(239,68,68,.35)}
+.popup-overlay.show{transform:translate(-50%,-50%) scale(1)}
+.popup-overlay.hide{transform:translate(-50%,-50%) scale(0);opacity:0}
+.po-text{font-size:1.9rem;font-weight:900;white-space:nowrap}
+.po-sub{font-size:.85rem;font-weight:800;color:rgba(255,255,255,.6);margin-top:3px}
+
+/* TOPIC TAG */
+.topic-tag{font-size:.63rem;font-weight:900;border-radius:99px;padding:3px 11px;border:1px solid}
+.topic-tag.instrument{background:rgba(168,85,247,.12);color:#D8B4FE;border-color:rgba(168,85,247,.28)}
+.topic-tag.dance{background:rgba(255,0,110,.12);color:var(--pink2);border-color:rgba(255,0,110,.28)}
+.topic-tag.genre{background:rgba(6,182,212,.1);color:#67E8F9;border-color:rgba(6,182,212,.25)}
+.topic-tag.fact{background:rgba(252,211,77,.1);color:var(--yellow);border-color:rgba(252,211,77,.25)}
+
+/* GAME CARD */
+.q-card{background:var(--gc);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(168,85,247,.15);border-radius:var(--r);
+  padding:16px;box-shadow:var(--shadow)}
+.q-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.q-num{font-size:.6rem;font-weight:800;color:rgba(255,255,255,.35)}
+
+/* BIG EMOJI */
+.item-display{text-align:center;margin-bottom:12px}
+.item-emoji{font-size:4rem;display:block;margin-bottom:8px;
+  animation:bounce .8s ease-in-out infinite alternate;
+  filter:drop-shadow(0 4px 12px rgba(168,85,247,.4))}
+@keyframes bounce{from{transform:scale(1) rotate(-3deg)}to{transform:scale(1.1) rotate(3deg)}}
+.item-name{font-size:1.6rem;font-weight:900;color:#fff;margin-bottom:4px}
+.item-sub{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.45)}
+.question-text{font-size:1.05rem;font-weight:900;color:#fff;text-align:center;
+  margin-bottom:12px;line-height:1.4}
+
+/* MCQ */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.opts.single{grid-template-columns:1fr}
+.opt{padding:12px 10px;background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(168,85,247,.15);border-radius:12px;
+  font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;
+  color:rgba(255,255,255,.88);cursor:pointer;transition:all .15s;text-align:center;
+  -webkit-tap-highlight-color:transparent}
+.opt:active:not(:disabled){transform:scale(.96)}
+.opt.correct{background:rgba(16,185,129,.2)!important;border-color:var(--green)!important;color:#6EE7B7!important}
+.opt.wrong{background:rgba(239,68,68,.12)!important;border-color:var(--red)!important;color:#FCA5A5!important;animation:shake .3s ease}
+
+/* ATTEMPTS */
+.attempts-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;justify-content:center}
+.attempt-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.15);
+  border:1.5px solid rgba(255,255,255,.2);transition:all .3s}
+.attempt-dot.used{background:var(--red);border-color:var(--red)}
+.attempt-dot.current{background:var(--yellow);border-color:var(--yellow);animation:pulse .8s ease infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+.feedback-row{min-height:24px;font-size:.78rem;font-weight:800;text-align:center;
+  margin-bottom:6px;color:var(--yellow)}
+
+/* SPEAK BTN */
+.speak-btn{display:flex;align-items:center;gap:8px;margin:0 auto 12px;
+  padding:8px 20px;background:rgba(6,182,212,.1);border:1.5px solid rgba(6,182,212,.25);
+  border-radius:99px;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:800;
+  color:#67E8F9;cursor:pointer;transition:all .2s}
+.speak-btn:active{background:rgba(6,182,212,.2)}
+.speak-btn.speaking{animation:speakPulse .6s ease infinite alternate}
+@keyframes speakPulse{from{opacity:1}to{opacity:.4}}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:7px;margin-top:8px}
+.show-pic-btn{flex:1;padding:9px;background:rgba(168,85,247,.08);
+  border:1.5px solid rgba(168,85,247,.2);border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;
+  color:rgba(216,180,254,.7);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+.show-pic-btn:active{background:rgba(168,85,247,.18)}
+.hint-btn{flex:1;padding:9px;background:rgba(255,255,255,.04);
+  border:1.5px solid rgba(255,255,255,.1);border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;
+  color:rgba(255,255,255,.4);cursor:pointer;display:none;align-items:center;justify-content:center;gap:5px}
+.hint-btn:active{background:rgba(252,211,77,.1)}
+.hint-btn.used{opacity:.35;cursor:default}
+.hint-box{background:rgba(252,211,77,.06);border:1px solid rgba(252,211,77,.15);
+  border-radius:10px;padding:8px 12px;margin-top:6px;display:none}
+.hint-box.show{display:block}
+.hint-txt{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.65)}
+
+/* EXPLANATION */
+.explanation-card{margin-top:10px;border-radius:13px;padding:13px 15px;display:none;animation:slideDown .3s ease}
+.explanation-card.show{display:block}
+.explanation-card.ok{background:rgba(16,185,129,.1);border:1.5px solid rgba(16,185,129,.22)}
+.explanation-card.no{background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.2)}
+.ex-result{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ex-icon{font-size:1.2rem;flex-shrink:0}
+.ex-answer{font-size:.88rem;font-weight:900;color:#fff}
+.ex-answer span{color:var(--yellow)}
+.ex-explain{font-size:.74rem;font-weight:700;color:rgba(255,255,255,.7);line-height:1.55;margin-bottom:7px}
+.ex-fact{background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);
+  border-radius:9px;padding:8px 11px;margin-bottom:9px}
+.ex-fact-lbl{font-size:.57rem;font-weight:900;color:#D8B4FE;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.ex-fact-txt{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.75);line-height:1.5}
+.ex-next{width:100%;padding:11px;border:none;border-radius:11px;font-family:'Nunito',sans-serif;
+  font-size:.88rem;font-weight:900;cursor:pointer;color:#fff}
+.ex-next.ok{background:linear-gradient(135deg,var(--purple),var(--purple2))}
+.ex-next.no{background:linear-gradient(135deg,var(--pink),var(--pink2))}
+
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{0%{transform:scale(.94)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+
+/* SCREENS */
+.screen{display:none}.screen.active{display:flex;flex-direction:column;gap:9px}
+
+/* START */
+.start-card{background:var(--gc);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(168,85,247,.2);border-radius:var(--r);
+  padding:22px 18px;text-align:center;box-shadow:var(--shadow)}
+.start-icon{font-size:3rem;margin-bottom:6px;display:block;animation:float 2s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-8px) rotate(5deg)}}
+.start-title{font-size:1.4rem;font-weight:900;margin-bottom:4px;
+  background:linear-gradient(135deg,var(--pink2),var(--yellow),var(--teal),var(--purple2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.start-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:12px;line-height:1.6}
+.topic-chips{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:12px}
+.topic-chip{font-size:.6rem;font-weight:800;border-radius:99px;padding:3px 9px;border:1px solid}
+.rules{display:flex;flex-direction:column;gap:5px;text-align:left;margin-bottom:12px}
+.rule{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border-radius:9px;padding:7px 10px}
+.rule-ico{font-size:.9rem;flex-shrink:0}
+.rule-txt{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.7)}
+.start-btn{width:100%;padding:14px;border:none;border-radius:13px;
+  background:linear-gradient(135deg,var(--purple),var(--pink),var(--orange));
+  color:#fff;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;
+  cursor:pointer;box-shadow:0 4px 20px rgba(255,0,110,.3);transition:all .2s}
+.start-btn:active{transform:scale(.97)}
+.pb-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;
+  font-size:.7rem;font-weight:700;color:rgba(255,255,255,.4)}
+.pb-val{color:var(--yellow);font-weight:900}
+
+/* ROUND END / GAME OVER */
+.re-card,.go-card{background:var(--gc);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(168,85,247,.2);border-radius:var(--r);
+  padding:20px 16px;text-align:center;box-shadow:var(--shadow)}
+.re-icon{font-size:2.6rem;margin-bottom:6px;display:block}
+.go-trophy{font-size:3.5rem;margin-bottom:7px;display:block;animation:float 2s ease-in-out infinite}
+.re-title,.go-title{font-size:1.1rem;font-weight:900;margin-bottom:3px;
+  background:linear-gradient(135deg,var(--pink2),var(--yellow));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.re-stats,.go-stats{display:flex;gap:7px;margin:10px 0}
+.re-stat,.go-stat{flex:1;background:rgba(255,255,255,.05);border-radius:10px;padding:9px;text-align:center}
+.re-sv,.go-sv{font-size:1.1rem;font-weight:900;color:var(--yellow)}
+.re-sl,.go-sl{font-size:.53rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px}
+.re-msg,.go-msg{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.45);margin-bottom:11px}
+.new-best{background:rgba(252,211,77,.1);border:1px solid rgba(252,211,77,.25);
+  border-radius:10px;padding:8px 13px;font-size:.78rem;font-weight:900;color:var(--yellow);margin:7px 0;animation:popIn .4s ease}
+.re-btn,.go-btn{width:100%;padding:11px;border:none;border-radius:12px;
+  font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:900;cursor:pointer;transition:all .15s}
+.re-btn.next,.go-btn.play{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff}
+.re-btn.home,.go-btn.home{background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);margin-top:6px}
+.re-btn:active,.go-btn:active{transform:scale(.97)}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="popup-overlay combo" id="combo-popup">
+  <div class="po-text" id="combo-text">ROCKSTAR! 🎸</div>
+  <div class="po-sub" id="combo-sub">3 in a row!</div>
+</div>
+<div class="popup-overlay life" id="life-popup">
+  <div class="po-text">❤️ Life Restored!</div>
+  <div class="po-sub">3 correct in a row!</div>
+</div>
+
+<div class="wrap">
+  <!-- START -->
+  <div id="startScreen" class="screen active">
+    <div class="start-card">
+      <span class="start-icon">🎵</span>
+      <div class="start-title">Music & Dance Explorer</div>
+      <div class="start-sub" id="start-greeting">Explore the world of music and dance!</div>
+      <div class="topic-chips">
+        <span class="topic-chip" style="background:rgba(168,85,247,.1);border-color:rgba(168,85,247,.25);color:#D8B4FE">🎸 Instruments</span>
+        <span class="topic-chip" style="background:rgba(255,0,110,.1);border-color:rgba(255,0,110,.25);color:var(--pink2)">💃 Dances</span>
+        <span class="topic-chip" style="background:rgba(6,182,212,.1);border-color:rgba(6,182,212,.25);color:#67E8F9">🎶 Music Genres</span>
+        <span class="topic-chip" style="background:rgba(252,211,77,.1);border-color:rgba(252,211,77,.25);color:var(--yellow)">⭐ Fun Facts</span>
+      </div>
+      <div class="rules">
+        <div class="rule"><span class="rule-ico">🎸</span><span class="rule-txt">Indian classical + Western instruments — strings, winds, percussion</span></div>
+        <div class="rule"><span class="rule-ico">💃</span><span class="rule-txt">Indian classical dances + world dances — ballet, hip hop, salsa and more</span></div>
+        <div class="rule"><span class="rule-ico">🎶</span><span class="rule-txt">Music genres — classical, jazz, rock, pop, Bollywood and more</span></div>
+        <div class="rule"><span class="rule-ico">🔊</span><span class="rule-txt">Hear instrument names spoken — identify by listening</span></div>
+        <div class="rule"><span class="rule-ico">❤️</span><span class="rule-txt">3 correct in a row restores a life</span></div>
+      </div>
+      <button class="start-btn" onclick="startGame()">🎵 Start Exploring!</button>
+      <div class="pb-row" id="pb-row" style="display:none">🏆 Personal Best: <span class="pb-val" id="pb-val">0</span> stars</div>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div id="gameScreen" class="screen">
+    <div class="hdr">
+      <button class="back-btn" onclick="confirmQuit()">←</button>
+      <div style="flex:1">
+        <div class="hdr-title">🎵 Music & Dance Explorer</div>
+        <div class="hdr-sub" id="g-player-label">Riaan · Grade 3</div>
+      </div>
+      <div class="lives" id="lives-display">❤️❤️❤️</div>
+      <div class="star-count">⭐ <span id="g-stars">0</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-box"><div class="ib-val" style="color:var(--pink2)" id="g-round">1</div><div class="ib-lbl">Round</div></div>
+      <div class="info-box"><div class="ib-val" id="g-qnum">1/10</div><div class="ib-lbl">Question</div></div>
+      <div class="info-box" style="flex:1.4"><div class="ib-val" id="g-topic-disp" style="font-size:.7rem;color:rgba(255,255,255,.7)">Instruments</div><div class="ib-lbl">Topic</div></div>
+      <div class="info-box" style="display:flex;align-items:center;justify-content:center">
+        <div id="streak-badge" class="streak-badge">0 🎵</div>
+      </div>
+    </div>
+    <div class="q-card">
+      <div class="q-meta">
+        <span class="topic-tag" id="g-topic-tag">Instrument</span>
+        <span class="q-num" id="g-qnum2">Q 1/10</span>
+      </div>
+      <div id="q-content"></div>
+      <div class="attempts-row">
+        <span style="font-size:.6rem;font-weight:700;color:rgba(255,255,255,.35)">Attempts:</span>
+        <div class="attempt-dot current" id="dot-0"></div>
+        <div class="attempt-dot" id="dot-1"></div>
+        <div class="attempt-dot" id="dot-2"></div>
+      </div>
+      <div class="feedback-row" id="g-feedback"></div>
+      <div class="btn-row">
+        <button class="show-pic-btn" onclick="showPicture()">🔍 Show Picture</button>
+        <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 Hint</button>
+      </div>
+      <div class="hint-box" id="hint-box"><div class="hint-txt" id="hint-txt"></div></div>
+      <div class="explanation-card" id="explanation-card">
+        <div class="ex-result">
+          <span class="ex-icon" id="ex-icon">✅</span>
+          <span class="ex-answer" id="ex-answer">Correct!</span>
+        </div>
+        <div class="ex-explain" id="ex-explain"></div>
+        <div class="ex-fact">
+          <div class="ex-fact-lbl">🎵 Music Fact</div>
+          <div class="ex-fact-txt" id="ex-fact-txt"></div>
+        </div>
+        <button class="ex-next" id="ex-next" onclick="advanceQuestion()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUND END -->
+  <div id="roundEndScreen" class="screen">
+    <div class="re-card">
+      <span class="re-icon" id="re-icon">⭐</span>
+      <div class="re-title" id="re-title">Round 1 Complete!</div>
+      <div class="re-stats">
+        <div class="re-stat"><div class="re-sv" id="re-correct">0</div><div class="re-sl">Correct</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-acc">0%</div><div class="re-sl">Accuracy</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-stars-r">0</div><div class="re-sl">Stars</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-streak-r">0</div><div class="re-sl">Best Streak</div></div>
+      </div>
+      <div class="re-msg" id="re-msg"></div>
+      <button class="re-btn next" onclick="nextRound()">Round 2 →</button>
+      <button class="re-btn home" onclick="goHome()">🏠 Back to Hub</button>
+    </div>
+  </div>
+
+  <!-- GAME OVER -->
+  <div id="gameOverScreen" class="screen">
+    <div class="go-card">
+      <span class="go-trophy" id="go-trophy">🏆</span>
+      <div class="go-title">Music Master!</div>
+      <div class="go-sv" id="go-score" style="font-size:2.2rem;font-weight:900;color:var(--yellow);line-height:1;margin-bottom:3px">0 ⭐</div>
+      <div style="font-size:.85rem;font-weight:800;color:#6EE7B7" id="go-earned">+0 stars saved</div>
+      <div id="new-best-banner" class="new-best" style="display:none">🏆 NEW PERSONAL BEST!</div>
+      <div class="go-msg" id="go-msg">Amazing performance!</div>
+      <div class="go-stats">
+        <div class="go-stat"><div class="go-sv" id="go-rounds">1</div><div class="go-sl">Rounds</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-correct">0</div><div class="go-sl">Correct</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-streak">0</div><div class="go-sl">Best Streak</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-pb">0</div><div class="go-sl">Personal Best</div></div>
+      </div>
+      <button class="go-btn play" onclick="restartGame()">🎵 Play Again</button>
+      <button class="go-btn home" onclick="goHome()">🏠 Back to Hub</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SB='https://tnhgihzfwqsflpueivwe.supabase.co',KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
+const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':o.prefer||'return=representation',...o.headers},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined}).then(r=>r.json()).catch(()=>[]);
+const params=new URLSearchParams(window.location.search);
+const playerName=params.get('player')||'riaan';
+let playerId=null,playerGrade=3,personalBest=0;
+
+// ── Floating notes ────────────────────────────────────────────────
+function buildBG(){
+  const notes=['🎵','🎶','🎸','🎹','🎺','🎻','🥁','🎷'];
+  for(let i=0;i<10;i++){
+    const el=document.createElement('div');
+    el.className='note';
+    el.textContent=notes[i%notes.length];
+    el.style.cssText=`left:${Math.random()*100}%;animation-duration:${8+Math.random()*12}s;
+      animation-delay:${Math.random()*8}s;font-size:${0.8+Math.random()*1.2}rem`;
+    document.querySelector('.bg').appendChild(el);
+  }
+}
+
+// ── DATA ──────────────────────────────────────────────────────────
+const INSTRUMENTS=[
+  // Indian Classical
+  {name:'Sitar',emoji:'🪕',family:'String',origin:'Indian Classical',
+   desc:'A long-necked string instrument from India with 18-21 strings. Ravi Shankar made it famous worldwide.',
+   fact:'The sitar has sympathetic strings that vibrate on their own when nearby strings are played, creating a rich resonant sound!',
+   pic:'sitar Indian classical instrument',hint:'It has over 18 strings and a long neck',grade:1},
+  {name:'Tabla',emoji:'🥁',family:'Percussion',origin:'Indian Classical',
+   desc:'A pair of hand drums central to Hindustani classical music. The right drum is called dayan, the left is bayan.',
+   fact:'The tabla can produce over 16 different sounds called "bols" — more than almost any other drum in the world!',
+   pic:'tabla Indian classical drums',hint:'It is a pair of drums played with the hands',grade:1},
+  {name:'Veena',emoji:'🎸',family:'String',origin:'Indian Classical',
+   desc:'One of India\'s oldest instruments, associated with Goddess Saraswati. It has 4 main strings and 3 drone strings.',
+   fact:'The Veena is over 2,500 years old and is mentioned in ancient Vedic texts — one of humanity\'s oldest string instruments!',
+   pic:'veena Indian classical string instrument',hint:'Goddess Saraswati plays this instrument',grade:3},
+  {name:'Bansuri',emoji:'🎵',family:'Wind',origin:'Indian Classical',
+   desc:'A bamboo flute associated with Lord Krishna. It produces a pure, mellow tone.',
+   fact:'The bansuri has no keys or valves — the player controls pitch entirely with breath and finger placement!',
+   pic:'bansuri bamboo flute Krishna India',hint:'Lord Krishna played this flute made of bamboo',grade:1},
+  {name:'Sarod',emoji:'🎸',family:'String',origin:'Indian Classical',
+   desc:'A fretless string instrument with a metal fingerboard. It produces a deep, resonant sound.',
+   fact:'The sarod descended from the Afghan rabab and was developed in India in the 19th century!',
+   pic:'sarod Indian classical instrument',hint:'It has a metal fingerboard and no frets',grade:3},
+  {name:'Harmonium',emoji:'🎹',family:'Wind',origin:'Indian',
+   desc:'A keyboard instrument where air is pumped through reeds. Common in Indian devotional music and Bollywood.',
+   fact:'The harmonium was brought to India by European missionaries but became so beloved that India is now its biggest user!',
+   pic:'harmonium Indian keyboard instrument',hint:'It has a keyboard and you pump air into it',grade:1},
+  {name:'Mridangam',emoji:'🥁',family:'Percussion',origin:'Indian Classical',
+   desc:'A double-headed drum used in Carnatic classical music from South India.',
+   fact:'The mridangam is said to be the "king of percussion" in Carnatic music and is over 2,000 years old!',
+   pic:'mridangam South Indian drum Carnatic',hint:'The main drum of South Indian classical music',grade:3},
+  {name:'Shehnai',emoji:'🎺',family:'Wind',origin:'Indian',
+   desc:'A woodwind instrument often played at weddings and auspicious occasions in India.',
+   fact:'Ustad Bismillah Khan made the shehnai famous — he played it at India\'s Independence ceremony in 1947!',
+   pic:'shehnai Indian woodwind instrument',hint:'Played at Indian weddings — sounds like a clarinet',grade:3},
+  // Western
+  {name:'Piano',emoji:'🎹',family:'Keyboard',origin:'Western',
+   desc:'A keyboard instrument invented in Italy around 1700. It has 88 keys and uses hammers to strike strings.',
+   fact:'The piano was invented by Bartolomeo Cristofori in 1700. Its full name is "pianoforte" meaning soft-loud in Italian!',
+   pic:'piano keyboard instrument classical',hint:'It has 88 black and white keys',grade:1},
+  {name:'Guitar',emoji:'🎸',family:'String',origin:'Western',
+   desc:'A string instrument with 6 strings, played by plucking or strumming. The most popular instrument in the world.',
+   fact:'The guitar is the world\'s most popular instrument — there are over 50 million guitar players worldwide!',
+   pic:'acoustic guitar string instrument',hint:'Most popular instrument — 6 strings',grade:1},
+  {name:'Violin',emoji:'🎻',family:'String',origin:'Western',
+   desc:'A bowed string instrument played with a bow made of horsehair. The highest-pitched instrument in the string family.',
+   fact:'A professional violin bow uses about 150-200 individual hairs from a horse\'s tail!',
+   pic:'violin string instrument classical',hint:'It is played with a bow made of horsehair',grade:1},
+  {name:'Trumpet',emoji:'🎺',family:'Brass',origin:'Western',
+   desc:'A brass wind instrument that produces sound by buzzing lips into the mouthpiece.',
+   fact:'Louis Armstrong, one of the greatest jazz musicians ever, played the trumpet. He could hold a single note for over 3 minutes!',
+   pic:'trumpet brass wind instrument jazz',hint:'It is a shiny brass instrument you blow into',grade:1},
+  {name:'Drums',emoji:'🥁',family:'Percussion',origin:'Western',
+   desc:'A percussion instrument set including bass drum, snare, cymbals and tom-toms played with sticks.',
+   fact:'The drum kit was invented in the early 1900s when musicians started combining multiple drums to be played by one person!',
+   pic:'drum kit percussion instrument rock',hint:'You hit it with sticks — the heartbeat of a band',grade:1},
+  {name:'Flute',emoji:'🎵',family:'Wind',origin:'Western',
+   desc:'A woodwind instrument played by blowing air across a hole. One of the oldest instruments in the world.',
+   fact:'The oldest known musical instrument is a flute — a 40,000-year-old flute was found carved from a vulture bone!',
+   pic:'flute woodwind instrument orchestra',hint:'You blow across a hole in this silver instrument',grade:1},
+  {name:'Saxophone',emoji:'🎷',family:'Wind',origin:'Western',
+   desc:'A woodwind instrument invented by Adolphe Sax in the 1840s. Essential to jazz music.',
+   fact:'The saxophone is the only major instrument named after its inventor — Adolphe Sax invented it in 1846!',
+   pic:'saxophone jazz wind instrument',hint:'Named after its inventor Adolphe Sax',grade:3},
+  {name:'Cello',emoji:'🎻',family:'String',origin:'Western',
+   desc:'A large bowed string instrument deeper in pitch than the violin or viola. Played seated between the knees.',
+   fact:'The cello\'s range is similar to the human voice, which is why it sounds so emotional and expressive!',
+   pic:'cello string instrument orchestra classical',hint:'Larger than a violin, played sitting down between your knees',grade:3},
+  {name:'Harp',emoji:'🪕',family:'String',origin:'Western',
+   desc:'A large triangular instrument with 47 strings plucked with the fingers. One of the oldest instruments.',
+   fact:'A concert harp weighs about 80 pounds and costs up to $180,000 — one of the most expensive instruments!',
+   pic:'harp orchestral string instrument',hint:'Large triangular instrument with 47 strings',grade:3},
+  {name:'Clarinet',emoji:'🎵',family:'Wind',origin:'Western',
+   desc:'A woodwind instrument with a single reed mouthpiece. Used in classical music, jazz and marching bands.',
+   fact:'The clarinet can play a wider range of notes than almost any other wind instrument — nearly 4 octaves!',
+   pic:'clarinet woodwind instrument',hint:'A black woodwind with a single reed mouthpiece',grade:3},
+  {name:'Trombone',emoji:'🎺',family:'Brass',origin:'Western',
+   desc:'A brass instrument with a sliding tube that changes pitch. Has a deep, rich sound.',
+   fact:'The trombone is the only brass instrument that changes pitch using a slide instead of valves!',
+   pic:'trombone brass slide instrument',hint:'It has a sliding section to change the pitch',grade:3},
+];
+
+const DANCES=[
+  // Indian
+  {name:'Bharatanatyam',emoji:'💃',origin:'Tamil Nadu, India',type:'Indian Classical',
+   desc:'One of India\'s oldest classical dances from Tamil Nadu temples. Known for precise footwork, expressive hand gestures (mudras) and facial expressions.',
+   fact:'Bharatanatyam has 64 basic gestures called mudras — each tells part of a story!',
+   pic:'Bharatanatyam classical dance Tamil Nadu India',hint:'The oldest classical dance from South India',grade:1},
+  {name:'Kathak',emoji:'💃',origin:'North India',type:'Indian Classical',
+   desc:'A classical dance of North India combining Hindu devotional themes with Mughal elegance. Known for fast spinning and intricate footwork.',
+   fact:'Kathak dancers wear hundreds of tiny bells (ghungroo) on their feet — the sound is part of the performance!',
+   pic:'Kathak classical dance North India',hint:'North Indian classical dance with spinning and bells on feet',grade:1},
+  {name:'Garba',emoji:'🕺',origin:'Gujarat, India',type:'Indian Folk',
+   desc:'A circular folk dance from Gujarat performed during Navratri festival. Dancers move in circles around a central image.',
+   fact:'The word Garba comes from Sanskrit "Garbha" meaning womb — the circular dance represents the cycle of life!',
+   pic:'Garba dance Gujarat Navratri festival',hint:'Circular dance from Gujarat performed during Navratri',grade:1},
+  {name:'Dandiya Raas',emoji:'🕺',origin:'Gujarat, India',type:'Indian Folk',
+   desc:'A stick dance from Gujarat where pairs of dancers tap decorated sticks together in rhythmic patterns.',
+   fact:'Dandiya sticks represent the sword fight between Goddess Durga and the demon Mahishasura in Hindu mythology!',
+   pic:'Dandiya Raas stick dance Gujarat',hint:'Pairs tap decorated sticks together — from Gujarat',grade:1},
+  {name:'Odissi',emoji:'💃',origin:'Odisha, India',type:'Indian Classical',
+   desc:'A classical dance from Odisha known for its graceful tribhangi posture — the S-curve of head, torso and hip.',
+   fact:'Odissi was nearly lost when temple dancing was banned under British rule — it was revived in the 1950s!',
+   pic:'Odissi classical dance Odisha India',hint:'Classical dance from Odisha with an S-shaped posture',grade:3},
+  {name:'Kathakali',emoji:'🎭',origin:'Kerala, India',type:'Indian Classical',
+   desc:'A dramatic dance-drama from Kerala featuring elaborate costumes, heavy makeup and stories from Hindu epics.',
+   fact:'Kathakali makeup can take 6-8 hours to apply — actors arrive at midnight to prepare for an evening show!',
+   pic:'Kathakali dance drama Kerala elaborate makeup',hint:'Dramatic dance from Kerala with colourful makeup taking hours to apply',grade:3},
+  {name:'Bhangra',emoji:'🕺',origin:'Punjab, India',type:'Indian Folk',
+   desc:'An energetic folk dance from Punjab originally celebrating the harvest festival of Vaisakhi.',
+   fact:'Bhangra has influenced music worldwide — you can hear its beats in Western pop, hip hop and electronic music!',
+   pic:'Bhangra dance Punjab India folk',hint:'Energetic harvest dance from Punjab',grade:1},
+  {name:'Manipuri',emoji:'💃',origin:'Manipur, India',type:'Indian Classical',
+   desc:'A graceful classical dance from Manipur in northeastern India, known for its soft flowing movements.',
+   fact:'Manipuri dance uses costumes with a unique cylindrical skirt called "Potloi" that can be over 30 kg!',
+   pic:'Manipuri classical dance Northeast India',hint:'Graceful classical dance from northeastern India',grade:3},
+  // Western/World
+  {name:'Ballet',emoji:'🩰',origin:'France/Italy',type:'Western Classical',
+   desc:'A classical dance form originating in Italy and France in the 15th century. Known for pointe shoes, turnout and graceful movements.',
+   fact:'Ballerinas dance on the tips of their toes wearing "pointe shoes" — they typically go through 2-3 pairs every week!',
+   pic:'ballet classical dance pointe shoes',hint:'Classical dance on the tips of the toes with pointe shoes',grade:1},
+  {name:'Hip Hop',emoji:'🕺',origin:'United States',type:'Street Dance',
+   desc:'A street dance style born in New York in the 1970s. Includes breakdancing, popping, locking and freestyling.',
+   fact:'Hip hop dance was invented in the South Bronx, New York in the early 1970s — it grew out of block parties!',
+   pic:'hip hop street dance breakdancing',hint:'Street dance from New York — includes breakdancing',grade:1},
+  {name:'Salsa',emoji:'💃',origin:'Cuba/Latin America',type:'Latin',
+   desc:'A partner dance from Cuba and Latin America. Fast, rhythmic with hip movements danced to salsa music.',
+   fact:'Salsa music is a mix of Cuban son, jazz and African rhythms — the word "salsa" means sauce in Spanish!',
+   pic:'salsa Latin dance Cuba partner',hint:'Latin partner dance from Cuba with hip movements',grade:1},
+  {name:'Flamenco',emoji:'💃',origin:'Spain',type:'Spanish',
+   desc:'A passionate Spanish dance from Andalusia featuring stomping feet, clapping, castanets and emotional expression.',
+   fact:'Flamenco is a UNESCO Intangible Cultural Heritage! The hand movements are called "floreos" and can take years to perfect.',
+   pic:'Flamenco Spanish dance Andalusia',hint:'Passionate Spanish dance with stomping and clapping',grade:1},
+  {name:'Tango',emoji:'🕺',origin:'Argentina',type:'Latin',
+   desc:'A dramatic partner dance from Buenos Aires, Argentina. Known for close embrace, dramatic pauses and leg flicks.',
+   fact:'The tango originated in the slums of Buenos Aires in the late 1800s and became a worldwide sensation!',
+   pic:'Tango Argentine dance Buenos Aires',hint:'Dramatic partner dance from Argentina',grade:3},
+  {name:'Waltz',emoji:'💃',origin:'Austria/Germany',type:'Ballroom',
+   desc:'A smooth ballroom dance in 3/4 time. Partners rotate and glide across the floor.',
+   fact:'The waltz was considered scandalous in the 1800s because partners danced in a close embrace — it was almost banned!',
+   pic:'Waltz ballroom dance classical',hint:'Smooth spinning ballroom dance in 3/4 time',grade:3},
+  {name:'Tap Dance',emoji:'🕺',origin:'United States',type:'American',
+   desc:'A dance style using metal-tipped shoes to create rhythmic sounds. Combines African and Irish step dancing.',
+   fact:'Tap shoes have metal plates on the heel and toe — a tap dancer\'s feet become a percussion instrument!',
+   pic:'tap dance metal shoes rhythm',hint:'Uses metal-tipped shoes to make rhythmic sounds',grade:1},
+  {name:'Breakdancing',emoji:'🕺',origin:'United States',type:'Street Dance',
+   desc:'An acrobatic street dance with spins on the head, freezes and power moves. Part of hip hop culture.',
+   fact:'Breakdancing became an Olympic sport at the 2024 Paris Olympics — making it official worldwide!',
+   pic:'breakdancing b-boy acrobatic street dance',hint:'Acrobatic dance with headspins — became an Olympic sport in 2024',grade:1},
+  {name:'Haka',emoji:'🕺',origin:'New Zealand (Māori)',type:'Ceremonial',
+   desc:'A powerful ceremonial dance of the Māori people of New Zealand. Used for welcoming, celebrating and challenges.',
+   fact:'The New Zealand All Blacks rugby team performs the Haka before every match — it terrifies opponents!',
+   pic:'Haka Maori New Zealand ceremonial dance',hint:'Powerful ceremonial dance from New Zealand\'s Māori people',grade:3},
+];
+
+const GENRES=[
+  {name:'Classical',emoji:'🎼',desc:'Formal Western music from composers like Mozart, Beethoven and Bach, written from the 17th-19th centuries.',
+   example:'Beethoven\'s Symphony No. 9, Mozart\'s The Magic Flute',
+   fact:'Classical music can improve concentration and memory — studies show babies who hear it develop better!',
+   pic:'classical music orchestra Beethoven Mozart',grade:1},
+  {name:'Jazz',emoji:'🎷',desc:'An American music genre born in New Orleans in the early 1900s, featuring improvisation and swing rhythm.',
+   example:'Louis Armstrong, Miles Davis, John Coltrane',
+   fact:'Jazz improvisation means musicians make up the music on the spot — no two performances are ever the same!',
+   pic:'jazz music New Orleans improvisation',grade:3},
+  {name:'Rock',emoji:'🎸',desc:'A genre that developed from rock and roll in the 1960s, featuring electric guitars, bass and drums.',
+   example:'The Beatles, Led Zeppelin, Queen',
+   fact:'The Beatles are the best-selling music act of all time — they sold over 600 million records worldwide!',
+   pic:'rock music electric guitar band',grade:1},
+  {name:'Pop',emoji:'🎤',desc:'Popular music designed for wide audiences with catchy melodies and simple structure.',
+   example:'Michael Jackson, Taylor Swift, BTS',
+   fact:'Michael Jackson\'s "Thriller" is the best-selling album of all time with over 70 million copies sold!',
+   pic:'pop music concert singer microphone',grade:1},
+  {name:'Hip Hop',emoji:'🎤',desc:'A genre from New York in the 1970s featuring rap vocals over beats. Became the world\'s most popular genre.',
+   example:'Tupac, Jay-Z, Kendrick Lamar, Drake',
+   fact:'Hip hop is now the most streamed music genre in the world — it has over 10 billion streams monthly!',
+   pic:'hip hop rap music culture',grade:1},
+  {name:'Bollywood',emoji:'🎬',desc:'The music from Indian Hindi cinema — energetic, melodic songs mixing Indian classical with Western and electronic sounds.',
+   example:'A.R. Rahman, Lata Mangeshkar, Kishore Kumar',
+   fact:'A.R. Rahman (composer of Jai Ho) has won 2 Oscars, 2 Grammys, a BAFTA and 6 National Film Awards!',
+   pic:'Bollywood Hindi film music India',grade:1},
+  {name:'Carnatic',emoji:'🎵',desc:'A South Indian classical music tradition over 1,500 years old, based on ragas (melody scales) and talas (rhythms).',
+   example:'M.S. Subbulakshmi, Tyagaraja',
+   fact:'Carnatic music has 72 parent scales (melakarta ragas) from which thousands of other scales are derived!',
+   pic:'Carnatic classical music South India',grade:3},
+  {name:'Hindustani',emoji:'🎵',desc:'The classical music tradition of North India, featuring deep improvisations in ragas performed over a drone.',
+   example:'Ravi Shankar, Pandit Jasraj, Zakir Hussain',
+   fact:'A Hindustani raga concert can last several hours — musicians begin slowly and gradually increase speed!',
+   pic:'Hindustani classical music North India raga',grade:3},
+  {name:'Folk',emoji:'🎸',desc:'Traditional music passed down through generations within communities, reflecting cultural identity and history.',
+   example:'Baul music from Bengal, Lok Geet from Rajasthan',
+   fact:'Every country in the world has its own folk music tradition — there are thousands of different folk styles!',
+   pic:'folk music traditional instruments culture',grade:1},
+  {name:'Electronic',emoji:'🎹',desc:'Music created using electronic instruments and computers — includes EDM, techno, house and ambient music.',
+   example:'Daft Punk, David Guetta, Avicii',
+   fact:'Electronic music pioneer Robert Moog invented the synthesizer in 1964 — it changed music forever!',
+   pic:'electronic music DJ synthesizer EDM',grade:3},
+  {name:'Reggae',emoji:'🎵',desc:'A Jamaican music genre developed in the 1960s with a distinctive offbeat rhythm and social message lyrics.',
+   example:'Bob Marley, Jimmy Cliff',
+   fact:'Bob Marley\'s "One Love" was named the Song of the Millennium by the BBC in 1999!',
+   pic:'reggae music Jamaica Bob Marley',grade:3},
+];
+
+const MUSIC_FACTS=[
+  {q:'How many strings does a standard guitar have?',opts:['4','5','6','8'],a:'6',
+   explain:'A standard acoustic or electric guitar has 6 strings tuned E-A-D-G-B-E.',
+   fact:'Bass guitars only have 4 strings — that\'s why bass sounds deeper than regular guitar!',pic:'guitar strings music',grade:1},
+  {q:'Which of these is a percussion instrument?',opts:['Flute','Violin','Tabla','Trumpet'],a:'Tabla',
+   explain:'Tabla is a percussion instrument — it makes sound by being struck or hit.',
+   fact:'Percussion instruments are the oldest type of instrument — humans have been hitting things to make rhythm for 100,000 years!',pic:'tabla percussion instrument India',grade:1},
+  {q:'The musical note ♩ is called a:',opts:['Half note','Whole note','Quarter note','Eighth note'],a:'Quarter note',
+   explain:'A quarter note (♩) gets one beat. A half note gets 2 beats. A whole note gets 4 beats.',
+   fact:'Musical notation was invented in medieval Europe by monks who needed to write down church music!',pic:'music notes notation quarter note',grade:3},
+  {q:'How many strings does a violin have?',opts:['3','4','5','6'],a:'4',
+   explain:'A violin has 4 strings tuned G-D-A-E from lowest to highest pitch.',
+   fact:'The world\'s most expensive violin — a Stradivarius — sold for $16 million! Antonio Stradivari made about 1,100 instruments.',pic:'violin strings classical instrument',grade:1},
+  {q:'Which instrument family does the flute belong to?',opts:['String','Brass','Percussion','Woodwind'],a:'Woodwind',
+   explain:'The flute is a woodwind instrument even though it\'s made of metal — it produces sound by air vibrating.',
+   fact:'The oldest musical instrument ever found is a flute made from a vulture bone 40,000 years ago!',pic:'flute woodwind instrument',grade:1},
+  {q:'What is the lowest-pitched string instrument in an orchestra?',opts:['Violin','Viola','Cello','Double Bass'],a:'Double Bass',
+   explain:'The double bass is the largest and lowest-pitched string instrument in the orchestra.',
+   fact:'A double bass can be over 180cm tall — taller than most people! Players stand or sit on high stools to play it.',pic:'double bass orchestra string lowest',grade:3},
+  {q:'Ravi Shankar was famous for playing which Indian instrument?',opts:['Tabla','Veena','Sitar','Shehnai'],a:'Sitar',
+   explain:'Ravi Shankar was the world\'s most celebrated sitar player, bringing Indian classical music to global audiences.',
+   fact:'Ravi Shankar taught the Beatles\' George Harrison to play sitar — helping Indian music reach millions worldwide!',pic:'Ravi Shankar sitar Indian classical',grade:1},
+  {q:'What does "forte" mean in music?',opts:['Slowly','Loudly','Quickly','Softly'],a:'Loudly',
+   explain:'Forte (f) means loud in Italian musical notation. Piano (p) means soft. Fortissimo (ff) means very loud.',
+   fact:'Musical terms like forte, piano and allegro are in Italian because Italy was the centre of classical music in the 1600s!',pic:'music dynamics forte piano notation',grade:3},
+  {q:'Which of these is a string instrument?',opts:['Trombone','Tabla','Sitar','Flute'],a:'Sitar',
+   explain:'The sitar is a string instrument — sound is made by plucking or strumming strings.',
+   fact:'String instruments make sound through vibrating strings — the tighter and shorter the string, the higher the pitch!',pic:'sitar Indian string instrument',grade:1},
+  {q:'How many keys does a standard piano have?',opts:['72','80','88','96'],a:'88',
+   explain:'A standard piano has 88 keys — 52 white and 36 black.',
+   fact:'The piano was invented in Italy around 1700 and was originally called "gravicembalo col piano e forte" — keyboard with soft and loud!',pic:'piano 88 keys keyboard',grade:3},
+  {q:'What do you call a group of musicians who play together?',opts:['A choir','An orchestra','A band','All of the above'],a:'All of the above',
+   explain:'Choir = singers, Orchestra = large classical ensemble, Band = smaller group. All are groups of musicians!',
+   fact:'The world\'s largest orchestra ever assembled had 8,097 musicians playing together in Frankfurt, Germany in 2017!',pic:'orchestra band musicians ensemble',grade:1},
+  {q:'Which dance style uses metal-tipped shoes to make rhythm?',opts:['Ballet','Waltz','Tap Dance','Salsa'],a:'Tap Dance',
+   explain:'Tap dancers wear shoes with metal plates (taps) on the heel and toe to create percussion sounds.',
+   fact:'Fred Astaire and Ginger Rogers made tap dancing famous in Hollywood movies of the 1930s!',pic:'tap dance shoes metal rhythm',grade:1},
+  {q:'Bharatanatyam originates from which Indian state?',opts:['Kerala','Gujarat','Tamil Nadu','Rajasthan'],a:'Tamil Nadu',
+   explain:'Bharatanatyam is the classical dance of Tamil Nadu, originating from the temples of that region.',
+   fact:'Bharatanatyam was performed in temples for centuries — the dancers were called "Devadasis" meaning servants of God.',pic:'Bharatanatyam Tamil Nadu India classical dance',grade:1},
+  {q:'What is the correct beat count for waltz music?',opts:['2/4','3/4','4/4','6/8'],a:'3/4',
+   explain:'Waltz is in 3/4 time — three beats per bar, counted ONE-two-three, ONE-two-three.',
+   fact:'Johann Strauss II (The Waltz King) composed over 500 waltzes including the famous "Blue Danube"!',pic:'waltz ballroom dance 3/4 time',grade:3},
+  {q:'Which instrument is Ustad Zakir Hussain famous for?',opts:['Sitar','Tabla','Bansuri','Sarod'],a:'Tabla',
+   explain:'Zakir Hussain is one of the world\'s greatest tabla players, known for his incredible speed and musicality.',
+   fact:'Zakir Hussain has won 4 Grammy Awards — the first Indian percussionist to win this international honour!',pic:'Zakir Hussain tabla player India',grade:3},
+];
+
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+function buildQuestionBank(grade){
+  const bank=[];
+  // Instruments — show emoji, pick name
+  INSTRUMENTS.filter(i=>i.grade<=grade).forEach(inst=>{
+    const others=shuffle(INSTRUMENTS.filter(x=>x.name!==inst.name)).slice(0,3).map(x=>x.name);
+    bank.push({topic:'instrument',mode:'emoji_to_name',
+      q:`What instrument is this? ${inst.emoji}`,display:inst.name,
+      opts:shuffle([inst.name,...others]),answer:inst.name,
+      explain:inst.desc,fact:inst.fact,pic:inst.pic,
+      hint:`It belongs to the ${inst.family} family and comes from ${inst.origin}`,grade:inst.grade});
+  });
+  // Instruments — show name, pick family
+  INSTRUMENTS.filter(i=>i.grade<=grade).forEach(inst=>{
+    const families=['String','Wind','Brass','Percussion','Keyboard','Woodwind'];
+    const others=shuffle(families.filter(f=>f!==inst.family)).slice(0,3);
+    bank.push({topic:'instrument',mode:'name_to_family',
+      q:`Which instrument family does the ${inst.name} belong to?`,
+      emoji:inst.emoji,opts:shuffle([inst.family,...others]),answer:inst.family,
+      explain:`The ${inst.name} is a ${inst.family} instrument. ${inst.desc}`,
+      fact:inst.fact,pic:inst.pic,
+      hint:`Think about HOW the ${inst.name} makes sound`,grade:inst.grade});
+  });
+  // Dances — show name, pick origin
+  DANCES.filter(d=>d.grade<=grade).forEach(dance=>{
+    const others=shuffle(DANCES.filter(x=>x.name!==dance.name)).slice(0,3).map(x=>x.origin);
+    bank.push({topic:'dance',mode:'name_to_origin',
+      q:`Where does ${dance.name} come from?`,emoji:dance.emoji,
+      opts:shuffle([dance.origin,...others]),answer:dance.origin,
+      explain:dance.desc,fact:dance.fact,pic:dance.pic,
+      hint:`Think about which country or region is associated with ${dance.name}`,grade:dance.grade});
+  });
+  // Dances — show description, pick name
+  DANCES.filter(d=>d.grade<=grade).forEach(dance=>{
+    const others=shuffle(DANCES.filter(x=>x.name!==dance.name)).slice(0,3).map(x=>x.name);
+    bank.push({topic:'dance',mode:'desc_to_name',
+      q:`This dance is known for: "${dance.desc.slice(0,60)}..."`,
+      opts:shuffle([dance.name,...others]),answer:dance.name,
+      explain:dance.desc,fact:dance.fact,pic:dance.pic,
+      hint:`This dance comes from ${dance.origin}`,grade:dance.grade});
+  });
+  // Genres
+  GENRES.filter(g=>g.grade<=grade).forEach(genre=>{
+    const others=shuffle(GENRES.filter(x=>x.name!==genre.name)).slice(0,3).map(x=>x.name);
+    bank.push({topic:'genre',mode:'desc_to_genre',
+      q:`Which music genre features: "${genre.example}"?`,emoji:genre.emoji,
+      opts:shuffle([genre.name,...others]),answer:genre.name,
+      explain:genre.desc,fact:genre.fact,pic:genre.pic,
+      hint:`This genre originated in ${genre.desc.split(' ').slice(0,5).join(' ')}...`,grade:genre.grade});
+  });
+  // Music facts
+  bank.push(...MUSIC_FACTS.filter(f=>f.grade<=grade).map(f=>({...f,topic:'fact',answer:f.a||f.answer})));
+  return shuffle(bank);
+}
+
+// ── Speech ────────────────────────────────────────────────────────
+function speakText(text){
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.9;u.lang='en-GB';
+  window.speechSynthesis.speak(u);
+}
+
+// ── Game State ────────────────────────────────────────────────────
+let G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
+  streak:0,bestStreak:0,sessionBestStreak:0,answered:false,roundStars:0,
+  attempts:0,question:null,qBank:[],bankIdx:0,
+  lifeRestoreStreak:0,hintUsed:false,hintTimer:null};
+
+async function init(){
+  buildBG();
+  try{
+    const players=await db('players?select=*');
+    const p=players.find(x=>x.name.toLowerCase()===playerName.toLowerCase());
+    if(p){playerId=p.id;playerGrade=p.grade||3;}
+  }catch(e){}
+  if(playerId){
+    try{
+      const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.music-dance-explorer`);
+      if(rows&&rows.length){personalBest=rows[0].best_score||0;
+        document.getElementById('pb-row').style.display='flex';
+        document.getElementById('pb-val').textContent=personalBest.toLocaleString();}
+    }catch(e){}
+  }
+  document.getElementById('start-greeting').textContent=`Explore the world of music and dance, ${cap(playerName)}! 🎵`;
+  document.getElementById('g-player-label').textContent=`${cap(playerName)} · Grade ${playerGrade}`;
+}
+
+function startGame(){
+  G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
+    streak:0,bestStreak:0,sessionBestStreak:0,answered:false,roundStars:0,
+    attempts:0,question:null,qBank:buildQuestionBank(playerGrade),bankIdx:0,
+    lifeRestoreStreak:0,hintUsed:false,hintTimer:null};
+  showScreen('gameScreen');loadQuestion();
+}
+
+function loadQuestion(){
+  if(G.qIdx>=10){endRound();return;}
+  G.answered=false;G.attempts=0;G.hintUsed=false;
+  clearTimeout(G.hintTimer);
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('hint-box').className='hint-box';
+  document.getElementById('hint-btn').style.display='none';
+  document.getElementById('g-feedback').textContent='';
+  if(G.bankIdx>=G.qBank.length){G.qBank=buildQuestionBank(playerGrade);G.bankIdx=0;}
+  G.question=G.qBank[G.bankIdx++];
+  const q=G.question;
+  document.getElementById('g-qnum').textContent=`${G.qIdx+1}/10`;
+  document.getElementById('g-qnum2').textContent=`Q ${G.qIdx+1}/10`;
+  document.getElementById('g-round').textContent=G.round;
+  document.getElementById('g-topic-tag').textContent=
+    q.topic==='instrument'?'🎸 Instrument':q.topic==='dance'?'💃 Dance':
+    q.topic==='genre'?'🎶 Genre':'⭐ Music Fact';
+  document.getElementById('g-topic-tag').className=`topic-tag ${q.topic}`;
+  document.getElementById('g-topic-disp').textContent=
+    q.topic==='instrument'?'Instruments':q.topic==='dance'?'Dances':
+    q.topic==='genre'?'Genres':'Music Facts';
+  updateAttemptDots();
+  renderQuestion(q);
+  G.hintTimer=setTimeout(()=>{if(!G.answered)document.getElementById('hint-btn').style.display='flex';},7000);
+}
+
+function renderQuestion(q){
+  const el=document.getElementById('q-content');
+  let html='';
+  // Show emoji if available
+  if(q.emoji){
+    html+=`<div class="item-display"><span class="item-emoji">${q.emoji}</span></div>`;
+  }
+  if(q.display){
+    html+=`<div class="item-display"><div class="item-name">${q.display}</div></div>`;
+  }
+  html+=`<div class="question-text">${q.q}</div>`;
+  // Speak button for instrument name mode
+  if(q.mode==='name_to_family'||q.mode==='name_to_origin'){
+    html+=`<button class="speak-btn" id="speak-btn" onclick="speakText('${q.answer}')">🔊 Hear it</button>`;
+  }
+  html+=`<div class="opts ${q.opts&&q.opts.length>4?'single':''}">${(q.opts||[]).map(o=>
+    `<button class="opt" onclick="checkOpt(this,'${o.replace(/'/g,"\\'")}','${q.answer.replace(/'/g,"\\'")}')">
+      ${o}</button>`).join('')}</div>`;
+  el.innerHTML=html;
+}
+
+function checkOpt(btn,chosen,correct){
+  if(G.answered)return;
+  clearTimeout(G.hintTimer);
+  if(chosen===correct){
+    btn.classList.add('correct');
+    document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+    processResult(true);
+  } else {
+    btn.classList.add('wrong');btn.disabled=true;
+    G.attempts++;updateAttemptDots();
+    if(G.attempts>=3){
+      document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+      processResult(false);
+    } else {
+      document.getElementById('g-feedback').textContent=G.attempts===1?'Not quite! Try again 🎵':'One more try!';
+    }
+  }
+}
+
+function updateAttemptDots(){
+  for(let i=0;i<3;i++){
+    const dot=document.getElementById(`dot-${i}`);if(!dot)return;
+    dot.className='attempt-dot';
+    if(i<G.attempts)dot.classList.add('used');
+    else if(i===G.attempts)dot.classList.add('current');
+  }
+}
+
+function processResult(isCorrect){
+  G.answered=true;clearTimeout(G.hintTimer);
+  const attemptStars=G.attempts===0?2:G.attempts===1?1:0;
+  const hintPenalty=G.hintUsed?0.5:1;
+  let earned=0;
+  if(isCorrect){
+    earned=Math.max(0,Math.floor(attemptStars*hintPenalty));
+    G.stars+=earned;G.roundStars+=earned;
+    G.correct++;G.totalCorrect++;G.totalAsked++;
+    G.streak++;
+    if(G.streak>G.bestStreak)G.bestStreak=G.streak;
+    if(G.streak>G.sessionBestStreak)G.sessionBestStreak=G.streak;
+    checkLifeRestore();updateStreakBadge();
+    const combos=[{s:3,t:'ROCKSTAR! 🎸',sub:'3 correct!'},{s:5,t:'MUSIC MAESTRO! 🎵',sub:'5 in a row!'},{s:7,t:'VIRTUOSO! 🌟',sub:'7 in a row!'},{s:10,t:'LEGEND! 💥',sub:'10 in a row!'}];
+    const c=combos.slice().reverse().find(c=>G.streak===c.s);
+    if(c)showPopup('combo',c.t,c.sub);
+  } else {
+    G.lives--;G.streak=0;G.totalAsked++;G.lifeRestoreStreak=0;
+    updateStreakBadge();updateLives();
+    if(G.lives<=0){showExplanation(false,()=>endGame());return;}
+  }
+  document.getElementById('g-stars').textContent=G.stars.toLocaleString();
+  updateLives();
+  showExplanation(isCorrect,()=>{G.qIdx++;loadQuestion();});
+}
+
+function showExplanation(isCorrect,onNext){
+  const q=G.question;
+  const ec=document.getElementById('explanation-card');
+  document.getElementById('ex-icon').textContent=isCorrect?'✅':'❌';
+  document.getElementById('ex-answer').innerHTML=`Answer: <span>${q.answer}</span>`;
+  document.getElementById('ex-explain').textContent=q.explain||'';
+  document.getElementById('ex-fact-txt').textContent=q.fact||'';
+  const nextBtn=document.getElementById('ex-next');
+  nextBtn.className=`ex-next ${isCorrect?'ok':'no'}`;
+  nextBtn.textContent=G.qIdx>=9||G.lives<=0?'See Results →':'Next →';
+  ec.className=`explanation-card show ${isCorrect?'ok':'no'}`;
+  ec.style.display='block';
+  window._exNextFn=onNext;
+  setTimeout(()=>ec.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function advanceQuestion(){
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('hint-box').className='hint-box';
+  document.getElementById('hint-btn').style.display='none';
+  clearTimeout(G.hintTimer);
+  if(window._exNextFn){window._exNextFn();window._exNextFn=null;}
+}
+
+function useHint(){
+  if(G.hintUsed||G.answered)return;
+  G.hintUsed=true;
+  document.getElementById('hint-btn').className='hint-btn used';
+  document.getElementById('hint-btn').innerHTML='💡 Used';
+  document.getElementById('hint-txt').textContent=G.question.hint||'Think carefully!';
+  document.getElementById('hint-box').className='hint-box show';
+}
+
+function showPicture(){
+  const q=encodeURIComponent(G.question.pic||G.question.answer+' music');
+  window.open('https://www.google.com/search?tbm=isch&q='+q,'_blank');
+}
+
+function checkLifeRestore(){
+  if(G.lives>=3)return;
+  G.lifeRestoreStreak++;
+  if(G.lifeRestoreStreak>=3){G.lifeRestoreStreak=0;G.lives=Math.min(3,G.lives+1);updateLives();showPopup('life','❤️ Life Restored!','3 correct in a row!');}
+}
+
+function updateLives(){let h='';for(let i=0;i<3;i++)h+=i<G.lives?'❤️':'🖤';document.getElementById('lives-display').textContent=h;}
+function updateStreakBadge(){
+  const el=document.getElementById('streak-badge');
+  el.textContent=`${G.streak} 🎵`;
+  el.className=`streak-badge${G.streak>=7?' s7':G.streak>=5?' s5':G.streak>=3?' s3':''}`;
+}
+function showPopup(type,text,sub){
+  const el=document.getElementById(type+'-popup');if(!el)return;
+  if(type==='combo'){document.getElementById('combo-text').textContent=text;document.getElementById('combo-sub').textContent=sub;}
+  el.className=`popup-overlay ${type} show`;
+  setTimeout(()=>{el.className=`popup-overlay ${type} hide`;},1500);
+  setTimeout(()=>{el.className=`popup-overlay ${type}`;},1800);
+}
+
+function endRound(){
+  const acc=G.totalAsked>0?Math.round(G.totalCorrect/G.totalAsked*100):0;
+  document.getElementById('re-icon').textContent=G.correct>=8?'🏆':G.correct>=5?'🎵':'🌱';
+  document.getElementById('re-title').textContent=`Round ${G.round} Complete!`;
+  document.getElementById('re-correct').textContent=G.correct;
+  document.getElementById('re-acc').textContent=acc+'%';
+  document.getElementById('re-stars-r').textContent=G.roundStars.toLocaleString();
+  document.getElementById('re-streak-r').textContent=G.bestStreak;
+  document.getElementById('re-msg').textContent=G.correct>=8?'Music Maestro! 🌟':G.correct>=5?'Great performance! 💪':'Keep practising! 🌱';
+  showScreen('roundEndScreen');
+}
+
+function nextRound(){
+  G.round++;G.qIdx=0;G.roundStars=0;G.correct=0;G.streak=0;G.bestStreak=0;G.lifeRestoreStreak=0;
+  showScreen('gameScreen');loadQuestion();
+}
+
+async function endGame(){
+  showScreen('gameOverScreen');
+  const total=G.stars;
+  document.getElementById('go-score').textContent=total.toLocaleString()+' ⭐';
+  document.getElementById('go-earned').textContent=`+${total.toLocaleString()} stars saved`;
+  document.getElementById('go-rounds').textContent=G.round;
+  document.getElementById('go-correct').textContent=G.totalCorrect;
+  document.getElementById('go-streak').textContent=G.sessionBestStreak;
+  const isNewBest=total>personalBest;if(isNewBest)personalBest=total;
+  document.getElementById('go-pb').textContent=personalBest.toLocaleString();
+  document.getElementById('new-best-banner').style.display=isNewBest?'block':'none';
+  document.getElementById('go-msg').textContent=total>=20?'Music Legend! 🏆':total>=12?'Outstanding! 🌟':total>=7?'Great effort! 💪':'Keep exploring! 🌱';
+  document.getElementById('go-trophy').textContent=total>=20?'🏆':total>=12?'🎵':'⭐';
+  if(playerId&&total>0){
+    try{
+      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,amount:total,reason:`Music & Dance — Round ${G.round}, ${G.totalCorrect} correct`,category:'game'}});
+      const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.music-dance-explorer`);
+      if(rows&&rows.length){
+        await db(`game_scores?player_id=eq.${playerId}&game_key=eq.music-dance-explorer`,{method:'PATCH',prefer:'return=minimal',body:{best_score:isNewBest?total:rows[0].best_score,best_round:G.round,total_plays:(rows[0].total_plays||0)+1,last_played:new Date().toISOString()}});
+      } else {
+        await db('game_scores',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,game_key:'music-dance-explorer',best_score:total,best_round:G.round,total_plays:1}});
+      }
+    }catch(e){}
+  }
+}
+
+function restartGame(){startGame();}
+function goHome(){window.location.href='index.html?player='+playerName;}
+function confirmQuit(){if(confirm('Quit Music & Dance Explorer?'))goHome();}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+init();
+</script>
+</body>
+</html>

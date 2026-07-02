@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>World Flags 🚩 — Learning Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0D1B3E;--navy2:#1A2F5E;--gold:#F59E0B;--gold2:#D97706;--gold3:#FDE68A;
+  --blue:#3B82F6;--blue2:#1D4ED8;--green:#10B981;--red:#EF4444;
+  --gc:rgba(8,14,32,0.93);--gb:rgba(255,255,255,0.08);
+  --r:16px;--shadow:0 4px 24px rgba(0,0,0,0.5);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+html,body{height:100%;font-family:'Nunito',sans-serif;color:#fff;overflow:hidden}
+body{background:#060B1A;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.bg{position:fixed;inset:0;z-index:0;
+  background:radial-gradient(ellipse at 50% 40%,rgba(29,78,216,.12) 0%,transparent 60%),
+             radial-gradient(ellipse at 20% 80%,rgba(245,158,11,.08) 0%,transparent 50%),#060B1A}
+
+.wrap{position:relative;z-index:1;width:100%;max-width:580px;padding:12px;
+  display:flex;flex-direction:column;gap:9px;max-height:100vh;overflow-y:auto}
+.wrap::-webkit-scrollbar{display:none}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:10px;background:var(--gc);backdrop-filter:blur(14px);
+  border:1px solid rgba(245,158,11,.18);border-radius:var(--r);padding:11px 15px;
+  box-shadow:var(--shadow);flex-shrink:0}
+.back-btn{width:36px;height:36px;border-radius:50%;background:rgba(245,158,11,.12);border:none;
+  color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hdr-title{flex:1;font-size:1rem;font-weight:900;
+  background:linear-gradient(135deg,var(--gold3),#fff,var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hdr-sub{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.45)}
+.lives{display:flex;gap:2px;font-size:1rem}
+.star-count{font-size:.9rem;font-weight:900;color:var(--gold);white-space:nowrap}
+
+/* INFO ROW */
+.info-row{display:flex;gap:7px;flex-shrink:0}
+.info-box{flex:1;background:var(--gc);backdrop-filter:blur(14px);
+  border:1px solid rgba(245,158,11,.1);border-radius:11px;padding:7px 9px;text-align:center;box-shadow:var(--shadow)}
+.ib-val{font-size:.95rem;font-weight:900;color:#fff;line-height:1}
+.ib-lbl{font-size:.5rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px;text-transform:uppercase}
+.streak-badge{display:inline-flex;align-items:center;gap:3px;border-radius:99px;padding:3px 9px;
+  font-size:.7rem;font-weight:900;background:rgba(245,158,11,.1);
+  border:1px solid rgba(245,158,11,.22);color:var(--gold3);transition:all .3s}
+.streak-badge.s3{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.28);color:#93C5FD}
+.streak-badge.s5{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.25);color:#6EE7B7}
+.streak-badge.s7{background:rgba(245,158,11,.15);border-color:rgba(245,158,11,.35);color:var(--gold);animation:mp .6s ease infinite alternate}
+@keyframes mp{from{transform:scale(1)}to{transform:scale(1.08)}}
+
+/* POPUPS */
+.popup-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
+  z-index:9999;text-align:center;pointer-events:none;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  background:rgba(6,11,26,0.96);backdrop-filter:blur(18px);
+  border-radius:24px;padding:20px 32px;box-shadow:0 8px 40px rgba(0,0,0,0.7)}
+.popup-overlay.combo{border:1.5px solid rgba(245,158,11,.3)}
+.popup-overlay.life{border:1.5px solid rgba(239,68,68,.35)}
+.popup-overlay.show{transform:translate(-50%,-50%) scale(1)}
+.popup-overlay.hide{transform:translate(-50%,-50%) scale(0);opacity:0}
+.po-text{font-size:1.9rem;font-weight:900;white-space:nowrap}
+.po-sub{font-size:.85rem;font-weight:800;color:rgba(255,255,255,.6);margin-top:3px}
+
+/* CONTINENT BADGE */
+.continent-badge{display:inline-flex;align-items:center;gap:8px;border-radius:12px;
+  padding:7px 18px;margin-bottom:12px;font-size:.82rem;font-weight:900;
+  background:rgba(245,158,11,.1);border:1.5px solid rgba(245,158,11,.25);color:var(--gold3)}
+
+/* GAME CARD */
+.q-card{background:var(--gc);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(245,158,11,.15);border-radius:var(--r);
+  padding:16px;box-shadow:var(--shadow)}
+.q-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.mode-tag{font-size:.63rem;font-weight:900;border-radius:99px;padding:3px 11px;border:1px solid}
+.mode-tag.flag_to_country{background:rgba(59,130,246,.12);color:#93C5FD;border-color:rgba(59,130,246,.28)}
+.mode-tag.country_to_flag{background:rgba(245,158,11,.1);color:var(--gold3);border-color:rgba(245,158,11,.25)}
+.q-num{font-size:.6rem;font-weight:800;color:rgba(255,255,255,.35)}
+
+/* FLAG DISPLAY */
+.flag-big{font-size:5rem;text-align:center;margin:8px 0 14px;
+  display:block;animation:flagBounce .8s ease-in-out infinite alternate;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,.4))}
+@keyframes flagBounce{from{transform:scale(1) rotate(-2deg)}to{transform:scale(1.08) rotate(2deg)}}
+.question-text{font-size:1.1rem;font-weight:900;color:#fff;text-align:center;
+  margin-bottom:14px;line-height:1.4}
+
+/* MCQ */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.opt{padding:11px 8px;background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(245,158,11,.12);border-radius:12px;
+  font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;
+  color:rgba(255,255,255,.88);cursor:pointer;transition:all .15s;text-align:center;
+  -webkit-tap-highlight-color:transparent;display:flex;flex-direction:column;
+  align-items:center;gap:3px}
+.opt-flag{font-size:2.8rem;line-height:1}
+.opt-name{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.7)}
+.opt:active:not(:disabled){transform:scale(.96)}
+.opt.correct{background:rgba(16,185,129,.2)!important;border-color:var(--green)!important;color:#6EE7B7!important}
+.opt.wrong{background:rgba(239,68,68,.12)!important;border-color:var(--red)!important;color:#FCA5A5!important;animation:shake .3s ease}
+
+/* ATTEMPTS */
+.attempts-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;justify-content:center}
+.attempt-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.15);
+  border:1.5px solid rgba(255,255,255,.2);transition:all .3s}
+.attempt-dot.used{background:var(--red);border-color:var(--red)}
+.attempt-dot.current{background:var(--gold);border-color:var(--gold);animation:pulse .8s ease infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+.feedback-row{min-height:24px;font-size:.78rem;font-weight:800;text-align:center;
+  margin-bottom:6px;color:var(--gold)}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:7px;margin-top:8px}
+.show-pic-btn{flex:1;padding:9px;background:rgba(245,158,11,.08);
+  border:1.5px solid rgba(245,158,11,.2);border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;
+  color:rgba(253,230,138,.7);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+.show-pic-btn:active{background:rgba(245,158,11,.18)}
+.hint-btn{flex:1;padding:9px;background:rgba(255,255,255,.04);
+  border:1.5px solid rgba(255,255,255,.1);border-radius:10px;
+  font-family:'Nunito',sans-serif;font-size:.7rem;font-weight:800;
+  color:rgba(255,255,255,.4);cursor:pointer;display:none;align-items:center;justify-content:center;gap:5px}
+.hint-btn:active{background:rgba(245,158,11,.1)}
+.hint-btn.used{opacity:.35;cursor:default}
+.hint-box{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);
+  border-radius:10px;padding:8px 12px;margin-top:6px;display:none}
+.hint-box.show{display:block}
+.hint-txt{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.65)}
+
+/* EXPLANATION */
+.explanation-card{margin-top:10px;border-radius:13px;padding:13px 15px;display:none;animation:slideDown .3s ease}
+.explanation-card.show{display:block}
+.explanation-card.ok{background:rgba(16,185,129,.1);border:1.5px solid rgba(16,185,129,.22)}
+.explanation-card.no{background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.2)}
+.ex-result{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ex-flag{font-size:2rem;flex-shrink:0}
+.ex-country{font-size:1rem;font-weight:900;color:#fff}
+.ex-country span{color:var(--gold)}
+.ex-details{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.ex-detail{background:rgba(255,255,255,.05);border-radius:9px;padding:7px 10px;text-align:center}
+.ex-detail-lbl{font-size:.53rem;font-weight:900;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.ex-detail-val{font-size:.82rem;font-weight:800;color:#fff}
+.ex-fact{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.18);
+  border-radius:9px;padding:8px 11px;margin-bottom:9px}
+.ex-fact-lbl{font-size:.57rem;font-weight:900;color:var(--gold3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.ex-fact-txt{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.75);line-height:1.5}
+.ex-next{width:100%;padding:11px;border:none;border-radius:11px;font-family:'Nunito',sans-serif;
+  font-size:.88rem;font-weight:900;cursor:pointer;color:#fff}
+.ex-next.ok{background:linear-gradient(135deg,var(--blue2),var(--blue))}
+.ex-next.no{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#0a0800}
+
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{0%{transform:scale(.94)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+
+/* SCREENS */
+.screen{display:none}.screen.active{display:flex;flex-direction:column;gap:9px}
+
+/* START */
+.start-card{background:var(--gc);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(245,158,11,.2);border-radius:var(--r);
+  padding:22px 18px;text-align:center;box-shadow:var(--shadow)}
+.start-icon{font-size:3rem;margin-bottom:6px;display:block;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.start-title{font-size:1.4rem;font-weight:900;margin-bottom:4px;
+  background:linear-gradient(135deg,var(--gold3),#fff,var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.start-sub{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:14px;line-height:1.6}
+.continent-progress{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.cp-row{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);
+  border-radius:9px;padding:7px 11px}
+.cp-emoji{font-size:1.1rem;flex-shrink:0}
+.cp-name{flex:1;font-size:.72rem;font-weight:800;color:rgba(255,255,255,.7)}
+.cp-count{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.35)}
+.cp-status{font-size:.7rem}
+.rules{display:flex;flex-direction:column;gap:5px;text-align:left;margin-bottom:14px}
+.rule{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border-radius:9px;padding:7px 10px}
+.rule-ico{font-size:.9rem;flex-shrink:0}
+.rule-txt{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.7)}
+.start-btn{width:100%;padding:14px;border:none;border-radius:13px;
+  background:linear-gradient(135deg,var(--navy2),var(--blue2),var(--blue));
+  color:#fff;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;
+  cursor:pointer;box-shadow:0 4px 20px rgba(59,130,246,.3);transition:all .2s}
+.start-btn:active{transform:scale(.97)}
+.pb-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;
+  font-size:.7rem;font-weight:700;color:rgba(255,255,255,.4)}
+.pb-val{color:var(--gold);font-weight:900}
+
+/* ROUND END / GAME OVER */
+.re-card,.go-card{background:var(--gc);backdrop-filter:blur(14px);
+  border:1.5px solid rgba(245,158,11,.2);border-radius:var(--r);
+  padding:20px 16px;text-align:center;box-shadow:var(--shadow)}
+.re-icon{font-size:2.6rem;margin-bottom:6px;display:block}
+.go-trophy{font-size:3.5rem;margin-bottom:7px;display:block;animation:float 2s ease-in-out infinite}
+.re-title,.go-title{font-size:1.1rem;font-weight:900;color:var(--gold3);margin-bottom:3px}
+.re-stats,.go-stats{display:flex;gap:7px;margin:10px 0}
+.re-stat,.go-stat{flex:1;background:rgba(255,255,255,.05);border-radius:10px;padding:9px;text-align:center}
+.re-sv,.go-sv{font-size:1.1rem;font-weight:900;color:var(--gold)}
+.re-sl,.go-sl{font-size:.53rem;font-weight:700;color:rgba(255,255,255,.4);margin-top:2px}
+.re-msg,.go-msg{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.45);margin-bottom:11px}
+.new-best{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);
+  border-radius:10px;padding:8px 13px;font-size:.78rem;font-weight:900;color:var(--gold);margin:7px 0;animation:popIn .4s ease}
+.re-btn,.go-btn{width:100%;padding:11px;border:none;border-radius:12px;
+  font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:900;cursor:pointer;transition:all .15s}
+.re-btn.next,.go-btn.play{background:linear-gradient(135deg,var(--blue2),var(--blue));color:#fff}
+.re-btn.home,.go-btn.home{background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);margin-top:6px}
+.re-btn:active,.go-btn:active{transform:scale(.97)}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="popup-overlay combo" id="combo-popup">
+  <div class="po-text" id="combo-text">GLOBE TROTTER! 🌍</div>
+  <div class="po-sub" id="combo-sub">3 in a row!</div>
+</div>
+<div class="popup-overlay life" id="life-popup">
+  <div class="po-text">❤️ Life Restored!</div>
+  <div class="po-sub">3 correct in a row!</div>
+</div>
+
+<div class="wrap">
+  <!-- START -->
+  <div id="startScreen" class="screen active">
+    <div class="start-card">
+      <span class="start-icon">🚩</span>
+      <div class="start-title">World Flags</div>
+      <div class="start-sub" id="start-greeting">Learn the flags of every country in the world!</div>
+      <div class="continent-progress" id="continent-progress"></div>
+      <div class="rules">
+        <div class="rule"><span class="rule-ico">🌍</span><span class="rule-txt">Go continent by continent — master one region at a time</span></div>
+        <div class="rule"><span class="rule-ico">🚩</span><span class="rule-txt">Show flag → pick country, or show country → pick flag</span></div>
+        <div class="rule"><span class="rule-ico">📍</span><span class="rule-txt">Capital city + continent + fun fact after every answer</span></div>
+        <div class="rule"><span class="rule-ico">3️⃣</span><span class="rule-txt">3 attempts per question — stars reduce each try</span></div>
+        <div class="rule"><span class="rule-ico">❤️</span><span class="rule-txt">3 correct in a row restores a life</span></div>
+      </div>
+      <button class="start-btn" onclick="startGame()">🌍 Start Exploring!</button>
+      <div class="pb-row" id="pb-row" style="display:none">🏆 Personal Best: <span class="pb-val" id="pb-val">0</span> stars</div>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div id="gameScreen" class="screen">
+    <div class="hdr">
+      <button class="back-btn" onclick="confirmQuit()">←</button>
+      <div style="flex:1">
+        <div class="hdr-title">🚩 World Flags</div>
+        <div class="hdr-sub" id="g-player-label">Riaan · Grade 3</div>
+      </div>
+      <div class="lives" id="lives-display">❤️❤️❤️</div>
+      <div class="star-count">⭐ <span id="g-stars">0</span></div>
+    </div>
+    <div class="info-row">
+      <div class="info-box"><div class="ib-val" style="color:var(--gold)" id="g-round">1</div><div class="ib-lbl">Round</div></div>
+      <div class="info-box"><div class="ib-val" id="g-qnum">1/10</div><div class="ib-lbl">Question</div></div>
+      <div class="info-box" style="flex:1.5"><div class="ib-val" id="g-cont-disp" style="font-size:.7rem;color:var(--gold3)">Asia</div><div class="ib-lbl">Continent</div></div>
+      <div class="info-box" style="display:flex;align-items:center;justify-content:center">
+        <div id="streak-badge" class="streak-badge">0 🚩</div>
+      </div>
+    </div>
+    <div class="q-card">
+      <div class="q-meta">
+        <span class="mode-tag" id="g-mode-tag">Flag → Country</span>
+        <span class="q-num" id="g-qnum2">Q 1/10</span>
+      </div>
+      <div style="text-align:center">
+        <div class="continent-badge" id="continent-badge">🌏 Asia</div>
+      </div>
+      <div id="q-content"></div>
+      <div class="attempts-row">
+        <span style="font-size:.6rem;font-weight:700;color:rgba(255,255,255,.35)">Attempts:</span>
+        <div class="attempt-dot current" id="dot-0"></div>
+        <div class="attempt-dot" id="dot-1"></div>
+        <div class="attempt-dot" id="dot-2"></div>
+      </div>
+      <div class="feedback-row" id="g-feedback"></div>
+      <div class="btn-row">
+        <button class="show-pic-btn" onclick="showPicture()">🔍 Show Picture</button>
+        <button class="hint-btn" id="hint-btn" onclick="useHint()">💡 Hint</button>
+      </div>
+      <div class="hint-box" id="hint-box"><div class="hint-txt" id="hint-txt"></div></div>
+      <div class="explanation-card" id="explanation-card">
+        <div class="ex-result">
+          <span class="ex-flag" id="ex-flag">🚩</span>
+          <div>
+            <div class="ex-country" id="ex-country">Country</div>
+            <div style="font-size:.65rem;font-weight:700;color:rgba(255,255,255,.4)" id="ex-continent-label"></div>
+          </div>
+        </div>
+        <div class="ex-details">
+          <div class="ex-detail"><div class="ex-detail-lbl">🏛️ Capital</div><div class="ex-detail-val" id="ex-capital"></div></div>
+          <div class="ex-detail"><div class="ex-detail-lbl">🌍 Continent</div><div class="ex-detail-val" id="ex-continent"></div></div>
+        </div>
+        <div class="ex-fact">
+          <div class="ex-fact-lbl">🌟 Fun Fact</div>
+          <div class="ex-fact-txt" id="ex-fact-txt"></div>
+        </div>
+        <button class="ex-next" id="ex-next" onclick="advanceQuestion()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUND END -->
+  <div id="roundEndScreen" class="screen">
+    <div class="re-card">
+      <span class="re-icon" id="re-icon">⭐</span>
+      <div class="re-title" id="re-title">Asia Round Complete!</div>
+      <div class="re-stats">
+        <div class="re-stat"><div class="re-sv" id="re-correct">0</div><div class="re-sl">Correct</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-acc">0%</div><div class="re-sl">Accuracy</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-stars-r">0</div><div class="re-sl">Stars</div></div>
+        <div class="re-stat"><div class="re-sv" id="re-streak-r">0</div><div class="re-sl">Best Streak</div></div>
+      </div>
+      <div class="re-msg" id="re-msg"></div>
+      <button class="re-btn next" id="re-next-btn" onclick="nextRound()">Next Continent →</button>
+      <button class="re-btn home" onclick="goHome()">🏠 Back to Hub</button>
+    </div>
+  </div>
+
+  <!-- GAME OVER -->
+  <div id="gameOverScreen" class="screen">
+    <div class="go-card">
+      <span class="go-trophy" id="go-trophy">🏆</span>
+      <div class="go-title">World Explorer!</div>
+      <div class="go-sv" id="go-score" style="font-size:2.2rem;font-weight:900;color:var(--gold);line-height:1;margin-bottom:3px">0 ⭐</div>
+      <div style="font-size:.85rem;font-weight:800;color:#6EE7B7" id="go-earned">+0 stars saved</div>
+      <div id="new-best-banner" class="new-best" style="display:none">🏆 NEW PERSONAL BEST!</div>
+      <div class="go-msg" id="go-msg">Amazing explorer!</div>
+      <div class="go-stats">
+        <div class="go-stat"><div class="go-sv" id="go-rounds">1</div><div class="go-sl">Rounds</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-correct">0</div><div class="go-sl">Correct</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-streak">0</div><div class="go-sl">Best Streak</div></div>
+        <div class="go-stat"><div class="go-sv" id="go-pb">0</div><div class="go-sl">Personal Best</div></div>
+      </div>
+      <button class="go-btn play" onclick="restartGame()">🚩 Play Again</button>
+      <button class="go-btn home" onclick="goHome()">🏠 Back to Hub</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SB='https://tnhgihzfwqsflpueivwe.supabase.co',KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
+const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':o.prefer||'return=representation',...o.headers},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined}).then(r=>r.json()).catch(()=>[]);
+const params=new URLSearchParams(window.location.search);
+const playerName=params.get('player')||'riaan';
+let playerId=null,playerGrade=3,personalBest=0;
+
+// ── FLAGS DATA ────────────────────────────────────────────────────
+const FLAGS={
+  Asia:[
+    {name:'India',flag:'🇮🇳',capital:'New Delhi',fact:'India is the world\'s largest democracy with over 1.4 billion people!'},
+    {name:'China',flag:'🇨🇳',capital:'Beijing',fact:'China invented paper, printing, gunpowder and the compass — four of the most important inventions ever!'},
+    {name:'Japan',flag:'🇯🇵',capital:'Tokyo',fact:'Japan has over 6,800 islands and is home to 13 UNESCO World Heritage Sites!'},
+    {name:'South Korea',flag:'🇰🇷',capital:'Seoul',fact:'South Korea has the fastest internet speeds in the world!'},
+    {name:'Pakistan',flag:'🇵🇰',capital:'Islamabad',fact:'Pakistan is home to K2, the second highest mountain on Earth!'},
+    {name:'Bangladesh',flag:'🇧🇩',capital:'Dhaka',fact:'Bangladesh is one of the most densely populated countries in the world!'},
+    {name:'Sri Lanka',flag:'🇱🇰',capital:'Sri Jayawardenepura Kotte',fact:'Sri Lanka produces some of the finest tea in the world — Ceylon tea is famous globally!'},
+    {name:'Nepal',flag:'🇳🇵',capital:'Kathmandu',fact:'Nepal is the only country with a non-rectangular flag and is home to Mount Everest!'},
+    {name:'Thailand',flag:'🇹🇭',capital:'Bangkok',fact:'Thailand means "Land of the Free" — it\'s the only Southeast Asian country never colonised!'},
+    {name:'Vietnam',flag:'🇻🇳',capital:'Hanoi',fact:'Vietnam is the world\'s second largest exporter of coffee!'},
+    {name:'Indonesia',flag:'🇮🇩',capital:'Jakarta',fact:'Indonesia has over 17,000 islands — the most of any country in the world!'},
+    {name:'Malaysia',flag:'🇲🇾',capital:'Kuala Lumpur',fact:'Malaysia\'s Petronas Towers were the tallest buildings in the world from 1998 to 2004!'},
+    {name:'Philippines',flag:'🇵🇭',capital:'Manila',fact:'The Philippines is an archipelago of over 7,000 islands!'},
+    {name:'Singapore',flag:'🇸🇬',capital:'Singapore',fact:'Singapore is one of only three city-states in the world and has one of the busiest ports!'},
+    {name:'Myanmar',flag:'🇲🇲',capital:'Naypyidaw',fact:'Myanmar has over 2,000 temples and pagodas in Bagan alone!'},
+    {name:'Cambodia',flag:'🇰🇭',capital:'Phnom Penh',fact:'Cambodia\'s flag is the only one in the world to feature a building — Angkor Wat temple!'},
+    {name:'Afghanistan',flag:'🇦🇫',capital:'Kabul',fact:'Afghanistan is one of the oldest countries in the world with a history spanning over 5,000 years!'},
+    {name:'Iran',flag:'🇮🇷',capital:'Tehran',fact:'Iran (ancient Persia) is one of the world\'s oldest civilisations, over 2,500 years old!'},
+    {name:'Iraq',flag:'🇮🇶',capital:'Baghdad',fact:'Iraq is home to Mesopotamia — the "cradle of civilisation" where writing was first invented!'},
+    {name:'Saudi Arabia',flag:'🇸🇦',capital:'Riyadh',fact:'Saudi Arabia has the world\'s second largest oil reserves and contains the holy cities of Mecca and Medina!'},
+    {name:'UAE',flag:'🇦🇪',capital:'Abu Dhabi',fact:'The UAE has the tallest building in the world — the Burj Khalifa at 828 metres!'},
+    {name:'Israel',flag:'🇮🇱',capital:'Jerusalem',fact:'Israel is home to the Dead Sea — the lowest point on Earth\'s surface!'},
+    {name:'Turkey',flag:'🇹🇷',capital:'Ankara',fact:'Turkey is the only country that straddles two continents — Europe and Asia!'},
+    {name:'Kazakhstan',flag:'🇰🇿',capital:'Astana',fact:'Kazakhstan is the world\'s largest landlocked country!'},
+    {name:'Uzbekistan',flag:'🇺🇿',capital:'Tashkent',fact:'Uzbekistan was the heart of the ancient Silk Road trading route!'},
+    {name:'Mongolia',flag:'🇲🇳',capital:'Ulaanbaatar',fact:'Mongolia has the lowest population density of any country — only 2 people per square km!'},
+    {name:'North Korea',flag:'🇰🇵',capital:'Pyongyang',fact:'North Korea and South Korea are technically still at war — the Korean War never officially ended!'},
+    {name:'Taiwan',flag:'🇹🇼',capital:'Taipei',fact:'Taiwan produces over 90% of the world\'s most advanced computer chips!'},
+    {name:'Hong Kong',flag:'🇭🇰',capital:'Hong Kong',fact:'Hong Kong has more skyscrapers than any other city in the world!'},
+    {name:'Bhutan',flag:'🇧🇹',capital:'Thimphu',fact:'Bhutan measures happiness — it has a "Gross National Happiness" index instead of just GDP!'},
+    {name:'Maldives',flag:'🇲🇻',capital:'Malé',fact:'The Maldives is the world\'s lowest country — its highest point is only 2.4 metres above sea level!'},
+    {name:'Kuwait',flag:'🇰🇼',capital:'Kuwait City',fact:'Kuwait has the world\'s fourth largest oil reserves!'},
+    {name:'Qatar',flag:'🇶🇦',capital:'Doha',fact:'Qatar has the highest GDP per capita in the world!'},
+    {name:'Oman',flag:'🇴🇲',capital:'Muscat',fact:'Oman is one of the oldest countries in the Arab world with a history of over 5,000 years!'},
+    {name:'Jordan',flag:'🇯🇴',capital:'Amman',fact:'Jordan is home to Petra — the ancient city carved into rose-red rock!'},
+    {name:'Lebanon',flag:'🇱🇧',capital:'Beirut',fact:'The cedar tree on Lebanon\'s flag is one of the oldest symbols — mentioned 103 times in the Bible!'},
+    {name:'Syria',flag:'🇸🇾',capital:'Damascus',fact:'Damascus is one of the oldest continuously inhabited cities in the world — over 11,000 years old!'},
+    {name:'Yemen',flag:'🇾🇪',capital:'Sana\'a',fact:'Yemen\'s Socotra Island has trees found nowhere else — it\'s called the "Galápagos of the Indian Ocean"!'},
+    {name:'Laos',flag:'🇱🇦',capital:'Vientiane',fact:'Laos is the most bombed country per capita in history — but has survived and thrives today!'},
+    {name:'Brunei',flag:'🇧🇳',capital:'Bandar Seri Begawan',fact:'Brunei is one of the wealthiest nations per capita thanks to its oil and natural gas!'},
+    {name:'Timor-Leste',flag:'🇹🇱',capital:'Dili',fact:'Timor-Leste (East Timor) is one of the world\'s newest countries, gaining independence in 2002!'},
+    {name:'Georgia',flag:'🇬🇪',capital:'Tbilisi',fact:'Georgia is said to be the birthplace of wine — archaeological evidence of winemaking 8,000 years ago!'},
+    {name:'Armenia',flag:'🇦🇲',capital:'Yerevan',fact:'Armenia was the first country in the world to adopt Christianity as its state religion in 301 AD!'},
+    {name:'Azerbaijan',flag:'🇦🇿',capital:'Baku',fact:'Azerbaijan means "Land of Fire" — ancient temples burned natural gas seeping from the ground!'},
+    {name:'Cyprus',flag:'🇨🇾',capital:'Nicosia',fact:'Cyprus is the only country whose flag shows a map of the country itself!'},
+  ],
+  Europe:[
+    {name:'United Kingdom',flag:'🇬🇧',capital:'London',fact:'The UK invented the World Wide Web, the steam engine, the telephone and the television!'},
+    {name:'France',flag:'🇫🇷',capital:'Paris',fact:'France is the most visited country in the world with over 90 million tourists per year!'},
+    {name:'Germany',flag:'🇩🇪',capital:'Berlin',fact:'Germany invented the car, aspirin, MP3 format and the Christmas tree tradition!'},
+    {name:'Italy',flag:'🇮🇹',capital:'Rome',fact:'Italy has more UNESCO World Heritage Sites than any other country in the world!'},
+    {name:'Spain',flag:'🇪🇸',capital:'Madrid',fact:'Spanish is the world\'s second most spoken native language with 480 million speakers!'},
+    {name:'Portugal',flag:'🇵🇹',capital:'Lisbon',fact:'Portugal is the world\'s oldest country with unchanged borders since 1139!'},
+    {name:'Netherlands',flag:'🇳🇱',capital:'Amsterdam',fact:'The Netherlands has more bicycles than people — 23 million bikes for 17 million citizens!'},
+    {name:'Belgium',flag:'🇧🇪',capital:'Brussels',fact:'Belgium invented French fries — despite the name, they\'re originally Belgian!'},
+    {name:'Switzerland',flag:'🇨🇭',capital:'Bern',fact:'Switzerland has been neutral in wars since 1815 and has not been to war in over 200 years!'},
+    {name:'Austria',flag:'🇦🇹',capital:'Vienna',fact:'Austria is the birthplace of Mozart, Beethoven grew up there, and it\'s the home of classical music!'},
+    {name:'Greece',flag:'🇬🇷',capital:'Athens',fact:'Ancient Greece invented democracy, the Olympics and was the birthplace of Western civilisation!'},
+    {name:'Sweden',flag:'🇸🇪',capital:'Stockholm',fact:'Sweden invented the safety match, the zipper, the pacemaker and Spotify!'},
+    {name:'Norway',flag:'🇳🇴',capital:'Oslo',fact:'Norway has the world\'s longest road tunnel — 24.5 km through a mountain!'},
+    {name:'Denmark',flag:'🇩🇰',capital:'Copenhagen',fact:'Denmark\'s flag is the oldest national flag still in use — since 1370!'},
+    {name:'Finland',flag:'🇫🇮',capital:'Helsinki',fact:'Finland has over 188,000 lakes — more than any other country relative to its size!'},
+    {name:'Poland',flag:'🇵🇱',capital:'Warsaw',fact:'Poland is the birthplace of Marie Curie, the first woman to win a Nobel Prize!'},
+    {name:'Ukraine',flag:'🇺🇦',capital:'Kyiv',fact:'Ukraine is the largest country entirely within Europe and has the richest soil in the world!'},
+    {name:'Russia',flag:'🇷🇺',capital:'Moscow',fact:'Russia spans 11 time zones — the largest country on Earth by land area!'},
+    {name:'Romania',flag:'🇷🇴',capital:'Bucharest',fact:'Romania is home to Transylvania — the region that inspired Bram Stoker\'s Dracula!'},
+    {name:'Hungary',flag:'🇭🇺',capital:'Budapest',fact:'Hungary invented the Rubik\'s Cube, the ballpoint pen and the hologram!'},
+    {name:'Czech Republic',flag:'🇨🇿',capital:'Prague',fact:'Prague is one of the best-preserved medieval cities in Europe!'},
+    {name:'Slovakia',flag:'🇸🇰',capital:'Bratislava',fact:'Bratislava is the only capital city that borders two different countries — Austria and Hungary!'},
+    {name:'Croatia',flag:'🇭🇷',capital:'Zagreb',fact:'Croatia invented the necktie — the word "cravat" comes from Croatian soldiers!'},
+    {name:'Serbia',flag:'🇷🇸',capital:'Belgrade',fact:'Nikola Tesla, who invented the electric motor and alternating current, was born in Serbia!'},
+    {name:'Bulgaria',flag:'🇧🇬',capital:'Sofia',fact:'Bulgaria is the only country to have kept the same name since it was first established in 681 AD!'},
+    {name:'Albania',flag:'🇦🇱',capital:'Tirana',fact:'In Albania, nodding your head means "no" and shaking it means "yes" — the opposite of most countries!'},
+    {name:'North Macedonia',flag:'🇲🇰',capital:'Skopje',fact:'North Macedonia is one of the youngest countries in Europe, declaring independence in 1991!'},
+    {name:'Bosnia',flag:'🇧🇦',capital:'Sarajevo',fact:'Sarajevo hosted the 1984 Winter Olympics and is called the "Jerusalem of Europe" for its diversity!'},
+    {name:'Slovenia',flag:'🇸🇮',capital:'Ljubljana',fact:'Slovenia has the oldest wooden wheel in the world — over 5,000 years old!'},
+    {name:'Iceland',flag:'🇮🇸',capital:'Reykjavik',fact:'Iceland is the world\'s oldest democracy — its parliament, the Althing, was founded in 930 AD!'},
+    {name:'Ireland',flag:'🇮🇪',capital:'Dublin',fact:'Ireland is known as the "Emerald Isle" and has the world\'s oldest pub — Sean\'s Bar, open since 900 AD!'},
+    {name:'Luxembourg',flag:'🇱🇺',capital:'Luxembourg City',fact:'Luxembourg has the highest GDP per capita in Europe and is one of the smallest countries!'},
+    {name:'Malta',flag:'🇲🇹',capital:'Valletta',fact:'Malta is the smallest EU member state and Valletta is the EU\'s smallest capital city!'},
+    {name:'Cyprus',flag:'🇨🇾',capital:'Nicosia',fact:'Cyprus\'s flag is unique — it shows a map of the island in copper-orange colour!'},
+    {name:'Estonia',flag:'🇪🇪',capital:'Tallinn',fact:'Estonia was the first country in the world to have online voting in national elections!'},
+    {name:'Latvia',flag:'🇱🇻',capital:'Riga',fact:'Latvia has one of the fastest internet connections in Europe!'},
+    {name:'Lithuania',flag:'🇱🇹',capital:'Vilnius',fact:'Lithuania was the last European country to adopt Christianity in 1387!'},
+    {name:'Belarus',flag:'🇧🇾',capital:'Minsk',fact:'Belarus has the largest ancient primeval forest in Europe — the Białowieża Forest!'},
+    {name:'Moldova',flag:'🇲🇩',capital:'Chișinău',fact:'Moldova is one of the world\'s top wine producers per capita!'},
+    {name:'Monaco',flag:'🇲🇨',capital:'Monaco',fact:'Monaco is the world\'s most densely populated country and second smallest!'},
+    {name:'San Marino',flag:'🇸🇲',capital:'San Marino',fact:'San Marino claims to be the world\'s oldest republic — founded in 301 AD!'},
+    {name:'Liechtenstein',flag:'🇱🇮',capital:'Vaduz',fact:'Liechtenstein is the world\'s only country bordered by two landlocked countries!'},
+    {name:'Andorra',flag:'🇦🇩',capital:'Andorra la Vella',fact:'Andorra has no army and relies on France and Spain for its defence!'},
+    {name:'Kosovo',flag:'🇽🇰',capital:'Pristina',fact:'Kosovo is one of the world\'s newest countries, declaring independence in 2008!'},
+    {name:'Montenegro',flag:'🇲🇪',capital:'Podgorica',fact:'Montenegro means "Black Mountain" — named after Mount Lovćen which appears black from the sea!'},
+  ],
+  Africa:[
+    {name:'Nigeria',flag:'🇳🇬',capital:'Abuja',fact:'Nigeria is the most populous country in Africa with over 220 million people!'},
+    {name:'Egypt',flag:'🇪🇬',capital:'Cairo',fact:'Ancient Egypt is one of the world\'s oldest civilisations — the pyramids were built over 4,500 years ago!'},
+    {name:'South Africa',flag:'🇿🇦',capital:'Pretoria',fact:'South Africa has three capital cities and 11 official languages!'},
+    {name:'Ethiopia',flag:'🇪🇹',capital:'Addis Ababa',fact:'Ethiopia is the only African country that was never colonised by a European power!'},
+    {name:'Kenya',flag:'🇰🇪',capital:'Nairobi',fact:'Kenya is home to the Great Rift Valley and has the most runners in the world at the Olympics!'},
+    {name:'Ghana',flag:'🇬🇭',capital:'Accra',fact:'Ghana was the first sub-Saharan African country to gain independence from colonial rule in 1957!'},
+    {name:'Tanzania',flag:'🇹🇿',capital:'Dodoma',fact:'Tanzania has Mount Kilimanjaro — the highest peak in Africa at 5,895 metres!'},
+    {name:'Morocco',flag:'🇲🇦',capital:'Rabat',fact:'Morocco has the world\'s oldest university still in operation — the University of al-Qarawiyyin, founded in 859 AD!'},
+    {name:'Algeria',flag:'🇩🇿',capital:'Algiers',fact:'Algeria is the largest country in Africa and the tenth largest in the world!'},
+    {name:'Sudan',flag:'🇸🇩',capital:'Khartoum',fact:'Sudan has more ancient pyramids than Egypt — over 200 Nubian pyramids!'},
+    {name:'Uganda',flag:'🇺🇬',capital:'Kampala',fact:'Uganda is home to half of the world\'s remaining mountain gorillas!'},
+    {name:'Mozambique',flag:'🇲🇿',capital:'Maputo',fact:'Mozambique\'s flag is the only national flag in the world to feature a modern weapon — an AK-47!'},
+    {name:'Madagascar',flag:'🇲🇬',capital:'Antananarivo',fact:'Madagascar is called the "8th continent" — 90% of its wildlife is found nowhere else on Earth!'},
+    {name:'Cameroon',flag:'🇨🇲',capital:'Yaoundé',fact:'Cameroon is called "Africa in miniature" because it has every landscape found in Africa!'},
+    {name:'Ivory Coast',flag:'🇨🇮',capital:'Yamoussoukro',fact:'Ivory Coast is the world\'s largest producer of cocoa — your chocolate bar likely came from there!'},
+    {name:'Niger',flag:'🇳🇪',capital:'Niamey',fact:'Niger has one of the world\'s youngest populations — over 50% under 15 years old!'},
+    {name:'Mali',flag:'🇲🇱',capital:'Bamako',fact:'Timbuktu in Mali was once the wealthiest city in the world during the 14th century!'},
+    {name:'Angola',flag:'🇦🇴',capital:'Luanda',fact:'Angola has one of the world\'s fastest growing economies thanks to its oil and diamond wealth!'},
+    {name:'Zambia',flag:'🇿🇲',capital:'Lusaka',fact:'Zambia and Zimbabwe share Victoria Falls — one of the world\'s largest waterfalls!'},
+    {name:'Zimbabwe',flag:'🇿🇼',capital:'Harare',fact:'Zimbabwe had hyperinflation so extreme they printed a 100 trillion dollar note!'},
+    {name:'Rwanda',flag:'🇷🇼',capital:'Kigali',fact:'Rwanda is one of the cleanest countries in Africa — plastic bags are banned!'},
+    {name:'Senegal',flag:'🇸🇳',capital:'Dakar',fact:'Senegal\'s capital Dakar is the westernmost point of the African continent!'},
+    {name:'Tunisia',flag:'🇹🇳',capital:'Tunis',fact:'Tunisia was home to Carthage — the ancient city that rivalled Rome in power!'},
+    {name:'Libya',flag:'🇱🇾',capital:'Tripoli',fact:'Libya has the largest proven oil reserves in Africa!'},
+    {name:'Somalia',flag:'🇸🇴',capital:'Mogadishu',fact:'Somalia has the longest coastline of any country in mainland Africa!'},
+    {name:'Botswana',flag:'🇧🇼',capital:'Gaborone',fact:'Botswana transformed from one of the world\'s poorest countries to one of Africa\'s most successful through diamond revenue!'},
+    {name:'Namibia',flag:'🇳🇦',capital:'Windhoek',fact:'Namibia has the oldest desert in the world — the Namib Desert is over 55 million years old!'},
+    {name:'Malawi',flag:'🇲🇼',capital:'Lilongwe',fact:'Lake Malawi contains more fish species than any other lake in the world!'},
+    {name:'Gabon',flag:'🇬🇦',capital:'Libreville',fact:'Gabon has over 80% forest cover — one of the most forested countries in Africa!'},
+    {name:'Congo',flag:'🇨🇩',capital:'Kinshasa',fact:'The Congo River is the world\'s deepest river — over 220 metres in some places!'},
+    {name:'Eritrea',flag:'🇪🇷',capital:'Asmara',fact:'Eritrea is one of the world\'s newest countries, gaining independence from Ethiopia in 1993!'},
+    {name:'Djibouti',flag:'🇩🇯',capital:'Djibouti',fact:'Djibouti sits at one of the world\'s busiest shipping lanes — the gateway between the Red Sea and Indian Ocean!'},
+  ],
+  'North America':[
+    {name:'United States',flag:'🇺🇸',capital:'Washington D.C.',fact:'The USA has the world\'s largest economy and invented the internet, airplane and the moon landing!'},
+    {name:'Canada',flag:'🇨🇦',capital:'Ottawa',fact:'Canada is the second largest country in the world and has more lakes than all other countries combined!'},
+    {name:'Mexico',flag:'🇲🇽',capital:'Mexico City',fact:'Mexico City was built on an ancient Aztec city called Tenochtitlan!'},
+    {name:'Cuba',flag:'🇨🇺',capital:'Havana',fact:'Cuba has one of the highest literacy rates in the world at 99.8%!'},
+    {name:'Jamaica',flag:'🇯🇲',capital:'Kingston',fact:'Jamaica gave the world reggae music and Usain Bolt — the fastest human ever!'},
+    {name:'Haiti',flag:'🇭🇹',capital:'Port-au-Prince',fact:'Haiti was the first Black republic in the world and first country to abolish slavery!'},
+    {name:'Dominican Republic',flag:'🇩🇴',capital:'Santo Domingo',fact:'Santo Domingo is the oldest European city in the Americas, founded in 1498!'},
+    {name:'Guatemala',flag:'🇬🇹',capital:'Guatemala City',fact:'Guatemala was home to the ancient Maya civilisation — their calendar predicted events 3,000 years ahead!'},
+    {name:'Honduras',flag:'🇭🇳',capital:'Tegucigalpa',fact:'Honduras is home to the ancient Maya ruins of Copán, a UNESCO World Heritage Site!'},
+    {name:'Panama',flag:'🇵🇦',capital:'Panama City',fact:'The Panama Canal connects the Atlantic and Pacific Oceans — one of the greatest engineering feats ever!'},
+    {name:'Costa Rica',flag:'🇨🇷',capital:'San José',fact:'Costa Rica has no army — it abolished its military in 1948 and invests in education instead!'},
+    {name:'El Salvador',flag:'🇸🇻',capital:'San Salvador',fact:'El Salvador is the smallest country in Central America but the most densely populated!'},
+    {name:'Nicaragua',flag:'🇳🇮',capital:'Managua',fact:'Nicaragua has the largest lake in Central America — Lake Nicaragua, which contains freshwater sharks!'},
+    {name:'Belize',flag:'🇧🇿',capital:'Belmopan',fact:'Belize is the only country in Central America where English is the official language!'},
+    {name:'Trinidad & Tobago',flag:'🇹🇹',capital:'Port of Spain',fact:'Trinidad is the birthplace of calypso music and the steel pan drum!'},
+    {name:'Bahamas',flag:'🇧🇸',capital:'Nassau',fact:'The Bahamas has some of the clearest water in the world — you can see 60 metres down!'},
+    {name:'Barbados',flag:'🇧🇧',capital:'Bridgetown',fact:'Barbados is the birthplace of Rihanna and has the third oldest parliament in the world!'},
+    {name:'Grenada',flag:'🇬🇩',capital:'St. George\'s',fact:'Grenada is called the "Spice Island" — it\'s one of the world\'s largest producers of nutmeg!'},
+  ],
+  'South America':[
+    {name:'Brazil',flag:'🇧🇷',capital:'Brasília',fact:'Brazil contains 60% of the Amazon rainforest — the world\'s largest tropical rainforest!'},
+    {name:'Argentina',flag:'🇦🇷',capital:'Buenos Aires',fact:'Argentina is home to the world\'s southernmost city — Ushuaia, at the tip of South America!'},
+    {name:'Colombia',flag:'🇨🇴',capital:'Bogotá',fact:'Colombia is the only country in South America with coastlines on both the Pacific and Atlantic Oceans!'},
+    {name:'Peru',flag:'🇵🇪',capital:'Lima',fact:'Peru is home to Machu Picchu — the legendary lost city of the Inca built 2,430 metres above sea level!'},
+    {name:'Venezuela',flag:'🇻🇪',capital:'Caracas',fact:'Venezuela has Angel Falls — the world\'s highest uninterrupted waterfall at 979 metres!'},
+    {name:'Chile',flag:'🇨🇱',capital:'Santiago',fact:'Chile is the world\'s longest country from north to south — 4,300 km!'},
+    {name:'Ecuador',flag:'🇪🇨',capital:'Quito',fact:'Ecuador is home to the Galápagos Islands — where Charles Darwin developed his theory of evolution!'},
+    {name:'Bolivia',flag:'🇧🇴',capital:'Sucre',fact:'Bolivia has the world\'s highest capital city — La Paz at 3,640 metres above sea level!'},
+    {name:'Paraguay',flag:'🇵🇾',capital:'Asunción',fact:'Paraguay is one of the only countries whose flag is different on each side!'},
+    {name:'Uruguay',flag:'🇺🇾',capital:'Montevideo',fact:'Uruguay was the first country in the world to legalise cannabis and same-sex marriage!'},
+    {name:'Guyana',flag:'🇬🇾',capital:'Georgetown',fact:'Guyana is the only English-speaking country in South America!'},
+    {name:'Suriname',flag:'🇸🇷',capital:'Paramaribo',fact:'Suriname is the smallest country in South America and has the most forest cover of any nation!'},
+  ],
+  Oceania:[
+    {name:'Australia',flag:'🇦🇺',capital:'Canberra',fact:'Australia is the only country that is also a continent, and has 80% of species found nowhere else!'},
+    {name:'New Zealand',flag:'🇳🇿',capital:'Wellington',fact:'New Zealand was the first country to give women the right to vote in 1893!'},
+    {name:'Papua New Guinea',flag:'🇵🇬',capital:'Port Moresby',fact:'Papua New Guinea has over 800 languages — more than any other country on Earth!'},
+    {name:'Fiji',flag:'🇫🇯',capital:'Suva',fact:'Fiji is made up of over 330 islands and is known for having some of the friendliest people on Earth!'},
+    {name:'Samoa',flag:'🇼🇸',capital:'Apia',fact:'Samoa changed which side of the road they drive on in 2011 — overnight!'},
+    {name:'Tonga',flag:'🇹🇴',capital:'Nuku\'alofa',fact:'Tonga is the only monarchy in the Pacific Ocean region!'},
+    {name:'Vanuatu',flag:'🇻🇺',capital:'Port Vila',fact:'Vanuatu has more languages per person than any other country!'},
+    {name:'Solomon Islands',flag:'🇸🇧',capital:'Honiara',fact:'The Solomon Islands were the site of some of the fiercest fighting in World War II!'},
+    {name:'Micronesia',flag:'🇫🇲',capital:'Palikir',fact:'Micronesia\'s flag stars represent its four states spread across the Pacific Ocean!'},
+    {name:'Palau',flag:'🇵🇼',capital:'Ngerulmud',fact:'Palau has one of the world\'s first shark sanctuaries — fishing sharks is completely banned!'},
+    {name:'Marshall Islands',flag:'🇲🇭',capital:'Majuro',fact:'The Marshall Islands is at serious risk of disappearing due to rising sea levels!'},
+    {name:'Kiribati',flag:'🇰🇮',capital:'South Tarawa',fact:'Kiribati is the first country that will disappear due to climate change — its highest point is 2 metres!'},
+    {name:'Nauru',flag:'🇳🇷',capital:'Yaren',fact:'Nauru is the world\'s smallest island nation and third smallest country overall!'},
+    {name:'Tuvalu',flag:'🇹🇻',capital:'Funafuti',fact:'Tuvalu may be the world\'s most isolated country — the nearest land is 1,000 km away!'},
+  ]
+};
+
+const CONTINENT_INFO={
+  Asia:{emoji:'🌏',roundName:'Asian Flags'},
+  Europe:{emoji:'🌍',roundName:'European Flags'},
+  Africa:{emoji:'🌍',roundName:'African Flags'},
+  'North America':{emoji:'🌎',roundName:'North American Flags'},
+  'South America':{emoji:'🌎',roundName:'South American Flags'},
+  Oceania:{emoji:'🌏',roundName:'Oceanian Flags'},
+};
+
+const CONTINENT_ORDER=['Asia','Europe','Africa','North America','South America','Oceania'];
+
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+
+// ── Game State ────────────────────────────────────────────────────
+let G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
+  streak:0,bestStreak:0,sessionBestStreak:0,answered:false,roundStars:0,
+  attempts:0,question:null,continentIdx:0,continentPool:[],poolIdx:0,
+  lifeRestoreStreak:0,hintUsed:false,hintTimer:null};
+
+// ── Init ──────────────────────────────────────────────────────────
+async function init(){
+  try{
+    const players=await db('players?select=*');
+    const p=players.find(x=>x.name.toLowerCase()===playerName.toLowerCase());
+    if(p){playerId=p.id;playerGrade=p.grade||3;}
+  }catch(e){}
+  if(playerId){
+    try{
+      const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.world-flags`);
+      if(rows&&rows.length){personalBest=rows[0].best_score||0;
+        document.getElementById('pb-row').style.display='flex';
+        document.getElementById('pb-val').textContent=personalBest.toLocaleString();}
+    }catch(e){}
+  }
+  document.getElementById('start-greeting').textContent=`Learn the flags of every country, ${cap(playerName)}! 🌍`;
+  document.getElementById('g-player-label').textContent=`${cap(playerName)} · Grade ${playerGrade}`;
+  renderContinentProgress();
+}
+
+function renderContinentProgress(){
+  const el=document.getElementById('continent-progress');
+  el.innerHTML=CONTINENT_ORDER.map((c,i)=>{
+    const info=CONTINENT_INFO[c];
+    const count=FLAGS[c].length;
+    return `<div class="cp-row">
+      <span class="cp-emoji">${info.emoji}</span>
+      <span class="cp-name">${c}</span>
+      <span class="cp-count">${count} countries</span>
+      <span class="cp-status">${i===0?'▶️':'⏳'}</span>
+    </div>`;
+  }).join('');
+}
+
+function startGame(){
+  G={round:1,qIdx:0,lives:3,stars:0,correct:0,totalCorrect:0,totalAsked:0,
+    streak:0,bestStreak:0,sessionBestStreak:0,answered:false,roundStars:0,
+    attempts:0,question:null,continentIdx:0,
+    continentPool:shuffle([...FLAGS[CONTINENT_ORDER[0]]]),poolIdx:0,
+    lifeRestoreStreak:0,hintUsed:false,hintTimer:null};
+  updateContinentDisplay();
+  showScreen('gameScreen');
+  loadQuestion();
+}
+
+function getCurrentContinent(){return CONTINENT_ORDER[G.continentIdx%CONTINENT_ORDER.length];}
+
+function updateContinentDisplay(){
+  const cont=getCurrentContinent();
+  const info=CONTINENT_INFO[cont];
+  document.getElementById('g-cont-disp').textContent=`${info.emoji} ${cont}`;
+  document.getElementById('continent-badge').textContent=`${info.emoji} ${cont}`;
+}
+
+function loadQuestion(){
+  if(G.qIdx>=10){endRound();return;}
+  G.answered=false;G.attempts=0;G.hintUsed=false;
+  clearTimeout(G.hintTimer);
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('hint-box').className='hint-box';
+  document.getElementById('hint-btn').style.display='none';
+  document.getElementById('g-feedback').textContent='';
+  if(G.poolIdx>=G.continentPool.length){
+    G.continentPool=shuffle([...FLAGS[getCurrentContinent()]]);
+    G.poolIdx=0;
+  }
+  const country=G.continentPool[G.poolIdx++];
+  const isFlagMode=G.qIdx%2===0;
+  G.question={country,isFlagMode};
+  document.getElementById('g-qnum').textContent=`${G.qIdx+1}/10`;
+  document.getElementById('g-qnum2').textContent=`Q ${G.qIdx+1}/10`;
+  document.getElementById('g-round').textContent=G.round;
+  document.getElementById('g-mode-tag').textContent=isFlagMode?'🚩 Flag → Country':'🗺️ Country → Flag';
+  document.getElementById('g-mode-tag').className=`mode-tag ${isFlagMode?'flag_to_country':'country_to_flag'}`;
+  updateAttemptDots();
+  renderQuestion(country,isFlagMode);
+  G.hintTimer=setTimeout(()=>{if(!G.answered)document.getElementById('hint-btn').style.display='flex';},7000);
+}
+
+function renderQuestion(country,isFlagMode){
+  const el=document.getElementById('q-content');
+  const cont=getCurrentContinent();
+  const others=shuffle(FLAGS[cont].filter(c=>c.name!==country.name)).slice(0,3);
+  if(isFlagMode){
+    el.innerHTML=`<span class="flag-big">${country.flag}</span>
+      <div class="question-text">Which country does this flag belong to?</div>
+      <div class="opts">${shuffle([country,...others]).map(c=>
+        `<button class="opt" onclick="checkOpt(this,'${c.name.replace(/'/g,"\\'")}','${country.name.replace(/'/g,"\\'")}')">
+          ${c.name}</button>`).join('')}</div>`;
+  } else {
+    el.innerHTML=`<div class="question-text" style="font-size:1.4rem;margin-bottom:16px">${country.name}</div>
+      <div class="question-text" style="font-size:.88rem;margin-bottom:12px">Which flag belongs to ${country.name}?</div>
+      <div class="opts">${shuffle([country,...others]).map(c=>
+        `<button class="opt" onclick="checkOpt(this,'${c.name.replace(/'/g,"\\'")}','${country.name.replace(/'/g,"\\'")}')">
+          <span class="opt-flag">${c.flag}</span>
+        </button>`).join('')}</div>`;
+  }
+}
+
+function checkOpt(btn,chosen,correct){
+  if(G.answered)return;
+  clearTimeout(G.hintTimer);
+  if(chosen===correct){
+    btn.classList.add('correct');
+    document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+    processResult(true);
+  } else {
+    btn.classList.add('wrong');btn.disabled=true;
+    G.attempts++;updateAttemptDots();
+    if(G.attempts>=3){
+      document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+      processResult(false);
+    } else {
+      document.getElementById('g-feedback').textContent=G.attempts===1?'Not quite! Try again 🤔':'One more try!';
+    }
+  }
+}
+
+function updateAttemptDots(){
+  for(let i=0;i<3;i++){
+    const dot=document.getElementById(`dot-${i}`);if(!dot)return;
+    dot.className='attempt-dot';
+    if(i<G.attempts)dot.classList.add('used');
+    else if(i===G.attempts)dot.classList.add('current');
+  }
+}
+
+function processResult(isCorrect){
+  G.answered=true;clearTimeout(G.hintTimer);
+  const attemptStars=G.attempts===0?2:G.attempts===1?1:0;
+  const hintPenalty=G.hintUsed?0.5:1;
+  let earned=0;
+  if(isCorrect){
+    earned=Math.max(0,Math.floor(attemptStars*hintPenalty));
+    G.stars+=earned;G.roundStars+=earned;
+    G.correct++;G.totalCorrect++;G.totalAsked++;
+    G.streak++;
+    if(G.streak>G.bestStreak)G.bestStreak=G.streak;
+    if(G.streak>G.sessionBestStreak)G.sessionBestStreak=G.streak;
+    checkLifeRestore();updateStreakBadge();
+    const combos=[{s:3,t:'GLOBE TROTTER! 🌍',sub:'3 correct!'},{s:5,t:'WORLD EXPLORER! ⭐',sub:'5 in a row!'},{s:7,t:'FLAG MASTER! 🚩',sub:'7 in a row!'},{s:10,t:'WORLD CHAMPION! 🏆',sub:'10 in a row!'}];
+    const c=combos.slice().reverse().find(c=>G.streak===c.s);
+    if(c)showPopup('combo',c.t,c.sub);
+  } else {
+    G.lives--;G.streak=0;G.totalAsked++;G.lifeRestoreStreak=0;
+    updateStreakBadge();updateLives();
+    if(G.lives<=0){showExplanation(false,()=>endGame());return;}
+  }
+  document.getElementById('g-stars').textContent=G.stars.toLocaleString();
+  updateLives();
+  showExplanation(isCorrect,()=>{G.qIdx++;loadQuestion();});
+}
+
+function showExplanation(isCorrect,onNext){
+  const c=G.question.country;
+  const cont=getCurrentContinent();
+  const ec=document.getElementById('explanation-card');
+  document.getElementById('ex-flag').textContent=c.flag;
+  document.getElementById('ex-country').textContent=c.name;
+  document.getElementById('ex-continent-label').textContent=cont;
+  document.getElementById('ex-capital').textContent=c.capital;
+  document.getElementById('ex-continent').textContent=cont;
+  document.getElementById('ex-fact-txt').textContent=c.fact;
+  const nextBtn=document.getElementById('ex-next');
+  nextBtn.className=`ex-next ${isCorrect?'ok':'no'}`;
+  nextBtn.textContent=G.qIdx>=9||G.lives<=0?'See Results →':'Next Flag →';
+  ec.className=`explanation-card show ${isCorrect?'ok':'no'}`;
+  ec.style.display='block';
+  window._exNextFn=onNext;
+  setTimeout(()=>ec.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function advanceQuestion(){
+  document.getElementById('explanation-card').style.display='none';
+  document.getElementById('hint-box').className='hint-box';
+  document.getElementById('hint-btn').style.display='none';
+  clearTimeout(G.hintTimer);
+  if(window._exNextFn){window._exNextFn();window._exNextFn=null;}
+}
+
+function useHint(){
+  if(G.hintUsed||G.answered)return;
+  G.hintUsed=true;
+  document.getElementById('hint-btn').className='hint-btn used';
+  document.getElementById('hint-btn').innerHTML='💡 Used';
+  const c=G.question.country;
+  document.getElementById('hint-txt').textContent=`This country\'s capital is ${c.capital} and it\'s in ${getCurrentContinent()}.`;
+  document.getElementById('hint-box').className='hint-box show';
+}
+
+function showPicture(){
+  const c=G.question.country;
+  window.open(`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(c.name+' flag country')}`, '_blank');
+}
+
+function checkLifeRestore(){
+  if(G.lives>=3)return;
+  G.lifeRestoreStreak++;
+  if(G.lifeRestoreStreak>=3){G.lifeRestoreStreak=0;G.lives=Math.min(3,G.lives+1);updateLives();showPopup('life','❤️ Life Restored!','3 correct in a row!');}
+}
+
+function updateLives(){let h='';for(let i=0;i<3;i++)h+=i<G.lives?'❤️':'🖤';document.getElementById('lives-display').textContent=h;}
+function updateStreakBadge(){
+  const el=document.getElementById('streak-badge');
+  el.textContent=`${G.streak} 🚩`;
+  el.className=`streak-badge${G.streak>=7?' s7':G.streak>=5?' s5':G.streak>=3?' s3':''}`;
+}
+function showPopup(type,text,sub){
+  const el=document.getElementById(type+'-popup');if(!el)return;
+  if(type==='combo'){document.getElementById('combo-text').textContent=text;document.getElementById('combo-sub').textContent=sub;}
+  el.className=`popup-overlay ${type} show`;
+  setTimeout(()=>{el.className=`popup-overlay ${type} hide`;},1500);
+  setTimeout(()=>{el.className=`popup-overlay ${type}`;},1800);
+}
+
+function endRound(){
+  const acc=G.totalAsked>0?Math.round(G.totalCorrect/G.totalAsked*100):0;
+  const cont=getCurrentContinent();
+  const info=CONTINENT_INFO[cont];
+  document.getElementById('re-icon').textContent=G.correct>=8?'🏆':G.correct>=5?'⭐':'🚩';
+  document.getElementById('re-title').textContent=`${info.emoji} ${cont} Complete!`;
+  document.getElementById('re-correct').textContent=G.correct;
+  document.getElementById('re-acc').textContent=acc+'%';
+  document.getElementById('re-stars-r').textContent=G.roundStars.toLocaleString();
+  document.getElementById('re-streak-r').textContent=G.bestStreak;
+  document.getElementById('re-msg').textContent=G.correct>=8?`${cont} flag expert! 🌟`:G.correct>=5?'Great flag knowledge! 💪':'Keep exploring! 🌱';
+  G.continentIdx++;
+  const nextCont=CONTINENT_ORDER[G.continentIdx%CONTINENT_ORDER.length];
+  const nextInfo=CONTINENT_INFO[nextCont];
+  document.getElementById('re-next-btn').textContent=`Next: ${nextInfo.emoji} ${nextCont} →`;
+  showScreen('roundEndScreen');
+}
+
+function nextRound(){
+  G.round++;G.qIdx=0;G.roundStars=0;G.correct=0;G.streak=0;G.bestStreak=0;G.lifeRestoreStreak=0;
+  const cont=getCurrentContinent();
+  G.continentPool=shuffle([...FLAGS[cont]]);G.poolIdx=0;
+  updateContinentDisplay();
+  showScreen('gameScreen');loadQuestion();
+}
+
+async function endGame(){
+  showScreen('gameOverScreen');
+  const total=G.stars;
+  document.getElementById('go-score').textContent=total.toLocaleString()+' ⭐';
+  document.getElementById('go-earned').textContent=`+${total.toLocaleString()} stars saved`;
+  document.getElementById('go-rounds').textContent=G.round;
+  document.getElementById('go-correct').textContent=G.totalCorrect;
+  document.getElementById('go-streak').textContent=G.sessionBestStreak;
+  const isNewBest=total>personalBest;if(isNewBest)personalBest=total;
+  document.getElementById('go-pb').textContent=personalBest.toLocaleString();
+  document.getElementById('new-best-banner').style.display=isNewBest?'block':'none';
+  document.getElementById('go-msg').textContent=total>=20?'World Flag Champion! 🏆':total>=12?'Outstanding explorer! 🌟':total>=7?'Great geography! 💪':'Keep exploring! 🌱';
+  document.getElementById('go-trophy').textContent=total>=20?'🏆':total>=12?'🌍':'🚩';
+  if(playerId&&total>0){
+    try{
+      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,amount:total,reason:`World Flags — Round ${G.round}, ${G.totalCorrect} correct`,category:'game'}});
+      const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.world-flags`);
+      if(rows&&rows.length){
+        await db(`game_scores?player_id=eq.${playerId}&game_key=eq.world-flags`,{method:'PATCH',prefer:'return=minimal',body:{best_score:isNewBest?total:rows[0].best_score,best_round:G.round,total_plays:(rows[0].total_plays||0)+1,last_played:new Date().toISOString()}});
+      } else {
+        await db('game_scores',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,game_key:'world-flags',best_score:total,best_round:G.round,total_plays:1}});
+      }
+    }catch(e){}
+  }
+}
+
+function restartGame(){G.continentIdx=0;startGame();}
+function goHome(){window.location.href='index.html?player='+playerName;}
+function confirmQuit(){if(confirm('Quit World Flags? Progress will be lost.'))goHome();}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+init();
+</script>
+</body>
+</html>
