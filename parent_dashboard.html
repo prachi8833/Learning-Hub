@@ -198,6 +198,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     <div class="pd-nav-section">Configure</div>
     <div class="pd-nav-item" onclick="showSection('schedule')"><span class="ni">📅</span><span class="nl">Schedule</span></div>
     <div class="pd-nav-item" onclick="showSection('content')"><span class="ni">🎓</span><span class="nl">Content</span></div>
+    <div class="pd-nav-item" onclick="showSection('backgrounds')"><span class="ni">🖼️</span><span class="nl">Backgrounds</span></div>
     <div class="pd-nav-item" onclick="showSection('settings')"><span class="ni">⚙️</span><span class="nl">Settings</span></div>
   </nav>
 </aside>
@@ -332,6 +333,23 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     </div>
 
     <!-- SETTINGS -->
+    <!-- ─── BACKGROUNDS SECTION ─── -->
+    <div id="section-backgrounds" class="pd-section">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title"><span>🖼️ App Backgrounds</span></div>
+        <p style="font-size:.78rem;color:rgba(255,255,255,.5);font-weight:700;margin:0 0 16px">
+          Upload a background image for each screen. Kids see it immediately — no code changes needed.
+        </p>
+        <div id="bg-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px">
+          <!-- Cards injected by JS -->
+          <div style="text-align:center;padding:24px;color:rgba(255,255,255,.3);font-size:.8rem">Loading backgrounds…</div>
+        </div>
+      </div>
+
+      <!-- Hidden file input -->
+      <input type="file" id="bg-file-input" accept="image/*" style="display:none" onchange="handleBgUpload(event)">
+    </div>
+
     <div id="section-settings" class="pd-section">
       <div class="card">
         <div class="card-title"><span>⚙️ App Settings</span></div>
@@ -404,8 +422,9 @@ async function uploadToStorage(bucket, path, file){
 let D={players:[],tasks:[],wishList:[],rewardShop:[],settings:{}};
 let D_wishFilter='all';
 const sectionTitles={overview:'Overview',pending:'Pending Approvals',tasks:'Task Manager',
-  wishlist:'Wish List Manager',rewards:'Reward Shop',stars:'Star Manager',
-  schedule:'Schedule Manager',content:'Content Manager',settings:'Settings'};
+  wishlist:'Wish List',rewards:'Reward Shop',stars:'Stars & History',
+  schedule:'Daily Schedule',content:'Learning Content',
+  backgrounds:'Background Images',settings:'Settings'};
 
 async function init(){
   await loadAll();
@@ -1092,7 +1111,203 @@ function toast(msg,type=''){
   setTimeout(()=>el.classList.remove('show'),3000);
 }
 
+// ═══════════════════════════════════════════════
+// 🖼️  BACKGROUNDS MANAGER
+// ═══════════════════════════════════════════════
+
+const SB_STORAGE = `${SB}/storage/v1/object`;
+const SB_STORAGE_PUBLIC = `${SB}/storage/v1/object/public/backgrounds`;
+
+const BG_SCREENS = [
+  { key:'home',    label:'🏠 Home',         desc:'Player select & main home screen' },
+  { key:'learn',   label:'📚 Learn',         desc:'Subject explorer screen' },
+  { key:'tasks',   label:'📋 Tasks',         desc:'Daily tasks & schedule screen' },
+  { key:'rewards', label:'🎁 Rewards',        desc:'Star shop & wish list screen' },
+  { key:'profile', label:'👤 Profile',        desc:'Kid profile & achievements screen' },
+  { key:'parent',  label:'🔑 Parent Dashboard', desc:'This dashboard background' },
+];
+
+// Current Supabase-stored background URLs (keyed by screen)
+const bgSettings = {};
+
+async function loadBackgrounds(){
+  try{
+    const rows = await db('app_settings?select=key,value');
+    if(Array.isArray(rows)) rows.forEach(r => { bgSettings[r.key] = r.value; });
+  }catch(e){ console.warn('loadBackgrounds error',e); }
+  renderBgGrid();
+}
+
+function renderBgGrid(){
+  const grid = document.getElementById('bg-grid');
+  if(!grid) return;
+  grid.innerHTML = BG_SCREENS.map(s => {
+    const settingKey = `bg_${s.key}`;
+    const url = bgSettings[settingKey] || null;
+    const hasCustom = !!url;
+    return `
+    <div class="bg-card" id="bgcard-${s.key}" style="
+      border-radius:14px;overflow:hidden;
+      border:1.5px solid ${hasCustom?'rgba(43,191,184,.4)':'rgba(255,255,255,.1)'};
+      background:rgba(255,255,255,.04);
+      transition:border-color .2s;
+    ">
+      <!-- Thumbnail -->
+      <div style="position:relative;height:130px;background:#0D1A12;overflow:hidden">
+        ${hasCustom
+          ? `<img src="${url}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">`
+          : `<div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:6px">
+               <div style="font-size:2rem;opacity:.3">🖼️</div>
+               <div style="font-size:.65rem;font-weight:700;color:rgba(255,255,255,.25)">No custom image</div>
+             </div>`
+        }
+        ${hasCustom ? `<div style="position:absolute;top:8px;right:8px;background:rgba(43,191,184,.9);border-radius:99px;padding:2px 8px;font-size:.58rem;font-weight:900;color:#fff">✓ Custom</div>` : ''}
+      </div>
+      <!-- Info + actions -->
+      <div style="padding:12px">
+        <div style="font-size:.82rem;font-weight:900;color:#fff;margin-bottom:2px">${s.label}</div>
+        <div style="font-size:.65rem;color:rgba(255,255,255,.4);font-weight:700;margin-bottom:10px">${s.desc}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="triggerBgUpload('${s.key}')" style="
+            flex:1;padding:7px 10px;border:none;border-radius:8px;
+            background:var(--teal);color:#fff;
+            font-size:.7rem;font-weight:900;cursor:pointer;
+            font-family:'Nunito',sans-serif;
+          ">📤 Upload</button>
+          ${hasCustom ? `
+          <button onclick="removeBg('${s.key}')" style="
+            padding:7px 10px;border:1px solid rgba(255,100,100,.3);border-radius:8px;
+            background:rgba(255,100,100,.1);color:#FF8A80;
+            font-size:.7rem;font-weight:900;cursor:pointer;
+            font-family:'Nunito',sans-serif;
+          ">🗑️</button>
+          ` : ''}
+        </div>
+        ${hasCustom ? `<div style="margin-top:8px;font-size:.58rem;color:rgba(255,255,255,.25);word-break:break-all;font-weight:700">${url.split('/').pop()}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Which screen we're uploading for
+let _bgUploadTarget = null;
+
+function triggerBgUpload(screenKey){
+  _bgUploadTarget = screenKey;
+  const inp = document.getElementById('bg-file-input');
+  inp.value = ''; // reset so same file can be re-uploaded
+  inp.click();
+}
+
+async function handleBgUpload(event){
+  const file = event.target.files[0];
+  if(!file || !_bgUploadTarget) return;
+
+  // Validate
+  if(!file.type.startsWith('image/')){
+    showToast('Please choose an image file (JPG, PNG, WebP)','error'); return;
+  }
+  if(file.size > 8 * 1024 * 1024){
+    showToast('Image must be under 8MB','error'); return;
+  }
+
+  const screenKey = _bgUploadTarget;
+  const ext = file.name.split('.').pop().toLowerCase();
+  const filename = `bg-${screenKey}.${ext}`;
+  const settingKey = `bg_${screenKey}`;
+
+  // Show uploading state on the card
+  const card = document.getElementById(`bgcard-${screenKey}`);
+  if(card){
+    const btn = card.querySelector('button');
+    if(btn){ btn.textContent = '⏳ Uploading…'; btn.disabled = true; }
+  }
+
+  try{
+    // 1. Upload to Supabase Storage
+    const uploadRes = await fetch(`${SB_STORAGE}/backgrounds/${filename}`, {
+      method: 'PUT',
+      headers: {
+        'apikey': KEY,
+        'Authorization': `Bearer ${KEY}`,
+        'Content-Type': file.type,
+        'x-upsert': 'true',
+      },
+      body: file,
+    });
+
+    if(!uploadRes.ok){
+      const err = await uploadRes.text();
+      throw new Error(`Upload failed: ${err}`);
+    }
+
+    // 2. Build public URL
+    const publicUrl = `${SB_STORAGE_PUBLIC}/${filename}?t=${Date.now()}`;
+
+    // 3. Upsert into app_settings
+    const upsertRes = await fetch(`${SB}/rest/v1/app_settings`, {
+      method: 'POST',
+      headers: {
+        'apikey': KEY,
+        'Authorization': `Bearer ${KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates,return=minimal',
+      },
+      body: JSON.stringify({ key: settingKey, value: publicUrl, updated_at: new Date().toISOString() }),
+    });
+
+    if(!upsertRes.ok) throw new Error('Failed to save setting');
+
+    // 4. Update local cache + re-render
+    bgSettings[settingKey] = publicUrl;
+    renderBgGrid();
+    showToast(`✅ Background updated for ${BG_SCREENS.find(s=>s.key===screenKey)?.label||screenKey}!`);
+
+    // 5. If it's the parent dashboard's own bg, apply immediately
+    if(screenKey === 'parent'){
+      document.body.style.backgroundImage = `url('${publicUrl}')`;
+    }
+
+  }catch(e){
+    console.error('bg upload error', e);
+    showToast(`Upload failed: ${e.message}`, 'error');
+    renderBgGrid(); // reset button state
+  }
+}
+
+async function removeBg(screenKey){
+  if(!confirm(`Remove custom background for ${screenKey}? It will revert to the default.`)) return;
+  const settingKey = `bg_${screenKey}`;
+  try{
+    await fetch(`${SB}/rest/v1/app_settings?key=eq.${settingKey}`, {
+      method: 'DELETE',
+      headers: { 'apikey': KEY, 'Authorization': `Bearer ${KEY}` },
+    });
+    delete bgSettings[settingKey];
+    renderBgGrid();
+    showToast(`Background removed — reverted to default`);
+  }catch(e){
+    showToast('Remove failed','error');
+  }
+}
+
+// Load backgrounds on init
+async function initBackgrounds(){
+  await loadBackgrounds();
+  // Apply parent dashboard background if set
+  const parentBg = bgSettings['bg_parent'];
+  if(parentBg) document.body.style.backgroundImage = `url('${parentBg}')`;
+}
+
+// ─── Wire into showSection ───────────────────────────────
+const _origShowSection = showSection;
+showSection = function(name){
+  _origShowSection(name);
+  if(name === 'backgrounds') loadBackgrounds();
+};
+
 init();
+initBackgrounds();
 </script>
 </body>
 </html>
