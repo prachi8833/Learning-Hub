@@ -2056,9 +2056,12 @@ h1, h2, h3 {
 </div>
 
 <script>
-// ─── CONFIG ────────────────────────────────────────────────────────
-const BG_BASE = 'https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/';
-const SUPABASE_STORAGE = `${SB}/storage/v1/object/public/backgrounds/`;
+// ─── CONFIG — ALL CONSTANTS IN DEPENDENCY ORDER ────────────
+const SB='https://tnhgihzfwqsflpueivwe.supabase.co';
+const KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
+const IMG_BASE='https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/';
+const BG_BASE=IMG_BASE;
+const SUPABASE_STORAGE=`${SB}/storage/v1/object/public/backgrounds/`;
 
 // Default GitHub backgrounds (fallback if Supabase not set)
 const SCREEN_BG={
@@ -2089,7 +2092,6 @@ function setBG(screen){
   _currentBG=url;
   const layer=document.getElementById('bg-layer');
   if(!layer) return;
-  // Crossfade: create a second layer, fade it in, then swap
   layer.style.transition='opacity 0.6s ease';
   layer.style.opacity='0';
   setTimeout(()=>{
@@ -2097,10 +2099,6 @@ function setBG(screen){
     layer.style.opacity='1';
   },300);
 }
-
-const SB='https://tnhgihzfwqsflpueivwe.supabase.co';
-const KEY='sb_publishable_MOfPmwQ3sKgia0bnOfrIdw_rY7FaJCr';
-const IMG_BASE='https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/';
 
 // Subject key → PNG filename mapping (all uploaded PNGs)
 const subjectImages={
