@@ -2793,9 +2793,8 @@ const QUEST_PHASES = [
   {
     id: 'games', num: 3, icon: '\ud83c\udfae', name: 'Choice Games',
     tag: 'Phase 3', locked: true,
-    subtitle: () => '2 games \u00b7 20-30 min \u00b7 Coming soon',
+    subtitle: () => '2 games \u00b7 20-30 min',
     starsMax: 40,
-    comingSoon: true,
   },
   {
     id: 'dharma', num: 4, icon: '\ud83d\udd49\ufe0f', name: 'Dharma Time',
@@ -2820,8 +2819,12 @@ function getQuestState() {
   // Phase 2: done when a reading session was submitted today
   const readingDone = (S.todayReadingCount || 0) > 0;
 
-  // Phase 3 + 4: stubbed until built
-  const gamesDone = false;
+  // Phase 3: done when 2 different games were played today
+  const gamesPlayed = S.todayGamesPlayed || [];
+  const gamesCount = Math.min(gamesPlayed.length, 2);
+  const gamesDone = gamesCount >= 2;
+
+  // Phase 4: stubbed until built
   const dharmaDone = false;
 
   // Phase 5: done when an "exercise" task is approved today
@@ -2831,7 +2834,7 @@ function getQuestState() {
   return {
     subjects: { done: subjectsDone, progress: subjectsCount, total: 3 },
     reading: { done: readingDone, progress: readingDone ? 1 : 0, total: 1 },
-    games: { done: gamesDone, progress: 0, total: 2 },
+    games: { done: gamesDone, progress: gamesCount, total: 2 },
     dharma: { done: dharmaDone, progress: 0, total: 1 },
     exercise: { done: exerciseDone, progress: exerciseDone ? 1 : 0, total: 1 },
   };
@@ -2871,7 +2874,7 @@ function renderQuestTrail() {
   const phases = [
     { id:'subjects', num:1, emoji:'📚', name:'Subject Learning', sub: todaySubjNames.join(' · '), starsMax:60, locked:false, comingSoon:false },
     { id:'reading',  num:2, emoji:'📖', name:'Reading Time',     sub:'One passage · 10–15 min', starsMax:20, locked:!state.subjects.done, comingSoon:false },
-    { id:'games',    num:3, emoji:'🎮', name:'Choice Games',     sub:'2 games · 20–30 min', starsMax:40, locked:!state.reading.done, comingSoon:true },
+    { id:'games',    num:3, emoji:'🎮', name:'Choice Games',     sub:'2 games · 20–30 min', starsMax:40, locked:!state.reading.done, comingSoon:false },
     { id:'dharma',   num:4, emoji:'🕉️', name:'Dharma Time',     sub:'10–15 min', starsMax:15, locked:false, comingSoon:true, open:true },
     { id:'exercise', num:5, emoji:'🏃', name:'Exercise',         sub:'5 min · stretch, jump, move!', starsMax:5, locked:false, comingSoon:false, open:true },
   ];
@@ -2937,6 +2940,9 @@ function renderQuestTrail() {
         return `<span class="qt-mini-pill ${done?'done':'todo'}">${done?'✓':'○'} ${nm}</span>`;
       }).join('')}</div>`;
     }
+    if(ph.id==='games'){
+      miniPills = `<div class="qt-mini-pills" style="margin-top:6px"><span class="qt-mini-pill ${state.games.progress>=1?'done':'todo'}">${state.games.progress>=1?'✓':'○'} Game 1</span><span class="qt-mini-pill ${state.games.progress>=2?'done':'todo'}">${state.games.progress>=2?'✓':'○'} Game 2</span></div>`;
+    }
 
     // Coming soon note
     const csnote = ph.comingSoon ? '<span style="font-size:.58rem;font-weight:700;color:rgba(255,255,255,.3);margin-left:4px">· Coming soon</span>' : '';
@@ -2997,14 +3003,33 @@ function startQuestPhase(id) {
     return;
   }
   if(id === 'reading'){ openReading(); return; }
+  if(id === 'games'){ openGamesPicker(); return; }
   if(id === 'exercise'){
     const t=S.tasks.find(t=>/exercise|play|outdoor/i.test(t.title||''));
     if(t) tapTask(t.id,t.stars_value);
     else navTo('tasks');
     return;
   }
-  // games / dharma — coming soon
+  // dharma — coming soon
   showMod(`<div style="text-align:center;padding:12px"><div style="font-size:2.5rem;margin-bottom:9px">🛠️</div><div style="font-size:.95rem;font-weight:900;color:#fff;margin-bottom:5px">Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">This phase is still being built!</div><button class="mb" onclick="closeMod()">OK</button></div>`);
+}
+
+function openGamesPicker(){
+  const played = S.todayGamesPlayed || [];
+  showMod(`<div class="mt">🎮 Choice Games</div>
+    <div style="font-size:.72rem;color:rgba(255,255,255,.5);font-weight:700;margin-bottom:12px">${Math.min(played.length,2)} / 2 played today — pick a game!</div>
+    <div class="game-grid" style="max-height:400px;overflow-y:auto">${GAMES.map(g=>{
+      const done=played.includes(g.id);
+      const pName=S.player?.name||'';
+      return `<a class="gcard" href="${g.file}?player=${encodeURIComponent(pName)}"
+        style="background:rgba(8,20,14,.75);--gc-accent:${g.accent}${done?';opacity:.55':''}"
+        ontouchend="event.preventDefault();location.href='${g.file}?player=${encodeURIComponent(pName)}'">
+        ${done?`<span class="gc-badge fav">✓ Played</span>`:g.badge?`<span class="gc-badge ${g.badge}">${g.badge==='hot'?'🔥 Hot':'✨ New'}</span>`:''}
+        <div class="gc-emoji">${g.emoji}</div>
+        <div class="gc-name">${g.name}</div>
+        <div class="gc-desc">${g.desc}</div>
+      </a>`;
+    }).join('')}</div>`);
 }
 
 async function startTodaySubjects(){
@@ -3074,6 +3099,8 @@ async function loadQuestData() {
     S.todaySessions = Array.isArray(sessions) ? sessions : [];
     const reads = await db(`stars_log?player_id=eq.${S.player.id}&category=eq.reading&created_at=gte.${todayStr}T00:00:00&select=id`);
     S.todayReadingCount = Array.isArray(reads) ? reads.length : 0;
+    const gscores = await db(`game_scores?player_id=eq.${S.player.id}&last_played=gte.${todayStr}T00:00:00&select=game_key`);
+    S.todayGamesPlayed = Array.isArray(gscores) ? [...new Set(gscores.map(g => g.game_key))] : [];
     const logs = await db(`stars_log?player_id=eq.${S.player.id}&created_at=gte.${todayStr}T00:00:00&select=amount`);
     S.todayStarsEarned = Math.max(0, (Array.isArray(logs) ? logs : []).reduce((a, l) => a + Math.max(0, l.amount), 0));
   } catch (e) {}
@@ -3421,7 +3448,6 @@ const GAMES=[
   {id:'hindi-gujarati-hub',emoji:'🙏',  name:'Hindi & Gujarati Hub',   desc:'Learn your heritage language',  accent:'#FF9933', badge:'new',  file:'hindi-gujarati-hub.html'},
   {id:'world-flags',       emoji:'🚩',  name:'World Flags',            desc:'Guess flags from every nation', accent:'#3E8FD0', badge:'new',  file:'world-flags.html'},
   {id:'music-dance-explorer',emoji:'🎵',name:'Music & Dance',          desc:'Indian classical arts explorer',accent:'#C850C0', badge:'new',  file:'music-dance-explorer.html'},
-  {id:'coding-quest',      emoji:'💻',  name:'Coding Quest',           desc:'Puzzles, logic & basic code',   accent:'#2BBFB8', badge:'new',  file:'coding-quest.html'},
 ];
 
 function renderGames(){
