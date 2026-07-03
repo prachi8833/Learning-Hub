@@ -2125,16 +2125,48 @@ const SCREEN_BG={
   parent:  BG_BASE+'bg-beach-FirstPage.png',
 };
 
-// Load Supabase app_settings and override SCREEN_BG if set
+// Load Supabase app_settings — powers the parent dashboard's Asset Manager.
+// Flat key/value: bg_<screen>, subjectimg_<key>, navicon_<screen>,
+// skillicon_<key>, tara_img. ASSET_SETTINGS is the general lookup;
+// SCREEN_BG additionally gets overridden in place since setBG() reads it.
+let ASSET_SETTINGS={};
 async function loadAppSettings(){
   try{
     const rows=await db('app_settings?select=key,value');
     if(!Array.isArray(rows)) return;
     rows.forEach(r=>{
-      const screenKey=r.key.replace('bg_','');
-      if(SCREEN_BG.hasOwnProperty(screenKey)) SCREEN_BG[screenKey]=r.value;
+      ASSET_SETTINGS[r.key]=r.value;
+      if(r.key.startsWith('bg_')){
+        const screenKey=r.key.replace('bg_','');
+        if(SCREEN_BG.hasOwnProperty(screenKey)) SCREEN_BG[screenKey]=r.value;
+      }
     });
+    applyAssetOverrides();
   }catch(e){ console.warn('app_settings load failed, using defaults',e); }
+}
+
+// Static-HTML assets (nav icons, mobile nav icons, Tara) get swapped in
+// directly; subject images and skill icons are checked inline wherever
+// they're rendered (buildSCard/subjectImg, renderSkills), since those
+// re-render on every navigation anyway.
+function applyAssetOverrides(){
+  ['home','learn','games','tasks','rewards','profile'].forEach(screen=>{
+    const url=ASSET_SETTINGS['navicon_'+screen];
+    if(!url)return;
+    document.querySelectorAll(`#nav-${screen} .ni`).forEach(el=>{
+      el.innerHTML=`<img src="${url}" style="width:1.15em;height:1.15em;object-fit:contain;vertical-align:-0.2em">`;
+    });
+  });
+  document.querySelectorAll('.mn-it').forEach(el=>{
+    const m=el.getAttribute('onclick')?.match(/navTo\('(\w+)'\)/);
+    const screen=m&&m[1];
+    const url=screen&&ASSET_SETTINGS['navicon_'+screen];
+    if(!url)return;
+    const icoEl=el.querySelector('.mn-ico');
+    if(icoEl)icoEl.innerHTML=`<img src="${url}" style="width:1.3em;height:1.3em;object-fit:contain">`;
+  });
+  const taraUrl=ASSET_SETTINGS['tara_img'];
+  if(taraUrl)document.querySelectorAll('.h-tara').forEach(el=>el.src=taraUrl);
 }
 
 let _currentBG='';
@@ -2181,6 +2213,7 @@ const subjectColors={
 };
 
 function subjectImg(key){
+  if(ASSET_SETTINGS['subjectimg_'+key])return ASSET_SETTINGS['subjectimg_'+key];
   const f=subjectImages[key];
   return f?IMG_BASE+f:null;
 }
@@ -3473,8 +3506,12 @@ function renderContCards(){
 
 function renderSkills(){
   const el=document.getElementById('l-skills');if(!el)return;
-  const sks=[{e:'⚙️',n:'Problem Solver',c:'#3E8FD0'},{e:'⚡',n:'Quick Learner',c:'#27AE60'},{e:'💡',n:'Curious Mind',c:'#F0A030'},{e:'🎯',n:'Focus Master',c:'#E05C8A'},{e:'⭐',n:'Consistent Star',c:'#7C5CBF'},{e:'🔒',n:'Coming Soon',c:'#555',locked:true}];
-  el.innerHTML=sks.map(s=>`<div class="sk-hex"><div class="sk-ico ${s.locked?'lck':''}">${s.e}</div><div class="sk-nm" style="color:${s.c}">${s.n}</div></div>`).join('');
+  const sks=[{k:'problemsolver',e:'⚙️',n:'Problem Solver',c:'#3E8FD0'},{k:'quicklearner',e:'⚡',n:'Quick Learner',c:'#27AE60'},{k:'curiousmind',e:'💡',n:'Curious Mind',c:'#F0A030'},{k:'focusmaster',e:'🎯',n:'Focus Master',c:'#E05C8A'},{k:'consistentstar',e:'⭐',n:'Consistent Star',c:'#7C5CBF'},{e:'🔒',n:'Coming Soon',c:'#555',locked:true}];
+  el.innerHTML=sks.map(s=>{
+    const img=s.k&&ASSET_SETTINGS['skillicon_'+s.k];
+    const ico=img?`<img src="${img}" style="width:1.4em;height:1.4em;object-fit:contain">`:s.e;
+    return `<div class="sk-hex"><div class="sk-ico ${s.locked?'lck':''}">${ico}</div><div class="sk-nm" style="color:${s.c}">${s.n}</div></div>`;
+  }).join('');
 }
 
 const GAMES=[
