@@ -1450,6 +1450,9 @@ h1, h2, h3 {
       <div class="nav-it" id="nav-games" onclick="navTo('games')" style="--ni-bg:rgba(43,191,184,.22);--ni-glow:rgba(43,191,184,.4)">
         <span class="ni">🎮</span><span class="nl">Games</span>
       </div>
+      <div class="nav-it" id="nav-reading" onclick="openPracticeReading()" style="--ni-bg:rgba(230,126,34,.22);--ni-glow:rgba(230,126,34,.4)">
+        <span class="ni">📖</span><span class="nl">Reading</span>
+      </div>
       <div class="nav-it" id="nav-tasks" onclick="navTo('tasks')" style="--ni-bg:rgba(39,174,96,.22);--ni-glow:rgba(39,174,96,.4)">
         <span class="ni">✅</span><span class="nl">Tasks</span><span class="nb" id="tasks-nb" style="display:none">3</span>
       </div>
@@ -1987,6 +1990,7 @@ h1, h2, h3 {
   <div class="mn-it active" onclick="navTo('home')"><div class="mn-ico">🏠</div><div class="mn-lb">Home</div></div>
   <div class="mn-it" onclick="navTo('learn')"><div class="mn-ico">🎓</div><div class="mn-lb">Learn</div></div>
   <div class="mn-it" onclick="navTo('games')"><div class="mn-ico">🎮</div><div class="mn-lb">Games</div></div>
+  <div class="mn-it" onclick="openPracticeReading()"><div class="mn-ico">📖</div><div class="mn-lb">Reading</div></div>
   <div class="mn-it" onclick="navTo('tasks')"><div class="mn-ico">✅</div><div class="mn-lb">Tasks</div></div>
   <div class="mn-it" onclick="navTo('rewards')"><div class="mn-ico">🎁</div><div class="mn-lb">Rewards</div></div>
   <div class="mn-it" onclick="navTo('profile')"><div class="mn-ico">👤</div><div class="mn-lb">Profile</div></div>
@@ -1997,7 +2001,7 @@ h1, h2, h3 {
   <div class="rd-header">
     <button class="rd-back" onclick="closeReading()">←</button>
     <div class="rd-title"><h3 id="rd-passage-title">Reading Time 📖</h3><p id="rd-grade-label">Grade 1 · Level 1</p></div>
-    <div class="rd-stars-live">⭐ <span id="rd-stars-live">0</span></div>
+    <div class="rd-stars-live" id="rd-stars-live-wrap">⭐ <span id="rd-stars-live">0</span></div>
   </div>
   <div class="rd-body">
     <div>
@@ -4385,9 +4389,17 @@ function closeQuiz(){document.getElementById('quiz').style.display='none';if(win
 function closeRes(){document.getElementById('res').style.display='none';renderHome();}
 
 // ─── READING ────────────────────────────────────────────────────────
-let RD={passages:[],currentPassage:null,recognition:null,listening:false,transcript:'',starsEarned:0,taskId:null};
-async function openReading(taskId){
-  RD.taskId=taskId||null;document.getElementById('readingScreen').style.display='flex';
+let RD={passages:[],currentPassage:null,recognition:null,listening:false,transcript:'',starsEarned:0,taskId:null,practiceMode:false};
+// practiceMode=true (via the sidebar "Reading" nav item, see openPracticeReading())
+// means this session never earns stars, regardless of today's reading count --
+// same rule as practice-mode quizzes. The Quest Trail's Reading Time phase and
+// task-linked reading (openReading(taskId) with no 3rd arg) are unaffected.
+// Sidebar "Reading" nav item -- always available, never earns stars,
+// unlike the Quest Trail's Reading Time phase.
+function openPracticeReading(){ openReading(null,true); }
+
+async function openReading(taskId,practiceMode){
+  RD.taskId=taskId||null;RD.practiceMode=!!practiceMode;document.getElementById('readingScreen').style.display='flex';
   const passages=await db(`reading_passages?active=eq.true&grade=lte.${S.player?.grade||1}&order=grade,level`);
   RD.passages=Array.isArray(passages)?passages:[];
   if(!RD.passages.length){closeReading();return;}
@@ -4414,7 +4426,9 @@ function resetReadingUI(){
   document.getElementById('rd-mic-label').textContent='START';
   document.getElementById('rd-results').classList.remove('show');
   document.getElementById('rd-stars-live').textContent='0';
-  const sb=document.getElementById('rd-submit-btn');if(sb){sb.disabled=false;sb.textContent='⭐ Submit & Earn Stars';sb.style.background='';}
+  const starsWrap=document.getElementById('rd-stars-live-wrap');
+  if(starsWrap)starsWrap.style.opacity=RD.practiceMode?'0':'1'; // hide the live star counter in practice mode (never awarded), keep the span in the DOM so evaluateReading() can still safely update it
+  const sb=document.getElementById('rd-submit-btn');if(sb){sb.disabled=false;sb.textContent=RD.practiceMode?'✅ Submit (Practice — no stars)':'⭐ Submit & Earn Stars';sb.style.background=RD.practiceMode?'#7C5CBF':'';}
   document.querySelectorAll('.rd-word').forEach(w=>{w.className='rd-word';});
 }
 function toggleListening(){if(RD.listening)stopListening();else startListening();}
@@ -4457,9 +4471,9 @@ function evaluateReading(){
 }
 async function submitReading(){
   const btn=document.getElementById('rd-submit-btn');btn.disabled=true;btn.textContent='Submitting...';
-  // Only the first reading of the day earns stars -- extra passages are
-  // free practice (same star-economy rule as practice-mode quizzes).
-  const earnsStars=(S.todayReadingCount||0)===0;
+  // Only the first reading of the day earns stars, AND only outside
+  // practice mode -- same star-economy rule as practice-mode quizzes.
+  const earnsStars=!RD.practiceMode&&(S.todayReadingCount||0)===0;
   let awarded=0;
   try{
     if(earnsStars){
