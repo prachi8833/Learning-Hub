@@ -1447,6 +1447,9 @@ h1, h2, h3 {
       <div class="nav-it" id="nav-learn" onclick="navTo('learn')" style="--ni-bg:rgba(124,92,191,.25);--ni-glow:rgba(124,92,191,.4)">
         <span class="ni">🎓</span><span class="nl">Learn</span>
       </div>
+      <div class="nav-it" id="nav-games" onclick="navTo('games')" style="--ni-bg:rgba(43,191,184,.22);--ni-glow:rgba(43,191,184,.4)">
+        <span class="ni">🎮</span><span class="nl">Games</span>
+      </div>
       <div class="nav-it" id="nav-tasks" onclick="navTo('tasks')" style="--ni-bg:rgba(39,174,96,.22);--ni-glow:rgba(39,174,96,.4)">
         <span class="ni">✅</span><span class="nl">Tasks</span><span class="nb" id="tasks-nb" style="display:none">3</span>
       </div>
@@ -1659,9 +1662,16 @@ h1, h2, h3 {
             <div class="card games-section">
               <div class="card-hdr">
                 <div class="card-ttl">🎮 Games &amp; Adventures</div>
-                <span class="card-lnk" id="games-count-lbl">12 games</span>
+                <span class="card-lnk games-progress-txt" id="games-count-lbl">0 / 2 played today</span>
               </div>
-              <p class="card-sub">Tap a game to play — stars earned count toward your rewards!</p>
+              <p class="card-sub">Tap a game to play — the first 2 you play each day earn stars!</p>
+              <div class="games-cap-banner" style="display:none;align-items:center;gap:13px;background:linear-gradient(135deg,rgba(43,191,184,.14),rgba(124,92,191,.12));border:1px solid rgba(43,191,184,.25);border-radius:14px;padding:13px 16px;margin-bottom:14px">
+                <div style="font-size:2rem">🎉</div>
+                <div>
+                  <div style="font-weight:900;color:#fff;font-size:.82rem">All done for today!</div>
+                  <div style="font-size:.68rem;color:rgba(255,255,255,.5);font-weight:700">You played 2 games already — come back tomorrow for more!</div>
+                </div>
+              </div>
               <div class="game-grid" id="game-grid"></div>
             </div>
           </div>
@@ -1706,6 +1716,25 @@ h1, h2, h3 {
               <div class="dg-gift">🎁</div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- GAMES -->
+      <div id="gamesScreen" class="screen">
+        <div class="card games-section" style="max-width:900px;margin:0 auto">
+          <div class="card-hdr">
+            <div class="card-ttl">🎮 Choice Games</div>
+            <span class="card-lnk games-progress-txt">0 / 2 played today</span>
+          </div>
+          <p class="card-sub">Pick a game and have fun — the first 2 you play each day earn stars!</p>
+          <div class="games-cap-banner" style="display:none;align-items:center;gap:13px;background:linear-gradient(135deg,rgba(43,191,184,.14),rgba(124,92,191,.12));border:1px solid rgba(43,191,184,.25);border-radius:14px;padding:13px 16px;margin-bottom:14px">
+            <div style="font-size:2rem">🎉</div>
+            <div>
+              <div style="font-weight:900;color:#fff;font-size:.82rem">All done for today!</div>
+              <div style="font-size:.68rem;color:rgba(255,255,255,.5);font-weight:700">You played 2 games already — come back tomorrow for more!</div>
+            </div>
+          </div>
+          <div class="game-grid" id="game-grid-tab"></div>
         </div>
       </div>
 
@@ -1957,6 +1986,7 @@ h1, h2, h3 {
 <div class="mob-nav" id="mob-nav">
   <div class="mn-it active" onclick="navTo('home')"><div class="mn-ico">🏠</div><div class="mn-lb">Home</div></div>
   <div class="mn-it" onclick="navTo('learn')"><div class="mn-ico">🎓</div><div class="mn-lb">Learn</div></div>
+  <div class="mn-it" onclick="navTo('games')"><div class="mn-ico">🎮</div><div class="mn-lb">Games</div></div>
   <div class="mn-it" onclick="navTo('tasks')"><div class="mn-ico">✅</div><div class="mn-lb">Tasks</div></div>
   <div class="mn-it" onclick="navTo('rewards')"><div class="mn-ico">🎁</div><div class="mn-lb">Rewards</div></div>
   <div class="mn-it" onclick="navTo('profile')"><div class="mn-ico">👤</div><div class="mn-lb">Profile</div></div>
@@ -2088,6 +2118,7 @@ const SUPABASE_STORAGE=`${SB}/storage/v1/object/public/backgrounds/`;
 const SCREEN_BG={
   home:    BG_BASE+'bg-ocean-Home.png',
   learn:   BG_BASE+'bg-castle-forest-day-Learn.png',
+  games:   BG_BASE+'bg-castle-forest-day-Learn.png',
   tasks:   BG_BASE+'bg-sunset-village-Tasks.png',
   rewards: BG_BASE+'bg-treehouse-night-Rewards.png',
   profile: BG_BASE+'bg-treehouse-airballons-Profile.png',
@@ -2604,7 +2635,8 @@ function navTo(tab){
   document.getElementById('ps-scroll').scrollTo(0,0);
   setBG(tab);
   if(tab==='home'){renderHome();refreshData();}
-  if(tab==='learn')renderLearn();
+  if(tab==='learn'){renderLearn();loadQuestData().then(renderGames);}
+  if(tab==='games'){renderGames();loadQuestData().then(renderGames);}
   if(tab==='tasks'){renderTasks();refreshData();}
   if(tab==='rewards'){renderRewards();refreshData();}
   if(tab==='profile')renderProfile();
@@ -3016,11 +3048,20 @@ function startQuestPhase(id) {
 
 function openGamesPicker(){
   const played = S.todayGamesPlayed || [];
+  const capped = played.length>=2;
   showMod(`<div class="mt">🎮 Choice Games</div>
-    <div style="font-size:.72rem;color:rgba(255,255,255,.5);font-weight:700;margin-bottom:12px">${Math.min(played.length,2)} / 2 played today — pick a game!</div>
+    <div style="font-size:.72rem;color:rgba(255,255,255,.5);font-weight:700;margin-bottom:12px">${Math.min(played.length,2)} / 2 played today${capped?' — all done for today! 🎉':' — pick a game!'}</div>
     <div class="game-grid" style="max-height:400px;overflow-y:auto">${GAMES.map(g=>{
       const done=played.includes(g.id);
       const pName=S.player?.name||'';
+      if(capped){
+        return `<div class="gcard" style="background:rgba(8,20,14,.75);--gc-accent:${g.accent};opacity:.4;filter:grayscale(.6);cursor:not-allowed;pointer-events:none">
+          <span class="gc-badge">🔒</span>
+          <div class="gc-emoji">${g.emoji}</div>
+          <div class="gc-name">${g.name}</div>
+          <div class="gc-desc">${g.desc}</div>
+        </div>`;
+      }
       return `<a class="gcard" href="${g.file}?player=${encodeURIComponent(pName)}"
         style="background:rgba(8,20,14,.75);--gc-accent:${g.accent}${done?';opacity:.55':''}"
         ontouchend="event.preventDefault();location.href='${g.file}?player=${encodeURIComponent(pName)}'">
@@ -3451,17 +3492,36 @@ const GAMES=[
 ];
 
 function renderGames(){
-  const el=document.getElementById('game-grid');if(!el)return;
+  const targets=['game-grid','game-grid-tab'].map(id=>document.getElementById(id)).filter(Boolean);
+  if(!targets.length)return;
+  const played=S.todayGamesPlayed||[];
+  const capped=played.length>=2;
   const pName=S.player?.name||'';
-  el.innerHTML=GAMES.map(g=>`
-    <a class="gcard" href="${g.file}?player=${encodeURIComponent(pName)}"
+
+  document.querySelectorAll('.games-cap-banner').forEach(b=>b.style.display=capped?'flex':'none');
+  document.querySelectorAll('.games-progress-txt').forEach(t=>t.textContent=`${Math.min(played.length,2)} / 2 played today`);
+
+  const html=GAMES.map(g=>{
+    const donePlaying=played.includes(g.id);
+    if(capped){
+      return `<div class="gcard" style="background:rgba(8,20,14,.75);--gc-accent:${g.accent};opacity:.4;filter:grayscale(.6);cursor:not-allowed;pointer-events:none">
+        <span class="gc-badge">🔒</span>
+        <div class="gc-emoji">${g.emoji}</div>
+        <div class="gc-name">${g.name}</div>
+        <div class="gc-desc">${g.desc}</div>
+      </div>`;
+    }
+    return `<a class="gcard" href="${g.file}?player=${encodeURIComponent(pName)}"
        style="background:rgba(8,20,14,.75);--gc-accent:${g.accent}"
        ontouchend="event.preventDefault();location.href='${g.file}?player=${encodeURIComponent(pName)}'">
-      ${g.badge?`<span class="gc-badge ${g.badge}">${g.badge==='fav'?'⭐ Fav':g.badge==='hot'?'🔥 Hot':'✨ New'}</span>`:''}
+      ${donePlaying?`<span class="gc-badge fav">✓ Played</span>`:g.badge?`<span class="gc-badge ${g.badge}">${g.badge==='fav'?'⭐ Fav':g.badge==='hot'?'🔥 Hot':'✨ New'}</span>`:''}
       <div class="gc-emoji">${g.emoji}</div>
       <div class="gc-name">${g.name}</div>
       <div class="gc-desc">${g.desc}</div>
-    </a>`).join('');
+    </a>`;
+  }).join('');
+
+  targets.forEach(el=>el.innerHTML=html);
 }
 
 function buildSMD(){
