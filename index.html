@@ -2175,7 +2175,7 @@ function buildSCard(s, type='home'){
   const pillCl=type==='home'?'scard-pill':'lscard-pill';
   const pbCl=type==='home'?'scard-pb':'lscard-pb';
   const pfCl=type==='home'?'scard-pf':'lscard-pf';
-  return `<div class="${cl}" style="--sc-color:${col};--sc-grad:${grad}" onclick="startSubject('${s.key}')">
+  return `<div class="${cl}" style="--sc-color:${col};--sc-grad:${grad}" onclick="openSubject('${s.key}')">
     <div class="${imgCl}">
       ${img
         ?`<img src="${img}" alt="${s.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
@@ -2190,7 +2190,7 @@ function buildSCard(s, type='home'){
 }
 
 const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':o.prefer||'return=representation',...o.headers},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined}).then(r=>r.json()).catch(()=>[]);
-let S={player:null,players:[],stars:0,streak:0,subjects:[],tasks:[],wishList:[],activeGoal:null,levelProgress:{},badges:[],earnedBadges:[],starConfig:{},rewardShop:[],quotes:{},calY:new Date().getFullYear(),calM:new Date().getMonth(),quizSubj:null,quizBatch:[],quizIdx:0,quizScore:0,quizSE:0,quizAns:false,pin:'1820',pinE:'',tab:'home',tc:{}};
+let S={player:null,players:[],stars:0,streak:0,subjects:[],modules:[],tasks:[],wishList:[],activeGoal:null,levelProgress:{},badges:[],earnedBadges:[],starConfig:{},rewardShop:[],quotes:{},calY:new Date().getFullYear(),calM:new Date().getMonth(),quizSubj:null,quizBatch:[],quizIdx:0,quizScore:0,quizSE:0,quizAns:false,pin:'1820',pinE:'',tab:'home',tc:{}};
 
 function getQuote(m){const p=S.quotes[m];if(p&&p.length){const q=p[Math.floor(Math.random()*p.length)];return q.emoji+' '+q.quote;}return{success:'⭐ Shabash!',wrong_answer:'🌱 Ek aur try!',level_up:'🏆 Level up!',daily_start:'🙏 Namaste! Ready?',perfect_score:'🎊 Perfect!'}[m]||'⭐ Keep going!';}
 const today=()=>new Date().toISOString().split('T')[0];
@@ -2558,10 +2558,11 @@ async function uploadAvatar(input){
 async function loadPlayer(){
   const p=S.player;
   try{
-    const[logs,streak,subj,tasks,wish,goal,lvl,badges,earned,cfg,shop,tc]=await Promise.all([
+    const[logs,streak,subj,mods,tasks,wish,goal,lvl,badges,earned,cfg,shop,tc]=await Promise.all([
       db(`stars_log?player_id=eq.${p.id}&select=amount`),
       db(`streaks?player_id=eq.${p.id}`),
       db('subjects?active=eq.true&order=sort_order'),
+      db('modules?active=eq.true&order=subject_key,sort_order'),
       db('tasks?active=eq.true&order=sort_order'),
       db(`wish_list?player_id=eq.${p.id}&active=eq.true&gifted=eq.false`),
       db(`active_goals?player_id=eq.${p.id}`),
@@ -2575,6 +2576,7 @@ async function loadPlayer(){
     S.stars=Math.max(0,logs.reduce((a,l)=>a+l.amount,0));
     S.streak=streak[0]?.current_streak||0;
     S.subjects=Array.isArray(subj)&&subj.length?subj:FALLBACK_SUBJECTS;
+    S.modules=Array.isArray(mods)?mods:[];
     S.tasks=Array.isArray(tasks)&&tasks.length?tasks:FALLBACK_TASKS;
     S.wishList=Array.isArray(wish)?wish:[];
     S.activeGoal=goal[0]||null;
@@ -3381,7 +3383,7 @@ function renderIslands(cat='all'){
     const img=subjectImg(s.key);
     const col=subjectColor(s);
     const grad=subjectGrad(s);
-    return `<div class="lscard" style="--sc-color:${col};--sc-grad:${grad}" onclick="startSubject('${s.key}')">
+    return `<div class="lscard" style="--sc-color:${col};--sc-grad:${grad}" onclick="openSubject('${s.key}')">
       ${isNew?'<div class="scard-new">NEW</div>':''}
       <div class="lscard-img">
         ${img?`<img src="${img}" alt="${s.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:``}
@@ -4041,6 +4043,39 @@ function saveAbout(){
 }
 
 // ─── QUIZ ENGINE ────────────────────────────────────────────
+function openSubject(key){
+  const s=S.subjects.find(x=>x.key===key);if(!s)return;
+  const mods=(S.modules||[]).filter(m=>m.subject_key===key);
+  if(!mods.length){startSubject(key);return;}
+  showMod(`<div class="mt">${s.icon||'📚'} ${s.name}</div>
+    <div style="font-size:.72rem;color:rgba(255,255,255,.5);font-weight:700;margin-bottom:12px">Pick a topic to learn</div>
+    <div style="display:flex;flex-direction:column;gap:8px;max-height:340px;overflow-y:auto">
+      ${mods.map(m=>`<button class="mb s" style="text-align:left;display:flex;align-items:center;gap:10px" onclick="startTopic('${key}','${m.key}','${esc(m.name)}')"><span style="font-size:1.3rem">${m.icon||'📘'}</span><span style="flex:1"><div style="font-weight:800">${m.name}</div>${m.description?`<div style="font-size:.65rem;color:rgba(255,255,255,.45);font-weight:600">${m.description}</div>`:''}</span></button>`).join('')}
+    </div>`);
+}
+
+async function startTopic(subjKey,topicKey,topicName){
+  closeMod();
+  const s=S.subjects.find(x=>x.key===subjKey);if(!s)return;
+  S.quizSubj={...s,name:`${s.name} · ${topicName}`};
+  const qEl=document.getElementById('quiz');
+  qEl.style.display='flex';
+  if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='none';
+  document.getElementById('q-subj').textContent=S.quizSubj.name;
+  const targetGrade=gradeAhead(S.player.grade);
+  if(window.gsap) gsap.fromTo(qEl,{opacity:0},{opacity:1,duration:0.3});
+  try{
+    let qs=await db(`questions?subject_key=eq.${subjKey}&topic=eq.${topicKey}&active=eq.true&grade=lte.${targetGrade}&limit=50`);
+    if(Array.isArray(qs)&&qs.length)qs=shuf(qs).slice(0,15);
+    if(!Array.isArray(qs)||!qs.length){
+      qEl.style.display='none';
+      showMod(`<div style="text-align:center;padding:12px"><div style="font-size:3rem;margin-bottom:9px">🚧</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Questions Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">Adding questions for <strong>${topicName}</strong> soon!</div><button class="mb" onclick="closeMod()">OK!</button></div>`);
+      return;
+    }
+    S.quizBatch=shuf(qs);S.quizIdx=0;S.quizScore=0;S.quizSE=0;loadQ();
+  }catch(e){qEl.style.display='none';}
+}
+
 async function startSubject(key){
   const s=S.subjects.find(x=>x.key===key);if(!s)return;
   S.quizSubj=s;
