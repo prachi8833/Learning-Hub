@@ -2787,6 +2787,7 @@ function renderHome(){
   renderGoal();renderHTasks();renderHSubjects();renderWeekLB();renderHWish();
   loadQuestData().then(renderQuestTrail);
   renderQuestTrail(); // render immediately with stale data, then refresh above
+  checkMonthlyPrize();
 }
 
 function renderGoal(){
@@ -2897,6 +2898,7 @@ function renderQuestTrail() {
 
   let phasesComplete = 0;
   Object.values(state).forEach(s => { if(s.done) phasesComplete++; });
+  if(state.subjects.done&&state.reading.done&&state.games.done)checkAndUpdateStreak();
 
   const summaryEl = document.getElementById('qt-summary');
   if(summaryEl) summaryEl.textContent = `${phasesComplete} / 5 phases`;
@@ -3085,6 +3087,78 @@ async function loadQuestData() {
     const logs = await db(`stars_log?player_id=eq.${S.player.id}&created_at=gte.${todayStr}T00:00:00&select=amount`);
     S.todayStarsEarned = Math.max(0, (Array.isArray(logs) ? logs : []).reduce((a, l) => a + Math.max(0, l.amount), 0));
   } catch (e) {}
+}
+
+// Streaks were loaded from the `streaks` table at login but nothing ever
+// wrote to it -- S.streak has always just displayed whatever was there
+// (usually 0) and never actually tracked anything. Called once the day's
+// 3 required quest phases (subjects/reading/games) are all done; the
+// last_active===today guard makes repeated calls a no-op.
+async function checkAndUpdateStreak(){
+  if(!S.player)return;
+  try{
+    const todayStr=today();
+    const rows=await db(`streaks?player_id=eq.${S.player.id}`);
+    const row=Array.isArray(rows)?rows[0]:null;
+    if(row&&row.last_active===todayStr)return; // already counted today
+    let newStreak=1,shield=row?.shield_count??1;
+    if(row&&row.last_active){
+      const gapDays=Math.round((new Date(todayStr)-new Date(row.last_active))/86400000);
+      if(gapDays===1) newStreak=(row.current_streak||0)+1;
+      else if(gapDays>1&&shield>0){ newStreak=(row.current_streak||0)+1; shield--; }
+      else newStreak=1;
+    }
+    const newBest=Math.max(row?.best_streak||0,newStreak);
+    if(row)await db(`streaks?player_id=eq.${S.player.id}`,{method:'PATCH',prefer:'return=minimal',body:{current_streak:newStreak,best_streak:newBest,last_active:todayStr,shield_count:shield}});
+    else await db('streaks',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,current_streak:newStreak,best_streak:newBest,last_active:todayStr,shield_count:shield}});
+    S.streak=newStreak;
+
+    // Milestone bonuses -- outside the daily quest cap on purpose (rare,
+    // not part of the grinding loop that caused the 900-stars-in-a-day
+    // problem). daily_streak fires every day the streak continues;
+    // streak_7/streak_30 fire once, exactly on those milestone days.
+    let bonus=starCfg('daily_streak',25);
+    if(newStreak===7)bonus+=starCfg('streak_7',200);
+    if(newStreak===30)bonus+=starCfg('streak_30',1000);
+    if(bonus>0){
+      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:bonus,reason:`${newStreak}-day streak! 🔥`,category:'streak'}});
+      S.stars+=bonus;
+    }
+  }catch(e){}
+}
+
+// Monthly prize tiers -- bronze/silver/gold based on total stars earned
+// this calendar month (all categories). Each tier pays out once, the
+// first time its threshold is crossed; de-duped by checking for an
+// existing monthly_prize log entry with that tier's reason text this
+// month. Idempotent, safe to call on every Home render.
+const MONTHLY_TIERS=[
+  {key:'monthly_bronze', threshold:1000, reason:'Monthly Bronze Prize! 🥉'},
+  {key:'monthly_silver', threshold:3000, reason:'Monthly Silver Prize! 🥈'},
+  {key:'monthly_gold',   threshold:6000, reason:'Monthly Gold Prize! 🥇'},
+];
+async function checkMonthlyPrize(){
+  if(!S.player)return;
+  try{
+    const monthStart=new Date();monthStart.setDate(1);monthStart.setHours(0,0,0,0);
+    const monthStartStr=monthStart.toISOString();
+    const logs=await db(`stars_log?player_id=eq.${S.player.id}&created_at=gte.${monthStartStr}&select=amount,reason,category`);
+    const rows=Array.isArray(logs)?logs:[];
+    const monthTotal=Math.max(0,rows.reduce((a,l)=>a+Math.max(0,l.amount),0));
+    const claimed=new Set(rows.filter(l=>l.category==='monthly_prize').map(l=>l.reason));
+    for(const t of MONTHLY_TIERS){ // lowest tier first -- if a total jumps past several
+      // tiers at once (e.g. right after this feature ships), award the lowest
+      // unclaimed one now and let the next render catch the next one up, so
+      // no tier is ever silently skipped.
+      if(monthTotal>=t.threshold&&!claimed.has(t.reason)){
+        const bonus=starCfg(t.key,100);
+        await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:bonus,reason:t.reason,category:'monthly_prize'}});
+        S.stars+=bonus;
+        showMod(`<div style="text-align:center;padding:16px"><div style="font-size:3.5rem;margin-bottom:9px">${t.reason.match(/[\u{1F300}-\u{1FAFF}]/u)?.[0]||'🏅'}</div><div style="font-size:1.05rem;font-weight:900;color:#fff;margin-bottom:6px">${t.reason.replace(/[\u{1F300}-\u{1FAFF}]/gu,'').trim()}</div><div style="font-size:.8rem;color:rgba(255,255,255,.6);margin-bottom:14px">+${bonus} bonus stars for reaching ${t.threshold.toLocaleString()} stars this month!</div><button class="mb" onclick="closeMod()">Awesome! 🎉</button></div>`);
+        break;
+      }
+    }
+  }catch(e){}
 }
 
 
@@ -4165,10 +4239,33 @@ function loadQ(){
   }
 }
 
+// Parent-configurable star values (Settings > Star Manager > star_config
+// table) -- was loaded into S.starConfig at login but never actually read
+// anywhere, so every reward silently used hardcoded numbers instead.
+function starCfg(key,fallback){
+  const v=S.starConfig?.[key]?.value;
+  return typeof v==='number'?v:fallback;
+}
+
+// Daily cap on AUTOMATED quest earning (quiz/reading/game categories) --
+// tasks and parent bonuses are excluded on purpose, since those are
+// already parent-controlled and self-limiting. Clamps the proposed award
+// to whatever's left of today's cap; returns 0 once the cap is hit.
+async function applyDailyCap(proposedAmount){
+  if(proposedAmount<=0)return proposedAmount;
+  const cap=starCfg('daily_quest_cap',300);
+  try{
+    const todayStart=`${today()}T00:00:00`;
+    const logs=await db(`stars_log?player_id=eq.${S.player.id}&created_at=gte.${todayStart}&category=in.(learning,reading,game)&select=amount`);
+    const earnedSoFar=Math.max(0,(Array.isArray(logs)?logs:[]).reduce((a,l)=>a+Math.max(0,l.amount),0));
+    return Math.max(0,Math.min(proposedAmount,cap-earnedSoFar));
+  }catch(e){ return proposedAmount; } // fail open -- don't block a kid's reward over a network hiccup
+}
+
 function pickQ(btn,chosen,correct,lv){
   if(S.quizAns)return;S.quizAns=true;
   document.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
-  const stars=lv<=2?10:lv<=4?15:lv<=6?20:25;
+  const stars=lv<=2?starCfg('correct_l1_2',10):lv<=4?starCfg('correct_l3_4',15):lv<=6?starCfg('correct_l5_6',20):lv<=8?starCfg('correct_l7_8',25):starCfg('correct_l9_10',30);
   const fb=document.getElementById('q-fb');
   if(chosen===correct){
     btn.classList.add('correct');fb.className='q-fb ok';fb.textContent=getQuote('success');
@@ -4202,15 +4299,20 @@ function qNext(){S.quizIdx++;if(S.quizIdx>=S.quizBatch.length){showQRes();return
 let QR={questNextIsLast:false};
 async function showQRes(){
   const total=S.quizBatch.length,pct=Math.round(S.quizScore/total*100);
-  const passed=pct>=80,perf=pct===100;
-  const ts=S.quizSE+(perf?300:passed?100:0);
+  const passed=pct>=80,distinction=pct>=90,perf=pct===100;
+  const sessionBonus=perf?starCfg('perfect_level',200):distinction?starCfg('level_distinction',150):passed?starCfg('level_pass',100):0;
+  let ts=S.quizSE+sessionBonus;
   const questMode=!!S.questModeQuiz;
+  let capped=false;
   if(questMode){
+    const allowed=await applyDailyCap(ts);
+    capped=allowed<ts;
+    ts=allowed;
     if(passed) megaConfetti();
     if(perf) setTimeout(megaConfetti,600);
     try{
       await db('sessions',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,subject_key:S.quizSubj.key,level:S.levelProgress[S.quizSubj.key]?.current_level||1,score:S.quizScore,total,stars_earned:ts,passed,perfect:perf}});
-      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:ts,reason:`${S.quizSubj.name} quiz — ${S.quizScore}/${total}`,category:'learning'}});
+      if(ts>0)await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:ts,reason:`${S.quizSubj.name} quiz — ${S.quizScore}/${total}`,category:'learning'}});
       S.stars+=ts;
       if(passed){
         const nl=(S.levelProgress[S.quizSubj.key]?.current_level||1)+1;
@@ -4226,7 +4328,10 @@ async function showQRes(){
   const rs=document.getElementById('res');rs.style.display='flex';
   document.getElementById('r-tr').textContent=perf?'🏆':passed?'⭐':'💪';
   document.getElementById('r-sc').textContent=`${S.quizScore}/${total}`;
-  document.getElementById('r-ea').textContent=questMode?`+${ts.toLocaleString()} ⭐ earned`:'Practice round — no stars this time!';
+  document.getElementById('r-ea').textContent=!questMode?'Practice round — no stars this time!':
+    capped&&ts>0?`+${ts.toLocaleString()} ⭐ earned (today's cap almost here!)`:
+    capped?`🎉 You've hit today's star cap — amazing work!`:
+    `+${ts.toLocaleString()} ⭐ earned`;
   document.getElementById('r-mg').textContent=perf?getQuote('perfect_score'):passed?getQuote('level_up'):getQuote('wrong_answer');
   // GSAP animate results screen
   if(window.gsap){
@@ -4339,15 +4444,19 @@ async function submitReading(){
   // Only the first reading of the day earns stars -- extra passages are
   // free practice (same star-economy rule as practice-mode quizzes).
   const earnsStars=(S.todayReadingCount||0)===0;
+  let awarded=0;
   try{
     if(earnsStars){
-      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:RD.starsEarned,reason:`Reading: ${RD.currentPassage?.title||'passage'}`,category:'reading'}});
-      S.stars+=RD.starsEarned;
+      awarded=await applyDailyCap(RD.starsEarned);
+      if(awarded>0)await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:awarded,reason:`Reading: ${RD.currentPassage?.title||'passage'}`,category:'reading'}});
+      S.stars+=awarded;
       S.todayReadingCount=(S.todayReadingCount||0)+1;
     }
     if(RD.taskId)await db('task_completions',{method:'POST',prefer:'return=minimal',body:{task_id:RD.taskId,player_id:S.player.id,status:'pending',completion_date:today()}});
-    btn.textContent=earnsStars?'✅ Submitted! Ask a parent to approve':'✅ Great practice — no extra stars this time!';
-    btn.style.background=earnsStars?'#27AE60':'#7C5CBF';
+    btn.textContent=!earnsStars?'✅ Great practice — no extra stars this time!':
+      awarded<RD.starsEarned?`🎉 You've hit today's star cap — great reading!`:
+      '✅ Submitted! Ask a parent to approve';
+    btn.style.background=earnsStars&&awarded>0?'#27AE60':'#7C5CBF';
     setTimeout(()=>closeReading(),2500);
   }catch(e){btn.disabled=false;btn.textContent='⭐ Submit & Earn Stars';}
 }
