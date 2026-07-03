@@ -391,6 +391,7 @@ const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorizat
 
 const params=new URLSearchParams(window.location.search);
 const playerName=params.get('player')||'riaan';
+const isQuest=params.get('quest')==='1'; // only quest-launched plays earn stars
 let playerId=null,playerGrade=3,personalBest=0;
 
 // ── Background decoration ─────────────────────────────────────────
@@ -1113,7 +1114,7 @@ async function endGame(){
   showScreen('gameOverScreen');
   const total=G.stars;
   document.getElementById('go-score').textContent=total.toLocaleString()+' ⭐';
-  document.getElementById('go-earned').textContent=`+${total.toLocaleString()} stars saved`;
+  document.getElementById('go-earned').textContent=isQuest?`+${total.toLocaleString()} stars saved`:'Practice round — no stars this time!';
   document.getElementById('go-rounds').textContent=G.round;
   document.getElementById('go-correct').textContent=G.totalCorrect;
   document.getElementById('go-streak').textContent=G.sessionBestStreak;
@@ -1125,7 +1126,7 @@ async function endGame(){
   document.getElementById('go-trophy').textContent=total>=500?'🏆':total>=300?'⭐':total>=150?'🔬':'🌱';
   if(playerId&&total>0){
     try{
-      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{
+      if(isQuest)await db('stars_log',{method:'POST',prefer:'return=minimal',body:{
         player_id:playerId,amount:total,
         reason:`Science Lab — Round ${G.round}, ${G.totalCorrect} correct`,category:'game'}});
       const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.science-lab`);

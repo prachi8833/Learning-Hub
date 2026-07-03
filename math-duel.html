@@ -53,11 +53,14 @@ body{background:#0a1a10;display:flex;flex-direction:column;align-items:center;ju
 
 /* COMBO */
 .combo-announce{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);
-  z-index:999;text-align:center;pointer-events:none;transition:all .25s cubic-bezier(.34,1.56,.64,1)}
+  z-index:999;text-align:center;pointer-events:none;transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  background:rgba(8,20,12,0.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1.5px solid rgba(255,255,255,0.12);border-radius:24px;
+  padding:20px 36px;box-shadow:0 8px 40px rgba(0,0,0,0.6)}
 .combo-announce.show{transform:translate(-50%,-50%) scale(1)}
 .combo-announce.hide{transform:translate(-50%,-50%) scale(0);opacity:0}
-.ca-text{font-size:2.2rem;font-weight:900;text-shadow:0 4px 20px rgba(0,0,0,.6);white-space:nowrap}
-.ca-sub{font-size:.9rem;font-weight:800;color:rgba(255,255,255,.8);margin-top:4px}
+.ca-text{font-size:2.2rem;font-weight:900;white-space:nowrap}
+.ca-sub{font-size:.9rem;font-weight:800;color:rgba(255,255,255,.7);margin-top:4px}
 
 /* GAME CARD */
 .game-card{background:var(--gc);backdrop-filter:blur(14px);border:1px solid var(--gb);
@@ -330,6 +333,7 @@ const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorizat
 
 const params=new URLSearchParams(window.location.search);
 const playerName=params.get('player')||'riaan';
+const isQuest=params.get('quest')==='1'; // only quest-launched plays earn stars
 let playerId=null,playerGrade=3,personalBest=0,inputMode='keyboard';
 
 // ── SVG Visuals ───────────────────────────────────────────────────
@@ -978,7 +982,7 @@ async function endGame(){
   showScreen('gameOverScreen');
   const total=G.stars;
   document.getElementById('go-score').textContent=total.toLocaleString()+' ⭐';
-  document.getElementById('go-earned').textContent=`+${total.toLocaleString()} stars saved to your account`;
+  document.getElementById('go-earned').textContent=isQuest?`+${total.toLocaleString()} stars saved to your account`:'Practice round — no stars this time!';
   document.getElementById('go-rounds').textContent=G.round;
   document.getElementById('go-correct').textContent=G.totalCorrect;
   document.getElementById('go-best-streak').textContent=G.sessionBestStreak;
@@ -990,7 +994,7 @@ async function endGame(){
   document.getElementById('go-trophy').textContent=total>=500?'🏆':total>=300?'⭐':total>=150?'💪':'🌱';
   if(playerId&&total>0){
     try{
-      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,amount:total,reason:`Math Duel — ${G.round} rounds, ${G.totalCorrect} correct`,category:'game'}});
+      if(isQuest)await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,amount:total,reason:`Math Duel — ${G.round} rounds, ${G.totalCorrect} correct`,category:'game'}});
       const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.math-duel`);
       if(rows&&rows.length){
         await db(`game_scores?player_id=eq.${playerId}&game_key=eq.math-duel`,{method:'PATCH',prefer:'return=minimal',body:{best_score:isNewBest?total:rows[0].best_score,best_round:G.round,total_plays:(rows[0].total_plays||0)+1,last_played:new Date().toISOString()}});

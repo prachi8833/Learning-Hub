@@ -2060,10 +2060,11 @@ h1, h2, h3 {
   <div class="res-sc" id="r-sc">0/10</div>
   <div class="res-ea" id="r-ea">+0 ⭐ earned</div>
   <div class="res-mg" id="r-mg">Great effort!</div>
-  <div class="res-btns">
+  <div class="res-btns" id="res-std-btns">
     <button class="res-btn res-rt" onclick="retryQuiz()">🔄 Try Again</button>
     <button class="res-btn res-hm" onclick="closeRes()">🏠 Home</button>
   </div>
+  <button class="res-btn" id="res-next-btn" style="display:none;width:100%;background:var(--teal);color:#fff" onclick="continueQuestSubjectFlow()">Next →</button>
 </div>
 
 <!-- PIN -->
@@ -2254,7 +2255,7 @@ function buildSCard(s, type='home'){
 }
 
 const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':o.prefer||'return=representation',...o.headers},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined}).then(r=>r.json()).catch(()=>[]);
-let S={player:null,players:[],stars:0,streak:0,subjects:[],modules:[],tasks:[],wishList:[],activeGoal:null,levelProgress:{},badges:[],earnedBadges:[],starConfig:{},rewardShop:[],quotes:{},calY:new Date().getFullYear(),calM:new Date().getMonth(),quizSubj:null,quizBatch:[],quizIdx:0,quizScore:0,quizSE:0,quizAns:false,pin:'1820',pinE:'',tab:'home',tc:{}};
+let S={player:null,players:[],stars:0,streak:0,subjects:[],modules:[],tasks:[],wishList:[],activeGoal:null,levelProgress:{},badges:[],earnedBadges:[],starConfig:{},rewardShop:[],quotes:{},calY:new Date().getFullYear(),calM:new Date().getMonth(),quizSubj:null,quizBatch:[],quizIdx:0,quizScore:0,quizSE:0,quizAns:false,questModeQuiz:false,pin:'1820',pinE:'',tab:'home',tc:{}};
 
 function getQuote(m){const p=S.quotes[m];if(p&&p.length){const q=p[Math.floor(Math.random()*p.length)];return q.emoji+' '+q.quote;}return{success:'⭐ Shabash!',wrong_answer:'🌱 Ek aur try!',level_up:'🏆 Level up!',daily_start:'🙏 Namaste! Ready?',perfect_score:'🎊 Perfect!'}[m]||'⭐ Keep going!';}
 const today=()=>new Date().toISOString().split('T')[0];
@@ -2825,59 +2826,40 @@ function renderHTasks(){
   });
 }
 
-// ─── TODAY'S QUEST TRAIL ────────────────────────────────────
-// Phase definitions. Choice Games and Dharma Time content are still being
-// built — they render with a "Coming Soon" state until wired to real data.
-const QUEST_PHASES = [
-  {
-    id: 'subjects', num: 1, icon: '\ud83d\udcda', name: 'Subject Learning',
-    tag: 'Phase 1', locked: true,
-    subtitle: () => {
-      const today = new Date().getDay();
-      const rotation = {
-        1: ['math', 'english', 'science'],
-        2: ['world', 'hindi', 'social'],
-        3: ['math', 'reading', 'art'],
-        4: ['science', 'english', 'social'],
-        5: ['math', 'world', 'creative'],
-        6: ['math', 'science', 'social'],
-        0: [],
-      };
-      const keys = rotation[today] || [];
-      const names = keys.map(k => S.subjects.find(s => s.key === k)?.name || k);
-      return names.length ? names.join(' \u00b7 ') : 'Pick any 3 subjects today';
-    },
-    starsMax: 60,
-  },
-  {
-    id: 'reading', num: 2, icon: '\ud83d\udcd6', name: 'Reading Time',
-    tag: 'Phase 2', locked: true,
-    subtitle: () => 'One passage \u00b7 10-15 min',
-    starsMax: 20,
-  },
-  {
-    id: 'games', num: 3, icon: '\ud83c\udfae', name: 'Choice Games',
-    tag: 'Phase 3', locked: true,
-    subtitle: () => '2 games \u00b7 20-30 min',
-    starsMax: 40,
-  },
-  {
-    id: 'dharma', num: 4, icon: '\ud83d\udd49\ufe0f', name: 'Dharma Time',
-    tag: 'Open anytime', locked: false,
-    subtitle: () => '10-15 min \u00b7 Coming soon',
-    starsMax: 15,
-    comingSoon: true,
-  },
-  {
-    id: 'exercise', num: 5, icon: '\ud83c\udfc3', name: 'Exercise',
-    tag: 'Open anytime', locked: false,
-    subtitle: () => '5 min \u00b7 stretch, jump, move!',
-    starsMax: 5,
-  },
-];
+// ─── QUEST PLAN — today's random 3 subjects + 2 games, persisted per
+// player per day so "Next Subject"/"Start Next Game" always knows where
+// it left off, even across the full-page navigation a game requires.
+function getQuestPlan(){
+  if(!S.player)return null;
+  const storageKey=`lh_qplan_${S.player.id}_${today()}`;
+  let plan=null;
+  try{ plan=JSON.parse(localStorage.getItem(storageKey)||'null'); }catch(e){}
+  if(!plan||!Array.isArray(plan.subjects)||!Array.isArray(plan.games)){
+    plan={subjects:shuf(S.subjects.map(s=>s.key)).slice(0,3),games:shuf(GAMES.map(g=>g.id)).slice(0,2),subjIdx:0,gameIdx:0};
+    localStorage.setItem(storageKey,JSON.stringify(plan));
+  }
+  return plan;
+}
+function saveQuestPlan(plan){
+  if(!S.player||!plan)return;
+  localStorage.setItem(`lh_qplan_${S.player.id}_${today()}`,JSON.stringify(plan));
+}
+// Keeps plan.gameIdx in sync with reality -- a game finished via any path
+// still advances the sequence once it shows up in today's game_scores.
+function reconcileQuestPlan(){
+  const plan=getQuestPlan();if(!plan)return plan;
+  let changed=false;
+  while(plan.gameIdx<2 && (S.todayGamesPlayed||[]).includes(plan.games[plan.gameIdx])){
+    plan.gameIdx++;changed=true;
+  }
+  if(changed)saveQuestPlan(plan);
+  return plan;
+}
 
 function getQuestState() {
-  // Phase 1: done when at least 3 quiz sessions today across any subjects
+  // Phase 1: done when at least 3 quiz sessions today across any subjects.
+  // Practice-mode quizzes never write a sessions row, so this only counts
+  // official quest attempts.
   const todaySessions = (S.todaySessions || []);
   const subjectsDone = todaySessions.length >= 3;
   const subjectsCount = Math.min(todaySessions.length, 3);
@@ -2909,18 +2891,8 @@ function renderQuestTrail() {
   const listEl = document.getElementById('qt-list');
   if (!listEl) return;
   const state = getQuestState();
-
-  const today = new Date().getDay();
-  const rotation = {
-    1: ['math','english','science'],   // Mon
-    2: ['social','art','coding'],      // Tue
-    3: ['math','science','art'],       // Wed
-    4: ['english','social','science'], // Thu
-    5: ['math','coding','art'],        // Fri
-    6: ['math','english','social'],    // Sat
-    0: ['math','english','science'],   // Sun — free pick, pick 3
-  };
-  const todayKeys = rotation[today] || ['math','english','science'];
+  const plan = reconcileQuestPlan();
+  const todayKeys = plan ? plan.subjects : [];
   const todaySubjNames = todayKeys.map(k => S.subjects.find(s=>s.key===k)?.name || k);
 
   let phasesComplete = 0;
@@ -2936,10 +2908,12 @@ function renderQuestTrail() {
   if(dpBar) dpBar.style.width = Math.min(100, Math.round(todayStars/350*100)) + '%';
 
   // Determine status of each phase
+  const nextSubjName = plan && plan.subjIdx<3 ? (S.subjects.find(s=>s.key===plan.subjects[plan.subjIdx])?.name||plan.subjects[plan.subjIdx]) : null;
+  const nextGameName = plan && plan.gameIdx<2 ? (GAMES.find(g=>g.id===plan.games[plan.gameIdx])?.name||plan.games[plan.gameIdx]) : null;
   const phases = [
-    { id:'subjects', num:1, emoji:'📚', name:'Subject Learning', sub: todaySubjNames.join(' · '), starsMax:60, locked:false, comingSoon:false },
+    { id:'subjects', num:1, emoji:'📚', name:'Subject Learning', sub: state.subjects.done?todaySubjNames.join(' · '):`Next: ${nextSubjName||'—'} (${state.subjects.progress}/3)`, starsMax:60, locked:false, comingSoon:false },
     { id:'reading',  num:2, emoji:'📖', name:'Reading Time',     sub:'One passage · 10–15 min', starsMax:20, locked:!state.subjects.done, comingSoon:false },
-    { id:'games',    num:3, emoji:'🎮', name:'Choice Games',     sub:'2 games · 20–30 min', starsMax:40, locked:!state.reading.done, comingSoon:false },
+    { id:'games',    num:3, emoji:'🎮', name:'Choice Games',     sub: state.games.done?'2 games · done!':`Next: ${nextGameName||'—'} (${state.games.progress}/2)`, starsMax:40, locked:!state.reading.done, comingSoon:false },
     { id:'dharma',   num:4, emoji:'🕉️', name:'Dharma Time',     sub:'10–15 min', starsMax:15, locked:false, comingSoon:true, open:true },
     { id:'exercise', num:5, emoji:'🏃', name:'Exercise',         sub:'5 min · stretch, jump, move!', starsMax:5, locked:false, comingSoon:false, open:true },
   ];
@@ -3062,13 +3036,9 @@ function renderQuestTrail() {
 }
 
 function startQuestPhase(id) {
-  if(id === 'subjects'){
-    // Launch today's subject rotation as a combined quiz
-    startTodaySubjects();
-    return;
-  }
+  if(id === 'subjects'){ startQuestSubject(); return; }
   if(id === 'reading'){ openReading(); return; }
-  if(id === 'games'){ openGamesPicker(); return; }
+  if(id === 'games'){ startQuestGame(); return; }
   if(id === 'exercise'){
     const t=S.tasks.find(t=>/exercise|play|outdoor/i.test(t.title||''));
     if(t) tapTask(t.id,t.stars_value);
@@ -3079,90 +3049,27 @@ function startQuestPhase(id) {
   showMod(`<div style="text-align:center;padding:12px"><div style="font-size:2.5rem;margin-bottom:9px">🛠️</div><div style="font-size:.95rem;font-weight:900;color:#fff;margin-bottom:5px">Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">This phase is still being built!</div><button class="mb" onclick="closeMod()">OK</button></div>`);
 }
 
-function openGamesPicker(){
-  const played = S.todayGamesPlayed || [];
-  const capped = played.length>=2;
-  showMod(`<div class="mt">🎮 Choice Games</div>
-    <div style="font-size:.72rem;color:rgba(255,255,255,.5);font-weight:700;margin-bottom:12px">${Math.min(played.length,2)} / 2 played today${capped?' — all done for today! 🎉':' — pick a game!'}</div>
-    <div class="game-grid" style="max-height:400px;overflow-y:auto">${GAMES.map(g=>{
-      const done=played.includes(g.id);
-      const pName=S.player?.name||'';
-      if(capped){
-        return `<div class="gcard" style="background:rgba(8,20,14,.75);--gc-accent:${g.accent};opacity:.4;filter:grayscale(.6);cursor:not-allowed;pointer-events:none">
-          <span class="gc-badge">🔒</span>
-          <div class="gc-emoji">${g.emoji}</div>
-          <div class="gc-name">${g.name}</div>
-          <div class="gc-desc">${g.desc}</div>
-        </div>`;
-      }
-      return `<a class="gcard" href="${g.file}?player=${encodeURIComponent(pName)}"
-        style="background:rgba(8,20,14,.75);--gc-accent:${g.accent}${done?';opacity:.55':''}"
-        ontouchend="event.preventDefault();location.href='${g.file}?player=${encodeURIComponent(pName)}'">
-        ${done?`<span class="gc-badge fav">✓ Played</span>`:g.badge?`<span class="gc-badge ${g.badge}">${g.badge==='hot'?'🔥 Hot':'✨ New'}</span>`:''}
-        <div class="gc-emoji">${g.emoji}</div>
-        <div class="gc-name">${g.name}</div>
-        <div class="gc-desc">${g.desc}</div>
-      </a>`;
-    }).join('')}</div>`);
+// Quest-mode subject quiz — one of today's 3 randomly-assigned subjects,
+// launched one at a time. Only quest-mode quizzes earn stars; see
+// launchSubjectQuiz() and the questMode branch in showQRes().
+async function startQuestSubject(){
+  const plan=getQuestPlan();if(!plan||plan.subjIdx>=3)return;
+  const key=plan.subjects[plan.subjIdx];
+  const s=S.subjects.find(x=>x.key===key);
+  if(!s){ plan.subjIdx++; saveQuestPlan(plan); renderQuestTrail(); return; }
+  S.questModeQuiz=true;
+  await launchSubjectQuiz(s);
 }
 
-async function startTodaySubjects(){
-  // Get today's 3 subjects from rotation
-  const day=new Date().getDay();
-  const rotation={
-    1:['math','english','science'],
-    2:['social','art','coding'],
-    3:['math','science','art'],
-    4:['english','social','science'],
-    5:['math','coding','art'],
-    6:['math','english','social'],
-    0:['math','english','science'],
-  };
-  const todayKeys=rotation[day]||['math','english','science'];
-  const targetGrade=gradeAhead(S.player?.grade||3);
-
-  // Pull questions for all 3 subjects combined
-  let allQ=[];
-  for(const key of todayKeys){
-    const qs=await db(`questions?subject_key=eq.${key}&active=eq.true&grade=lte.${targetGrade}&limit=30`);
-    if(Array.isArray(qs)&&qs.length){
-      // Take up to 5 per subject so it's balanced
-      allQ=[...allQ,...shuf(qs).slice(0,5)];
-    }
-  }
-
-  // Fallback questions if Supabase has none yet
-  if(!allQ.length){
-    allQ=[
-      {id:'fq1',subject_key:'math',grade:3,level:1,topic:'addition',question:'What is 8 + 6?',answer:'14',wrong1:'12',wrong2:'13',wrong3:'15',explanation:'8 + 6 = 14',active:true},
-      {id:'fq2',subject_key:'math',grade:1,level:1,topic:'counting',question:'What comes after 9?',answer:'10',wrong1:'8',wrong2:'11',wrong3:'12',explanation:'10 comes after 9',active:true},
-      {id:'fq3',subject_key:'english',grade:3,level:1,topic:'vocabulary',question:'Which word means happy?',answer:'joyful',wrong1:'sad',wrong2:'angry',wrong3:'tired',explanation:'Joyful means very happy',active:true},
-      {id:'fq4',subject_key:'english',grade:1,level:1,topic:'spelling',question:'Which is spelled correctly?',answer:'friend',wrong1:'freind',wrong2:'frend',wrong3:'friand',explanation:'F-R-I-E-N-D',active:true},
-      {id:'fq5',subject_key:'science',grade:3,level:1,topic:'animals',question:'What do you call a baby dog?',answer:'puppy',wrong1:'kitten',wrong2:'cub',wrong3:'foal',explanation:'A baby dog is called a puppy',active:true},
-      {id:'fq6',subject_key:'science',grade:1,level:1,topic:'plants',question:'What do plants need to make food?',answer:'sunlight',wrong1:'darkness',wrong2:'ice',wrong3:'sand',explanation:'Plants use sunlight to make food',active:true},
-      {id:'fq7',subject_key:'social',grade:3,level:1,topic:'canada',question:'What is the capital of Canada?',answer:'Ottawa',wrong1:'Toronto',wrong2:'Vancouver',wrong3:'Calgary',explanation:'Ottawa is Canada\'s capital city',active:true},
-      {id:'fq8',subject_key:'art',grade:1,level:1,topic:'colours',question:'What colour do you get mixing red and blue?',answer:'purple',wrong1:'green',wrong2:'orange',wrong3:'yellow',explanation:'Red + blue = purple',active:true},
-      {id:'fq9',subject_key:'coding',grade:3,level:1,topic:'basics',question:'What is a set of instructions for a computer called?',answer:'a program',wrong1:'a story',wrong2:'a picture',wrong3:'a recipe',explanation:'Programs tell computers what to do',active:true},
-    ].filter(q=>todayKeys.includes(q.subject_key));
-  }
-
-  if(!allQ.length){
-    showMod(`<div style="text-align:center;padding:12px"><div style="font-size:3rem;margin-bottom:9px">🚧</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Questions Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">We're adding questions to Supabase soon!</div><button class="mb" onclick="closeMod()">OK</button></div>`);
-    return;
-  }
-
-  // Set up as a special "Today's Learning" session
-  const subjectNames=todayKeys.map(k=>S.subjects.find(s=>s.key===k)?.name||k).join(' · ');
-  S.quizSubj={key:'daily_subjects', name:`Today's Learning`, icon:'📚', color:'#F6C04A', todayKeys};
-  S.quizBatch=shuf(allQ);
-  S.quizIdx=0;S.quizScore=0;S.quizSE=0;
-
-  const qEl=document.getElementById('quiz');
-  qEl.style.display='flex';
-  if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='none';
-  document.getElementById('q-subj').textContent=`📚 ${subjectNames}`;
-  if(window.gsap) gsap.fromTo(qEl,{opacity:0},{opacity:1,duration:0.3});
-  loadQ();
+// Quest-mode game — one of today's 2 randomly-assigned games. Full-page
+// navigation to the game file with ?quest=1 so it knows to award stars;
+// reconcileQuestPlan() picks the sequence back up when the player returns.
+function startQuestGame(){
+  const plan=getQuestPlan();if(!plan||plan.gameIdx>=2)return;
+  const g=GAMES.find(x=>x.id===plan.games[plan.gameIdx]);
+  if(!g){ plan.gameIdx++; saveQuestPlan(plan); renderQuestTrail(); return; }
+  const pName=S.player?.name||'';
+  location.href=`${g.file}?player=${encodeURIComponent(pName)}&quest=1`;
 }
 
 async function loadQuestData() {
@@ -4180,11 +4087,10 @@ function openSubject(key){
 async function startTopic(subjKey,topicKey,topicName){
   closeMod();
   const s=S.subjects.find(x=>x.key===subjKey);if(!s)return;
-  S.quizSubj={...s,name:`${s.name} · ${topicName}`};
+  S.questModeQuiz=false; // topic picker is always practice mode -- no stars
   const qEl=document.getElementById('quiz');
   qEl.style.display='flex';
   if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='none';
-  document.getElementById('q-subj').textContent=S.quizSubj.name;
   const targetGrade=gradeAhead(S.player.grade);
   if(window.gsap) gsap.fromTo(qEl,{opacity:0},{opacity:1,duration:0.3});
   try{
@@ -4195,22 +4101,32 @@ async function startTopic(subjKey,topicKey,topicName){
       showMod(`<div style="text-align:center;padding:12px"><div style="font-size:3rem;margin-bottom:9px">🚧</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Questions Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">Adding questions for <strong>${topicName}</strong> soon!</div><button class="mb" onclick="closeMod()">OK!</button></div>`);
       return;
     }
+    S.quizSubj={...s,name:`${s.name} · ${topicName}`};
+    document.getElementById('q-subj').textContent=S.quizSubj.name;
     S.quizBatch=shuf(qs);S.quizIdx=0;S.quizScore=0;S.quizSE=0;loadQ();
   }catch(e){qEl.style.display='none';}
 }
 
-async function startSubject(key){
+function startSubject(key){
   const s=S.subjects.find(x=>x.key===key);if(!s)return;
+  S.questModeQuiz=false; // direct subject-card clicks are always practice mode -- no stars
+  launchSubjectQuiz(s);
+}
+
+// Shared quiz launcher for both practice mode (startSubject/startQuestSubject
+// with S.questModeQuiz already set by the caller) and quest mode. Whole-
+// subject question set, not topic-filtered -- matches the original quest
+// flow's behaviour before the topic picker existed.
+async function launchSubjectQuiz(s){
   S.quizSubj=s;
   const qEl=document.getElementById('quiz');
   qEl.style.display='flex';
   if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='none';
   document.getElementById('q-subj').textContent=s.name;
   const targetGrade=gradeAhead(S.player.grade);
-  // Animate quiz opening
   if(window.gsap) gsap.fromTo(qEl,{opacity:0},{opacity:1,duration:0.3});
   try{
-    let qs=await db(`questions?subject_key=eq.${key}&active=eq.true&grade=lte.${targetGrade}&limit=50`);
+    let qs=await db(`questions?subject_key=eq.${s.key}&active=eq.true&grade=lte.${targetGrade}&limit=50`);
     if(Array.isArray(qs)&&qs.length)qs=shuf(qs).slice(0,15);
     if(!Array.isArray(qs)||!qs.length)qs=[
       {id:'q1',subject_key:'math',grade:3,level:1,topic:'addition',question:'What is 5 + 7?',answer:'12',wrong1:'10',wrong2:'11',wrong3:'13',explanation:'5 + 7 = 12',active:true},
@@ -4220,7 +4136,7 @@ async function startSubject(key){
       {id:'q5',subject_key:'social',grade:3,level:1,topic:'canada',question:'What is the capital city of Canada?',answer:'Ottawa',wrong1:'Toronto',wrong2:'Vancouver',wrong3:'Montreal',explanation:'Ottawa is the capital city',active:true},
       {id:'q6',subject_key:'coding',grade:3,level:1,topic:'basics',question:'What do we call instructions for a computer?',answer:'program',wrong1:'story',wrong2:'picture',wrong3:'song',explanation:'A program tells computers what to do',active:true},
       {id:'q7',subject_key:'english',grade:3,level:1,topic:'punctuation',question:'Which mark ends a question?',answer:'?',wrong1:'.',wrong2:'!',wrong3:',',explanation:'A question mark ends a question',active:true}
-    ].filter(q=>q.subject_key===key||q.subject_key==='math');
+    ].filter(q=>q.subject_key===s.key||q.subject_key==='math');
     if(!qs.length){
       qEl.style.display='none';
       showMod(`<div style="text-align:center;padding:12px"><div style="font-size:3rem;margin-bottom:9px">🚧</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Questions Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">Adding questions for <strong>${s.name}</strong> soon!</div><button class="mb" onclick="closeMod()">OK!</button></div>`);
@@ -4278,38 +4194,69 @@ function pickQ(btn,chosen,correct,lv){
 
 function qNext(){S.quizIdx++;if(S.quizIdx>=S.quizBatch.length){showQRes();return;}loadQ();}
 
+// Star economy rule: stars only come from tasks, the official Today's Quest
+// flow, and parent bonuses. A quiz only writes to sessions/stars_log/
+// level_progress when S.questModeQuiz is true (set by startQuestSubject());
+// direct subject/topic clicks (practice) show the same results screen but
+// earn nothing.
+let QR={questNextIsLast:false};
 async function showQRes(){
   const total=S.quizBatch.length,pct=Math.round(S.quizScore/total*100);
   const passed=pct>=80,perf=pct===100;
   const ts=S.quizSE+(perf?300:passed?100:0);
-  // 🎉 Celebration on pass
-  if(passed) megaConfetti();
-  if(perf) setTimeout(megaConfetti,600);
-  try{
-    await db('sessions',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,subject_key:S.quizSubj.key,level:S.levelProgress[S.quizSubj.key]?.current_level||1,score:S.quizScore,total,stars_earned:ts,passed,perfect:perf}});
-    await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:ts,reason:`${S.quizSubj.name} quiz — ${S.quizScore}/${total}`,category:'learning'}});
-    S.stars+=ts;
-    if(passed){
-      const nl=(S.levelProgress[S.quizSubj.key]?.current_level||1)+1;
-      if(S.levelProgress[S.quizSubj.key])await db(`level_progress?player_id=eq.${S.player.id}&subject_key=eq.${S.quizSubj.key}`,{method:'PATCH',prefer:'return=minimal',body:{current_level:Math.min(nl,10)}});
-      else await db('level_progress',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,subject_key:S.quizSubj.key,current_level:2}});
-      S.levelProgress[S.quizSubj.key]={...(S.levelProgress[S.quizSubj.key]||{}),current_level:Math.min(nl,10)};
-      // Level up animation if jumped a level
-      if(nl<=10) animateLevelUp(Math.min(nl,10));
-    }
-  }catch(e){}
+  const questMode=!!S.questModeQuiz;
+  if(questMode){
+    if(passed) megaConfetti();
+    if(perf) setTimeout(megaConfetti,600);
+    try{
+      await db('sessions',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,subject_key:S.quizSubj.key,level:S.levelProgress[S.quizSubj.key]?.current_level||1,score:S.quizScore,total,stars_earned:ts,passed,perfect:perf}});
+      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:ts,reason:`${S.quizSubj.name} quiz — ${S.quizScore}/${total}`,category:'learning'}});
+      S.stars+=ts;
+      if(passed){
+        const nl=(S.levelProgress[S.quizSubj.key]?.current_level||1)+1;
+        if(S.levelProgress[S.quizSubj.key])await db(`level_progress?player_id=eq.${S.player.id}&subject_key=eq.${S.quizSubj.key}`,{method:'PATCH',prefer:'return=minimal',body:{current_level:Math.min(nl,10)}});
+        else await db('level_progress',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,subject_key:S.quizSubj.key,current_level:2}});
+        S.levelProgress[S.quizSubj.key]={...(S.levelProgress[S.quizSubj.key]||{}),current_level:Math.min(nl,10)};
+        // Level up animation if jumped a level
+        if(nl<=10) animateLevelUp(Math.min(nl,10));
+      }
+    }catch(e){}
+  }
   document.getElementById('quiz').style.display='none';
   const rs=document.getElementById('res');rs.style.display='flex';
   document.getElementById('r-tr').textContent=perf?'🏆':passed?'⭐':'💪';
   document.getElementById('r-sc').textContent=`${S.quizScore}/${total}`;
-  document.getElementById('r-ea').textContent=`+${ts.toLocaleString()} ⭐ earned`;
+  document.getElementById('r-ea').textContent=questMode?`+${ts.toLocaleString()} ⭐ earned`:'Practice round — no stars this time!';
   document.getElementById('r-mg').textContent=perf?getQuote('perfect_score'):passed?getQuote('level_up'):getQuote('wrong_answer');
   // GSAP animate results screen
   if(window.gsap){
     gsap.fromTo('#res > *',{opacity:0,scale:0.8,y:20},{opacity:1,scale:1,y:0,duration:0.5,stagger:0.1,ease:'back.out(1.8)'});
   }
-  // Update star display with CountUp
-  updateStarDisplay(S.stars, ts);
+  if(questMode) updateStarDisplay(S.stars, ts);
+
+  // Quest sequencing — was this the subject the plan is currently on?
+  const plan=questMode?getQuestPlan():null;
+  const isQuestSubjSlot=plan && plan.subjIdx<3 && plan.subjects[plan.subjIdx]===S.quizSubj.key;
+  const stdBtns=document.getElementById('res-std-btns'), nextBtn=document.getElementById('res-next-btn');
+  if(isQuestSubjSlot){
+    plan.subjIdx++;saveQuestPlan(plan);
+    stdBtns.style.display='none';nextBtn.style.display='block';
+    if(plan.subjIdx<3){
+      const nextName=S.subjects.find(s=>s.key===plan.subjects[plan.subjIdx])?.name||plan.subjects[plan.subjIdx];
+      QR.questNextIsLast=false;
+      nextBtn.textContent=`Next: ${nextName} →`;
+    }else{
+      QR.questNextIsLast=true;
+      nextBtn.textContent='🎉 All 3 Done! Back Home';
+    }
+  }else{
+    stdBtns.style.display='flex';nextBtn.style.display='none';
+  }
+}
+function continueQuestSubjectFlow(){
+  document.getElementById('res').style.display='none';
+  if(QR.questNextIsLast) renderHome();
+  else startQuestSubject();
 }
 
 function retryQuiz(){document.getElementById('res').style.display='none';startSubject(S.quizSubj.key);}
@@ -4389,10 +4336,18 @@ function evaluateReading(){
 }
 async function submitReading(){
   const btn=document.getElementById('rd-submit-btn');btn.disabled=true;btn.textContent='Submitting...';
+  // Only the first reading of the day earns stars -- extra passages are
+  // free practice (same star-economy rule as practice-mode quizzes).
+  const earnsStars=(S.todayReadingCount||0)===0;
   try{
-    await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:RD.starsEarned,reason:`Reading: ${RD.currentPassage?.title||'passage'}`,category:'reading'}});
+    if(earnsStars){
+      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:RD.starsEarned,reason:`Reading: ${RD.currentPassage?.title||'passage'}`,category:'reading'}});
+      S.stars+=RD.starsEarned;
+      S.todayReadingCount=(S.todayReadingCount||0)+1;
+    }
     if(RD.taskId)await db('task_completions',{method:'POST',prefer:'return=minimal',body:{task_id:RD.taskId,player_id:S.player.id,status:'pending',completion_date:today()}});
-    S.stars+=RD.starsEarned;btn.textContent='✅ Submitted! Ask a parent to approve';btn.style.background='#27AE60';
+    btn.textContent=earnsStars?'✅ Submitted! Ask a parent to approve':'✅ Great practice — no extra stars this time!';
+    btn.style.background=earnsStars?'#27AE60':'#7C5CBF';
     setTimeout(()=>closeReading(),2500);
   }catch(e){btn.disabled=false;btn.textContent='⭐ Submit & Earn Stars';}
 }
