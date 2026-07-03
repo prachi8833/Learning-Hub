@@ -790,11 +790,30 @@ function nextRound(){
   showScreen('gameScreen');loadQuestion();
 }
 
+// Daily cap on automated quest earning (quiz/reading/game), shared across
+// the whole app -- keeps a big game round from blowing past what quizzes
+// and reading already earned today. Parent-configurable via star_config.
+async function applyGameDailyCap(proposed){
+  if(proposed<=0)return proposed;
+  try{
+    const cfg=await db('star_config?key=eq.daily_quest_cap&select=value');
+    const cap=(Array.isArray(cfg)&&cfg[0]&&typeof cfg[0].value==='number')?cfg[0].value:300;
+    const todayStr=new Date().toISOString().split('T')[0];
+    const logs=await db(`stars_log?player_id=eq.${playerId}&created_at=gte.${todayStr}T00:00:00&category=in.(learning,reading,game)&select=amount`);
+    const earned=Math.max(0,(Array.isArray(logs)?logs:[]).reduce((a,l)=>a+Math.max(0,l.amount),0));
+    return Math.max(0,Math.min(proposed,cap-earned));
+  }catch(e){ return proposed; }
+}
+
 async function endGame(){
   showScreen('gameOverScreen');
   const total=G.stars;
+  const awarded=(isQuest&&playerId)?await applyGameDailyCap(total):0;
   document.getElementById('go-score').textContent=total.toLocaleString()+' ⭐';
-  document.getElementById('go-earned').textContent=isQuest?`+${total.toLocaleString()} stars saved`:'Practice round — no stars this time!';
+  document.getElementById('go-earned').textContent=!isQuest?'Practice round — no stars this time!':
+    awarded===0?`🎉 You've hit today's star cap — amazing work!`:
+    awarded<total?`+${awarded.toLocaleString()} stars saved (today's cap almost here!)`:
+    `+${awarded.toLocaleString()} stars saved`;
   document.getElementById('go-rounds').textContent=G.round;
   document.getElementById('go-correct').textContent=G.totalCorrect;
   document.getElementById('go-streak').textContent=G.sessionBestStreak;
@@ -805,7 +824,7 @@ async function endGame(){
   document.getElementById('go-trophy').textContent=total>=20?'🏆':total>=12?'🌍':'🚩';
   if(playerId&&total>0){
     try{
-      if(isQuest)await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,amount:total,reason:`World Flags — Round ${G.round}, ${G.totalCorrect} correct`,category:'game'}});
+      if(isQuest&&awarded>0)await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:playerId,amount:awarded,reason:`World Flags — Round ${G.round}, ${G.totalCorrect} correct`,category:'game'}});
       const rows=await db(`game_scores?player_id=eq.${playerId}&game_key=eq.world-flags`);
       if(rows&&rows.length){
         await db(`game_scores?player_id=eq.${playerId}&game_key=eq.world-flags`,{method:'PATCH',prefer:'return=minimal',body:{best_score:isNewBest?total:rows[0].best_score,best_round:G.round,total_plays:(rows[0].total_plays||0)+1,last_played:new Date().toISOString()}});
