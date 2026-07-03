@@ -355,6 +355,30 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
         <div class="card-title"><span>⚙️ App Settings</span></div>
         <div style="padding:10px 0;font-size:.82rem;color:rgba(255,255,255,.65);font-weight:700">Settings panel ready</div>
       </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="card-title"><span>🔄 Restart Center</span></div>
+        <p style="font-size:.78rem;color:rgba(255,255,255,.5);font-weight:700;margin:0 0 16px">
+          Reset progress for one kid, both kids, or a single subject. Each reset type explains exactly what it touches before you confirm.
+        </p>
+        <div class="form-group">
+          <label class="form-label">Kid(s)</label>
+          <div style="display:flex;gap:14px;padding:4px 0">
+            <label style="display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:700;color:#fff;cursor:pointer"><input type="checkbox" id="rc-kid-riaan" class="rc-kid-cb"> Riaan</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:.82rem;font-weight:700;color:#fff;cursor:pointer"><input type="checkbox" id="rc-kid-kairav" class="rc-kid-cb"> Kairav</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Reset Type</label>
+          <select class="form-input form-select" id="rc-type" onchange="onResetTypeChange()"></select>
+        </div>
+        <div class="form-group" id="rc-subject-group" style="display:none">
+          <label class="form-label">Subject</label>
+          <select class="form-input form-select" id="rc-subject"></select>
+        </div>
+        <div id="rc-danger-note" style="font-size:.74rem;font-weight:700;padding:10px 12px;border-radius:10px;margin-bottom:12px"></div>
+        <button class="btn btn-red" style="width:100%" onclick="openResetConfirm()">🔄 Continue</button>
+      </div>
     </div>
   </div>
 </div>
@@ -435,6 +459,7 @@ async function init(){
   loadRewards();
   loadHistory();
   loadContent();
+  initResetCenter();
 }
 
 async function loadAll(){
@@ -1070,6 +1095,115 @@ async function submitQuickStar(pid,isAdd){
   await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:pid,amount:isAdd?amount:-amount,reason,category:isAdd?'bonus':'deduct'}});
   toast(isAdd?`+${amount} stars added! ⭐`:`-${amount} stars deducted`);
   closeModal();loadHistory();renderOverview();
+}
+
+// ─── RESTART CENTER ─────────────────────────────────────────
+// Scalable by design: add a new object to RESET_TYPES (and a matching
+// reset<Name>(pid) function + a dispatch line in runReset) to add a new
+// reset type -- no other UI plumbing needed.
+const RESET_TYPES=[
+  {key:'stars',         label:'⭐ Reset Stars to 0',       danger:'medium',
+    note:'Zeroes the star balance by logging one corrective entry. Full history is kept -- fully reversible by adding stars back.'},
+  {key:'today_quest',   label:"🗺️ Reset Today's Quest",    danger:'high',
+    note:"Deletes ALL of today's sessions and today's star gains (reading, games, tasks, quizzes) and today's game plays. Removes stars earned today. Cannot be undone. Only affects today -- history before today is untouched."},
+  {key:'subject_level', label:'📚 Reset a Subject Level',  danger:'low', needsSubject:true,
+    note:'Resets the chosen subject back to Level 1. Does not touch stars or other subjects.'},
+  {key:'full_player',   label:'💥 Full Player Reset',      danger:'extreme',
+    note:'Wipes EVERYTHING for this kid: all-time stars, all subject levels, all session history, game history, badges, streaks, active goal, and pending redemptions. This is a total fresh start and cannot be undone.'},
+];
+const DANGER_STYLE={
+  low:    'background:rgba(39,174,96,.12);color:#52D08A;border:1px solid rgba(39,174,96,.25)',
+  medium: 'background:rgba(246,192,74,.12);color:#F6C04A;border:1px solid rgba(246,192,74,.25)',
+  high:   'background:rgba(240,120,48,.14);color:#F07830;border:1px solid rgba(240,120,48,.3)',
+  extreme:'background:rgba(232,69,69,.14);color:#E84545;border:1px solid rgba(232,69,69,.35)',
+};
+
+function initResetCenter(){
+  const sel=document.getElementById('rc-type');
+  if(!sel)return;
+  sel.innerHTML=RESET_TYPES.map(t=>`<option value="${t.key}">${t.label}</option>`).join('');
+  onResetTypeChange();
+}
+async function onResetTypeChange(){
+  const type=RESET_TYPES.find(t=>t.key===document.getElementById('rc-type').value);
+  document.getElementById('rc-subject-group').style.display=type.needsSubject?'block':'none';
+  if(type.needsSubject){
+    const subjSel=document.getElementById('rc-subject');
+    if(!subjSel.dataset.loaded){
+      const subjects=await db('subjects?order=sort_order&select=key,name');
+      subjSel.innerHTML=(Array.isArray(subjects)?subjects:[]).map(s=>`<option value="${s.key}">${s.name}</option>`).join('');
+      subjSel.dataset.loaded='1';
+    }
+  }
+  const note=document.getElementById('rc-danger-note');
+  note.setAttribute('style',`font-size:.74rem;font-weight:700;padding:10px 12px;border-radius:10px;margin-bottom:12px;${DANGER_STYLE[type.danger]}`);
+  note.textContent=type.note;
+}
+
+function openResetConfirm(){
+  const type=RESET_TYPES.find(t=>t.key===document.getElementById('rc-type').value);
+  const riaan=D.players.find(p=>p.name==='Riaan'), kairav=D.players.find(p=>p.name==='Kairav');
+  const pids=[];
+  if(document.getElementById('rc-kid-riaan').checked&&riaan)pids.push(riaan.id);
+  if(document.getElementById('rc-kid-kairav').checked&&kairav)pids.push(kairav.id);
+  if(!pids.length){toast('Select at least one kid','error');return;}
+  const names=D.players.filter(p=>pids.includes(p.id)).map(p=>p.name).join(' & ');
+  let subjectKey='',subjName='';
+  if(type.needsSubject){
+    const subjSel=document.getElementById('rc-subject');
+    if(!subjSel.value){toast('Select a subject','error');return;}
+    subjectKey=subjSel.value;subjName=subjSel.selectedOptions[0]?.textContent||subjSel.value;
+  }
+  const heavy=type.danger==='high'||type.danger==='extreme';
+  showModal(`<div class="modal-title">⚠️ Confirm Reset <button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div style="font-size:.85rem;color:#fff;font-weight:700;margin-bottom:8px">${type.label}${subjName?` — ${subjName}`:''} for <b>${names}</b></div>
+    <div style="font-size:.76rem;color:rgba(255,255,255,.55);font-weight:700;margin-bottom:14px">${type.note}</div>
+    ${heavy?`<div class="form-group"><label class="form-label">Type "${names}" to confirm</label><input class="form-input" id="rc-confirm-txt" placeholder="${names}"></div>`:''}
+    <button class="btn btn-red" style="width:100%" onclick='runReset(${JSON.stringify(type.key)},${JSON.stringify(pids)},${JSON.stringify(subjectKey)},${JSON.stringify(names)})'>🔄 Reset Now</button>`);
+}
+
+async function runReset(typeKey,pids,subjectKey,expectedNames){
+  const type=RESET_TYPES.find(t=>t.key===typeKey);
+  if(type.danger==='high'||type.danger==='extreme'){
+    const txt=document.getElementById('rc-confirm-txt').value.trim();
+    if(txt!==expectedNames){toast('Typed name did not match -- reset cancelled','error');return;}
+  }
+  for(const pid of pids){
+    if(typeKey==='stars')         await resetStars(pid);
+    if(typeKey==='today_quest')   await resetTodayQuest(pid);
+    if(typeKey==='subject_level') await resetSubjectLevel(pid,subjectKey);
+    if(typeKey==='full_player')   await resetFullPlayer(pid);
+  }
+  closeModal();toast('Reset complete ✅');renderOverview();loadHistory();
+}
+
+async function resetStars(pid){
+  const logs=await db(`stars_log?player_id=eq.${pid}&select=amount`);
+  const balance=Math.max(0,(Array.isArray(logs)?logs:[]).reduce((a,l)=>a+l.amount,0));
+  if(balance>0){
+    await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:pid,amount:-balance,reason:'Balance reset by parent',category:'reset'}});
+  }
+}
+async function resetTodayQuest(pid){
+  const todayStart=`${today()}T00:00:00`;
+  await db(`sessions?player_id=eq.${pid}&created_at=gte.${todayStart}`,{method:'DELETE',prefer:'return=minimal'});
+  await db(`stars_log?player_id=eq.${pid}&created_at=gte.${todayStart}`,{method:'DELETE',prefer:'return=minimal'});
+  await db(`game_scores?player_id=eq.${pid}&last_played=gte.${todayStart}`,{method:'PATCH',prefer:'return=minimal',body:{last_played:null}});
+  await db(`task_completions?player_id=eq.${pid}&completion_date=eq.${today()}`,{method:'DELETE',prefer:'return=minimal'});
+}
+async function resetSubjectLevel(pid,subjectKey){
+  await db(`level_progress?player_id=eq.${pid}&subject_key=eq.${subjectKey}`,{method:'DELETE',prefer:'return=minimal'});
+}
+async function resetFullPlayer(pid){
+  await db(`stars_log?player_id=eq.${pid}`,{method:'DELETE',prefer:'return=minimal'});
+  await db(`sessions?player_id=eq.${pid}`,{method:'DELETE',prefer:'return=minimal'});
+  await db(`level_progress?player_id=eq.${pid}`,{method:'DELETE',prefer:'return=minimal'});
+  await db(`game_scores?player_id=eq.${pid}`,{method:'DELETE',prefer:'return=minimal'});
+  await db(`task_completions?player_id=eq.${pid}`,{method:'DELETE',prefer:'return=minimal'});
+  await db(`earned_badges?player_id=eq.${pid}`,{method:'DELETE',prefer:'return=minimal'});
+  await db(`streaks?player_id=eq.${pid}`,{method:'DELETE',prefer:'return=minimal'});
+  await db(`active_goals?player_id=eq.${pid}`,{method:'DELETE',prefer:'return=minimal'});
+  await db(`redemptions?player_id=eq.${pid}&status=eq.pending`,{method:'DELETE',prefer:'return=minimal'});
 }
 async function loadHistory(){
   const filter=document.getElementById('history-filter')?.value||'';
