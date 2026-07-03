@@ -2258,7 +2258,23 @@ const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorizat
 let S={player:null,players:[],stars:0,streak:0,subjects:[],modules:[],tasks:[],wishList:[],activeGoal:null,levelProgress:{},badges:[],earnedBadges:[],starConfig:{},rewardShop:[],quotes:{},calY:new Date().getFullYear(),calM:new Date().getMonth(),quizSubj:null,quizBatch:[],quizIdx:0,quizScore:0,quizSE:0,quizAns:false,questModeQuiz:false,pin:'1820',pinE:'',tab:'home',tc:{}};
 
 function getQuote(m){const p=S.quotes[m];if(p&&p.length){const q=p[Math.floor(Math.random()*p.length)];return q.emoji+' '+q.quote;}return{success:'⭐ Shabash!',wrong_answer:'🌱 Ek aur try!',level_up:'🏆 Level up!',daily_start:'🙏 Namaste! Ready?',perfect_score:'🎊 Perfect!'}[m]||'⭐ Keep going!';}
-const today=()=>new Date().toISOString().split('T')[0];
+// LOCAL calendar date (not UTC!) -- toISOString() always converts to UTC,
+// which rolls the date over at e.g. 5pm Pacific time instead of local
+// midnight. That made "today's quest" appear to reset in the evening of
+// the previous day instead of at midnight, and let a task done at 6pm
+// count as "tomorrow" while the actual next morning still read as the
+// same day. localDateStr() (below) does the same local-date conversion
+// for arbitrary Date objects; localMidnightISO() gives the UTC instant
+// that corresponds to local midnight, for bounding created_at queries.
+const today=()=>localDateStr(new Date());
+function localDateStr(d){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function localMidnightISO(d){
+  d=d?new Date(d):new Date();
+  d.setHours(0,0,0,0);
+  return d.toISOString();
+}
 const esc=s=>(s||'').replace(/'/g,"\\'");
 const gradeAhead=(g)=>Math.min(g+2,6);
 const shuf=a=>{const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;};
@@ -3077,14 +3093,14 @@ function startQuestGame(){
 async function loadQuestData() {
   if (!S.player) return;
   try {
-    const todayStr = today();
-    const sessions = await db(`sessions?player_id=eq.${S.player.id}&created_at=gte.${todayStr}T00:00:00&select=id,subject_key`);
+    const todayStart = localMidnightISO();
+    const sessions = await db(`sessions?player_id=eq.${S.player.id}&created_at=gte.${todayStart}&select=id,subject_key`);
     S.todaySessions = Array.isArray(sessions) ? sessions : [];
-    const reads = await db(`stars_log?player_id=eq.${S.player.id}&category=eq.reading&created_at=gte.${todayStr}T00:00:00&select=id`);
+    const reads = await db(`stars_log?player_id=eq.${S.player.id}&category=eq.reading&created_at=gte.${todayStart}&select=id`);
     S.todayReadingCount = Array.isArray(reads) ? reads.length : 0;
-    const gscores = await db(`game_scores?player_id=eq.${S.player.id}&last_played=gte.${todayStr}T00:00:00&select=game_key`);
+    const gscores = await db(`game_scores?player_id=eq.${S.player.id}&last_played=gte.${todayStart}&select=game_key`);
     S.todayGamesPlayed = Array.isArray(gscores) ? [...new Set(gscores.map(g => g.game_key))] : [];
-    const logs = await db(`stars_log?player_id=eq.${S.player.id}&created_at=gte.${todayStr}T00:00:00&select=amount`);
+    const logs = await db(`stars_log?player_id=eq.${S.player.id}&created_at=gte.${todayStart}&select=amount`);
     S.todayStarsEarned = Math.max(0, (Array.isArray(logs) ? logs : []).reduce((a, l) => a + Math.max(0, l.amount), 0));
   } catch (e) {}
 }
@@ -3296,8 +3312,8 @@ async function buildWS(){
   });
 
   // Fetch completions for the whole week
-  const weekStart=weekDates[0].toISOString().split('T')[0];
-  const weekEnd=weekDates[6].toISOString().split('T')[0];
+  const weekStart=localDateStr(weekDates[0]);
+  const weekEnd=localDateStr(weekDates[6]);
   let compMap={};
   try{
     if(S.player){
@@ -3314,11 +3330,11 @@ async function buildWS(){
 
   const totalTasks=S.tasks.length||6;
   const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const todayStr=now.toISOString().split('T')[0];
+  const todayStr=localDateStr(now);
   let daysGood=0;
 
   el.innerHTML=weekDates.map((d,i)=>{
-    const ds=d.toISOString().split('T')[0];
+    const ds=localDateStr(d);
     const isToday=ds===todayStr;
     const isFuture=d>now&&!isToday;
     const comp=compMap[ds];
@@ -3349,9 +3365,9 @@ async function buildGarden(){
   const days=Array.from({length:7},(_,i)=>{
     const d=new Date(now);d.setDate(now.getDate()-6+i);return d;
   });
-  const startStr=days[0].toISOString().split('T')[0];
-  const endStr=days[6].toISOString().split('T')[0];
-  const todayStr=now.toISOString().split('T')[0];
+  const startStr=localDateStr(days[0]);
+  const endStr=localDateStr(days[6]);
+  const todayStr=localDateStr(now);
 
   let compMap={};
   try{
@@ -3371,7 +3387,7 @@ async function buildGarden(){
   const dayNames=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
   el.innerHTML=days.map((d,i)=>{
-    const ds=d.toISOString().split('T')[0];
+    const ds=localDateStr(d);
     const isToday=ds===todayStr;
     const isFuture=d>now&&!isToday;
     const comp=compMap[ds];
@@ -4255,7 +4271,7 @@ async function applyDailyCap(proposedAmount){
   if(proposedAmount<=0)return proposedAmount;
   const cap=starCfg('daily_quest_cap',300);
   try{
-    const todayStart=`${today()}T00:00:00`;
+    const todayStart=localMidnightISO();
     const logs=await db(`stars_log?player_id=eq.${S.player.id}&created_at=gte.${todayStart}&category=in.(learning,reading,game)&select=amount`);
     const earnedSoFar=Math.max(0,(Array.isArray(logs)?logs:[]).reduce((a,l)=>a+Math.max(0,l.amount),0));
     return Math.max(0,Math.min(proposedAmount,cap-earnedSoFar));
@@ -4502,8 +4518,8 @@ async function renderGardenModal(){
   const dim=new Date(y,m+1,0).getDate();
   const monthStart=`${y}-${String(m+1).padStart(2,'0')}-01`;
   const monthEnd=`${y}-${String(m+1).padStart(2,'0')}-${dim}`;
-  const today=new Date();
-  const todayStr=today.toISOString().split('T')[0];
+  const nowD=new Date();
+  const todayStr=localDateStr(nowD);
   const totalTasks=Math.max(S.tasks.length,1);
   let compMap={};
 
@@ -4540,7 +4556,7 @@ async function renderGardenModal(){
   for(let d=1;d<=dim;d++){
     const dateStr=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isToday=dateStr===todayStr;
-    const isFuture=new Date(y,m,d)>today&&!isToday;
+    const isFuture=new Date(y,m,d)>nowD&&!isToday;
     const comp=compMap[dateStr];
     let stage,pctTxt='';
 
