@@ -985,8 +985,10 @@ async function applyGameDailyCap(proposed){
   try{
     const cfg=await db('star_config?key=eq.daily_quest_cap&select=value');
     const cap=(Array.isArray(cfg)&&cfg[0]&&typeof cfg[0].value==='number')?cfg[0].value:300;
-    const todayStr=new Date().toISOString().split('T')[0];
-    const logs=await db(`stars_log?player_id=eq.${playerId}&created_at=gte.${todayStr}T00:00:00&category=in.(learning,reading,game)&select=amount`);
+    // Local midnight, not UTC -- toISOString() rolls the date over at
+    // ~5pm Pacific time instead of local midnight.
+    const todayStart=new Date();todayStart.setHours(0,0,0,0);
+    const logs=await db(`stars_log?player_id=eq.${playerId}&created_at=gte.${todayStart.toISOString()}&category=in.(learning,reading,game)&select=amount`);
     const earned=Math.max(0,(Array.isArray(logs)?logs:[]).reduce((a,l)=>a+Math.max(0,l.amount),0));
     return Math.max(0,Math.min(proposed,cap-earned));
   }catch(e){ return proposed; }

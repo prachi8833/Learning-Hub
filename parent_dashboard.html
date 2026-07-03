@@ -1188,7 +1188,7 @@ async function resetStars(pid){
   }
 }
 async function resetTodayQuest(pid){
-  const todayStart=`${today()}T00:00:00`;
+  const todayStart=localMidnightISO();
   await db(`sessions?player_id=eq.${pid}&created_at=gte.${todayStart}`,{method:'DELETE',prefer:'return=minimal'});
   await db(`stars_log?player_id=eq.${pid}&created_at=gte.${todayStart}`,{method:'DELETE',prefer:'return=minimal'});
   await db(`game_scores?player_id=eq.${pid}&last_played=gte.${todayStart}`,{method:'PATCH',prefer:'return=minimal',body:{last_played:null}});
@@ -1239,7 +1239,12 @@ async function loadContent(){
     :`<div style="text-align:center;padding:20px;font-size:.75rem;color:rgba(255,255,255,.5)">No questions found</div>`;
 }
 
-function today(){return new Date().toISOString().split('T')[0];}
+// LOCAL calendar date, not UTC -- toISOString() rolls the date over at
+// ~5pm Pacific time instead of local midnight (see index.html for the
+// full explanation). localMidnightISO() gives the correct UTC instant
+// for bounding created_at (timestamptz) queries against local midnight.
+function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function localMidnightISO(){const d=new Date();d.setHours(0,0,0,0);return d.toISOString();}
 function showModal(html){document.getElementById('modal-content').innerHTML=html;document.getElementById('modal').classList.add('open');}
 function closeModal(){document.getElementById('modal').classList.remove('open');}
 function toast(msg,type=''){
