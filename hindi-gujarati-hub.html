@@ -691,8 +691,8 @@ function renderQuestion(word,mode){
   // Options show ONLY romanised pronunciation — no English
   // Script shown small below for recognition, but answer is the roman word
   const makeOpt=(o)=>{
-    const key=o.roman.replace(/'/g,"\'");
-    const ans=word.roman.replace(/'/g,"\'");
+    const key=o.roman.replace(/'/g,"\\'");
+    const ans=word.roman.replace(/'/g,"\\'");
     return `<button class="opt" onclick="checkOpt(this,'${key}','${ans}')">
       <span class="opt-roman-big">${o.roman}</span>
       <span class="opt-script-small">${o.script}</span>
@@ -716,8 +716,8 @@ function renderQuestion(word,mode){
     </div>
     <button class="speak-btn" onclick="speakWord()">🔊 Hear it spoken</button>
     <div class="opts">${engOpts.map(o=>{
-      const key=o.eng.replace(/'/g,"\'");
-      const ans=word.eng.replace(/'/g,"\'");
+      const key=o.eng.replace(/'/g,"\\'");
+      const ans=word.eng.replace(/'/g,"\\'");
       return `<button class="opt" onclick="checkOpt(this,'${key}','${ans}')">${o.eng}</button>`;
     }).join('')}</div>`;
     setTimeout(()=>speakWord(),600);
