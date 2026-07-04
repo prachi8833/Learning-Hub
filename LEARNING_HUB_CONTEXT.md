@@ -105,10 +105,11 @@ The code always has hardcoded `FALLBACK_*` arrays as a safety net — keep them.
 | `earned_badges` | player_id, badge_id, earned_at |
 | `reading_passages` | id, title, content, grade, level, topic, word_count, active |
 | `motivation_quotes` | id, mood, quote, emoji |
-| `modules` | id, subject_key, title, description, level, active |
+| `modules` | id, subject_key, key, name, world_name, icon, description, sort_order, active, `lesson_content` (new, 2026-07, nullable — the "teach" lesson text shown before a topic's questions; splits on blank lines into paragraphs client-side) |
 | `game_templates` | id, name, type, description |
 | `game_items` | id, template_id, content, answer |
 | `parent_settings` | key, value |
+| `player_progress` | player_id, subject_key, topic, current_grade, current_level (1-5, capped), recent_results (rolling last-5 pass/fail array), updated_at — per-topic adaptive mastery, added 2026-07. **Needs an RLS write policy added (see SQL appendix below) — it has none by default.** |
 
 ### Question row format
 
@@ -126,10 +127,72 @@ VALUES
 - `answer` = correct option (string)
 - `wrong1/2/3` = plausible wrong options — never silly/obvious
 - Options are shuffled randomly in the quiz UI
-- `level` 1–10 = difficulty within subject
+- `level` 1–10 = difficulty within subject (note: the newer per-topic `player_progress.current_level` scale used for Subject Learning question selection is separately capped at 1-5, matching the grade×level staircase — see appendix below)
 - `grade` 1–5 = school year
 - `explanation` shown on wrong answer — keep it kind and simple
 - No trick questions; plain language for ages 6–10
+- `type` (new, 2026-07, default `'mcq'`) — question format: `mcq` (default, uses answer/wrong1-3 as today), `fill_in_blank` (question has a `___` blank, answer=correct fill, wrong1-3=distractor chips), `word_rearrange` (answer=full correct sentence, split/shuffled into tappable word tiles), `matching` (format_data.pairs holds the match set, answer/wrong1-3 unused)
+- `format_data` (new, 2026-07, jsonb, nullable) — generic bucket for type-specific structured data (currently only `matching` uses it: `{"pairs":[{"left":"...","right":"..."}]}`)
+
+### Subject Learning schema appendix — SQL to run once in the Supabase SQL Editor (2026-07)
+
+```sql
+-- 1. modules: add the "teach" lesson-content column (nullable — existing rows stay NULL, teach screen skips gracefully)
+ALTER TABLE modules ADD COLUMN IF NOT EXISTS lesson_content text;
+
+-- 2. questions: add question-format columns (backward compatible — all existing rows auto-default to 'mcq')
+ALTER TABLE questions ADD COLUMN IF NOT EXISTS type text NOT NULL DEFAULT 'mcq';
+ALTER TABLE questions ADD COLUMN IF NOT EXISTS format_data jsonb;
+
+-- 3. player_progress: add the missing write policy (confirmed live: INSERT currently fails with 42501,
+--    RLS-blocked, unlike level_progress which already has a working policy). Check what already works
+--    on level_progress first, then mirror it:
+SELECT policyname, cmd, qual, with_check FROM pg_policies WHERE tablename = 'level_progress';
+
+CREATE POLICY "Allow app read/write on player_progress"
+  ON player_progress FOR ALL TO anon USING (true) WITH CHECK (true);
+
+-- 4. player_progress: ensure a composite primary key exists so the app can upsert-by-filter
+--    (check first — only run the ALTER if the SELECT below returns no rows for player_progress):
+SELECT constraint_name, constraint_type FROM information_schema.table_constraints WHERE table_name='player_progress';
+ALTER TABLE player_progress ADD CONSTRAINT player_progress_pk PRIMARY KEY (player_id, subject_key, topic);
+```
+
+**Authoring examples** (one per new `type`, for copy-paste reference when adding real content):
+
+```sql
+-- lesson_content example
+UPDATE modules SET lesson_content =
+'The water cycle is how water moves around our planet.
+
+First, the sun heats up water in oceans and lakes. This is called EVAPORATION.
+
+Next, the vapor cools and turns back into tiny droplets, forming clouds. This is CONDENSATION.
+
+Finally, when clouds get heavy, water falls back down as rain or snow. This is PRECIPITATION -- and the cycle starts again!'
+WHERE subject_key='science' AND key='plants';
+
+-- fill_in_blank example (wrong1/2/3 become the tap-to-fill distractor chips)
+INSERT INTO questions (subject_key, topic, level, grade, type, question, answer, wrong1, wrong2, wrong3, explanation, active)
+VALUES ('science','plants',2,3,'fill_in_blank',
+  'Water turns into vapor through a process called ___.',
+  'evaporation','condensation','precipitation','erosion',
+  'Evaporation is when the sun heats water and turns it into vapor.', true);
+
+-- word_rearrange example (answer alone is the sentence to scramble into tappable word tiles)
+INSERT INTO questions (subject_key, topic, level, grade, type, question, answer, explanation, active)
+VALUES ('english','sentences',2,3,'word_rearrange',
+  'Put the words in the right order:',
+  'The dog ran across the park',
+  'Subject (the dog) plus verb (ran) plus place (across the park).', true);
+
+-- matching example (pairs live in format_data, not answer/wrong1-3)
+INSERT INTO questions (subject_key, topic, level, grade, type, question, format_data, explanation, active)
+VALUES ('social','canada',2,3,'matching',
+  'Match each city to its province:',
+  '{"pairs":[{"left":"Vancouver","right":"British Columbia"},{"left":"Toronto","right":"Ontario"},{"left":"Calgary","right":"Alberta"}]}',
+  'Each of these is the largest city in its province.', true);
+```
 
 ---
 

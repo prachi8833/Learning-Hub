@@ -1149,6 +1149,35 @@ h1, h2, h3 {
 .q-nxt{width:100%;margin-top:13px;padding:14px;border:none;border-radius:var(--r);background:linear-gradient(135deg,var(--teal2),var(--teal));color:#fff;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;cursor:pointer;display:none;box-shadow:0 4px 16px rgba(43,191,184,.3)}
 .q-nxt:hover{transform:translateY(-2px)}
 
+/* TEACH SCREEN — reuses .rd-header/.rd-body/.rd-passage-card from reading */
+#teachScreen{position:fixed;inset:0;z-index:9999;background:rgba(8,18,12,0.92);backdrop-filter:blur(22px);display:none;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.tc-para{margin-bottom:14px}
+.tc-para:last-child{margin-bottom:0}
+
+/* FILL-IN-THE-BLANK — reuses .q-opt as a chip instead of a full-width row */
+.q-blank-txt{font-size:1.1rem;font-weight:800;color:#fff;line-height:1.6;margin-bottom:18px}
+.q-blank-slot{display:inline-block;min-width:70px;border-bottom:3px solid var(--teal);color:var(--amber);font-weight:900;text-align:center;padding:0 4px}
+.q-chips{display:flex;flex-wrap:wrap;gap:9px}
+.q-opt.chip{flex:0 0 auto;display:inline-flex}
+
+/* WORD REARRANGE — adapted from word-builder.html's tap-to-arrange pattern */
+.qw-slots{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;min-height:52px;background:rgba(255,255,255,.04);border-radius:12px;padding:12px;border:1.5px dashed rgba(255,255,255,.12);margin-bottom:14px}
+.qw-slot{min-width:64px;height:44px;padding:0 10px;border-radius:9px;background:rgba(43,191,184,.15);border:2px solid rgba(43,191,184,.35);display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800;color:#fff;cursor:pointer;transition:all .2s}
+.qw-slot.empty{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.15);color:transparent}
+.qw-tiles{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
+.qw-tile{padding:10px 14px;border-radius:10px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);font-size:.9rem;font-weight:800;color:#fff;cursor:pointer;transition:all .2s;user-select:none}
+.qw-tile:hover:not(.used){background:rgba(246,192,74,.2);border-color:var(--amber);transform:translateY(-3px)}
+.qw-tile.used{opacity:.25;cursor:default;transform:none}
+
+/* MATCHING — two shuffled tappable columns */
+.qm-cols{display:flex;gap:16px}
+.qm-col{flex:1;display:flex;flex-direction:column;gap:8px}
+.qm-chip{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.1);border-radius:var(--r);padding:11px 13px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:700;color:rgba(255,255,255,.85);cursor:pointer;text-align:center;transition:all .15s}
+.qm-chip:hover:not(.matched){border-color:var(--teal);background:rgba(43,191,184,.09)}
+.qm-chip.selected{border-color:var(--amber);background:rgba(246,192,74,.15)}
+.qm-chip.matched{background:rgba(39,174,96,.16);border-color:var(--green);opacity:.6;cursor:default}
+.qm-chip.wrong-flash{background:rgba(232,69,69,.25);border-color:var(--red)}
+
 /* RESULTS */
 #res{position:fixed;inset:0;z-index:10000;background:linear-gradient(160deg,rgba(8,24,14,.95),rgba(20,100,80,.88));backdrop-filter:blur(22px);display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:40px 22px}
 .res-tr{font-size:5.5rem;animation:taraFloat 2s ease-in-out infinite}
@@ -2040,6 +2069,20 @@ h1, h2, h3 {
   </div>
 </div>
 
+<!-- TEACH -->
+<div id="teachScreen" style="display:none;flex-direction:column">
+  <div class="rd-header">
+    <button class="rd-back" onclick="closeTeach()">←</button>
+    <div class="rd-title"><h3 id="tc-title">Let's Learn! 📘</h3><p id="tc-progress">Topic 1 of 2</p></div>
+  </div>
+  <div class="rd-body">
+    <div class="rd-passage-card">
+      <div id="tc-content"></div>
+    </div>
+    <button class="mb" onclick="closeTeachAndStart()">Let's Practice! →</button>
+  </div>
+</div>
+
 <!-- QUIZ -->
 <div id="quiz" style="display:none;flex-direction:column">
   <div class="qt">
@@ -2259,7 +2302,7 @@ function buildSCard(s, type='home'){
 }
 
 const db=(p,o={})=>fetch(`${SB}/rest/v1/${p}`,{headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,'Content-Type':'application/json','Prefer':o.prefer||'return=representation',...o.headers},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined}).then(r=>r.json()).catch(()=>[]);
-let S={player:null,players:[],stars:0,streak:0,subjects:[],modules:[],tasks:[],wishList:[],activeGoal:null,levelProgress:{},badges:[],earnedBadges:[],starConfig:{},rewardShop:[],quotes:{},calY:new Date().getFullYear(),calM:new Date().getMonth(),quizSubj:null,quizBatch:[],quizIdx:0,quizScore:0,quizSE:0,quizAns:false,questModeQuiz:false,pin:'1820',pinE:'',tab:'home',tc:{}};
+let S={player:null,players:[],stars:0,streak:0,subjects:[],modules:[],tasks:[],wishList:[],activeGoal:null,levelProgress:{},playerProgress:{},badges:[],earnedBadges:[],starConfig:{},rewardShop:[],quotes:{},calY:new Date().getFullYear(),calM:new Date().getMonth(),quizSubj:null,quizBatch:[],quizIdx:0,quizScore:0,quizSE:0,quizAns:false,questModeQuiz:false,pin:'1820',pinE:'',tab:'home',tc:{}};
 
 function getQuote(m){const p=S.quotes[m];if(p&&p.length){const q=p[Math.floor(Math.random()*p.length)];return q.emoji+' '+q.quote;}return{success:'⭐ Shabash!',wrong_answer:'🌱 Ek aur try!',level_up:'🏆 Level up!',daily_start:'🙏 Namaste! Ready?',perfect_score:'🎊 Perfect!'}[m]||'⭐ Keep going!';}
 // LOCAL calendar date (not UTC!) -- toISOString() always converts to UTC,
@@ -2282,6 +2325,102 @@ function localMidnightISO(d){
 const esc=s=>(s||'').replace(/'/g,"\\'");
 const gradeAhead=(g)=>Math.min(g+2,6);
 const shuf=a=>{const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;};
+
+// ─── SUBJECT LEARNING: topic selection + per-topic mastery (player_progress) ──
+// Pure random 2-topic pick per subject; best-effort avoids repeating the
+// exact same pair picked yesterday (falls back to allowing repeats when a
+// subject has too few topics to avoid). NOT weighted toward weak topics --
+// that's what the per-topic grade/level gating below is for instead.
+function pickTopicsForSubject(subjKey){
+  const mods=(S.modules||[]).filter(m=>m.subject_key===subjKey);
+  if(!mods.length)return [];
+  const histKey=`lh_topicHist_${S.player.id}_${subjKey}`;
+  let pool=mods;
+  try{
+    const hist=JSON.parse(localStorage.getItem(histKey)||'null');
+    if(hist && hist.date!==today() && Array.isArray(hist.topics)){
+      const filtered=mods.filter(m=>!hist.topics.includes(m.key));
+      if(filtered.length>=Math.min(2,mods.length))pool=filtered;
+    }
+  }catch(e){}
+  const picked=shuf(pool).slice(0,Math.min(2,mods.length));
+  try{localStorage.setItem(histKey,JSON.stringify({date:today(),topics:picked.map(m=>m.key)}));}catch(e){}
+  return picked;
+}
+
+// Reads (and lazily caches) this player's mastery row for one topic.
+// Defaults to grade-ahead/level-1/no-history for a topic never attempted --
+// same grade-ahead policy already used app-wide (gradeAhead()).
+async function getPlayerProgress(subjKey,topicKey){
+  if(!S.player)return {current_grade:1,current_level:1,recent_results:[]};
+  S.playerProgress[subjKey]=S.playerProgress[subjKey]||{};
+  if(S.playerProgress[subjKey][topicKey])return S.playerProgress[subjKey][topicKey];
+  let prog=null;
+  try{
+    const rows=await db(`player_progress?player_id=eq.${S.player.id}&subject_key=eq.${subjKey}&topic=eq.${topicKey}`);
+    if(Array.isArray(rows)&&rows.length)prog=rows[0];
+  }catch(e){}
+  if(!prog)prog={current_grade:gradeAhead(S.player.grade),current_level:1,recent_results:[]};
+  S.playerProgress[subjKey][topicKey]=prog;
+  return prog;
+}
+
+// Question pool for one topic-round, gated by this player's current
+// grade/level for that specific topic (not the blanket subject-wide
+// grade-lte filter used elsewhere). Falls back to the old ungated query if
+// the level-filtered pool is empty -- protects thin subjects/topics that
+// don't yet have questions densely seeded at every level.
+async function pickQuestionsForTopic(subjKey,topicKey,progress){
+  let qs=[];
+  try{
+    qs=await db(`questions?subject_key=eq.${subjKey}&topic=eq.${topicKey}&active=eq.true&grade=eq.${progress.current_grade}&level=lte.${progress.current_level}&limit=50`);
+  }catch(e){}
+  if(!Array.isArray(qs)||!qs.length){
+    const targetGrade=gradeAhead(S.player.grade);
+    try{
+      qs=await db(`questions?subject_key=eq.${subjKey}&topic=eq.${topicKey}&active=eq.true&grade=lte.${targetGrade}&limit=50`);
+    }catch(e){qs=[];}
+  }
+  return Array.isArray(qs)&&qs.length?shuf(qs).slice(0,10):[];
+}
+
+// Called once per topic-round completion (quest AND practice -- mastery
+// reflects real skill regardless of when a kid practised). Rolling window
+// of the last 5 round outcomes; 4-of-5 passes advances current_level
+// (capped 5, matching the grade x level 1-5 staircase), resetting the
+// window so a kid can't ride residual passes from the old level into a
+// second quick advance. Never demotes on failure -- just holds and keeps
+// resampling at the same level.
+async function recordTopicRoundResult(subjKey,topicKey,passed){
+  if(!S.player)return;
+  const progress=await getPlayerProgress(subjKey,topicKey);
+  let recent=Array.isArray(progress.recent_results)?[...progress.recent_results]:[];
+  recent.push(!!passed);
+  if(recent.length>5)recent=recent.slice(-5);
+  let current_level=progress.current_level||1;
+  let current_grade=progress.current_grade||gradeAhead(S.player.grade);
+  const passCount=recent.filter(Boolean).length;
+  if(recent.length===5 && passCount>=4){
+    if(current_level<5){
+      current_level+=1;
+    }else{
+      current_grade=Math.min(current_grade+1,gradeAhead(S.player.grade));
+      current_level=1;
+    }
+    recent=[];
+  }
+  const updated={current_grade,current_level,recent_results:recent};
+  S.playerProgress[subjKey]=S.playerProgress[subjKey]||{};
+  S.playerProgress[subjKey][topicKey]=updated;
+  try{
+    const existing=await db(`player_progress?player_id=eq.${S.player.id}&subject_key=eq.${subjKey}&topic=eq.${topicKey}&select=player_id`);
+    if(Array.isArray(existing)&&existing.length){
+      await db(`player_progress?player_id=eq.${S.player.id}&subject_key=eq.${subjKey}&topic=eq.${topicKey}`,{method:'PATCH',prefer:'return=minimal',body:{current_grade,current_level,recent_results:recent}});
+    }else{
+      await db('player_progress',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,subject_key:subjKey,topic:topicKey,current_grade,current_level,recent_results:recent}});
+    }
+  }catch(e){}
+}
 
 const FALLBACK_SUBJECTS=[
   {id:'s1',key:'math',   name:'Maths',        icon:'🔢',color:'#2BBFB8',active:true,sort_order:1,
@@ -2878,12 +3017,16 @@ function reconcileQuestPlan(){
 }
 
 function getQuestState() {
-  // Phase 1: done when at least 3 quiz sessions today across any subjects.
-  // Practice-mode quizzes never write a sessions row, so this only counts
-  // official quest attempts.
+  // Phase 1: done when at least 3 DISTINCT subjects have a quiz session
+  // today. Practice-mode quizzes never write a sessions row, so this only
+  // counts official quest attempts. Distinct-subject count (not raw row
+  // count) because a subject-visit now writes 2 sessions rows (one per
+  // topic-round) instead of 1 -- a raw length check would falsely read
+  // "done" after only 1.5 subjects worth of sessions.
   const todaySessions = (S.todaySessions || []);
-  const subjectsDone = todaySessions.length >= 3;
-  const subjectsCount = Math.min(todaySessions.length, 3);
+  const distinctSubjKeys = new Set(todaySessions.map(s=>s.subject_key));
+  const subjectsDone = distinctSubjKeys.size >= 3;
+  const subjectsCount = Math.min(distinctSubjKeys.size, 3);
   // Phase 2: done when a reading session was submitted today
   const readingDone = (S.todayReadingCount || 0) > 0;
 
@@ -3071,16 +3214,40 @@ function startQuestPhase(id) {
   showMod(`<div style="text-align:center;padding:12px"><div style="font-size:2.5rem;margin-bottom:9px">🛠️</div><div style="font-size:.95rem;font-weight:900;color:#fff;margin-bottom:5px">Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">This phase is still being built!</div><button class="mb" onclick="closeMod()">OK</button></div>`);
 }
 
-// Quest-mode subject quiz — one of today's 3 randomly-assigned subjects,
-// launched one at a time. Only quest-mode quizzes earn stars; see
-// launchSubjectQuiz() and the questMode branch in showQRes().
+// Quest-mode subject visit — one of today's 3 randomly-assigned subjects,
+// launched one at a time: 2 random topics, each taught then quizzed (10Q).
+// Only quest-mode quizzes earn stars; see the questMode branch in showQRes().
 async function startQuestSubject(){
   const plan=getQuestPlan();if(!plan||plan.subjIdx>=3)return;
   const key=plan.subjects[plan.subjIdx];
   const s=S.subjects.find(x=>x.key===key);
   if(!s){ plan.subjIdx++; saveQuestPlan(plan); renderQuestTrail(); return; }
   S.questModeQuiz=true;
-  await launchSubjectQuiz(s);
+  runSubjectSequence(key);
+}
+
+// Picks (or resumes) today's 2 topics for this subject and starts the
+// teach→quiz sequence at topic 1. Topic picks are persisted on the quest
+// plan itself (subjectTopics map) so re-entering the same subject later the
+// same day resumes the same 2 topics instead of re-rolling. Falls back to
+// the old whole-subject sample if the subject has no modules authored yet.
+function runSubjectSequence(subjKey){
+  const plan=getQuestPlan();
+  plan.subjectTopics=plan.subjectTopics||{};
+  let topics=plan.subjectTopics[subjKey];
+  if(!Array.isArray(topics)||!topics.length){
+    const picked=pickTopicsForSubject(subjKey);
+    topics=picked.map(m=>({key:m.key,name:m.name}));
+    plan.subjectTopics[subjKey]=topics;
+    saveQuestPlan(plan);
+  }
+  if(!topics.length){
+    const s=S.subjects.find(x=>x.key===subjKey);
+    if(s)launchSubjectQuiz(s);
+    return;
+  }
+  SL={subjKey,topics,topicIdx:0,questMode:true};
+  openTeachScreen(subjKey,topics[0].key,topics[0].name);
 }
 
 // Quest-mode game — one of today's 2 randomly-assigned games. Full-page
@@ -4167,6 +4334,14 @@ function saveAbout(){
 }
 
 // ─── QUIZ ENGINE ────────────────────────────────────────────
+// SL -- ephemeral in-memory state for the teach→quiz→teach→quiz sequence of
+// one subject-visit (quest or practice). Deliberately NOT persisted across
+// page reloads (unlike the quest plan) -- if the app closes mid-sequence,
+// only which 2 topics were picked for today is at risk of changing on
+// re-entry, never stars/progress (those are durably written per-round as
+// each topic-quiz completes). Practice mode uses a degenerate 1-topic SL.
+let SL={subjKey:null,topics:[],topicIdx:0,questMode:false};
+
 function openSubject(key){
   const s=S.subjects.find(x=>x.key===key);if(!s)return;
   const mods=(S.modules||[]).filter(m=>m.subject_key===key);
@@ -4178,39 +4353,32 @@ function openSubject(key){
     </div>`);
 }
 
-async function startTopic(subjKey,topicKey,topicName){
+// Practice mode, one deliberately-picked topic (from the topic-picker
+// modal above): teach screen (if lesson_content exists) then 10 questions.
+// No stars -- practice mode never writes sessions/stars_log/level_progress.
+function startTopic(subjKey,topicKey,topicName){
   closeMod();
   const s=S.subjects.find(x=>x.key===subjKey);if(!s)return;
-  S.questModeQuiz=false; // topic picker is always practice mode -- no stars
-  const qEl=document.getElementById('quiz');
-  qEl.style.display='flex';
-  if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='none';
-  const targetGrade=gradeAhead(S.player.grade);
-  if(window.gsap) gsap.fromTo(qEl,{opacity:0},{opacity:1,duration:0.3});
-  try{
-    let qs=await db(`questions?subject_key=eq.${subjKey}&topic=eq.${topicKey}&active=eq.true&grade=lte.${targetGrade}&limit=50`);
-    if(Array.isArray(qs)&&qs.length)qs=shuf(qs).slice(0,15);
-    if(!Array.isArray(qs)||!qs.length){
-      qEl.style.display='none';
-      showMod(`<div style="text-align:center;padding:12px"><div style="font-size:3rem;margin-bottom:9px">🚧</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Questions Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">Adding questions for <strong>${topicName}</strong> soon!</div><button class="mb" onclick="closeMod()">OK!</button></div>`);
-      return;
-    }
-    S.quizSubj={...s,name:`${s.name} · ${topicName}`};
-    document.getElementById('q-subj').textContent=S.quizSubj.name;
-    S.quizBatch=shuf(qs);S.quizIdx=0;S.quizScore=0;S.quizSE=0;loadQ();
-  }catch(e){qEl.style.display='none';}
+  S.questModeQuiz=false;
+  SL={subjKey,topics:[{key:topicKey,name:topicName}],topicIdx:0,questMode:false};
+  openTeachScreen(subjKey,topicKey,topicName);
 }
 
+// Practice mode, direct subject-card click: 2 random topics, same
+// teach-then-10Q sequence as the Quest Trail, just without star earning.
 function startSubject(key){
   const s=S.subjects.find(x=>x.key===key);if(!s)return;
-  S.questModeQuiz=false; // direct subject-card clicks are always practice mode -- no stars
-  launchSubjectQuiz(s);
+  S.questModeQuiz=false;
+  const topics=pickTopicsForSubject(key);
+  if(!topics.length){launchSubjectQuiz(s);return;}
+  SL={subjKey:key,topics:topics.map(m=>({key:m.key,name:m.name})),topicIdx:0,questMode:false};
+  openTeachScreen(key,SL.topics[0].key,SL.topics[0].name);
 }
 
-// Shared quiz launcher for both practice mode (startSubject/startQuestSubject
-// with S.questModeQuiz already set by the caller) and quest mode. Whole-
-// subject question set, not topic-filtered -- matches the original quest
-// flow's behaviour before the topic picker existed.
+// Fallback whole-subject sample -- used ONLY when a subject has zero
+// modules authored yet (openSubject/startSubject/runSubjectSequence all
+// check for this before ever reaching here). Not part of the normal
+// teach+10Q-per-topic flow.
 async function launchSubjectQuiz(s){
   S.quizSubj=s;
   const qEl=document.getElementById('quiz');
@@ -4221,7 +4389,7 @@ async function launchSubjectQuiz(s){
   if(window.gsap) gsap.fromTo(qEl,{opacity:0},{opacity:1,duration:0.3});
   try{
     let qs=await db(`questions?subject_key=eq.${s.key}&active=eq.true&grade=lte.${targetGrade}&limit=50`);
-    if(Array.isArray(qs)&&qs.length)qs=shuf(qs).slice(0,15);
+    if(Array.isArray(qs)&&qs.length)qs=shuf(qs).slice(0,10);
     if(!Array.isArray(qs)||!qs.length)qs=[
       {id:'q1',subject_key:'math',grade:3,level:1,topic:'addition',question:'What is 5 + 7?',answer:'12',wrong1:'10',wrong2:'11',wrong3:'13',explanation:'5 + 7 = 12',active:true},
       {id:'q2',subject_key:'math',grade:1,level:1,topic:'counting',question:'What is 2 + 3?',answer:'5',wrong1:'4',wrong2:'6',wrong3:'7',explanation:'2 + 3 = 5',active:true},
@@ -4240,22 +4408,218 @@ async function launchSubjectQuiz(s){
   }catch(e){qEl.style.display='none';}
 }
 
+// ─── TEACH SCREEN ───────────────────────────────────────────
+// Shown before a topic's questions when the module has lesson_content.
+// Skips straight to the quiz (zero flash) when there's nothing to teach
+// yet -- the graceful path for every subject until Prachi adds lessons.
+function openTeachScreen(subjKey,topicKey,topicName){
+  const mod=(S.modules||[]).find(m=>m.subject_key===subjKey&&m.key===topicKey);
+  if(!mod||!mod.lesson_content){ startTopicQuiz(subjKey,topicKey,topicName); return; }
+  const el=document.getElementById('teachScreen');
+  document.getElementById('tc-title').textContent=`${mod.icon||'📘'} ${topicName}`;
+  document.getElementById('tc-progress').textContent=SL.topics.length>1?`Topic ${SL.topicIdx+1} of ${SL.topics.length}`:'';
+  const contentEl=document.getElementById('tc-content');
+  contentEl.innerHTML='';
+  mod.lesson_content.split(/\n\s*\n/).forEach(para=>{
+    if(!para.trim())return;
+    const p=document.createElement('div');
+    p.className='tc-para';
+    p.textContent=para.trim();
+    contentEl.appendChild(p);
+  });
+  el.style.display='flex';
+  if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='none';
+  if(window.gsap) gsap.fromTo(el,{opacity:0},{opacity:1,duration:0.3});
+}
+function closeTeach(){
+  document.getElementById('teachScreen').style.display='none';
+  if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='flex';
+}
+function closeTeachAndStart(){
+  document.getElementById('teachScreen').style.display='none';
+  const t=SL.topics[SL.topicIdx];
+  startTopicQuiz(SL.subjKey,t.key,t.name);
+}
+
+// Shared topic-quiz launcher for BOTH quest and practice mode -- 10
+// questions gated by this player's per-topic grade/level (player_progress),
+// falling back gracefully for topics with fewer than 10 questions seeded.
+async function startTopicQuiz(subjKey,topicKey,topicName){
+  const s=S.subjects.find(x=>x.key===subjKey);if(!s)return;
+  const qEl=document.getElementById('quiz');
+  qEl.style.display='flex';
+  if(window.innerWidth<=768)document.getElementById('mob-nav').style.display='none';
+  if(window.gsap) gsap.fromTo(qEl,{opacity:0},{opacity:1,duration:0.3});
+  try{
+    const progress=await getPlayerProgress(subjKey,topicKey);
+    const qs=await pickQuestionsForTopic(subjKey,topicKey,progress);
+    if(!qs.length){
+      qEl.style.display='none';
+      showMod(`<div style="text-align:center;padding:12px"><div style="font-size:3rem;margin-bottom:9px">🚧</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Questions Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">Adding questions for <strong>${topicName}</strong> soon!</div><button class="mb" onclick="closeMod()">OK!</button></div>`);
+      return;
+    }
+    S.quizSubj={...s,key:subjKey,name:`${s.name} · ${topicName}`,topicKey};
+    document.getElementById('q-subj').textContent=S.quizSubj.name;
+    S.quizBatch=qs;S.quizIdx=0;S.quizScore=0;S.quizSE=0;loadQ();
+  }catch(e){qEl.style.display='none';}
+}
+
+// Dispatches on q.type (default 'mcq' -- every existing seeded question has
+// no type column value yet, so this is the zero-regression path). Shared
+// meta (count/progress/tag/feedback-reset/next-button-hide/star-label) is
+// set once here; each renderer owns #q-txt + #q-opts' content and wiring.
 function loadQ(){
   S.quizAns=false;
   const q=S.quizBatch[S.quizIdx],total=S.quizBatch.length;
   document.getElementById('q-cnt').textContent=`Q ${S.quizIdx+1} of ${total}`;
   document.getElementById('q-prog').style.width=(S.quizIdx/total*100)+'%';
   document.getElementById('q-tag').textContent=`Grade ${q.grade} · Level ${q.level}`;
-  document.getElementById('q-txt').textContent=q.question;
   document.getElementById('q-fb').className='q-fb';
   document.getElementById('q-nxt').style.display='none';
   document.getElementById('q-stl').textContent=S.quizSE;
+  const type=q.type||'mcq';
+  if(type==='fill_in_blank')renderFillBlank(q);
+  else if(type==='word_rearrange')renderWordRearrange(q);
+  else if(type==='matching')renderMatching(q);
+  else renderMCQ(q);
+}
+
+// MCQ -- today's exact original rendering, moved verbatim into its own
+// function (the default/zero-regression path).
+function renderMCQ(q){
+  document.getElementById('q-txt').textContent=q.question;
   const opts=shuf([q.answer,q.wrong1,q.wrong2,q.wrong3]);
   document.getElementById('q-opts').innerHTML=opts.map((o,i)=>`<button class="q-opt" onclick="pickQ(this,'${esc(o)}','${esc(q.answer)}',${q.level})"><span class="q-let">${['A','B','C','D'][i]}</span>${o}</button>`).join('');
-  // GSAP: stagger answer options in
   if(window.gsap){
     gsap.fromTo('.q-opt',{opacity:0,x:-16},{opacity:1,x:0,duration:0.3,stagger:0.06,ease:'power2.out'});
     gsap.fromTo('#q-txt',{opacity:0,y:10},{opacity:1,y:0,duration:0.35,ease:'power2.out'});
+  }
+}
+
+// Fill-in-the-blank -- tap a word chip into the blank (no typing, avoids
+// spelling false-negatives). wrong1/2/3 become the 3 distractor chips.
+function renderFillBlank(q){
+  const marker=(q.format_data&&q.format_data.blank_marker)||'___';
+  const parts=(q.question||'').split(marker);
+  const txtEl=document.getElementById('q-txt');
+  txtEl.innerHTML='';txtEl.className='q-txt q-blank-txt';
+  const pre=document.createElement('span');pre.textContent=parts[0]||'';
+  const slot=document.createElement('span');slot.className='q-blank-slot';slot.id='q-blank-slot';slot.textContent='___';
+  const post=document.createElement('span');post.textContent=parts.slice(1).join(marker)||'';
+  txtEl.appendChild(pre);txtEl.appendChild(slot);txtEl.appendChild(post);
+  const chips=shuf([q.answer,q.wrong1,q.wrong2,q.wrong3]);
+  document.getElementById('q-opts').innerHTML=`<div class="q-chips">${chips.map(o=>`<button class="q-opt chip" onclick="pickFillBlank(this,'${esc(o)}','${esc(q.answer)}',${q.level})">${o}</button>`).join('')}</div>`;
+  if(window.gsap){
+    gsap.fromTo('.q-opt',{opacity:0,x:-16},{opacity:1,x:0,duration:0.3,stagger:0.06,ease:'power2.out'});
+    gsap.fromTo('#q-txt',{opacity:0,y:10},{opacity:1,y:0,duration:0.35,ease:'power2.out'});
+  }
+}
+function pickFillBlank(btn,chosen,correct,lv){
+  if(S.quizAns)return;S.quizAns=true;
+  document.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
+  const slot=document.getElementById('q-blank-slot');
+  if(slot)slot.textContent=chosen;
+  const isCorrect=chosen===correct;
+  if(isCorrect){btn.classList.add('correct');animateCorrect(btn);}
+  else{
+    btn.classList.add('wrong');
+    document.querySelectorAll('.q-opt').forEach(b=>{if(b.textContent.trim()===correct)b.classList.add('correct');});
+    animateWrong(btn);
+  }
+  resolveQuestion(isCorrect,lv,btn);
+}
+
+// Word rearrange -- answer is the full correct sentence; split on spaces,
+// shuffle into tiles, tap-to-place/tap-to-remove (adapted from
+// word-builder.html's tapLetterArrange/removeArrangeSlot pattern, word-level
+// instead of letter-level -- same no-drag, touch-friendly interaction).
+let QW={tiles:[],placed:[],answer:''};
+function renderWordRearrange(q){
+  document.getElementById('q-txt').textContent=q.question;
+  document.getElementById('q-txt').className='q-txt';
+  const words=(q.answer||'').trim().split(/\s+/);
+  QW={tiles:shuf(words),placed:[],answer:q.answer};
+  document.getElementById('q-opts').innerHTML=`
+    <div class="qw-slots" id="qw-slots">${words.map(()=>'<div class="qw-slot empty">_</div>').join('')}</div>
+    <div class="qw-tiles" id="qw-tiles">${QW.tiles.map((w,i)=>`<div class="qw-tile" id="qw-tile-${i}" onclick="tapWordArrange(${i},'${esc(w)}',${q.level})">${w}</div>`).join('')}</div>
+    <button onclick="clearWordArrange()" style="margin:10px auto 0;display:block;padding:5px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:99px;font-family:'Nunito',sans-serif;font-size:.65rem;font-weight:800;color:rgba(255,255,255,.45);cursor:pointer">Clear ↺</button>`;
+  if(window.gsap) gsap.fromTo('#q-txt',{opacity:0,y:10},{opacity:1,y:0,duration:0.35,ease:'power2.out'});
+}
+function tapWordArrange(idx,word,lv){
+  if(S.quizAns)return;
+  if(QW.placed.length>=QW.tiles.length)return;
+  QW.placed.push({idx,word});
+  document.getElementById(`qw-tile-${idx}`).classList.add('used');
+  const slotEls=document.querySelectorAll('#qw-slots .qw-slot');
+  const pos=QW.placed.length-1;
+  slotEls[pos].textContent=word;slotEls[pos].classList.remove('empty');
+  slotEls[pos].onclick=()=>removeWordSlot(pos,lv);
+  if(QW.placed.length===QW.tiles.length){
+    S.quizAns=true;
+    document.querySelectorAll('.qw-tile').forEach(t=>t.onclick=null);
+    const formed=QW.placed.map(p=>p.word).join(' ');
+    const isCorrect=formed===QW.answer;
+    const anchor=slotEls[slotEls.length-1];
+    if(isCorrect)animateCorrect(anchor);else animateWrong(anchor);
+    setTimeout(()=>resolveQuestion(isCorrect,lv,anchor),250);
+  }
+}
+function removeWordSlot(pos,lv){
+  if(S.quizAns)return;
+  const removed=QW.placed.splice(pos,1)[0];
+  document.getElementById(`qw-tile-${removed.idx}`)?.classList.remove('used');
+  const slotEls=document.querySelectorAll('#qw-slots .qw-slot');
+  QW.placed.forEach((p,i)=>{slotEls[i].textContent=p.word;slotEls[i].classList.remove('empty');slotEls[i].onclick=()=>removeWordSlot(i,lv);});
+  for(let i=QW.placed.length;i<slotEls.length;i++){slotEls[i].textContent='_';slotEls[i].classList.add('empty');slotEls[i].onclick=null;}
+}
+function clearWordArrange(){
+  if(S.quizAns)return;
+  QW.placed=[];
+  document.querySelectorAll('.qw-tile').forEach(t=>t.classList.remove('used'));
+  document.querySelectorAll('#qw-slots .qw-slot').forEach(s=>{s.textContent='_';s.classList.add('empty');s.onclick=null;});
+}
+
+// Matching -- format_data.pairs holds the match set (no single right-answer
+// end-state like the other types, so it only resolves once ALL pairs are
+// correctly matched; a wrong attempt just flashes and lets the kid retry).
+let QM={pairs:[],matched:[],selectedLeft:null};
+function renderMatching(q){
+  document.getElementById('q-txt').textContent=q.question;
+  document.getElementById('q-txt').className='q-txt';
+  const pairs=(q.format_data&&q.format_data.pairs)||[];
+  QM={pairs,matched:[],selectedLeft:null};
+  const leftShuf=shuf(pairs.map((p,i)=>({...p,i})));
+  const rightShuf=shuf(pairs.map((p,i)=>({...p,i})));
+  document.getElementById('q-opts').innerHTML=`
+    <div class="qm-cols">
+      <div class="qm-col" id="qm-left">${leftShuf.map(p=>`<div class="qm-chip" data-i="${p.i}" onclick="tapMatchLeft(${p.i},this)">${p.left}</div>`).join('')}</div>
+      <div class="qm-col" id="qm-right">${rightShuf.map(p=>`<div class="qm-chip" data-i="${p.i}" onclick="tapMatchRight(${p.i},this,${q.level})">${p.right}</div>`).join('')}</div>
+    </div>`;
+  if(window.gsap) gsap.fromTo('#q-txt',{opacity:0,y:10},{opacity:1,y:0,duration:0.35,ease:'power2.out'});
+}
+function tapMatchLeft(i,el){
+  if(S.quizAns||el.classList.contains('matched'))return;
+  document.querySelectorAll('#qm-left .qm-chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  QM.selectedLeft=i;
+}
+function tapMatchRight(i,el,lv){
+  if(S.quizAns||el.classList.contains('matched')||QM.selectedLeft===null)return;
+  const leftEl=document.querySelector(`#qm-left .qm-chip[data-i="${QM.selectedLeft}"]`);
+  if(QM.selectedLeft===i){
+    el.classList.add('matched');if(leftEl){leftEl.classList.remove('selected');leftEl.classList.add('matched');}
+    QM.matched.push(i);QM.selectedLeft=null;
+    if(QM.matched.length===QM.pairs.length){
+      S.quizAns=true;
+      animateCorrect(el);
+      setTimeout(()=>resolveQuestion(true,lv,el),250);
+    }
+  }else{
+    el.classList.add('wrong-flash');if(leftEl)leftEl.classList.add('wrong-flash');
+    animateWrong(el);
+    setTimeout(()=>{el.classList.remove('wrong-flash');if(leftEl)leftEl.classList.remove('wrong-flash');},500);
+    QM.selectedLeft=null;
+    document.querySelectorAll('#qm-left .qm-chip').forEach(c=>c.classList.remove('selected'));
   }
 }
 
@@ -4282,28 +4646,45 @@ async function applyDailyCap(proposedAmount){
   }catch(e){ return proposedAmount; } // fail open -- don't block a kid's reward over a network hiccup
 }
 
+// MCQ's answer handler -- thin wrapper around the format-agnostic
+// resolveQuestion() below, owning only MCQ's own button-class DOM updates.
 function pickQ(btn,chosen,correct,lv){
   if(S.quizAns)return;S.quizAns=true;
   document.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
-  const stars=lv<=2?starCfg('correct_l1_2',10):lv<=4?starCfg('correct_l3_4',15):lv<=6?starCfg('correct_l5_6',20):lv<=8?starCfg('correct_l7_8',25):starCfg('correct_l9_10',30);
-  const fb=document.getElementById('q-fb');
-  if(chosen===correct){
-    btn.classList.add('correct');fb.className='q-fb ok';fb.textContent=getQuote('success');
-    S.quizScore++;S.quizSE+=stars;document.getElementById('q-stl').textContent=S.quizSE;
-    // ✨ Correct answer — green flash + star burst + floating label
+  const isCorrect=chosen===correct;
+  if(isCorrect){
+    btn.classList.add('correct');
     animateCorrect(btn);
-    const rect=btn.getBoundingClientRect();
-    if(typeof confetti==='function') starBurst(rect.left+rect.width/2, rect.top);
-    floatStarLabel(stars, btn);
   }else{
-    btn.classList.add('wrong');fb.className='q-fb no';
-    const exp=S.quizBatch[S.quizIdx]?.explanation;
-    fb.textContent=getQuote('wrong_answer')+(exp?' — '+exp:'');
+    btn.classList.add('wrong');
     document.querySelectorAll('.q-opt').forEach(b=>{
       if(b.textContent.trim().slice(1).trim()===correct)b.classList.add('correct');
     });
-    // ✨ Wrong answer — shake
     animateWrong(btn);
+  }
+  resolveQuestion(isCorrect,lv,btn);
+}
+
+// Format-agnostic post-answer resolution, shared by every question-type
+// renderer: star award, feedback text, starBurst/floatStarLabel celebration,
+// and revealing the Next button. Each renderer's own handler (pickQ,
+// pickFillBlank, tapWordArrange, tapMatchRight) owns its own type-specific
+// DOM updates (marking chips/slots/tiles) before calling this.
+function resolveQuestion(isCorrect,lv,anchorEl){
+  const fb=document.getElementById('q-fb');
+  if(isCorrect){
+    const stars=lv<=2?starCfg('correct_l1_2',10):lv<=4?starCfg('correct_l3_4',15):lv<=6?starCfg('correct_l5_6',20):lv<=8?starCfg('correct_l7_8',25):starCfg('correct_l9_10',30);
+    fb.className='q-fb ok';fb.textContent=getQuote('success');
+    S.quizScore++;S.quizSE+=stars;document.getElementById('q-stl').textContent=S.quizSE;
+    if(anchorEl){
+      const rect=anchorEl.getBoundingClientRect();
+      if(typeof confetti==='function') starBurst(rect.left+rect.width/2, rect.top);
+      floatStarLabel(stars, anchorEl);
+    }
+  }else{
+    fb.className='q-fb no';
+    const exp=S.quizBatch[S.quizIdx]?.explanation;
+    fb.textContent=getQuote('wrong_answer')+(exp?' — '+exp:'');
   }
   document.getElementById('q-nxt').style.display='block';
   if(window.gsap) gsap.fromTo('#q-nxt',{opacity:0,y:8},{opacity:1,y:0,duration:0.25,ease:'back.out(1.5)'});
@@ -4315,11 +4696,14 @@ function qNext(){S.quizIdx++;if(S.quizIdx>=S.quizBatch.length){showQRes();return
 // flow, and parent bonuses. A quiz only writes to sessions/stars_log/
 // level_progress when S.questModeQuiz is true (set by startQuestSubject());
 // direct subject/topic clicks (practice) show the same results screen but
-// earn nothing.
-let QR={questNextIsLast:false};
+// earn nothing. Per-topic mastery (player_progress), however, is recorded
+// regardless of quest/practice mode -- mastery reflects real skill, not
+// whether stars happened to be on the table this round.
+let QR={questNextIsLast:false,questNextTopic:false};
 async function showQRes(){
   const total=S.quizBatch.length,pct=Math.round(S.quizScore/total*100);
   const passed=pct>=80,distinction=pct>=90,perf=pct===100;
+  if(S.quizSubj?.topicKey) recordTopicRoundResult(S.quizSubj.key,S.quizSubj.topicKey,passed);
   const sessionBonus=perf?starCfg('perfect_level',200):distinction?starCfg('level_distinction',150):passed?starCfg('level_pass',100):0;
   let ts=S.quizSE+sessionBonus;
   const questMode=!!S.questModeQuiz;
@@ -4359,13 +4743,26 @@ async function showQRes(){
   }
   if(questMode) updateStarDisplay(S.stars, ts);
 
-  // Quest sequencing — was this the subject the plan is currently on?
+  // Sequencing — a subject visit is now 2 topic-rounds (quest AND practice,
+  // since startSubject() also runs the same 2-topic SL sequence), so there
+  // are 3 possible next steps: more topics left in THIS subject (quest or
+  // practice), subject done with more quest subjects left, or all 3 quest
+  // subjects done. Topic-advancement depends only on SL state, NOT on
+  // quest/practice mode -- only the subject-level step (plan.subjIdx) is
+  // quest-specific.
   const plan=questMode?getQuestPlan():null;
   const isQuestSubjSlot=plan && plan.subjIdx<3 && plan.subjects[plan.subjIdx]===S.quizSubj.key;
+  const moreTopicsInSubject=SL.subjKey===S.quizSubj.key && (SL.topicIdx+1)<SL.topics.length;
   const stdBtns=document.getElementById('res-std-btns'), nextBtn=document.getElementById('res-next-btn');
-  if(isQuestSubjSlot){
+  if(moreTopicsInSubject){
+    SL.topicIdx++;
+    stdBtns.style.display='none';nextBtn.style.display='block';
+    QR.questNextIsLast=false;QR.questNextTopic=true;
+    nextBtn.textContent=`Next: ${SL.topics[SL.topicIdx].name} →`;
+  }else if(isQuestSubjSlot){
     plan.subjIdx++;saveQuestPlan(plan);
     stdBtns.style.display='none';nextBtn.style.display='block';
+    QR.questNextTopic=false;
     if(plan.subjIdx<3){
       const nextName=S.subjects.find(s=>s.key===plan.subjects[plan.subjIdx])?.name||plan.subjects[plan.subjIdx];
       QR.questNextIsLast=false;
@@ -4380,8 +4777,14 @@ async function showQRes(){
 }
 function continueQuestSubjectFlow(){
   document.getElementById('res').style.display='none';
-  if(QR.questNextIsLast) renderHome();
-  else startQuestSubject();
+  if(QR.questNextTopic){
+    const t=SL.topics[SL.topicIdx];
+    openTeachScreen(SL.subjKey,t.key,t.name);
+  }else if(QR.questNextIsLast){
+    renderHome();
+  }else{
+    startQuestSubject();
+  }
 }
 
 function retryQuiz(){document.getElementById('res').style.display='none';startSubject(S.quizSubj.key);}
