@@ -1190,37 +1190,6 @@ h1, h2, h3 {
 .res-rt{background:var(--teal);color:#fff}
 .res-hm{background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.18)}
 
-/* PIN */
-#pin{position:fixed;inset:0;z-index:2000;background:rgba(8,18,12,.92);backdrop-filter:blur(22px);display:none;flex-direction:column;align-items:center;justify-content:center;gap:22px}
-.pin-ttl{font-size:1.35rem;font-weight:900;color:#fff}
-.pin-sub{font-size:.76rem;color:rgba(255,255,255,.38);font-weight:700}
-.pin-dots{display:flex;gap:13px}
-.pd{width:15px;height:15px;border-radius:50%;border:2px solid rgba(255,255,255,.18);transition:all .2s}
-.pd.on{background:var(--amber);border-color:var(--amber)}
-.pin-kp{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;width:230px}
-.pk{aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.1);color:#fff;font-family:'Nunito',sans-serif;font-size:1.35rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.pk:hover{background:rgba(255,255,255,.15);transform:scale(1.08)}
-.pin-err{color:#FF6B6B;font-size:.77rem;font-weight:800;min-height:18px}
-
-/* PARENT DASH */
-#pdash{position:fixed;inset:0;z-index:1800;background:rgba(6,14,10,.95);backdrop-filter:blur(22px);overflow-y:auto;display:none}
-.pd-hdr{padding:22px 22px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
-.pd-hdr h2{font-size:1.25rem;font-weight:900;color:#fff}
-.pd-hdr p{font-size:.7rem;color:rgba(255,255,255,.28);margin-top:1px}
-.pd-body{padding:18px 22px 60px;display:flex;flex-direction:column;gap:14px}
-.pd-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:var(--r);padding:16px}
-.pd-ct{font-size:.65rem;font-weight:900;color:rgba(255,255,255,.28);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
-.pd-pr{display:flex;gap:11px}
-.pd-pt{flex:1;background:rgba(255,255,255,.04);border-radius:13px;padding:14px;text-align:center}
-.pd-pav{font-size:2rem;margin-bottom:5px}
-.pd-pnm{font-size:.85rem;font-weight:900;color:#fff}
-.pd-pst{font-size:1.2rem;font-weight:900;color:var(--amber)}
-.pd-psk{font-size:.66rem;font-weight:700;color:rgba(255,255,255,.28);margin-top:1px}
-.pda{width:100%;padding:12px 15px;border-radius:13px;border:none;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:9px;text-align:left;margin-bottom:7px;transition:opacity .15s}
-.pda:hover{opacity:.9}.pda .ai{font-size:1.05rem}
-.pda-g{background:var(--green);color:#fff}.pda-r{background:var(--red);color:#fff}.pda-b{background:var(--blue);color:#fff}
-.pda-a{background:var(--amber);color:#333}.pda-p{background:var(--purple);color:#fff}.pda-gr{background:rgba(255,255,255,.07);color:rgba(255,255,255,.6)}
-
 /* MODAL */
 .mov{position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);display:none;align-items:flex-end;justify-content:center}
 .mov.open{display:flex}
@@ -2114,40 +2083,6 @@ h1, h2, h3 {
   <button class="res-btn" id="res-next-btn" style="display:none;width:100%;background:var(--teal);color:#fff" onclick="continueQuestSubjectFlow()">Next →</button>
 </div>
 
-<!-- PIN -->
-<div id="pin" style="display:none;flex-direction:column">
-  <div class="pin-ttl">🔐 Parent Dashboard</div>
-  <div class="pin-sub">Enter your 4-digit PIN</div>
-  <div class="pin-dots"><div class="pd" id="p0"></div><div class="pd" id="p1"></div><div class="pd" id="p2"></div><div class="pd" id="p3"></div></div>
-  <div class="pin-kp">
-    <button class="pk" onclick="pk('1')">1</button><button class="pk" onclick="pk('2')">2</button><button class="pk" onclick="pk('3')">3</button>
-    <button class="pk" onclick="pk('4')">4</button><button class="pk" onclick="pk('5')">5</button><button class="pk" onclick="pk('6')">6</button>
-    <button class="pk" onclick="pk('7')">7</button><button class="pk" onclick="pk('8')">8</button><button class="pk" onclick="pk('9')">9</button>
-    <button class="pk" onclick="pk('back')" style="font-size:.95rem">⌫</button>
-    <button class="pk" onclick="pk('0')">0</button>
-    <button class="pk" onclick="closePin()" style="font-size:.82rem">✕</button>
-  </div>
-  <div class="pin-err" id="pin-err"></div>
-</div>
-
-<!-- PARENT DASH -->
-<div id="pdash" style="display:none">
-  <div class="pd-hdr"><h2>🔐 Parent Dashboard</h2><p>Mountainview Montessori · Summer Break ☀️</p></div>
-  <div class="pd-body">
-    <div class="pd-card"><div class="pd-ct">Kids Overview</div><div class="pd-pr" id="pd-ov"></div></div>
-    <div class="pd-card">
-      <div class="pd-ct">Quick Actions</div>
-      <button class="pda pda-g" onclick="showMod(addStarsHTML(true))"><span class="ai">⭐</span> Add Bonus Stars</button>
-      <button class="pda pda-r" onclick="showMod(addStarsHTML(false))"><span class="ai">⚠️</span> Deduct Stars</button>
-      <button class="pda pda-b" onclick="showMod(addTaskHTML())"><span class="ai">➕</span> Add New Task</button>
-      <button class="pda pda-a" onclick="showMod(addWishHTML())"><span class="ai">🎁</span> Manage Wish List</button>
-      <button class="pda pda-p" onclick="approveAll()"><span class="ai">✅</span> Approve All Pending</button>
-      <button class="pda pda-gr" onclick="closePD()"><span class="ai">←</span> Back to Hub</button>
-    </div>
-    <div class="pd-card"><div class="pd-ct">Pending Approvals</div><div id="pd-pend"><div class="empty">No pending items 🎉</div></div></div>
-    <div class="pd-card"><div class="pd-ct">Recent Star Activity</div><div id="pd-hist"><div class="empty">No activity yet</div></div></div>
-  </div>
-</div>
 
 <!-- MODAL -->
 <div class="mov" id="mov" onclick="if(event.target===this)closeMod()">
@@ -4925,10 +4860,10 @@ let GM={y:new Date().getFullYear(),m:new Date().getMonth()};
 async function showGardenModal(){
   GM.y=S.calY;GM.m=S.calM;
   document.getElementById('gardenModal').classList.add('open');
-  // Set legend images dynamically
-  document.querySelectorAll('.gm-leg-item img').forEach((img,i)=>{
-    const stages=['bloom','strong','bud','sprout','none'];
-    img.src=PLANT_IMGS[stages[i]]||'';
+  // Set legend images dynamically (static HTML can't interpolate PLANT_IMGS;
+  // literal ${...} srcs used to fire five bogus 404 requests at page load)
+  document.querySelectorAll('.gm-leg-item img[data-stage]').forEach(img=>{
+    img.src=PLANT_IMGS[img.dataset.stage]||'';
   });
   await renderGardenModal();
 }
@@ -5444,11 +5379,11 @@ window.addEventListener('load', ()=>{
       </div>
       <div class="gm-grid" id="gm-grid"></div>
       <div class="gm-legend">
-        <div class="gm-leg-item"><img src="${PLANT_IMGS?.bloom||''}" onerror="this.style.display='none'" alt="">Blooming (100%)</div>
-        <div class="gm-leg-item"><img src="${PLANT_IMGS?.strong||''}" onerror="this.style.display='none'" alt="">Growing Strong (75%+)</div>
-        <div class="gm-leg-item"><img src="${PLANT_IMGS?.bud||''}" onerror="this.style.display='none'" alt="">Ready to Bloom (50%+)</div>
-        <div class="gm-leg-item"><img src="${PLANT_IMGS?.sprout||''}" onerror="this.style.display='none'" alt="">Sprouting (25%+)</div>
-        <div class="gm-leg-item"><img src="${PLANT_IMGS?.none||''}" onerror="this.style.display='none'" alt="">Not Started</div>
+        <div class="gm-leg-item"><img data-stage="bloom" alt="">Blooming (100%)</div>
+        <div class="gm-leg-item"><img data-stage="strong" alt="">Growing Strong (75%+)</div>
+        <div class="gm-leg-item"><img data-stage="bud" alt="">Ready to Bloom (50%+)</div>
+        <div class="gm-leg-item"><img data-stage="sprout" alt="">Sprouting (25%+)</div>
+        <div class="gm-leg-item"><img data-stage="none" alt="">Not Started</div>
       </div>
     </div>
   </div>
