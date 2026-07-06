@@ -5265,6 +5265,28 @@ const _origCheckAns = typeof checkAns !== 'undefined' ? checkAns : null;
 
 init();
 
+// Kids' tabs stay open all day, but the star balance is only computed at
+// login -- stars awarded elsewhere (parent approvals, bonus stars, a game
+// page in another tab) never appeared until a full reload. Re-pull the
+// balance + today's quest state whenever the tab comes back into view
+// after being hidden for a bit, unless a quiz/reading/teach flow is open.
+let __hiddenAt=0;
+document.addEventListener('visibilitychange',async()=>{
+  if(document.visibilityState==='hidden'){__hiddenAt=Date.now();return;}
+  if(!S.player||Date.now()-__hiddenAt<60000)return;
+  const busy=['quiz','res','readingScreen','teachScreen'].some(id=>{
+    const el=document.getElementById(id);
+    return el&&getComputedStyle(el).display!=='none';
+  });
+  if(busy)return;
+  try{
+    const logs=await db(`stars_log?player_id=eq.${S.player.id}&select=amount`);
+    if(Array.isArray(logs)&&logs.length)S.stars=Math.max(0,logs.reduce((a,l)=>a+l.amount,0));
+    await loadQuestData();
+    renderAll();
+  }catch(e){}
+});
+
 // Start animations after init (libraries may load async)
 window.addEventListener('load', ()=>{
   // Small delay to ensure GSAP + confetti are ready
