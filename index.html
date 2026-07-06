@@ -2258,7 +2258,15 @@ function localMidnightISO(d){
   return d.toISOString();
 }
 const esc=s=>(s||'').replace(/'/g,"\\'");
-const gradeAhead=(g)=>Math.min(g+2,6);
+// Per Prachi's spec (2026-07-06): a topic never attempted starts one grade
+// BELOW the player's school grade (floor 1) -- Kairav (grade 1) starts at
+// grade 1, Riaan (grade 3) starts at grade 2. gradeAhead is the CEILING a
+// topic can advance to via recordTopicRoundResult's level-up mechanic (one
+// grade ABOVE school grade, capped 6) -- Kairav tops out at 2, Riaan at 4
+// ("mostly grade 2, 3 and 4"), so both kids grow into harder content over
+// time instead of being dropped into it on day one.
+const gradeStart=(g)=>Math.max(g-1,1);
+const gradeAhead=(g)=>Math.min(g+1,6);
 const shuf=a=>{const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;};
 
 // ─── SUBJECT LEARNING: topic selection + per-topic mastery (player_progress) ──
@@ -2284,8 +2292,7 @@ function pickTopicsForSubject(subjKey){
 }
 
 // Reads (and lazily caches) this player's mastery row for one topic.
-// Defaults to grade-ahead/level-1/no-history for a topic never attempted --
-// same grade-ahead policy already used app-wide (gradeAhead()).
+// Defaults to grade-start/level-1/no-history for a topic never attempted.
 async function getPlayerProgress(subjKey,topicKey){
   if(!S.player)return {current_grade:1,current_level:1,recent_results:[]};
   S.playerProgress[subjKey]=S.playerProgress[subjKey]||{};
@@ -2295,7 +2302,7 @@ async function getPlayerProgress(subjKey,topicKey){
     const rows=await db(`player_progress?player_id=eq.${S.player.id}&subject_key=eq.${subjKey}&topic=eq.${topicKey}`);
     if(Array.isArray(rows)&&rows.length)prog=rows[0];
   }catch(e){}
-  if(!prog)prog={current_grade:gradeAhead(S.player.grade),current_level:1,recent_results:[]};
+  if(!prog)prog={current_grade:gradeStart(S.player.grade),current_level:1,recent_results:[]};
   S.playerProgress[subjKey][topicKey]=prog;
   return prog;
 }
@@ -2333,7 +2340,7 @@ async function recordTopicRoundResult(subjKey,topicKey,passed){
   recent.push(!!passed);
   if(recent.length>5)recent=recent.slice(-5);
   let current_level=progress.current_level||1;
-  let current_grade=progress.current_grade||gradeAhead(S.player.grade);
+  let current_grade=progress.current_grade||gradeStart(S.player.grade);
   const passCount=recent.filter(Boolean).length;
   if(recent.length===5 && passCount>=4){
     if(current_level<5){
