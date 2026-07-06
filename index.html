@@ -1548,7 +1548,7 @@ h1, h2, h3 {
             <div class="h-greet" id="h-greet">Namaste, Riaan! 🙏</div>
             <div class="h-name">Ready to learn today?</div>
             <div class="h-sub">Every lesson is a step towards your dreams! <b>✨</b></div>
-            <button onclick="startTodaySubjects()" style="margin-top:14px;padding:13px 28px;border:none;border-radius:14px;background:linear-gradient(135deg,#F6C04A,#E8A020);color:#1A2B1E;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(246,192,74,.4);display:flex;align-items:center;gap:8px">🚀 Start Today's Learning</button>
+            <button onclick="startQuestSubject()" style="margin-top:14px;padding:13px 28px;border:none;border-radius:14px;background:linear-gradient(135deg,#F6C04A,#E8A020);color:#1A2B1E;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(246,192,74,.4);display:flex;align-items:center;gap:8px">🚀 Start Today's Learning</button>
           </div>
           <img class="h-tara" src="https://raw.githubusercontent.com/prachi8833/Learning-Hub/main/Star%20home%20-%20no%20bg.png" alt="Tara">
         </div>
@@ -2997,6 +2997,17 @@ function getQuestPlan(){
   if(!plan||!Array.isArray(plan.subjects)||!Array.isArray(plan.games)){
     plan={subjects:shuf(S.subjects.map(s=>s.key)).slice(0,3),games:shuf(GAMES.map(g=>g.id)).slice(0,2),subjIdx:0,gameIdx:0};
     localStorage.setItem(storageKey,JSON.stringify(plan));
+  }else{
+    // Repair a stored plan that references subjects no longer in S.subjects
+    // (e.g. a subject deactivated in Supabase mid-day). startQuestSubject()
+    // skips unknown keys, but the phase needs 3 DISTINCT subject sessions,
+    // so an unrepaired plan with a dead key could never complete.
+    const valid=new Set(S.subjects.map(s=>s.key));
+    if(plan.subjects.some(k=>!valid.has(k))){
+      const pool=shuf(S.subjects.map(s=>s.key).filter(k=>!plan.subjects.includes(k)));
+      plan.subjects=plan.subjects.map(k=>valid.has(k)?k:(pool.pop()||k));
+      localStorage.setItem(storageKey,JSON.stringify(plan));
+    }
   }
   return plan;
 }
@@ -4455,6 +4466,14 @@ async function startTopicQuiz(subjKey,topicKey,topicName){
     const qs=await pickQuestionsForTopic(subjKey,topicKey,progress);
     if(!qs.length){
       qEl.style.display='none';
+      if(SL&&SL.questMode&&SL.subjKey===subjKey){
+        // Quest mode must stay completable even when a topic has zero
+        // questions seeded (e.g. indigenous/firstnations) -- a "coming
+        // soon" modal here dead-ends the whole day's plan at phase 1.
+        // The whole-subject quiz has guaranteed inline fallbacks.
+        launchSubjectQuiz(s);
+        return;
+      }
       showMod(`<div style="text-align:center;padding:12px"><div style="font-size:3rem;margin-bottom:9px">🚧</div><div style="font-size:1rem;font-weight:900;color:#fff;margin-bottom:5px">Questions Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">Adding questions for <strong>${topicName}</strong> soon!</div><button class="mb" onclick="closeMod()">OK!</button></div>`);
       return;
     }
