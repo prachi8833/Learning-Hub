@@ -2121,7 +2121,9 @@ const SCREEN_BG={
 let ASSET_SETTINGS={};
 async function loadAppSettings(){
   try{
-    const rows=await db('app_settings?select=key,value');
+    // Exclude the per-player history blobs (qhist_*/readhist_*) -- they can
+    // grow to tens of KB and are loaded separately in loadPlayer().
+    const rows=await db('app_settings?select=key,value&key=not.like.qhist_*&key=not.like.readhist_*');
     if(!Array.isArray(rows)) return;
     rows.forEach(r=>{
       ASSET_SETTINGS[r.key]=r.value;
@@ -2319,28 +2321,51 @@ async function getPlayerProgress(subjKey,topicKey){
 // questions not served inside the window and only falls back to the
 // least-recently-served ones when a topic's pool is too small to avoid
 // repeats entirely.
-function getServedQHistory(){
-  try{
-    const raw=JSON.parse(localStorage.getItem(`lh_qHist_${S.player?.id}`)||'{}');
-    const c=new Date();c.setDate(c.getDate()-7);
-    const cutoff=`${c.getFullYear()}-${String(c.getMonth()+1).padStart(2,'0')}-${String(c.getDate()).padStart(2,'0')}`;
-    const out={};
-    for(const id in raw){ if(raw[id]>=cutoff) out[id]=raw[id]; }
-    return out;
-  }catch(e){return {};}
+// Histories live in Supabase app_settings (keys qhist_<playerId> /
+// readhist_<playerId>, JSON in the value column) so the no-repeat window is
+// uniform across devices (Prachi 2026-07-18). In-memory copies (S.qHist /
+// S.readHist) are hydrated at login and after the tab-return refresh;
+// writes are fire-and-forget upserts (same merge-duplicates pattern the
+// Asset Manager already uses on this table). Last-write-wins per player.
+function savePlayerHistory(kind,val){
+  if(!S.player)return;
+  db('app_settings',{method:'POST',prefer:'resolution=merge-duplicates,return=minimal',body:{key:`${kind}_${S.player.id}`,value:JSON.stringify(val),updated_at:new Date().toISOString()}});
 }
+function getServedQHistory(){
+  const raw=S.qHist||{};
+  const c=new Date();c.setDate(c.getDate()-7);
+  const cutoff=`${c.getFullYear()}-${String(c.getMonth()+1).padStart(2,'0')}-${String(c.getDate()).padStart(2,'0')}`;
+  const out={};
+  for(const id in raw){ if(raw[id]>=cutoff) out[id]=raw[id]; }
+  return out;
+}
+// History is keyed by a hash of the normalized question TEXT, not the row
+// id -- seed batches duplicate the same wording across many rows/cells with
+// different ids, and to a kid same words = same question. Short base36 FNV
+// hash keeps the stored blob small (~7 chars/entry).
+const qTextKey=q=>{
+  const s=(q&&q.question||'').trim().toLowerCase().replace(/\s+/g,' ');
+  let h=2166136261;
+  for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}
+  return (h>>>0).toString(36);
+};
 function recordServedQuestions(qs){
   if(!S.player||!Array.isArray(qs))return;
   const hist=getServedQHistory();
   const d=today();
-  qs.forEach(q=>{ if(q&&q.id) hist[q.id]=d; });
-  try{localStorage.setItem(`lh_qHist_${S.player.id}`,JSON.stringify(hist));}catch(e){}
+  qs.forEach(q=>{ if(q) hist[qTextKey(q)]=d; });
+  S.qHist=hist;
+  savePlayerHistory('qhist',hist);
 }
 function pickFreshQuestions(pool,n){
   const hist=getServedQHistory();
-  const fresh=pool.filter(q=>!hist[q.id]);
-  const seen=pool.filter(q=>hist[q.id]).sort((a,b)=>hist[a.id]<hist[b.id]?-1:1);
-  const picked=[...shuf(fresh),...seen].slice(0,n);
+  // Collapse exact-duplicate texts first so one quiz can never show the
+  // same question twice, even when the pool holds several copies.
+  const seenText=new Set();const uniq=[];
+  for(const q of shuf(pool)){const k=qTextKey(q);if(!seenText.has(k)){seenText.add(k);uniq.push(q);}}
+  const fresh=uniq.filter(q=>!hist[qTextKey(q)]);
+  const seen=uniq.filter(q=>hist[qTextKey(q)]).sort((a,b)=>hist[qTextKey(a)]<hist[qTextKey(b)]?-1:1);
+  const picked=[...fresh,...seen].slice(0,n);
   recordServedQuestions(picked);
   return picked;
 }
@@ -2764,7 +2789,7 @@ async function uploadAvatar(input){
 async function loadPlayer(){
   const p=S.player;
   try{
-    const[logs,streak,subj,mods,tasks,wish,goal,lvl,badges,earned,cfg,shop,tc]=await Promise.all([
+    const[logs,streak,subj,mods,tasks,wish,goal,lvl,badges,earned,cfg,shop,tc,phist]=await Promise.all([
       db(`stars_log?player_id=eq.${p.id}&select=amount`),
       db(`streaks?player_id=eq.${p.id}`),
       db('subjects?active=eq.true&order=sort_order'),
@@ -2777,7 +2802,8 @@ async function loadPlayer(){
       db(`earned_badges?player_id=eq.${p.id}&select=badge_id`),
       db('star_config?active=eq.true'),
       db('reward_shop?active=eq.true&order=sort_order'),
-      db(`task_completions?player_id=eq.${p.id}&completion_date=eq.${today()}&select=task_id,status`)
+      db(`task_completions?player_id=eq.${p.id}&completion_date=eq.${today()}&select=task_id,status`),
+      db(`app_settings?key=in.(qhist_${p.id},readhist_${p.id})&select=key,value`)
     ]);
     S.stars=Math.max(0,logs.reduce((a,l)=>a+l.amount,0));
     S.streak=streak[0]?.current_streak||0;
@@ -2792,6 +2818,24 @@ async function loadPlayer(){
     S.starConfig={};if(Array.isArray(cfg))cfg.forEach(c=>{S.starConfig[c.key]=c;});
     S.rewardShop=Array.isArray(shop)?shop:[];
     S.tc={};if(Array.isArray(tc))tc.forEach(c=>{S.tc[c.task_id]=c.status;});
+    // Cross-device no-repeat histories (see savePlayerHistory)
+    S.qHist={};S.readHist=[];
+    if(Array.isArray(phist))phist.forEach(r=>{try{
+      if(r.key===`qhist_${p.id}`)S.qHist=JSON.parse(r.value)||{};
+      else if(r.key===`readhist_${p.id}`)S.readHist=JSON.parse(r.value)||[];
+    }catch(e){}});
+    // One-time migration: fold any pre-Supabase per-device history in so
+    // this week's no-repeat window survives the switch, then drop the keys.
+    try{
+      const lq=JSON.parse(localStorage.getItem(`lh_qHist_${p.id}`)||'null');
+      if(lq&&typeof lq==='object'){S.qHist={...lq,...S.qHist};localStorage.removeItem(`lh_qHist_${p.id}`);savePlayerHistory('qhist',S.qHist);}
+      const lr=JSON.parse(localStorage.getItem(`lh_readHist_${p.id}`)||'null');
+      if(Array.isArray(lr)&&lr.length){
+        const ids=new Set(S.readHist.map(h=>h.id));
+        lr.forEach(h=>{if(h&&h.id&&!ids.has(h.id))S.readHist.push(h);});
+        localStorage.removeItem(`lh_readHist_${p.id}`);savePlayerHistory('readhist',S.readHist);
+      }
+    }catch(e){}
   }catch(e){S.subjects=FALLBACK_SUBJECTS;S.tasks=FALLBACK_TASKS;}
   try{
     const quotes=await db('motivation_quotes?select=mood,quote,emoji');
@@ -4868,19 +4912,19 @@ function seededShuffle(arr,seedStr){
 }
 // Per-player list of recently read passage ids ({id,date}), pruned to 14
 // days -- used to push already-seen passages to the back of the pool.
+// Backed by app_settings (readhist_<playerId>) like the question history.
 function getReadingHistory(){
-  try{
-    const raw=JSON.parse(localStorage.getItem(`lh_readHist_${S.player?.id}`)||'[]');
-    const c=new Date();c.setDate(c.getDate()-14);
-    const cutoff=`${c.getFullYear()}-${String(c.getMonth()+1).padStart(2,'0')}-${String(c.getDate()).padStart(2,'0')}`;
-    return Array.isArray(raw)?raw.filter(h=>h&&h.id&&h.date>=cutoff):[];
-  }catch(e){return [];}
+  const raw=Array.isArray(S.readHist)?S.readHist:[];
+  const c=new Date();c.setDate(c.getDate()-14);
+  const cutoff=`${c.getFullYear()}-${String(c.getMonth()+1).padStart(2,'0')}-${String(c.getDate()).padStart(2,'0')}`;
+  return raw.filter(h=>h&&h.id&&h.date>=cutoff);
 }
 function recordReadingHistory(passageId){
   if(!S.player||!passageId)return;
   const hist=getReadingHistory().filter(h=>h.id!==passageId);
   hist.push({id:passageId,date:today()});
-  try{localStorage.setItem(`lh_readHist_${S.player.id}`,JSON.stringify(hist));}catch(e){}
+  S.readHist=hist;
+  savePlayerHistory('readhist',hist);
 }
 async function openReading(taskId,practiceMode){
   RD.taskId=taskId||null;RD.practiceMode=!!practiceMode;document.getElementById('readingScreen').style.display='flex';
@@ -5439,6 +5483,17 @@ document.addEventListener('visibilitychange',async()=>{
   try{
     const logs=await db(`stars_log?player_id=eq.${S.player.id}&select=amount`);
     if(Array.isArray(logs)&&logs.length)S.stars=Math.max(0,logs.reduce((a,l)=>a+l.amount,0));
+    // Re-pull the cross-device no-repeat histories too, merging so entries
+    // written on another device appear without clobbering this tab's newest.
+    const phist=await db(`app_settings?key=in.(qhist_${S.player.id},readhist_${S.player.id})&select=key,value`);
+    if(Array.isArray(phist))phist.forEach(r=>{try{
+      if(r.key===`qhist_${S.player.id}`)S.qHist={...(JSON.parse(r.value)||{}),...(S.qHist||{})};
+      else if(r.key===`readhist_${S.player.id}`){
+        const remote=JSON.parse(r.value)||[];
+        const ids=new Set((S.readHist||[]).map(h=>h.id));
+        remote.forEach(h=>{if(h&&h.id&&!ids.has(h.id))(S.readHist=S.readHist||[]).push(h);});
+      }
+    }catch(e){}});
     await loadQuestData();
     renderAll();
   }catch(e){}
