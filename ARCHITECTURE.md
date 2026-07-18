@@ -181,13 +181,21 @@ questions** → results.
   mode only — falling back to `launchSubjectQuiz()` (whole-subject quiz with
   guaranteed inline questions) when a topic has **zero** questions, so the
   day's quest can never dead-end (PR #11).
-- **7-day no-repeat** (PR #21): a per-player served-question memory
-  (localStorage `lh_qHist_<playerId>`: id → local date, pruned weekly) makes
-  `pickFreshQuestions()` prefer questions not seen in the last 7 days,
-  reusing the least-recently-served only when a pool is too small to avoid
-  it. Pool queries fetch up to 300 rows (a fixed limit=50 window used to
-  re-serve the same 50 questions daily on richly seeded topics). Applies to
-  quest, practice, and the fallback quiz.
+- **7-day no-repeat** (PR #21, cross-device since PR #23): a per-player
+  served-question memory makes `pickFreshQuestions()` prefer questions not
+  seen in the last 7 days, reusing the least-recently-served only when a
+  pool is too small to avoid it. Stored in **Supabase `app_settings`**
+  (`qhist_<playerId>`, JSON in `value`, merge-duplicates upsert — same
+  pattern as the Asset Manager), hydrated at login, re-merged on tab return,
+  so the window is uniform across devices. Keys are FNV hashes of the
+  **normalized question text** (not row ids — seed batches duplicate
+  identical wording across rows/levels), and each round collapses duplicate
+  texts so one quiz never shows the same question twice. The reading-passage
+  history lives in `readhist_<playerId>` the same way (14-day window). Pool
+  queries fetch up to 300 rows (a fixed limit=50 window used to re-serve the
+  same 50 questions daily). Applies to quest, practice, and the fallback
+  quiz. `loadAppSettings()` excludes `qhist_*`/`readhist_*` from the asset
+  fetch.
 - `loadQ()` dispatches on `questions.type` → `renderMCQ` (default; only
   format until the schema migration adds `type`) / `renderFillBlank` /
   `renderWordRearrange` / `renderMatching`, all resolving through the shared
@@ -342,7 +350,7 @@ appendix). Until then the app degrades gracefully and silently:
 | 07-02 | Deep audit: found `star_config`/`streaks` loaded but unused; subjects/questions tables then-empty; timezone bug class identified. |
 | 07-03 | Timezone fix app-wide (PR #9); Reading practice tab (PR #10); star economy rebuilt onto `star_config` + daily cap + streaks + monthly prizes; standalone Games tab + 2-games/day cap; quest plan system; **Subject Learning rebuild** (2 topics × teach + 10Q, multi-format engine, adaptive mastery); geography-quest & hindi-gujarati-hub answer-button fixes; topbar dropdown stacking fix. |
 | 07-06 | Health-check audit. PR #11: dead hero Start button re-wired, quest zero-question dead-end fallback, stale-plan repair. PR #12: dead `#pin`/`#pdash` overlays removed, garden-legend 404s fixed, `Math-duel.html` case collision resolved. PR #13: star balance refresh on tab visibility. PR #14: `gradeStart`/`gradeAhead` split (start = grade−1, ceiling = grade+1). PR #15: this document. PR #16: Reading phase — durable completion rows (award-gated row-write was leaving the phase permanently not-done once the daily cap was hit, locking Choice Games), two passages/day, per-day passage rotation with 14-day history. PR #18: Dharma Time built on Hinduism content (one topic/day, `category:'dharma'` completion rows, 15/5 stars outside the cap). PR #20: sidebar scrolls on short screens. |
-| 07-18 | Prachi seeded ~7,250 new questions (total now ~15,850: science 3,548 · math 3,822 among others). Repaired 5 mis-keyed batches (2,000 rows) so the app can reach them: `social_studies/"Canada and British Columbia"` → new `social/canadabc` module (250 q, full 25-cell grade×level grid), `science/humanbody`→`body`, `math/geometry`→`shapes`, new `science/energy` (750) + `science/matter` (250) modules — zero orphaned topics remain (60 modules). PR #21: 7-day question no-repeat + pool limit 50→300. Data: `hindi` subject deactivated; 7 orphaned topics given `modules` rows (~1,880 questions unlocked: poetry, prefixes, pujapractice, hanumanchalisa, estimation, patterns, livingthings). |
+| 07-18 | Prachi seeded ~7,250 new questions (total now ~15,850: science 3,548 · math 3,822 among others). Repaired 5 mis-keyed batches (2,000 rows) so the app can reach them: `social_studies/"Canada and British Columbia"` → new `social/canadabc` module (250 q, full 25-cell grade×level grid), `science/humanbody`→`body`, `math/geometry`→`shapes`, new `science/energy` (750) + `science/matter` (250) modules — zero orphaned topics remain (60 modules). PR #21: 7-day question no-repeat + pool limit 50→300. PR #23: histories moved to Supabase `app_settings` for cross-device uniformity; history keyed by question-text hash (seed batches duplicate texts — energy/plants have each text 3× per grade); in-quiz duplicate-text collapse. Known content gap: several level cells offer only ~10 unique texts, so day-to-day repeats within a cell remain until more variety is seeded or the kid levels up. Data: `hindi` subject deactivated; 7 orphaned topics given `modules` rows (~1,880 questions unlocked: poetry, prefixes, pujapractice, hanumanchalisa, estimation, patterns, livingthings). |
 
 ## 14. Open items
 
