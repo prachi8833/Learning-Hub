@@ -120,10 +120,18 @@ blocked, see §11), `streaks`, `tasks`, `task_completions`, `wish_list`,
 ## 5. Today's Quest (the star-earning daily journey)
 
 Five phases on the Home screen "Quest Trail" (`renderQuestTrail()` /
-`getQuestState()`): **Subjects → Reading → Games → Dharma (coming soon) →
-Exercise**. Reading unlocks after Subjects; Games after Reading. Dharma and
-Exercise are always-open side stones (Exercise completes via an approved
-task whose title matches /exercise|play|outdoor/i).
+`getQuestState()`): **Subjects → Reading → Games → Dharma → Exercise**.
+Reading unlocks after Subjects; Games after Reading. Dharma and Exercise are
+always-open side stones (Exercise completes via an approved task whose title
+matches /exercise|play|outdoor/i).
+
+**Dharma Time** (PR #18): one random Hinduism topic per day (persisted as
+`plan.dharmaTopic`), taught then quizzed via the normal engine in
+`dharmaMode`. Writes NO `sessions` row (would falsely count toward the
+subjects phase); completion + stars are a `stars_log` row with
+`category:'dharma'` — first completed round of the day only, outside the
+daily cap: `dharma_pass` (15) at ≥80%, `dharma_try` (5) below. Re-runs are
+free practice ("already done today"). Mastery tracking still applies.
 
 ### The Quest Plan
 `getQuestPlan()` — one plan per player per local day, persisted at
@@ -207,6 +215,7 @@ not hardcoded. Current live values:
 | Session bonus (quest only) | `level_pass` (100) / `level_distinction` (150) / `perfect_level` (200) |
 | Reading (first TWO reads of the day, non-practice) | accuracy-tiered per read: 50/40/30/20/10 at ≥90/80/70/60/below %, through the daily cap (the `reading` star_config key (40) exists but the code uses these accuracy tiers) |
 | Tasks | per-task `stars_value`, approved by parent |
+| Dharma Time (first completed round/day, outside cap) | `dharma_pass` (15) at ≥80 %, `dharma_try` (5) below |
 | Streak | `daily_streak` (25) each qualifying day, `streak_7` (200), `streak_30` (1000) |
 | Monthly prizes | `monthly_bronze` (100) at 1,000 ★/month, `monthly_silver` (300) at 3,000, `monthly_gold` (750) at 6,000 — `checkMonthlyPrize()`, de-duped via `stars_log` reason text, lowest tier first |
 | **Daily cap** | `daily_quest_cap` (300) — `applyDailyCap()` in index.html + `applyGameDailyCap()` copied into every game file. Clamps combined `learning,reading,game` earnings per local day. Tasks/bonuses/streaks/prizes deliberately outside the cap. |
@@ -325,13 +334,11 @@ appendix). Until then the app degrades gracefully and silently:
 |---|---|
 | 07-02 | Deep audit: found `star_config`/`streaks` loaded but unused; subjects/questions tables then-empty; timezone bug class identified. |
 | 07-03 | Timezone fix app-wide (PR #9); Reading practice tab (PR #10); star economy rebuilt onto `star_config` + daily cap + streaks + monthly prizes; standalone Games tab + 2-games/day cap; quest plan system; **Subject Learning rebuild** (2 topics × teach + 10Q, multi-format engine, adaptive mastery); geography-quest & hindi-gujarati-hub answer-button fixes; topbar dropdown stacking fix. |
-| 07-06 | Health-check audit. PR #11: dead hero Start button re-wired, quest zero-question dead-end fallback, stale-plan repair. PR #12: dead `#pin`/`#pdash` overlays removed, garden-legend 404s fixed, `Math-duel.html` case collision resolved. PR #13: star balance refresh on tab visibility. PR #14: `gradeStart`/`gradeAhead` split (start = grade−1, ceiling = grade+1). PR #15: this document. PR #16: Reading phase — durable completion rows (award-gated row-write was leaving the phase permanently not-done once the daily cap was hit, locking Choice Games), two passages/day, per-day passage rotation with 14-day history. Data: `hindi` subject deactivated; 7 orphaned topics given `modules` rows (~1,880 questions unlocked: poetry, prefixes, pujapractice, hanumanchalisa, estimation, patterns, livingthings). |
+| 07-06 | Health-check audit. PR #11: dead hero Start button re-wired, quest zero-question dead-end fallback, stale-plan repair. PR #12: dead `#pin`/`#pdash` overlays removed, garden-legend 404s fixed, `Math-duel.html` case collision resolved. PR #13: star balance refresh on tab visibility. PR #14: `gradeStart`/`gradeAhead` split (start = grade−1, ceiling = grade+1). PR #15: this document. PR #16: Reading phase — durable completion rows (award-gated row-write was leaving the phase permanently not-done once the daily cap was hit, locking Choice Games), two passages/day, per-day passage rotation with 14-day history. PR #18: Dharma Time built on Hinduism content (one topic/day, `category:'dharma'` completion rows, 15/5 stars outside the cap). Data: `hindi` subject deactivated; 7 orphaned topics given `modules` rows (~1,880 questions unlocked: poetry, prefixes, pujapractice, hanumanchalisa, estimation, patterns, livingthings). |
 
 ## 14. Open items
 
 - **Schema migration** (§11) — waiting on Prachi to run the SQL.
-- **Dharma Time** quest phase — `comingSoon:true`, content exists in
-  `modules`/`questions` (hinduism), UI not built.
 - **`indigenous` subject** — 1 module, 0 questions; quest mode falls back to
   the inline-question whole-subject quiz. Needs real questions authored.
 - **Streak bar** — requires all of Subjects+Reading+Games in one day; kept
