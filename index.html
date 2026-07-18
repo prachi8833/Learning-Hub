@@ -2992,7 +2992,11 @@ function getQuestState() {
   const gamesDone = gamesCount >= 2;
 
   // Phase 4: stubbed until built
-  const dharmaDone = false;
+  // Phase 4: done when a Dharma Time round was completed today -- durable
+  // signal is a stars_log row with category 'dharma' (same pattern as
+  // reading; NOT a sessions row, which would falsely count toward the
+  // subjects phase's distinct-subject check).
+  const dharmaDone = (S.todayDharmaCount || 0) > 0;
 
   // Phase 5: done when an "exercise" task is approved today
   const exerciseTaskIds = (Array.isArray(S.tasks) ? S.tasks : []).filter(t => /exercise|play|outdoor/i.test(t.title||'')).map(t => t.id);
@@ -3002,7 +3006,7 @@ function getQuestState() {
     subjects: { done: subjectsDone, progress: subjectsCount, total: 3 },
     reading: { done: readingDone, progress: readingCount, total: 2 },
     games: { done: gamesDone, progress: gamesCount, total: 2 },
-    dharma: { done: dharmaDone, progress: 0, total: 1 },
+    dharma: { done: dharmaDone, progress: dharmaDone ? 1 : 0, total: 1 },
     exercise: { done: exerciseDone, progress: exerciseDone ? 1 : 0, total: 1 },
   };
 }
@@ -3035,7 +3039,7 @@ function renderQuestTrail() {
     { id:'subjects', num:1, emoji:'📚', name:'Subject Learning', sub: state.subjects.done?todaySubjNames.join(' · '):`Next: ${nextSubjName||'—'} (${state.subjects.progress}/3)`, starsMax:60, locked:false, comingSoon:false },
     { id:'reading',  num:2, emoji:'📖', name:'Reading Time',     sub: state.reading.done?'2 passages · done!':`Two passages (${state.reading.progress}/2) · 10–15 min`, starsMax:20, locked:!state.subjects.done, comingSoon:false },
     { id:'games',    num:3, emoji:'🎮', name:'Choice Games',     sub: state.games.done?'2 games · done!':`Next: ${nextGameName||'—'} (${state.games.progress}/2)`, starsMax:40, locked:!state.reading.done, comingSoon:false },
-    { id:'dharma',   num:4, emoji:'🕉️', name:'Dharma Time',     sub:'10–15 min', starsMax:15, locked:false, comingSoon:true, open:true },
+    { id:'dharma',   num:4, emoji:'🕉️', name:'Dharma Time',     sub: state.dharma.done?'Done for today! 🙏':'One Hinduism topic · 10–15 min', starsMax:15, locked:false, comingSoon:false, open:true },
     { id:'exercise', num:5, emoji:'🏃', name:'Exercise',         sub:'5 min · stretch, jump, move!', starsMax:5, locked:false, comingSoon:false, open:true },
   ];
 
@@ -3160,6 +3164,7 @@ function startQuestPhase(id) {
   if(id === 'subjects'){ startQuestSubject(); return; }
   if(id === 'reading'){ openReading(); return; }
   if(id === 'games'){ startQuestGame(); return; }
+  if(id === 'dharma'){ startDharmaTime(); return; }
   if(id === 'exercise'){
     const t=S.tasks.find(t=>/exercise|play|outdoor/i.test(t.title||''));
     if(t) tapTask(t.id,t.stars_value);
@@ -3168,6 +3173,30 @@ function startQuestPhase(id) {
   }
   // dharma — coming soon
   showMod(`<div style="text-align:center;padding:12px"><div style="font-size:2.5rem;margin-bottom:9px">🛠️</div><div style="font-size:.95rem;font-weight:900;color:#fff;margin-bottom:5px">Coming Soon!</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">This phase is still being built!</div><button class="mb" onclick="closeMod()">OK</button></div>`);
+}
+
+// Dharma Time (quest phase 4) — one Hinduism topic per day, taught then
+// quizzed through the normal subject-learning engine in a dedicated mode.
+// Deliberately writes NO sessions row (a hinduism session here would
+// falsely count toward the subjects phase's distinct-subject check);
+// completion + stars are a stars_log row with category 'dharma' — outside
+// the daily cap, like streak bonuses. See the dharmaMode branch in showQRes().
+function startDharmaTime(){
+  const mods=(S.modules||[]).filter(m=>m.subject_key==='hinduism');
+  if(!mods.length){
+    showMod(`<div style="text-align:center;padding:12px"><div style="font-size:2.5rem;margin-bottom:9px">🕉️</div><div style="font-size:.95rem;font-weight:900;color:#fff;margin-bottom:5px">Dharma Time</div><div style="font-size:.78rem;color:rgba(255,255,255,.5);margin-bottom:14px">Hinduism topics are coming soon!</div><button class="mb" onclick="closeMod()">OK</button></div>`);
+    return;
+  }
+  const plan=getQuestPlan();
+  let topic=plan&&plan.dharmaTopic;
+  if(!topic||!mods.some(m=>m.key===topic.key)){
+    const pick=shuf(mods)[0];
+    topic={key:pick.key,name:pick.name};
+    if(plan){ plan.dharmaTopic=topic; saveQuestPlan(plan); }
+  }
+  S.questModeQuiz=false;
+  SL={subjKey:'hinduism',topics:[topic],topicIdx:0,questMode:false,dharmaMode:true};
+  openTeachScreen('hinduism',topic.key,topic.name);
 }
 
 // Quest-mode subject visit — one of today's 3 randomly-assigned subjects,
@@ -3223,8 +3252,10 @@ async function loadQuestData() {
     const todayStart = localMidnightISO();
     const sessions = await db(`sessions?player_id=eq.${S.player.id}&created_at=gte.${todayStart}&select=id,subject_key`);
     S.todaySessions = Array.isArray(sessions) ? sessions : [];
-    const reads = await db(`stars_log?player_id=eq.${S.player.id}&category=eq.reading&created_at=gte.${todayStart}&select=id`);
-    S.todayReadingCount = Array.isArray(reads) ? reads.length : 0;
+    const reads = await db(`stars_log?player_id=eq.${S.player.id}&category=in.(reading,dharma)&created_at=gte.${todayStart}&select=id,category`);
+    const readRows = Array.isArray(reads) ? reads : [];
+    S.todayReadingCount = readRows.filter(r => r.category === 'reading').length;
+    S.todayDharmaCount = readRows.filter(r => r.category === 'dharma').length;
     const gscores = await db(`game_scores?player_id=eq.${S.player.id}&last_played=gte.${todayStart}&select=game_key`);
     S.todayGamesPlayed = Array.isArray(gscores) ? [...new Set(gscores.map(g => g.game_key))] : [];
     const logs = await db(`stars_log?player_id=eq.${S.player.id}&created_at=gte.${todayStart}&select=amount`);
@@ -4671,8 +4702,26 @@ async function showQRes(){
   const sessionBonus=perf?starCfg('perfect_level',200):distinction?starCfg('level_distinction',150):passed?starCfg('level_pass',100):0;
   let ts=S.quizSE+sessionBonus;
   const questMode=!!S.questModeQuiz;
+  const dharmaMode=!!(SL&&SL.dharmaMode&&S.quizSubj?.key==='hinduism');
+  let dharmaAwarded=0,dharmaAlreadyDone=false;
   let capped=false;
-  if(questMode){
+  if(dharmaMode){
+    // Dharma Time: no sessions/level_progress writes (see startDharmaTime).
+    // First completed round of the day logs a category:'dharma' row -- the
+    // durable phase-done signal -- and a small fixed award (outside the
+    // daily cap, like streaks): dharma_pass on >=80%, dharma_try otherwise.
+    dharmaAlreadyDone=(S.todayDharmaCount||0)>0;
+    if(passed) megaConfetti();
+    if(!dharmaAlreadyDone){
+      dharmaAwarded=passed?starCfg('dharma_pass',15):starCfg('dharma_try',5);
+      try{
+        await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:dharmaAwarded,reason:`Dharma Time: ${S.quizSubj.name} — ${S.quizScore}/${total}`,category:'dharma'}});
+        S.stars+=dharmaAwarded;
+        S.todayDharmaCount=(S.todayDharmaCount||0)+1;
+        updateStarDisplay(S.stars,dharmaAwarded);
+      }catch(e){}
+    }
+  }else if(questMode){
     const allowed=await applyDailyCap(ts);
     capped=allowed<ts;
     ts=allowed;
@@ -4696,7 +4745,9 @@ async function showQRes(){
   const rs=document.getElementById('res');rs.style.display='flex';
   document.getElementById('r-tr').textContent=perf?'🏆':passed?'⭐':'💪';
   document.getElementById('r-sc').textContent=`${S.quizScore}/${total}`;
-  document.getElementById('r-ea').textContent=!questMode?'Practice round — no stars this time!':
+  document.getElementById('r-ea').textContent=
+    dharmaMode?(dharmaAlreadyDone?'🙏 Dharma practice — already done today!':`+${dharmaAwarded} ⭐ Dharma Time complete! 🙏`):
+    !questMode?'Practice round — no stars this time!':
     capped&&ts>0?`+${ts.toLocaleString()} ⭐ earned (today's cap almost here!)`:
     capped?`🎉 You've hit today's star cap — amazing work!`:
     `+${ts.toLocaleString()} ⭐ earned`;
