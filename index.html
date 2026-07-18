@@ -2313,23 +2313,57 @@ async function getPlayerProgress(subjKey,topicKey){
   return prog;
 }
 
+// ─── 7-day served-question memory (Prachi 2026-07-07: questions were
+// repeating day to day). Per-player map of question id → local date last
+// served, pruned past 7 days, in localStorage. pickFreshQuestions() prefers
+// questions not served inside the window and only falls back to the
+// least-recently-served ones when a topic's pool is too small to avoid
+// repeats entirely.
+function getServedQHistory(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(`lh_qHist_${S.player?.id}`)||'{}');
+    const c=new Date();c.setDate(c.getDate()-7);
+    const cutoff=`${c.getFullYear()}-${String(c.getMonth()+1).padStart(2,'0')}-${String(c.getDate()).padStart(2,'0')}`;
+    const out={};
+    for(const id in raw){ if(raw[id]>=cutoff) out[id]=raw[id]; }
+    return out;
+  }catch(e){return {};}
+}
+function recordServedQuestions(qs){
+  if(!S.player||!Array.isArray(qs))return;
+  const hist=getServedQHistory();
+  const d=today();
+  qs.forEach(q=>{ if(q&&q.id) hist[q.id]=d; });
+  try{localStorage.setItem(`lh_qHist_${S.player.id}`,JSON.stringify(hist));}catch(e){}
+}
+function pickFreshQuestions(pool,n){
+  const hist=getServedQHistory();
+  const fresh=pool.filter(q=>!hist[q.id]);
+  const seen=pool.filter(q=>hist[q.id]).sort((a,b)=>hist[a.id]<hist[b.id]?-1:1);
+  const picked=[...shuf(fresh),...seen].slice(0,n);
+  recordServedQuestions(picked);
+  return picked;
+}
+
 // Question pool for one topic-round, gated by this player's current
 // grade/level for that specific topic (not the blanket subject-wide
 // grade-lte filter used elsewhere). Falls back to the old ungated query if
 // the level-filtered pool is empty -- protects thin subjects/topics that
 // don't yet have questions densely seeded at every level.
+// limit=300 (was 50): a fixed 50-row window in insertion order made richly
+// seeded topics draw from the same 50 questions every day.
 async function pickQuestionsForTopic(subjKey,topicKey,progress){
   let qs=[];
   try{
-    qs=await db(`questions?subject_key=eq.${subjKey}&topic=eq.${topicKey}&active=eq.true&grade=eq.${progress.current_grade}&level=lte.${progress.current_level}&limit=50`);
+    qs=await db(`questions?subject_key=eq.${subjKey}&topic=eq.${topicKey}&active=eq.true&grade=eq.${progress.current_grade}&level=lte.${progress.current_level}&limit=300`);
   }catch(e){}
   if(!Array.isArray(qs)||!qs.length){
     const targetGrade=gradeAhead(S.player.grade);
     try{
-      qs=await db(`questions?subject_key=eq.${subjKey}&topic=eq.${topicKey}&active=eq.true&grade=lte.${targetGrade}&limit=50`);
+      qs=await db(`questions?subject_key=eq.${subjKey}&topic=eq.${topicKey}&active=eq.true&grade=lte.${targetGrade}&limit=300`);
     }catch(e){qs=[];}
   }
-  return Array.isArray(qs)&&qs.length?shuf(qs).slice(0,10):[];
+  return Array.isArray(qs)&&qs.length?pickFreshQuestions(qs,10):[];
 }
 
 // Called once per topic-round completion (quest AND practice -- mastery
@@ -4381,8 +4415,8 @@ async function launchSubjectQuiz(s){
   const targetGrade=gradeAhead(S.player.grade);
   if(window.gsap) gsap.fromTo(qEl,{opacity:0},{opacity:1,duration:0.3});
   try{
-    let qs=await db(`questions?subject_key=eq.${s.key}&active=eq.true&grade=lte.${targetGrade}&limit=50`);
-    if(Array.isArray(qs)&&qs.length)qs=shuf(qs).slice(0,10);
+    let qs=await db(`questions?subject_key=eq.${s.key}&active=eq.true&grade=lte.${targetGrade}&limit=300`);
+    if(Array.isArray(qs)&&qs.length)qs=pickFreshQuestions(qs,10);
     if(!Array.isArray(qs)||!qs.length)qs=[
       {id:'q1',subject_key:'math',grade:3,level:1,topic:'addition',question:'What is 5 + 7?',answer:'12',wrong1:'10',wrong2:'11',wrong3:'13',explanation:'5 + 7 = 12',active:true},
       {id:'q2',subject_key:'math',grade:1,level:1,topic:'counting',question:'What is 2 + 3?',answer:'5',wrong1:'4',wrong2:'6',wrong3:'7',explanation:'2 + 3 = 5',active:true},
