@@ -2980,8 +2980,11 @@ function getQuestState() {
   const distinctSubjKeys = new Set(todaySessions.map(s=>s.subject_key));
   const subjectsDone = distinctSubjKeys.size >= 3;
   const subjectsCount = Math.min(distinctSubjKeys.size, 3);
-  // Phase 2: done when a reading session was submitted today
-  const readingDone = (S.todayReadingCount || 0) > 0;
+  // Phase 2: done when TWO readings were submitted today (Prachi 2026-07-06:
+  // two passages per day). Completion rows are written even when the daily
+  // cap clamps the award to 0 -- see submitReading().
+  const readingCount = Math.min(S.todayReadingCount || 0, 2);
+  const readingDone = readingCount >= 2;
 
   // Phase 3: done when 2 different games were played today
   const gamesPlayed = S.todayGamesPlayed || [];
@@ -2997,7 +3000,7 @@ function getQuestState() {
 
   return {
     subjects: { done: subjectsDone, progress: subjectsCount, total: 3 },
-    reading: { done: readingDone, progress: readingDone ? 1 : 0, total: 1 },
+    reading: { done: readingDone, progress: readingCount, total: 2 },
     games: { done: gamesDone, progress: gamesCount, total: 2 },
     dharma: { done: dharmaDone, progress: 0, total: 1 },
     exercise: { done: exerciseDone, progress: exerciseDone ? 1 : 0, total: 1 },
@@ -3030,7 +3033,7 @@ function renderQuestTrail() {
   const nextGameName = plan && plan.gameIdx<2 ? (GAMES.find(g=>g.id===plan.games[plan.gameIdx])?.name||plan.games[plan.gameIdx]) : null;
   const phases = [
     { id:'subjects', num:1, emoji:'📚', name:'Subject Learning', sub: state.subjects.done?todaySubjNames.join(' · '):`Next: ${nextSubjName||'—'} (${state.subjects.progress}/3)`, starsMax:60, locked:false, comingSoon:false },
-    { id:'reading',  num:2, emoji:'📖', name:'Reading Time',     sub:'One passage · 10–15 min', starsMax:20, locked:!state.subjects.done, comingSoon:false },
+    { id:'reading',  num:2, emoji:'📖', name:'Reading Time',     sub: state.reading.done?'2 passages · done!':`Two passages (${state.reading.progress}/2) · 10–15 min`, starsMax:20, locked:!state.subjects.done, comingSoon:false },
     { id:'games',    num:3, emoji:'🎮', name:'Choice Games',     sub: state.games.done?'2 games · done!':`Next: ${nextGameName||'—'} (${state.games.progress}/2)`, starsMax:40, locked:!state.reading.done, comingSoon:false },
     { id:'dharma',   num:4, emoji:'🕉️', name:'Dharma Time',     sub:'10–15 min', starsMax:15, locked:false, comingSoon:true, open:true },
     { id:'exercise', num:5, emoji:'🏃', name:'Exercise',         sub:'5 min · stretch, jump, move!', starsMax:5, locked:false, comingSoon:false, open:true },
@@ -4762,11 +4765,43 @@ let RD={passages:[],currentPassage:null,recognition:null,listening:false,transcr
 // unlike the Quest Trail's Reading Time phase.
 function openPracticeReading(){ openReading(null,true); }
 
+// Deterministic per-day passage order: FNV-1a hash of player+date seeds a
+// mulberry32 PRNG, so the shuffle is stable all day but different tomorrow.
+function seededShuffle(arr,seedStr){
+  let a=2166136261;
+  for(let i=0;i<seedStr.length;i++){a^=seedStr.charCodeAt(i);a=Math.imul(a,16777619);}
+  const rnd=()=>{a+=0x6D2B79F5;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;};
+  const r=[...arr];
+  for(let i=r.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[r[i],r[j]]=[r[j],r[i]];}
+  return r;
+}
+// Per-player list of recently read passage ids ({id,date}), pruned to 14
+// days -- used to push already-seen passages to the back of the pool.
+function getReadingHistory(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(`lh_readHist_${S.player?.id}`)||'[]');
+    const c=new Date();c.setDate(c.getDate()-14);
+    const cutoff=`${c.getFullYear()}-${String(c.getMonth()+1).padStart(2,'0')}-${String(c.getDate()).padStart(2,'0')}`;
+    return Array.isArray(raw)?raw.filter(h=>h&&h.id&&h.date>=cutoff):[];
+  }catch(e){return [];}
+}
+function recordReadingHistory(passageId){
+  if(!S.player||!passageId)return;
+  const hist=getReadingHistory().filter(h=>h.id!==passageId);
+  hist.push({id:passageId,date:today()});
+  try{localStorage.setItem(`lh_readHist_${S.player.id}`,JSON.stringify(hist));}catch(e){}
+}
 async function openReading(taskId,practiceMode){
   RD.taskId=taskId||null;RD.practiceMode=!!practiceMode;document.getElementById('readingScreen').style.display='flex';
   const passages=await db(`reading_passages?active=eq.true&grade=lte.${S.player?.grade||1}&order=grade,level`);
-  RD.passages=Array.isArray(passages)?passages:[];
-  if(!RD.passages.length){closeReading();return;}
+  let pool=Array.isArray(passages)?passages:[];
+  if(!pool.length){closeReading();return;}
+  // Rotate variety day to day (Prachi 2026-07-06): stable per-day shuffle,
+  // with passages read in the last 14 days pushed to the back so kids see
+  // fresh ones first instead of the same grade-1 passage every morning.
+  const seen=new Set(getReadingHistory().map(h=>h.id));
+  pool=seededShuffle(pool,`${S.player?.id||''}_${today()}`);
+  RD.passages=[...pool.filter(p=>!seen.has(p.id)),...pool.filter(p=>seen.has(p.id))];
   const sel=document.getElementById('rd-passage-selector');
   sel.innerHTML=RD.passages.map((p,i)=>`<button class="rps-chip ${i===0?'active':''}" onclick="selectPassage(${i},this)">${p.title}</button>`).join('');
   selectPassage(0,sel.firstChild);
@@ -4835,24 +4870,48 @@ function evaluateReading(){
 }
 async function submitReading(){
   const btn=document.getElementById('rd-submit-btn');btn.disabled=true;btn.textContent='Submitting...';
-  // Only the first reading of the day earns stars, AND only outside
-  // practice mode -- same star-economy rule as practice-mode quizzes.
-  const earnsStars=!RD.practiceMode&&(S.todayReadingCount||0)===0;
+  // Quest rule (Prachi 2026-07-06): the first TWO readings of the day count
+  // toward the Reading phase and each earns stars (through the daily cap).
+  // The stars_log row is written even when the cap clamps the award to 0 --
+  // the row itself is the durable "reading done" signal loadQuestData()
+  // counts after a reload; gating it on stars>0 is what used to leave the
+  // phase stuck at not-done (and Choice Games locked) for capped kids.
+  const countsTowardQuest=!RD.practiceMode&&(S.todayReadingCount||0)<2;
   let awarded=0;
   try{
-    if(earnsStars){
+    if(countsTowardQuest){
       awarded=await applyDailyCap(RD.starsEarned);
-      if(awarded>0)await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:awarded,reason:`Reading: ${RD.currentPassage?.title||'passage'}`,category:'reading'}});
+      await db('stars_log',{method:'POST',prefer:'return=minimal',body:{player_id:S.player.id,amount:awarded,reason:`Reading: ${RD.currentPassage?.title||'passage'}`,category:'reading'}});
       S.stars+=awarded;
       S.todayReadingCount=(S.todayReadingCount||0)+1;
+      if(awarded>0)updateStarDisplay(S.stars,awarded);
     }
+    recordReadingHistory(RD.currentPassage?.id);
     if(RD.taskId)await db('task_completions',{method:'POST',prefer:'return=minimal',body:{task_id:RD.taskId,player_id:S.player.id,status:'pending',completion_date:today()}});
-    btn.textContent=!earnsStars?'✅ Great practice — no extra stars this time!':
-      awarded<RD.starsEarned?`🎉 You've hit today's star cap — great reading!`:
-      '✅ Submitted! Ask a parent to approve';
-    btn.style.background=earnsStars&&awarded>0?'#27AE60':'#7C5CBF';
-    setTimeout(()=>closeReading(),2500);
+    if(countsTowardQuest&&(S.todayReadingCount||0)===1){
+      // First of two -- keep the overlay open and roll into passage #2.
+      btn.textContent=awarded>0?`⭐ +${awarded} — now read 1 more!`:'✅ Saved — now read 1 more!';
+      btn.style.background='#27AE60';
+      setTimeout(()=>{startNextPassage();},1800);
+    }else{
+      btn.textContent=!countsTowardQuest?'✅ Great practice — no extra stars this time!':
+        awarded<RD.starsEarned?`🎉 You've hit today's star cap — great reading!`:
+        '✅ Submitted! Ask a parent to approve';
+      btn.style.background=countsTowardQuest&&awarded>0?'#27AE60':'#7C5CBF';
+      setTimeout(()=>closeReading(),2500);
+    }
   }catch(e){btn.disabled=false;btn.textContent='⭐ Submit & Earn Stars';}
+}
+// Auto-advance to the first passage not yet read today (history was just
+// recorded, so filtering the already-ordered pool is enough).
+function startNextPassage(){
+  const seenToday=new Set(getReadingHistory().filter(h=>h.date===today()).map(h=>h.id));
+  let idx=RD.passages.findIndex(p=>!seenToday.has(p.id));
+  if(idx<0)idx=0;
+  const chips=document.querySelectorAll('.rps-chip');
+  selectPassage(idx,chips[idx]);
+  document.getElementById('rd-status').textContent='Passage 1 done! One more to finish Reading Time 📖';
+  document.getElementById('rd-passage-selector').scrollIntoView({behavior:'smooth'});
 }
 function tryAnotherPassage(){resetReadingUI();document.getElementById('rd-passage-selector').scrollIntoView({behavior:'smooth'});}
 function closeReading(){
