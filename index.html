@@ -39,7 +39,13 @@ body{background:#0a1a10}
   border-right:1px solid rgba(255,255,255,0.07);
   box-shadow:2px 0 24px rgba(0,0,0,0.28),inset -1px 0 0 rgba(43,191,184,0.1);
   display:flex;flex-direction:column;position:relative;z-index:10;
+  overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.12) transparent;
 }
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:99px}
+/* keep every block full-height inside the scroller instead of squashing */
+.sb-logo,.sb-tara,.sb-parent{flex-shrink:0}
+.sb-nav{flex-shrink:0}
 /* subtle top-to-bottom inner gradient so top feels lighter */
 .sidebar::before{
   content:'';position:absolute;inset:0;pointer-events:none;
