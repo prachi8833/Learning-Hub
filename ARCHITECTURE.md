@@ -139,7 +139,9 @@ games**, picked once, surviving the full-page navigation a game requires.
 ### Phase completion checks (`getQuestState()`)
 - **Subjects:** ≥3 distinct `sessions.subject_key` today. (Distinct, not raw
   count — each subject visit writes 2 session rows, one per topic round.)
-- **Reading:** ≥1 `stars_log` row with `category='reading'` today.
+- **Reading:** ≥2 `stars_log` rows with `category='reading'` today (two
+  passages per day, PR #16). Rows are written even when the daily cap clamps
+  the award to 0 — the row, not the stars, is the durable done-signal.
 - **Games:** 2 distinct `game_scores.game_key` entries today.
 
 ### Quest vs practice — the star gate
@@ -203,7 +205,7 @@ not hardcoded. Current live values:
 |---|---|
 | Per correct answer, by question level | `correct_l1_2` (10), `correct_l3_4` (15), `correct_l5_6` (20), `correct_l7_8` (25), `correct_l9_10` (30) |
 | Session bonus (quest only) | `level_pass` (100) / `level_distinction` (150) / `perfect_level` (200) |
-| Reading (first of the day, quest/task path) | `reading` (40) |
+| Reading (first TWO reads of the day, non-practice) | accuracy-tiered per read: 50/40/30/20/10 at ≥90/80/70/60/below %, through the daily cap (the `reading` star_config key (40) exists but the code uses these accuracy tiers) |
 | Tasks | per-task `stars_value`, approved by parent |
 | Streak | `daily_streak` (25) each qualifying day, `streak_7` (200), `streak_30` (1000) |
 | Monthly prizes | `monthly_bronze` (100) at 1,000 ★/month, `monthly_silver` (300) at 3,000, `monthly_gold` (750) at 6,000 — `checkMonthlyPrize()`, de-duped via `stars_log` reason text, lowest tier first |
@@ -223,10 +225,22 @@ required phases in one day.
 
 `openReading(taskId, practiceMode)` overlay: passage picker
 (`reading_passages`, filtered `grade ≤ player.grade`), Web Speech API
-recognition (`startListening()`), word-by-word scoring
-(`evaluateReading()`), `submitReading()` awards stars only when
-`!practiceMode && todayReadingCount === 0`, then logs and (if task-linked)
-creates a pending `task_completions` row.
+recognition (`startListening()`), word-by-word scoring (`evaluateReading()`).
+
+**Passage rotation (PR #16):** the pool is shuffled with a deterministic
+per-day seed (`seededShuffle`, player id + local date → FNV-1a → mulberry32),
+and passages read in the last 14 days (localStorage
+`lh_readHist_<playerId>`, written by `recordReadingHistory()`) are pushed to
+the back — kids see fresh passages first, different order every day.
+
+**Submission (PR #16):** the first TWO non-practice reads of the day count
+toward the quest and each earns accuracy stars through the daily cap; the
+`stars_log` row is written even at 0 stars (durable completion). After
+passage 1 the overlay stays open and `startNextPassage()` auto-advances to a
+passage not yet read today; after passage 2 it closes and the trail
+re-renders (Choice Games unlocks). Task-linked reads also create a pending
+`task_completions` row. Practice mode (sidebar Reading tab) never writes or
+earns.
 
 ## 9. Mini-game architecture (the per-file contract)
 
@@ -311,7 +325,7 @@ appendix). Until then the app degrades gracefully and silently:
 |---|---|
 | 07-02 | Deep audit: found `star_config`/`streaks` loaded but unused; subjects/questions tables then-empty; timezone bug class identified. |
 | 07-03 | Timezone fix app-wide (PR #9); Reading practice tab (PR #10); star economy rebuilt onto `star_config` + daily cap + streaks + monthly prizes; standalone Games tab + 2-games/day cap; quest plan system; **Subject Learning rebuild** (2 topics × teach + 10Q, multi-format engine, adaptive mastery); geography-quest & hindi-gujarati-hub answer-button fixes; topbar dropdown stacking fix. |
-| 07-06 | Health-check audit. PR #11: dead hero Start button re-wired, quest zero-question dead-end fallback, stale-plan repair. PR #12: dead `#pin`/`#pdash` overlays removed, garden-legend 404s fixed, `Math-duel.html` case collision resolved. PR #13: star balance refresh on tab visibility. PR #14: `gradeStart`/`gradeAhead` split (start = grade−1, ceiling = grade+1). Data: `hindi` subject deactivated; 7 orphaned topics given `modules` rows (~1,880 questions unlocked: poetry, prefixes, pujapractice, hanumanchalisa, estimation, patterns, livingthings). |
+| 07-06 | Health-check audit. PR #11: dead hero Start button re-wired, quest zero-question dead-end fallback, stale-plan repair. PR #12: dead `#pin`/`#pdash` overlays removed, garden-legend 404s fixed, `Math-duel.html` case collision resolved. PR #13: star balance refresh on tab visibility. PR #14: `gradeStart`/`gradeAhead` split (start = grade−1, ceiling = grade+1). PR #15: this document. PR #16: Reading phase — durable completion rows (award-gated row-write was leaving the phase permanently not-done once the daily cap was hit, locking Choice Games), two passages/day, per-day passage rotation with 14-day history. Data: `hindi` subject deactivated; 7 orphaned topics given `modules` rows (~1,880 questions unlocked: poetry, prefixes, pujapractice, hanumanchalisa, estimation, patterns, livingthings). |
 
 ## 14. Open items
 
